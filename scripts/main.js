@@ -99,21 +99,35 @@ function targetEffect({ name, img, description = "", statuses = [], changes = []
 // Ação simples de feature: custo, limite de usos e/ou efeitos aplicados no alvo.
 // uses: { max: 1, recovery: "scene" | "shortRest" | "longRest" | "session", onSuccess?: true }
 //   onSuccess = só gasta o uso se a rolagem tiver sucesso ("uma vez por descanso, em um sucesso").
+// dice: "2d8" faz a ação rolar esses dados no próprio card do chat (rolagem "diceSet" do sistema, igual
+// à Rune Ward oficial). O módulo pode trocar a fórmula na hora de usar (flag rollFormula, Takedown com
+// Kill Window, Integrated Chrome com Reinforced Build — ver edgeheart-character.js).
+function diceSetRoll(dice) {
+  const [, count, faces] = dice.match(/^(\d+)(d\d+)$/);
+  return {
+    type: "diceSet", trait: null, difficulty: null, bonus: null, advState: "neutral", useDefault: false,
+    diceRolling: { multiplier: "flat", flatMultiplier: Number(count), dice: faces, compare: null, treshold: null }
+  };
+}
+
 function featureAction({
   name, description = "", img = "icons/svg/upgrade.svg", actionType = "action",
-  costs = [], uses = null, effects = [], target = null
+  costs = [], uses = null, effects = [], target = null, dice = null
 }) {
   const id = foundry.utils.randomID();
   return {
     [id]: {
-      type: "effect", _id: id, systemPath: "actions", description,
+      ...(dice ? { type: "attack", roll: diceSetRoll(dice), damage: { main: null, resources: {} }, save: { trait: null, difficulty: null, damageMod: "none" } } : { type: "effect" }),
+      _id: id, systemPath: "actions", description,
       chatDisplay: true, actionType,
       cost: costs.map(c => ({ scalable: false, key: c.key, value: c.value, step: null, consumeOnSuccess: false, itemId: null })),
       uses: uses
         ? { value: null, max: String(uses.max), recovery: uses.recovery, consumeOnSuccess: !!uses.onSuccess }
         : { value: null, max: null, recovery: null, consumeOnSuccess: false },
       effects: effects.map(e => ({ _id: e._id, onSave: false })),
-      target: target ?? { type: effects.length ? "hostile" : "any", amount: effects.length ? 1 : null },
+      // Rolagem de dados sem efeito usa alvo "qualquer", como a Rune Ward oficial: com alvo "self" o card
+      // tratava o dado como ataque contra o próprio personagem e mostrava "MISS".
+      target: dice && !effects.length ? { type: "any", amount: null } : target ?? { type: effects.length ? "hostile" : "any", amount: effects.length ? 1 : null },
       name, img, range: "",
       baseAction: false, originItem: { type: "itemCollection" }, triggers: [], areas: []
     }
@@ -795,9 +809,10 @@ const SOLO = {
 // Cover (Infiltrator): recurso "simple" da feature Cover Work (0 a 3; progressão "increasing" faz o
 // refresh de cena do sistema zerar o valor). Ações que ganham ou gastam Cover ficam listadas no flag
 // coverActions do item ({ nomeDaAção: variação }); o módulo confere o saldo no preUseAction e
-// aplica a variação no postUseAction (edgeheart-character.js). O Takedown também rola o dado.
-// Outras features que só pedem "role um dado e some" usam o flag rolls ({ nomeDaAção: { formula, flavor } }):
-// o módulo rola a fórmula (com os dados do personagem, ex: @tier) depois que a ação termina.
+// aplica a variação no postUseAction (edgeheart-character.js).
+// Features que pedem "role um dado e some" usam featureAction({ dice }): o sistema rola dentro do card
+// da ação. Quando o dado depende do personagem, o flag rollFormula ({ nomeDaAção: fórmula }, ex:
+// "(@tier)d6") troca a fórmula na hora (Takedown e Integrated Chrome são tratados pelo nome).
 const COVER_ACTIONS = { gain: "Ganhar Cover", setup: "Setup", takedown: "Takedown" };
 
 function hiddenSelf(name, img, description) {
@@ -852,7 +867,7 @@ const INFILTRATOR = {
       actions: {
         ...featureAction({ name: COVER_ACTIONS.gain, img: CPR("gear/agent"), target: { type: "self", amount: null } }),
         ...featureAction({ name: COVER_ACTIONS.setup, img: CPR("gear/lock_picking_set"), target: { type: "self", amount: null } }),
-        ...featureAction({ name: COVER_ACTIONS.takedown, img: CPR("weapons/CombatKnife"), target: { type: "self", amount: null } })
+        ...featureAction({ name: COVER_ACTIONS.takedown, dice: "1d6", img: CPR("weapons/CombatKnife"), target: { type: "self", amount: null } })
       }
     }]
   },
@@ -867,8 +882,8 @@ const INFILTRATOR = {
         {
           name: "Opening Strike", img: CPR("weapons/CombatKnife_excellent"), form: "action",
           description: "<p>Uma vez por Holofote, quando você causa dano a um alvo enquanto está <em>Escondido</em> dele ou enquanto ele está <em>Vulnerável</em>, some à rolagem de dano uma quantidade de d6 igual ao seu Tier.</p><p><em>Na ficha: a ação rola os d6 do seu Tier para somar ao dano.</em></p>",
-          flags: { [MODULE_ID]: { rolls: { "Opening Strike": { formula: "(@tier)d6", flavor: "Opening Strike (d6 por Tier) — some ao dano" } } } },
-          actions: featureAction({ name: "Opening Strike", img: CPR("weapons/CombatKnife_excellent"), target: { type: "self", amount: null } })
+          flags: { [MODULE_ID]: { rollFormula: { "Opening Strike": "(@tier)d6" } } },
+          actions: featureAction({ name: "Opening Strike", dice: "1d6", img: CPR("weapons/CombatKnife_excellent"), target: { type: "self", amount: null } })
         },
         (() => {
           const hidden = hiddenSelf("No Witnesses", CPR("status/unconcious"), "<p>Escondido de novo pelo No Witnesses.</p>");
@@ -976,8 +991,7 @@ const AUGMENTED = {
     hopeFeature: {
       name: "Chrome Surge", img: CPR("status/stim"), form: "action",
       description: "<p>Gaste 3 Esperança quando fizer uma Rolagem de Agilidade, Força ou Acuidade. Role um d8 e some o resultado à rolagem. Se a rolagem tiver sucesso, escolha uma:</p><ul><li>Mova-se imediatamente dentro do alcance Próximo.</li><li>Limpe 1 Estresse.</li><li>Ganhe +2 de Evasão até o seu próximo Holofote.</li></ul><p><em>Na ficha: a ação gasta a Esperança e rola o d8 para somar à rolagem.</em></p>",
-      flags: { [MODULE_ID]: { rolls: { "Chrome Surge": { formula: "1d8", flavor: "Chrome Surge (d8) — some à Rolagem de Agilidade, Força ou Acuidade" } } } },
-      actions: featureAction({ name: "Chrome Surge", img: CPR("status/stim"), costs: [{ key: "hope", value: 3 }], target: { type: "self", amount: null } })
+      actions: featureAction({ name: "Chrome Surge", dice: "1d8", img: CPR("status/stim"), costs: [{ key: "hope", value: 3 }], target: { type: "self", amount: null } })
     },
     classFeatures: [{
       name: "Integrated Chrome", img: CPR("cyberware/cyberarm"), form: "action",
@@ -989,7 +1003,7 @@ const AUGMENTED = {
       } },
       actions: {
         ...featureAction({ name: CHROME_ACTIONS.calibrate, img: CPR("gear/tech_scanner"), target: { type: "self", amount: null } }),
-        ...featureAction({ name: CHROME_ACTIONS.use, img: CPR("cyberware/cyberarm"), costs: [{ key: "stress", value: 1 }], target: { type: "self", amount: null } })
+        ...featureAction({ name: CHROME_ACTIONS.use, dice: "1d6", img: CPR("cyberware/cyberarm"), costs: [{ key: "stress", value: 1 }], target: { type: "self", amount: null } })
       }
     }]
   },
@@ -1008,8 +1022,7 @@ const AUGMENTED = {
         {
           name: "Fast Enough", img: CPR("cyberware/sandevistan"), form: "reaction",
           description: "<p>Uma vez por descanso, quando um ataque contra você fosse acertar, pode marcar 1 Estresse para rolar um d6 e somar o resultado à sua Evasão contra esse ataque.</p>",
-          flags: { [MODULE_ID]: { rolls: { "Fast Enough": { formula: "1d6", flavor: "Fast Enough (d6) — some à Evasão contra este ataque" } } } },
-          actions: featureAction({ name: "Fast Enough", img: CPR("cyberware/sandevistan"), actionType: "reaction", costs: [{ key: "stress", value: 1 }], uses: { max: 1, recovery: "shortRest" }, target: { type: "self", amount: null } })
+          actions: featureAction({ name: "Fast Enough", dice: "1d6", img: CPR("cyberware/sandevistan"), actionType: "reaction", costs: [{ key: "stress", value: 1 }], uses: { max: 1, recovery: "shortRest" }, target: { type: "self", amount: null } })
         }
       ],
       specialization: [{
@@ -1113,11 +1126,10 @@ const TECH = {
     classFeatures: [{
       name: "Jury-Rig", img: CPR("gear/tech_tool"), form: "action",
       description: "<p>Uma vez por cena, quando você tem alguns momentos e acesso às suas ferramentas, pode modificar, consertar ou improvisar com um dispositivo, arma ou máquina dentro do alcance Corpo a Corpo. Escolha uma:</p><ul><li><strong>Boost:</strong> na próxima vez que o item modificado for usado antes de a cena terminar, some +1d6 à rolagem de ação, Rolagem de Interface ou rolagem de dano dele.</li><li><strong>Patch:</strong> restaure um item quebrado, travado, desativado ou danificado para que funcione até a cena terminar, ou permita que uma criatura usando o item limpe um Espaço de Armadura.</li><li><strong>Rewire:</strong> conecte ou desconecte o item de uma rede, contorne os controles locais dele ou permita que ele seja operado do alcance Distante até a cena terminar.</li></ul><p>Você pode marcar 1 Estresse para usar Jury-Rig de novo na mesma cena.</p><p><em>Na ficha: \"Jury-Rig\" é o uso da cena; \"Jury-Rig Extra\" marca 1 Estresse para usar de novo; \"Rolar Boost\" rola o d6 quando o item modificado for usado.</em></p>",
-      flags: { [MODULE_ID]: { rolls: { "Rolar Boost": { formula: "1d6", flavor: "Jury-Rig: Boost (d6) — some à rolagem do item modificado" } } } },
       actions: {
         ...featureAction({ name: "Jury-Rig", img: CPR("gear/tech_tool"), uses: { max: 1, recovery: "scene" }, target: { type: "self", amount: null } }),
         ...featureAction({ name: "Jury-Rig Extra", costs: [{ key: "stress", value: 1 }], target: { type: "self", amount: null } }),
-        ...featureAction({ name: "Rolar Boost", img: CPR("upgrades/nos"), target: { type: "self", amount: null } })
+        ...featureAction({ name: "Rolar Boost", dice: "1d6", img: CPR("upgrades/nos"), target: { type: "self", amount: null } })
       }
     }]
   },
@@ -1131,9 +1143,8 @@ const TECH = {
       foundation: [{
         name: "Companion Drone", img: CPR("dlc/cyberware/drone_remote"), form: "action",
         description: "<p>Você tem um pequeno drone ou máquina companheira que pode se mover de forma independente dentro do alcance Distante, carregar objetos pequenos, gravar, escanear e interagir com controles.</p><p>Você pode Ajudar um aliado dentro do alcance Próximo do drone, não importa onde você esteja. Se a rolagem dele envolver equipamento ou sistemas conectados, use um d8 como dado de Ajuda.</p><p>Quando o drone fosse sofrer dano, marque 1 Estresse para tirá-lo do perigo. Caso contrário, ele fica desativado até o seu próximo descanso.</p><p><em>Na ficha: \"Ajuda do Drone\" gasta 1 Esperança e rola o d8 de Ajuda; \"Proteger Drone\" marca 1 Estresse.</em></p>",
-        flags: { [MODULE_ID]: { rolls: { "Ajuda do Drone": { formula: "1d8", flavor: "Companion Drone: dado de Ajuda (d8) — some à rolagem do aliado" } } } },
         actions: {
-          ...featureAction({ name: "Ajuda do Drone", img: CPR("upgrades/communications_center"), costs: [{ key: "hope", value: 1 }], target: { type: "friendly", amount: 1 } }),
+          ...featureAction({ name: "Ajuda do Drone", dice: "1d8", img: CPR("upgrades/communications_center"), costs: [{ key: "hope", value: 1 }], target: { type: "friendly", amount: 1 } }),
           ...featureAction({ name: "Proteger Drone", img: CPR("upgrades/hardened_circuitry"), actionType: "reaction", costs: [{ key: "stress", value: 1 }], target: { type: "self", amount: null } })
         }
       }],
@@ -1148,10 +1159,9 @@ const TECH = {
           name: "Drone Network", img: network.img, form: "action",
           description: "<p>Uma vez por descanso longo, espalhe uma rede de drones até a cena terminar ou você sofrer dano Severo. Enquanto ativa:</p><ul><li>Seu drone pode operar dentro do alcance Muito Distante.</li><li>O Jury-Rig usado por meio dele pode aplicar dois efeitos.</li><li>Quando um aliado dentro do alcance Próximo dele sofrer dano, marque 1 Estresse para reduzir esse dano em <strong>1d8</strong>.</li></ul>",
           effects: [network],
-          flags: { [MODULE_ID]: { rolls: { "Reduzir Dano (Drone Network)": { formula: "1d8", flavor: "Drone Network (d8) — reduza o dano do aliado" } } } },
           actions: {
             ...featureAction({ name: "Drone Network", img: network.img, uses: { max: 1, recovery: "longRest" }, effects: [network], target: { type: "self", amount: null } }),
-            ...featureAction({ name: "Reduzir Dano (Drone Network)", img: CPR("upgrades/insulated_wiring"), actionType: "reaction", costs: [{ key: "stress", value: 1 }], target: { type: "friendly", amount: 1 } })
+            ...featureAction({ name: "Reduzir Dano (Drone Network)", dice: "1d8", img: CPR("upgrades/insulated_wiring"), actionType: "reaction", costs: [{ key: "stress", value: 1 }], target: { type: "friendly", amount: 1 } })
           }
         };
       })()]
@@ -1186,8 +1196,7 @@ const TECH = {
           name: "Controlled Demolition", img: restrained.img, form: "action",
           description: "<p>Uma vez por descanso longo, quando você aciona uma carga, destrua, desmorone, abra ou desative o alvo dela para criar uma grande brecha, rota de fuga ou obstrução.</p><p>Adversários dentro do alcance Próximo fazem uma Rolagem de Reação (16). Em uma falha, sofrem 3d10 de dano físico e ficam temporariamente <em>Imobilizados</em>. Em um sucesso, sofrem metade do dano.</p><p><em>Na ficha: a ação rola os 3d10 e aplica Imobilizado nos alvos que falharem.</em></p>",
           effects: [restrained],
-          flags: { [MODULE_ID]: { rolls: { "Controlled Demolition": { formula: "3d10", flavor: "Controlled Demolition (3d10 físico) — metade para quem passar na Rolagem de Reação (16)" } } } },
-          actions: featureAction({ name: "Controlled Demolition", img: restrained.img, uses: { max: 1, recovery: "longRest" }, effects: [restrained], target: { type: "hostile", amount: null } })
+          actions: featureAction({ name: "Controlled Demolition", dice: "3d10", img: restrained.img, uses: { max: 1, recovery: "longRest" }, effects: [restrained], target: { type: "hostile", amount: null } })
         };
       })()]
     }
@@ -1260,10 +1269,9 @@ const BROKER = {
       specialization: [{
         name: "Contacts Everywhere", img: CPR("gear/radio_communicator"), form: "action",
         description: "<p>Uma vez por descanso, chame ajuda imediata de um contato. Descreva como ele intervém e escolha uma:</p><ul><li>Reduza em 1 os Pontos de Vida marcados por você ou por um aliado.</li><li>Ganhe +3 na sua próxima rolagem de ação.</li><li>Some 2d8 à sua próxima rolagem de dano.</li></ul><p><em>Na ficha: \"Rolar 2d8\" rola o dano extra da terceira opção.</em></p>",
-        flags: { [MODULE_ID]: { rolls: { "Rolar 2d8": { formula: "2d8", flavor: "Contacts Everywhere (2d8) — some à próxima rolagem de dano" } } } },
         actions: {
           ...featureAction({ name: "Contacts Everywhere", img: CPR("gear/radio_communicator"), uses: { max: 1, recovery: "shortRest" }, target: { type: "self", amount: null } }),
-          ...featureAction({ name: "Rolar 2d8", img: CPR("default/Default_Dice"), target: { type: "self", amount: null } })
+          ...featureAction({ name: "Rolar 2d8", dice: "2d8", img: CPR("default/Default_Dice"), target: { type: "self", amount: null } })
         }
       }],
       mastery: [{
@@ -1385,8 +1393,7 @@ const RECLAIMER = {
           name: "Drive Off", img: vulnerable.img, form: "action",
           description: "<p>Uma vez por descanso longo, quando você tem sucesso numa rolagem de direção com o seu Signature Vehicle, pode se mover dentro do alcance Distante ou limpar 1 Estresse.</p><p>Além disso, um adversário faz uma Rolagem de Reação (16). Em uma falha, sofre <strong>3d10 de dano físico</strong> e fica temporariamente <em>Vulnerável</em>. Em um sucesso, sofre metade do dano.</p><p><em>Na ficha: a ação rola os 3d10 e deixa o alvo Vulnerável se ele falhar.</em></p>",
           effects: [vulnerable],
-          flags: { [MODULE_ID]: { rolls: { "Drive Off": { formula: "3d10", flavor: "Drive Off (3d10 físico) — metade se o alvo passar na Rolagem de Reação (16)" } } } },
-          actions: featureAction({ name: "Drive Off", img: vulnerable.img, uses: { max: 1, recovery: "longRest" }, effects: [vulnerable] })
+          actions: featureAction({ name: "Drive Off", dice: "3d10", img: vulnerable.img, uses: { max: 1, recovery: "longRest" }, effects: [vulnerable] })
         };
       })()]
     },
@@ -1399,10 +1406,9 @@ const RECLAIMER = {
       foundation: [{
         name: "Field Salvage", img: CPR("gear/carryall"), form: "action",
         description: "<p>Uma vez por cena, você pode recolher material útil da área ao redor. Escolha uma peça de Field Salvage:</p><ul><li><strong>Patch:</strong> você ou um aliado dentro do alcance Corpo a Corpo limpa um Espaço de Armadura.</li><li><strong>Tool:</strong> você ou um aliado ganha +2 na próxima ação.</li><li><strong>Hazard:</strong> na próxima vez que você causar dano a um adversário dentro da sua Surveyed Route, some 1d6 de dano físico à rolagem de dano.</li></ul><p>O Field Salvage não usado se perde quando você faz um descanso.</p><p><em>Na ficha: \"Field Salvage\" controla o uso da cena; \"Rolar Hazard\" rola o d6.</em></p>",
-        flags: { [MODULE_ID]: { rolls: { "Rolar Hazard": { formula: "1d6", flavor: "Field Salvage: Hazard (d6 físico) — some ao dano" } } } },
         actions: {
           ...featureAction({ name: "Field Salvage", img: CPR("gear/carryall"), uses: { max: 1, recovery: "scene" }, target: { type: "self", amount: null } }),
-          ...featureAction({ name: "Rolar Hazard", img: CPR("ammo/grenade_incendiary"), target: { type: "self", amount: null } })
+          ...featureAction({ name: "Rolar Hazard", dice: "1d6", img: CPR("ammo/grenade_incendiary"), target: { type: "self", amount: null } })
         }
       }],
       specialization: [(() => {
@@ -1422,10 +1428,9 @@ const RECLAIMER = {
           name: "Dead Zone", img: zone.img, form: "action",
           description: "<p>Uma vez por descanso longo, quando você cria uma Surveyed Route, pode transformá-la numa <strong>Dead Zone</strong> até a cena terminar ou você sofrer dano Severo. Dentro da sua Dead Zone:</p><ul><li>Adversários que se movem dentro do alcance Muito Próximo de você marcam 1 Estresse.</li><li>Adversários tratam a área inteira como terreno difícil.</li><li>Quando você causa dano a um adversário na Dead Zone, some 1d8 de dano físico à rolagem de dano.</li></ul>",
           effects: [zone],
-          flags: { [MODULE_ID]: { rolls: { "Rolar Dead Zone": { formula: "1d8", flavor: "Dead Zone (d8 físico) — some ao dano" } } } },
           actions: {
             ...featureAction({ name: "Dead Zone", img: zone.img, uses: { max: 1, recovery: "longRest" }, effects: [zone], target: { type: "self", amount: null } }),
-            ...featureAction({ name: "Rolar Dead Zone", img: CPR("status/radiation_low"), target: { type: "self", amount: null } })
+            ...featureAction({ name: "Rolar Dead Zone", dice: "1d8", img: CPR("status/radiation_low"), target: { type: "self", amount: null } })
           }
         };
       })()]
@@ -1521,8 +1526,7 @@ const TRAUMA_DOC = {
       foundation: [{
         name: "Black-Clinic Procedure", img: CPR("gear/generic_street_drugs"), form: "action",
         description: "<p>Quando você usa Emergency Medicine com sucesso numa criatura, pode dar a ela um aprimoramento perigoso além do efeito normal. Escolha um:</p><ul><li>Ela soma 1d8 à próxima rolagem de dano.</li><li>Ela ganha +2 na próxima Rolagem de Agilidade, Força ou Acuidade.</li><li>Ela ganha +2 de Evasão contra o próximo ataque que a tiver como alvo.</li></ul><p>Depois que a rolagem ou efeito aprimorado se resolver, ela marca 1 Estresse.</p><p><em>Na ficha: \"Rolar 1d8\" rola o dano extra da primeira opção.</em></p>",
-        flags: { [MODULE_ID]: { rolls: { "Rolar 1d8": { formula: "1d8", flavor: "Black-Clinic Procedure (d8) — some à rolagem de dano; depois, o alvo marca 1 Estresse" } } } },
-        actions: featureAction({ name: "Rolar 1d8", img: CPR("gear/generic_street_drugs"), target: { type: "self", amount: null } })
+        actions: featureAction({ name: "Rolar 1d8", dice: "1d8", img: CPR("gear/generic_street_drugs"), target: { type: "self", amount: null } })
       }],
       specialization: [{
         name: "Bad Medicine", img: CPR("gear/vial_poison"), form: "action",
@@ -1532,8 +1536,7 @@ const TRAUMA_DOC = {
       mastery: [{
         name: "Miracle Cocktail", img: CPR("dlc/gear/distilling_compound"), form: "action",
         description: "<p>Uma vez por descanso longo, quando você usa Emergency Medicine com sucesso numa criatura, pode inundar o corpo dela com estabilizantes ilegais, drogas de combate, bloqueadores nervosos ou comandos de emergência de cyberware.</p><p>Além dos benefícios normais da Emergency Medicine, o alvo pode se mover imediatamente dentro do alcance Próximo e fazer uma rolagem de ação com vantagem. Se essa ação causar dano, some 2d8 à rolagem de dano.</p><p><em>Na ficha: a ação controla o uso e rola os 2d8.</em></p>",
-        flags: { [MODULE_ID]: { rolls: { "Miracle Cocktail": { formula: "2d8", flavor: "Miracle Cocktail (2d8) — some à rolagem de dano da ação com vantagem" } } } },
-        actions: featureAction({ name: "Miracle Cocktail", img: CPR("dlc/gear/distilling_compound"), uses: { max: 1, recovery: "longRest" }, target: { type: "friendly", amount: 1 } })
+        actions: featureAction({ name: "Miracle Cocktail", dice: "2d8", img: CPR("dlc/gear/distilling_compound"), uses: { max: 1, recovery: "longRest" }, target: { type: "friendly", amount: 1 } })
       }]
     }
   ]

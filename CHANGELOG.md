@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.17.0
+- **Chat no padrão do sistema: uma mensagem por ação.** Features que rolam dado (Takedown, Opening Strike, Integrated Chrome, Chrome Surge, Boost, Drive Off…) rolam dentro do próprio card da ação, como a Rune Ward oficial, em vez de mandar a rolagem numa mensagem separada. As ações de Cover não mandam mais a mensagem "ganhou/gastou Cover": o contador da feature mostra o novo valor.
+- Dados que dependem do personagem continuam automáticos no card: d8 no Takedown com Kill Window, d8 no Integrated Chrome com Reinforced Build e Força calibrada, Tier×d6 no Opening Strike.
+- O selo do cabeçalho deixa de repetir o Kill Chain Die, e a lista de cyberware da aba Chrome deixa de repetir as cargas: os dois já aparecem na própria feature.
+
 ## v1.16.1
 - O Cover do Infiltrator não aparece mais no selo do cabeçalho: ele já tem o contador na própria feature Cover Work.
 

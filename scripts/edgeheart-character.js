@@ -132,12 +132,10 @@ export const Humanity = {
       loadMod: Number(actor.getFlag(MODULE_ID, "cyberLoadMod") ?? 0),
       cyberware: this.cyberware(actor).map(i => {
         const a = i.getFlag(MODULE_ID, "access");
-        const r = i.system.resource;
         return {
           uuid: i.uuid, name: i.name, img: i.img,
           cost: Number(i.getFlag(MODULE_ID, "cyberCost") ?? 0), tier: i.getFlag(MODULE_ID, "tier"),
           access: a ? `${ACCESS[a.level]}: ${COMPETENCIES[a.competency] ?? a.competency}` : null,
-          charges: r && i.type === "feature" ? `${r.value ?? 0}/${r.max}` : null,
           pending: !!i.getFlag(MODULE_ID, "choice") && !i.getFlag(MODULE_ID, "chosen"),
           weapon: i.type === "weapon"
         };
@@ -577,7 +575,9 @@ function defineSheet() {
       this.#renderHeaderBadge();
     }
 
-    // Resumo compacto ao lado da Esperança, visível em qualquer aba.
+    // Resumo compacto ao lado da Esperança, visível em qualquer aba. Contadores e dados que já aparecem
+    // na própria feature (Cover, Kill Chain Die) não se repetem aqui, como no sistema; só entram as
+    // escolhas de feature (Atributo Calibrado, Public Persona), que não aparecem em outro lugar.
     #renderHeaderBadge() {
       const anchor = this.element.querySelector(".character-row .resource-section");
       if (!anchor) return;
@@ -586,11 +586,10 @@ function defineSheet() {
       const badge = document.createElement("a");
       badge.className = `eh-header-badge${s.cyberpsycho ? " eh-psycho" : ""}${s.lost ? " eh-lost" : ""}`;
       badge.dataset.action = "ehOpenChrome";
-      const killChain = KillChain.feature(this.document);
       const picks = Pick.items(this.document);
-      badge.dataset.tooltip = ["Humanidade", "Carga Cibernética", killChain && "Kill Chain Die", ...picks.map(i => i.getFlag(MODULE_ID, "pick").title)].filter(Boolean).join(" / ");
+      badge.dataset.tooltip = ["Humanidade", "Carga Cibernética", ...picks.map(i => i.getFlag(MODULE_ID, "pick").title)].join(" / ");
       badge.innerHTML = `<i class="fa-solid fa-heart-pulse"></i> d${s.die} <span class="eh-sep">|</span> <i class="fa-solid fa-microchip"></i> ${s.load}`
-        + (killChain ? ` <span class="eh-sep">|</span> <i class="fa-solid fa-crosshairs"></i> ${KillChain.faces(killChain)}` : "")        + picks.map(i => ` <span class="eh-sep">|</span> <i class="fa-solid ${i.getFlag(MODULE_ID, "pick").icon ?? "fa-list-check"}"></i> ${Pick.label(i)}`).join("")
+        + picks.map(i => ` <span class="eh-sep">|</span> <i class="fa-solid ${i.getFlag(MODULE_ID, "pick").icon ?? "fa-list-check"}"></i> ${Pick.label(i)}`).join("")
         + (s.cyberpsycho ? ` <span class="eh-flag">CIBERPSICOSE</span>` : "")
         + (s.lost ? ` <span class="eh-flag">PERDIDO</span>` : "");
       anchor.after(badge);
@@ -688,7 +687,6 @@ const KillChain = {
 // O Cover fica em system.resource.value da feature "Cover Work" (0 a 3; o refresh de cena do
 // sistema zera). Cada item lista em flags.coverActions quanto Cover cada ação ganha ou gasta.
 const COVER_TAKEDOWN = "Takedown";
-const COVER_SETUP = "Setup";
 
 const Cover = {
   feature(actor) {
@@ -728,38 +726,33 @@ const Cover = {
     return true;
   },
 
+  // O card da ação no chat já registra o uso e o contador da feature mostra o novo valor, como nas
+  // cartas oficiais que gastam marcadores; por isso nenhuma mensagem extra.
   async apply(action) {
     const delta = this.delta(action);
     if (!delta) return;
     const item = this.feature(action.actor);
     if (!item) return;
-    const before = this.value(item);
-    const after = Math.clamp(before + delta, 0, this.max(item));
-    await item.update({ "system.resource.value": after });
-    const actor = action.actor;
-    const verb = delta > 0 ? `ganhou ${delta}` : `gastou ${-delta}`;
-    let extra = "";
-    if (action.name === COVER_SETUP) extra = " Ganhe <strong>+2</strong> na rolagem para se esconder, infiltrar, sabotar, se passar por alguém ou burlar a segurança.";
-    await chat(actor, `<p><strong>${actor.name}</strong> ${verb} Cover (${action.name}): ${before} → <strong>${after}</strong>.${extra}</p>`);
-    if (action.name === COVER_TAKEDOWN) await this.takedown(actor);
-  },
-
-  // Takedown: 1d6 extra de dano (1d8 com Kill Window, que também faz um alvo Vulnerável marcar 1 Estresse).
-  async takedown(actor) {
-    const faces = actor.items.find(i => i.getFlag(MODULE_ID, "takedownDie"))?.getFlag(MODULE_ID, "takedownDie") ?? "d6";
-    const roll = await new Roll(`1${faces}`).evaluate();
-    const note = faces === "d6" ? "" : " — Kill Window: se o alvo estiver Vulnerável, ele também marca 1 Estresse";
-    await roll.toMessage({ speaker: ChatMessage.getSpeaker({ actor }), flavor: `Takedown (${faces}) — some ao dano${note}` });
+    await item.update({ "system.resource.value": Math.clamp(this.value(item) + delta, 0, this.max(item)) });
   }
 };
 
-// Features do tipo "role um dado e some" (flag rolls do item: { nomeDaAção: { formula, flavor } }).
-async function rollOnUse(action) {
-  const def = action.item?.getFlag(MODULE_ID, "rolls")?.[action.name];
-  if (!def) return;
+// Ações com rolagem de dados do sistema (diceSet, rolada dentro do card da ação) cujo dado depende do
+// personagem: a fórmula é trocada antes da rolagem.
+// - flag rollFormula do item ({ nomeDaAção: fórmula }), ex: Opening Strike = "(@tier)d6";
+// - Takedown: d8 com Kill Window (flag takedownDie);
+// - Integrated Chrome: d8 com Reinforced Build e Força calibrada.
+function rollFormula(action) {
+  const item = action.item;
   const actor = action.actor;
-  const roll = await new Roll(def.formula, actor.getRollData()).evaluate();
-  await roll.toMessage({ speaker: ChatMessage.getSpeaker({ actor }), flavor: def.flavor ?? action.name });
+  const custom = item?.getFlag(MODULE_ID, "rollFormula")?.[action.name];
+  if (custom) return Roll.replaceFormulaData(custom, actor.getRollData());
+  if (item?.getFlag(MODULE_ID, "cover") && action.name === COVER_TAKEDOWN) {
+    const faces = actor.items.find(i => i.getFlag(MODULE_ID, "takedownDie"))?.getFlag(MODULE_ID, "takedownDie");
+    return faces ? `1${faces}` : null;
+  }
+  if (item?.getFlag(MODULE_ID, "integratedChrome") && action.name === CHROME_ACTIONS.use) return `1${IntegratedChrome.faces(actor)}`;
+  return null;
 }
 
 // ---------- Escolhas de feature (Atributo Calibrado, Public Persona...) ----------
@@ -800,7 +793,6 @@ const Pick = {
 // ---------- Integrated Chrome (Augmented) ----------
 // O Atributo Calibrado é a escolha (Pick) da feature Integrated Chrome. Reinforced Build
 // (Titan Frame) tem um efeito de +1 de Armadura que só fica ligado com Força calibrada.
-const CHROME_TRAITS = { agility: "Agilidade", strength: "Força", finesse: "Acuidade" };
 const CHROME_ACTIONS = { use: "Integrated Chrome" };
 
 const IntegratedChrome = {
@@ -820,14 +812,10 @@ const IntegratedChrome = {
     }
   },
 
-  // d6 (d8 com Reinforced Build e Força calibrada) para somar à rolagem.
-  async roll(actor) {
-    const trait = this.calibrated(actor);
-    const reinforced = trait === "strength" && actor.items.some(i => i.getFlag(MODULE_ID, "reinforcedBuild"));
-    const faces = reinforced ? "d8" : "d6";
-    const roll = await new Roll(`1${faces}`).evaluate();
-    const traitNote = trait ? `Atributo Calibrado: ${CHROME_TRAITS[trait]}` : "sem Atributo Calibrado escolhido";
-    await roll.toMessage({ speaker: ChatMessage.getSpeaker({ actor }), flavor: `Integrated Chrome (${faces}${reinforced ? ", Reinforced Build" : ""}) — some à rolagem · ${traitNote}` });
+  // Dado do Integrated Chrome: d6, ou d8 com Reinforced Build e Força calibrada.
+  faces(actor) {
+    const reinforced = this.calibrated(actor) === "strength" && actor.items.some(i => i.getFlag(MODULE_ID, "reinforcedBuild"));
+    return reinforced ? "d8" : "d6";
   }
 };
 
@@ -908,19 +896,20 @@ Hooks.on("daggerheart.preUseAction", (action, config) => {
 });
 
 // Cover: sem saldo (ou já no máximo) a ação nem começa; a variação só é aplicada depois que a ação
-// termina, então cancelar a janela de configuração não gasta Cover.
-Hooks.on("daggerheart.preUseAction", (action) => {
+// termina, então cancelar a janela de configuração não gasta Cover. Aqui também entra o dado que
+// depende do personagem (ver rollFormula).
+Hooks.on("daggerheart.preUseAction", (action, config) => {
   const item = action.item;
   if (!(item?.parent instanceof Actor) || !item.parent.isOwner) return;
   if (!Cover.check(action)) return false;
+  const formula = rollFormula(action);
+  if (formula && config.roll) config.roll.formula = formula;
 });
 
 Hooks.on("daggerheart.postUseAction", (action) => {
   const item = action.item;
   if (!(item?.parent instanceof Actor) || !item.parent.isOwner) return;
   Cover.apply(action);
-  rollOnUse(action);
-  if (item.getFlag(MODULE_ID, "integratedChrome") && action.name === CHROME_ACTIONS.use) IntegratedChrome.roll(item.parent);
 });
 
 // Ações de escolha (ex: "Calibrar Atributo") abrem a escolha do módulo em vez de usar a ação no sistema.
