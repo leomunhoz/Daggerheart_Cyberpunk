@@ -217,3 +217,10 @@ Rode a macro **"Importar Edgeheart (Núcleo)"** de novo para recriar os compênd
 - Black-Clinic Procedure rola o d8 e Miracle Cocktail os 2d8; Mass Casualty Protocol, Combat Triage e Bad Medicine controlam os usos por descanso.
 - **Competência Medtech:** as 21 cartas, releituras das cartas oficiais de Splendor (Lean On Me vem de Valor; Trauma Field e Rejuvenation Barrier vêm de Sage), com a automação copiada delas.
 - A página de Medtech do diário agora é gerada das cartas do compêndio, com links. Com isso, as 9 classes do PDF estão no módulo.
+
+## v1.15.0 — Network com a automação oficial e nomes das ações
+
+- **Network:** as 21 cartas agora copiam a automação das cartas oficiais — 15 de Arcana (Signal Burst = Unleash Chaos, Personal Firewall = Rune Ward, Network-Synced = Arcana-Touched…) e 6 de outros domínios (Threat Prediction e Shared Feed de Bone, Perceptual Spyware de Grace, Defensive Protocols e Retaliation Daemon de Codex, Deep Trace de Midnight). Ganharam ações e efeitos que antes não tinham (Reabastecer Marcadores, Overheated, Dano em Cadeia, Cloaked, camadas do Mirror Stack, +1 automático do Network-Synced…).
+- Onde o PDF muda os números, vale o PDF: Firewall em d12, Threat Prediction pela metade da Interface, Hard Shutdown com Dificuldade 16 e dano techno, Botnet Cataclysm com dano físico, Ghost Ping custando 1 Esperança.
+- **Nomes das ações em todas as Competências:** carta com uma ação usa o nome da carta; com várias, cada ação ganha o nome do PDF (os protocolos dos Suites de Systems, os modos do Zone Suppression Array, o Guardian/Razor Swarm do Field Swarm) ou a tradução do nome oficial (Limpar 1 PV, Dano em Cadeia…). Nenhuma carta tem mais ações repetidas.
+- Obs.: ações de cura de recurso (como Reabastecer Marcadores) seguem a automação do mundo — com a automação do mestre desligada, aplique pelo botão "Apply Healing" do chat, igual às cartas oficiais.

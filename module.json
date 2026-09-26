@@ -2,7 +2,7 @@
   "id": "edgeheart-cyberpunk",
   "title": "Edgeheart - Cyberpunk para Daggerheart (Núcleo)",
   "description": "Conteúdo do campaign frame Edgeheart (cyberpunk, inspirado em Armored Core) para o sistema Daggerheart. Classe Corredor completa (2 subclasses) com a Competência Rede (níveis 1 a 10), Trajetórias, Afiliações, armas e armaduras de Tier 1, e a Ficha Edgeheart (Humanidade, Carga Cibernética e Ciberpsicose). Rode a macro 'Importar Edgeheart (Núcleo)' uma vez por mundo para criar os compêndios.",
-  "version": "1.14.0",
+  "version": "1.15.0",
   "compatibility": {
     "minimum": "14",
     "verified": "14.368"
