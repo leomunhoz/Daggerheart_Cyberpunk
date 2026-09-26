@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   style="height: 512px; width: 512px;"
+   viewBox="0 0 512 512"
+   version="1.1"
+   id="svg2"
+   sodipodi:docname="roller_derby_skates.svg"
+   inkscape:version="1.4 (86a8ad7, 2024-10-11)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs2">
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Drop Shadow"
+       id="filter2"
+       x="-0.081546103"
+       y="-0.086956522"
+       width="1.1630922"
+       height="1.173913">
+      <feFlood
+         result="flood"
+         in="SourceGraphic"
+         flood-opacity="1.000000"
+         flood-color="rgb(58,63,94)"
+         id="feFlood1" />
+      <feGaussianBlur
+         result="blur"
+         in="SourceGraphic"
+         stdDeviation="15.000000"
+         id="feGaussianBlur1" />
+      <feOffset
+         result="offset"
+         in="blur"
+         dx="0.000000"
+         dy="0.000000"
+         id="feOffset1" />
+      <feComposite
+         result="comp1"
+         operator="out"
+         in="flood"
+         in2="offset"
+         id="feComposite1" />
+      <feComposite
+         result="comp2"
+         operator="atop"
+         in="comp1"
+         in2="SourceGraphic"
+         id="feComposite2" />
+    </filter>
+  </defs>
+  <sodipodi:namedview
+     id="namedview2"
+     pagecolor="#505050"
+     bordercolor="#ffffff"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="1"
+     inkscape:deskcolor="#505050"
+     inkscape:zoom="1.5664062"
+     inkscape:cx="256.00001"
+     inkscape:cy="264.61846"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg2" />
+  <path
+     d="M0 0h512v512H0z"
+     fill="#000"
+     fill-opacity="1"
+     id="path1"
+     style="fill:#1b1f21" />
+  <g
+     class=""
+     id="g2"
+     transform="translate(0,-24)"
+     style="fill:#e64539;filter:url(#filter2)">
+    <path
+       id="rect10"
+       style="display:inline;fill:#e64539;stroke-width:13.6851;stroke-linecap:square;stroke-miterlimit:5;paint-order:markers stroke fill"
+       inkscape:label="path2"
+       d="M 96.446583,88.000007 C 86.846585,144.8 70.00729,195.60078 58.917285,242.80078 70.657286,285.10078 97.147756,317.6 139.14776,342 h 230.29882 c 3.2,-16.5 6.2,-34.70078 12.5,-51.80078 5,-13.5 12.29961,-26.49961 23.59961,-36.59961 -8.2,-2.2 -17.99883,-4.19922 -29.79883,-5.69922 h -0.20117 c -33.5,-4.8 -59.6,-8.90039 -80,-15.40039 -18,3.5 -33.89961,4.30078 -48.09961,1.30078 -15.09999,-3.2 -28.19921,-11.20117 -38.19922,-23.70117 -19,-23.9 -28.20077,-62.79961 -32.80078,-122.09961 z m 98.099607,-6e-6 c 4.7,57.199999 14.30078,92.700389 28.80078,110.900399 7.7,9.59999 16.30078,14.79882 27.80078,17.29882 4.1,0.9 8.6,1.30039 13.5,1.40039 -3.8,-2.8 -7.40156,-5.90039 -10.60156,-9.40039 -21.7,-23.3 -26.69922,-59.09922 -29.69922,-120.199219 z M 425.64775,261.19921 c -13.49999,7.90001 -21.30078,20.00118 -26.80078,35.20118 -5.09999,13.9 -8,29.89961 -11,45.59961 h 60 v -39 c 0,-14.99999 -2.09921,-25.39922 -11.19922,-34.19922 -2.8,-2.59999 -6.4,-5.20156 -11,-7.60157 z M 52.157524,276 c -3.74,22.6 -5.341405,44.5 -3.191408,66 H 106.84697 C 82.846974,323.8 64.417523,301.7 52.157524,276 Z m -2.310546,84 2e-6,14 h 373.59569 l 24.2461,-14 z m 425.441402,0.15821 -58.65039,33.86132 13.96093,24.17774 0.22071,0.38476 0.71094,-0.41016 c 5.72454,-0.20069 39.30226,-2.68031 57.58984,-33.24999 l 0.34765,-0.20118 z M 104.84697,392 c -30.532043,0 -54.999997,24.53846 -54.999989,55 -4e-6,30.46154 24.467945,55 54.999989,55 30.46154,0 55,-24.53846 55.00001,-55 -1e-5,-30.46154 -24.53847,-55 -55.00001,-55 z m 234,0 c -30.46154,0 -55,24.53846 -55,55 0,30.46154 24.53846,55 55,55 30.46154,0 55,-24.53846 55,-55 0,-30.46154 -24.53846,-55 -55,-55 z m -234,32.43554 A 22.564103,22.564103 0 0 1 127.41142,447 22.564103,22.564103 0 0 1 104.84697,469.56445 22.564103,22.564103 0 0 1 82.282524,447 22.564103,22.564103 0 0 1 104.84697,424.43554 Z m 234,10e-6 A 22.564103,22.564103 0 0 1 361.41143,447 22.564103,22.564103 0 0 1 338.84697,469.56445 22.564103,22.564103 0 0 1 316.28252,447 22.564103,22.564103 0 0 1 338.84697,424.43555 Z" />
+  </g>
+</svg>

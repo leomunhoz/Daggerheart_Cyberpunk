@@ -1,0 +1,47 @@
+EDGEHEART — ÍCONES DE CLASSES E SUBCLASSES
+
+Runner
+  class_icon.png
+  subclasses/Breach Specialist.png
+  subclasses/Signal Ghost.png
+
+Infiltrator
+  class_icon.png
+  subclasses/Silent Killer.png
+  subclasses/Phantom.png
+
+Solo
+  class_icon.png
+  subclasses/Deadeye.png
+  subclasses/Shock Trooper.png
+
+Augmented
+  class_icon.png
+  subclasses/Reflex Suite.png
+  subclasses/Titan Frame.png
+
+Tech
+  class_icon.png
+  subclasses/Rigger.png
+  subclasses/Saboteur.png
+
+Broker
+  class_icon.png
+  subclasses/Fixer.png
+  subclasses/Icon.png
+
+Reclaimer
+  class_icon.png
+  subclasses/Outrider.png
+  subclasses/Zonebreaker.png
+
+Trauma Doc
+  class_icon.png
+  subclasses/Combat Medic.png
+  subclasses/Street Surgeon.png
+
+Warden
+  class_icon.png
+  subclasses/Bulwark.png
+  subclasses/Riotbreaker.png
+

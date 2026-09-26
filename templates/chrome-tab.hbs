@@ -1,0 +1,145 @@
+<section class="tab {{tabs.chrome.cssClass}}" data-tab="chrome" data-group="primary">
+    <div class="eh-chrome">
+        {{#with edgeheart}}
+
+            {{!-- ESTADO: Humanidade, Carga e Ciberpsicose num bloco só --}}
+            <fieldset class="eh-card eh-state-{{state}}">
+                <legend><i class="fa-solid fa-heart-pulse"></i> Humanidade</legend>
+
+                <div class="eh-status">
+                    <div class="eh-stat" data-tooltip="Dado de Humanidade: d4 → d6 → d8 → d10 → d12">
+                        <span class="eh-stat-value">d{{die}}</span>
+                        <span class="eh-stat-label">Humanidade</span>
+                        <span class="eh-pips">
+                            {{#each steps}}<span class="eh-pip {{#if current}}current{{/if}} {{#if below}}below{{/if}}" data-tooltip="d{{faces}}"></span>{{/each}}
+                        </span>
+                    </div>
+
+                    <div class="eh-stat" data-tooltip="Carga Cibernética: soma do Custo de todo o cyberware instalado{{#if loadMod}} ({{loadMod}} de modificador temporário){{/if}}">
+                        <span class="eh-stat-value">{{load}}</span>
+                        <span class="eh-stat-label">Carga Cibernética</span>
+                        {{#if @root.editable}}
+                            <label class="eh-mod" data-tooltip="Modificador temporário de Carga (efeitos, Eidolon, etc.)">
+                                <i class="fa-solid fa-plus-minus"></i>
+                                <input type="number" name="flags.edgeheart-cyberpunk.cyberLoadMod" value="{{loadMod}}" step="1">
+                            </label>
+                        {{/if}}
+                    </div>
+
+                    <div class="eh-stat" data-tooltip="Chance de manter o controle numa Rolagem de Humanidade agora (precisa tirar mais que {{load}} no d{{die}}){{#if anchor}}. Âncora de Humanidade: rola duas vezes e usa o maior{{/if}}">
+                        <span class="eh-stat-value eh-risk-{{risk}}">{{controlChance}}%</span>
+                        <span class="eh-stat-label">Controle</span>
+                        <span class="eh-mods">
+                            {{#if anchor}}<i class="fa-solid fa-anchor" data-tooltip="Âncora de Humanidade: rola duas vezes e usa o maior"></i>{{/if}}
+                            {{#if buffer}}<i class="fa-solid fa-shield-halved" data-tooltip="Buffer Cortical: pode marcar 1 Estresse para +1 na Rolagem de Humanidade"></i>{{/if}}
+                        </span>
+                    </div>
+
+                    <div class="eh-stat">
+                        <span class="eh-pill eh-pill-{{state}}">{{stateLabel}}</span>
+                    </div>
+                </div>
+
+                {{#if cyberpsycho}}
+                    <div class="eh-alert eh-alert-psycho">
+                        <strong><i class="fa-solid fa-brain"></i> Em Ciberpsicose</strong>
+                        <span>Rola só o Dado de Medo (d20), sempre com Medo · features que pedem Estresse não marcam · se a cena terminar assim, a Humanidade cai um passo.</span>
+                    </div>
+                {{/if}}
+                {{#if lost}}
+                    <div class="eh-alert eh-alert-psycho">
+                        <strong><i class="fa-solid fa-skull"></i> Perdido para a Ciberpsicose</strong>
+                        <span>Movimento de Morte: Cyberpsycho.</span>
+                    </div>
+                {{/if}}
+
+                {{#if @root.editable}}
+                    <div class="eh-actions">
+                        {{#if cyberpsycho}}
+                            <button type="button" class="eh-primary" data-action="ehStabilize" data-tooltip="Um aliado dentro do alcance Próximo gasta 1 Esperança: selecione o token dele e clique">
+                                <i class="fa-solid fa-hand-holding-heart"></i> Estabilizar
+                            </button>
+                            {{#if @root.isGM}}
+                                <button type="button" data-action="ehEndCyberpsychosis" data-tooltip="Encerrar a Ciberpsicose (mestre)"><i class="fa-solid fa-power-off"></i></button>
+                            {{/if}}
+                        {{else}}
+                            <button type="button" class="eh-primary" data-action="ehRollHumanity" {{#if lost}}disabled{{/if}}
+                                data-tooltip="Role quando rolar com Medo com todo o Estresse marcado ou sem Esperança (automático nesta ficha), ou quando o mestre pedir">
+                                <i class="fa-solid fa-dice"></i> Rolagem de Humanidade
+                            </button>
+                        {{/if}}
+                        <button type="button" data-action="ehAdvanceHumanity" {{#unless canAdvance}}disabled{{/unless}}
+                            data-tooltip="{{#if advancedThisLevel}}Já avançou neste nível{{else}}Avançar: vínculo significativo, objetivo importante, recuperar parte de si ou momento de esperança genuína (1x por nível){{/if}}">
+                            <i class="fa-solid fa-arrow-up"></i>
+                        </button>
+                        <button type="button" data-action="ehReduceHumanity" {{#unless canReduce}}disabled{{/unless}} data-tooltip="Reduzir o Dado de Humanidade um passo">
+                            <i class="fa-solid fa-arrow-down"></i>
+                        </button>
+                    </div>
+                {{/if}}
+            </fieldset>
+
+            {{!-- CYBERWARE --}}
+            <fieldset class="eh-card">
+                <legend>
+                    <i class="fa-solid fa-microchip"></i> Cyberware <span class="eh-count">{{cyberCount}}</span>
+                    <a class="eh-legend-action" data-action="ehOpenCyberware" data-tooltip="Abrir o compêndio de Cyberware (arraste um item para a ficha para instalar)"><i class="fa-solid fa-plus"></i></a>
+                </legend>
+                {{#if cyberware.length}}
+                    <ul class="eh-cyberware">
+                        {{#each cyberware}}
+                            <li class="{{#if pending}}pending{{/if}}">
+                                <img src="{{img}}" alt="">
+                                <a class="eh-cw-name" data-action="editDoc" data-item-uuid="{{uuid}}">{{name}}</a>
+                                <span class="eh-chips">
+                                    <span class="eh-chip" data-tooltip="Tier">T{{tier}}</span>
+                                    {{#if weapon}}<span class="eh-chip" data-tooltip="Weaponware: conta como arma sempre equipada"><i class="fa-solid fa-gun"></i></span>{{/if}}
+                                    {{#if access}}<span class="eh-chip" data-tooltip="{{access}}"><i class="fa-solid fa-network-wired"></i></span>{{/if}}
+                                    {{#if charges}}<span class="eh-chip" data-tooltip="Cargas (zeram no fim da cena)"><i class="fa-solid fa-bolt"></i> {{charges}}</span>{{/if}}
+                                </span>
+                                {{#if pending}}
+                                    <button type="button" class="eh-choose" data-action="ehChooseCyberware" data-item-uuid="{{uuid}}" data-tooltip="Este cyberware pede uma escolha">Escolher</button>
+                                {{/if}}
+                                <span class="eh-cost" data-tooltip="Custo Cibernético">{{cost}}</span>
+                            </li>
+                        {{/each}}
+                    </ul>
+                {{else}}
+                    <p class="eh-empty">Nenhum cyberware. Clique em <i class="fa-solid fa-plus"></i> e arraste um item para a ficha.</p>
+                {{/if}}
+            </fieldset>
+
+            {{!-- COMPETÊNCIAS --}}
+            <fieldset class="eh-card">
+                <legend><i class="fa-solid fa-network-wired"></i> Competências</legend>
+                <div class="eh-access">
+                    {{#each access}}
+                        <span class="eh-access-chip eh-access-{{kind}}" data-tooltip="{{tooltip}}">{{label}} <em>{{short}}</em></span>
+                    {{/each}}
+                </div>
+                {{#if accessNote}}
+                    <div class="eh-alert eh-alert-warn"><i class="fa-solid fa-circle-info"></i> {{accessNote}}</div>
+                {{/if}}
+                {{#if cardIssues.length}}
+                    <div class="eh-alert eh-alert-warn">
+                        <strong><i class="fa-solid fa-triangle-exclamation"></i> Cartas fora do acesso</strong>
+                        {{#each cardIssues}}
+                            <span><a data-action="editDoc" data-item-uuid="{{uuid}}">{{name}}</a>: {{problem}}</span>
+                        {{/each}}
+                    </div>
+                {{/if}}
+            </fieldset>
+
+            <details class="eh-help">
+                <summary><i class="fa-solid fa-circle-question"></i> Como funciona</summary>
+                <ul>
+                    <li><strong>Humanidade:</strong> começa em d6. Avança uma vez por nível (vínculo significativo, objetivo importante, recuperar parte de si, momento de esperança).</li>
+                    <li><strong>Carga Cibernética:</strong> soma do Custo de todo o cyberware instalado.</li>
+                    <li><strong>Rolagem de Humanidade:</strong> se o resultado for maior que a Carga, você mantém o controle; se for igual ou menor, entra em Ciberpsicose. É automática quando você rola com Medo com todo o Estresse marcado ou sem Esperança.</li>
+                    <li><strong>Ciberpsicose:</strong> rola só o Dado de Medo como d20, sempre com Medo; features que pedem Estresse não marcam. Um aliado pode gastar 1 Esperança para te estabilizar. Terminar a cena assim reduz a Humanidade; abaixo de d4 você está perdido.</li>
+                    <li><strong>Competências:</strong> a classe dá Acesso Total a uma; o cyberware pode dar Acesso de Carta, Meio Acesso (até metade do nível) ou Acesso Total.</li>
+                </ul>
+            </details>
+        {{/with}}
+    </div>
+</section>

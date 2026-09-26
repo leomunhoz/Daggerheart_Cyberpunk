@@ -1,0 +1,186 @@
+/* Edgeheart — Ficha de Personagem (aba Chrome, selo no cabeçalho, cards de chat) */
+
+.edgeheart-sheet {
+  --eh-neon: #00e5ff;
+  --eh-danger: #ff3860;
+  --eh-ok: #3ddc97;
+}
+
+/* Selo Humanidade | Carga ao lado da Esperança */
+.edgeheart-sheet .eh-header-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 8px;
+  padding: 2px 8px;
+  border: 1px solid var(--eh-neon);
+  border-radius: 4px;
+  font-size: var(--font-size-12, 12px);
+  white-space: nowrap;
+  cursor: pointer;
+}
+.edgeheart-sheet .eh-header-badge .eh-sep { opacity: 0.5; }
+.edgeheart-sheet .eh-header-badge.eh-psycho,
+.edgeheart-sheet .eh-header-badge.eh-lost { border-color: var(--eh-danger); }
+.edgeheart-sheet .eh-header-badge .eh-flag { color: var(--eh-danger); font-weight: bold; }
+
+/* Aba Chrome */
+.edgeheart-sheet .eh-chrome {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px 10px;
+  overflow-y: auto;
+}
+.edgeheart-sheet .eh-card { margin: 0; padding: 6px 10px 10px; }
+.edgeheart-sheet .eh-card legend i { margin-right: 4px; }
+.edgeheart-sheet .eh-card.eh-state-psycho,
+.edgeheart-sheet .eh-card.eh-state-lost { border-color: var(--eh-danger); }
+
+/* Linha de estado: Humanidade | Carga | Controle | Estado */
+.edgeheart-sheet .eh-status {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  align-items: stretch;
+}
+.edgeheart-sheet .eh-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 4px 2px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  min-height: 72px;
+}
+.edgeheart-sheet .eh-stat-value { font-size: 24px; font-weight: bold; line-height: 1.1; }
+.edgeheart-sheet .eh-stat-label { font-size: var(--font-size-11, 11px); opacity: 0.7; text-transform: uppercase; letter-spacing: 0.5px; text-align: center; }
+.edgeheart-sheet .eh-risk-ok { color: var(--eh-ok); }
+.edgeheart-sheet .eh-risk-warn { color: #ffb020; }
+.edgeheart-sheet .eh-risk-bad { color: var(--eh-danger); }
+.edgeheart-sheet .eh-pips { display: flex; gap: 3px; margin-top: 2px; }
+.edgeheart-sheet .eh-pip { width: 8px; height: 8px; border-radius: 50%; border: 1px solid currentColor; opacity: 0.35; }
+.edgeheart-sheet .eh-pip.below { opacity: 0.7; background: currentColor; }
+.edgeheart-sheet .eh-pip.current { opacity: 1; background: var(--eh-neon); border-color: var(--eh-neon); box-shadow: 0 0 4px var(--eh-neon); }
+.edgeheart-sheet .eh-mods { display: flex; gap: 6px; font-size: 12px; opacity: 0.85; min-height: 12px; }
+.edgeheart-sheet .eh-mod { display: flex; align-items: center; gap: 3px; font-size: 11px; opacity: 0.8; }
+.edgeheart-sheet .eh-mod input { width: 38px; height: 18px; padding: 0 2px; text-align: center; font-size: 11px; }
+.edgeheart-sheet .eh-pill {
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: var(--font-size-12, 12px);
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: 1px solid currentColor;
+}
+.edgeheart-sheet .eh-pill-stable { color: var(--eh-ok); }
+.edgeheart-sheet .eh-pill-psycho,
+.edgeheart-sheet .eh-pill-lost { color: var(--eh-danger); box-shadow: 0 0 6px var(--eh-danger); }
+
+.edgeheart-sheet .eh-actions { display: flex; gap: 6px; margin-top: 8px; }
+.edgeheart-sheet .eh-actions button { flex: 0 0 auto; width: 34px; }
+.edgeheart-sheet .eh-actions button.eh-primary { flex: 1 1 auto; width: auto; }
+
+.edgeheart-sheet .eh-alert {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 8px;
+  padding: 6px 8px;
+  border-radius: 4px;
+  font-size: var(--font-size-12, 12px);
+}
+.edgeheart-sheet .eh-alert-psycho { border: 1px solid var(--eh-danger); background: rgba(255, 56, 96, 0.08); }
+.edgeheart-sheet .eh-alert-psycho strong { color: var(--eh-danger); }
+.edgeheart-sheet .eh-alert-warn { border: 1px solid #ffb020; background: rgba(255, 176, 32, 0.06); }
+
+/* Cyberware */
+.edgeheart-sheet .eh-count {
+  display: inline-block;
+  min-width: 18px;
+  padding: 0 5px;
+  margin-left: 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  font-size: 11px;
+  text-align: center;
+}
+.edgeheart-sheet .eh-legend-action { margin-left: 6px; cursor: pointer; opacity: 0.8; }
+.edgeheart-sheet .eh-legend-action:hover { opacity: 1; color: var(--eh-neon); }
+.edgeheart-sheet .eh-cyberware { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+.edgeheart-sheet .eh-cyberware li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 4px;
+  border-radius: 4px;
+}
+.edgeheart-sheet .eh-cyberware li:hover { background: rgba(255, 255, 255, 0.05); }
+.edgeheart-sheet .eh-cyberware li.pending { box-shadow: inset 2px 0 0 #ffb020; }
+.edgeheart-sheet .eh-cyberware img { width: 26px; height: 26px; border: none; border-radius: 4px; flex: 0 0 auto; }
+.edgeheart-sheet .eh-cw-name { flex: 1 1 auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.edgeheart-sheet .eh-chips { display: flex; gap: 3px; flex: 0 0 auto; }
+.edgeheart-sheet .eh-chip {
+  padding: 0 5px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.08);
+  font-size: 11px;
+  line-height: 18px;
+  white-space: nowrap;
+}
+.edgeheart-sheet .eh-choose { flex: 0 0 auto; height: 20px; padding: 0 8px; font-size: 11px; line-height: 18px; border-color: #ffb020; }
+.edgeheart-sheet .eh-cost {
+  flex: 0 0 auto;
+  min-width: 22px;
+  text-align: center;
+  font-weight: bold;
+  border: 1px solid var(--eh-neon);
+  border-radius: 4px;
+  font-size: 12px;
+}
+.edgeheart-sheet .eh-empty { margin: 4px 0; font-size: var(--font-size-12, 12px); opacity: 0.7; }
+
+/* Competências */
+.edgeheart-sheet .eh-access { display: flex; flex-wrap: wrap; gap: 6px; }
+.edgeheart-sheet .eh-access-chip {
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+  font-size: var(--font-size-12, 12px);
+}
+.edgeheart-sheet .eh-access-chip em { opacity: 0.7; font-style: normal; margin-left: 2px; }
+.edgeheart-sheet .eh-access-full { color: var(--eh-neon); }
+.edgeheart-sheet .eh-access-half,
+.edgeheart-sheet .eh-access-card { opacity: 0.85; }
+
+/* Ajuda recolhível */
+.edgeheart-sheet .eh-help { font-size: var(--font-size-12, 12px); opacity: 0.85; }
+.edgeheart-sheet .eh-help summary { cursor: pointer; }
+.edgeheart-sheet .eh-help ul { margin: 6px 0 0; padding-left: 18px; }
+.edgeheart-sheet .eh-help li { margin-bottom: 4px; }
+.edgeheart-sheet .eh-banner,
+.eh-chat .eh-banner {
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-align: center;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+.edgeheart-sheet .eh-banner.eh-psycho,
+.edgeheart-sheet .eh-banner.eh-lost { border: 1px solid #ff3860; color: #ff3860; }
+
+/* Cards de chat */
+.eh-chat h3 { margin: 0 0 4px; }
+.eh-chat .eh-outcome { font-weight: bold; }
+.eh-chat .eh-ok { color: #3ddc97; }
+.eh-chat .eh-bad { color: #ff3860; }
+.eh-chat button { margin-top: 4px; width: 100%; }
+
+/* Botão no diretório de Atores */
+.eh-new-character { flex: 1 1 100%; }
+
+/* Navegador de compêndios durante a criação de um personagem Edgeheart */
+.compendium-browser .item-container.eh-hidden { display: none !important; }

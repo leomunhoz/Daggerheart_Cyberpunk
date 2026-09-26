@@ -1,0 +1,14 @@
+# Sistema operacional / editores
+Thumbs.db
+Desktop.ini
+.DS_Store
+.vscode/
+.idea/
+
+# Arquivos temporários
+*.tmp
+_tmp-*
+*.log
+
+# Compêndios gerados pelo Foundry (o módulo cria os compêndios no mundo pela macro de importação)
+packs/
