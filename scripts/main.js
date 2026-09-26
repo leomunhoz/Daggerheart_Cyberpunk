@@ -798,8 +798,755 @@ const SOLO = {
   ]
 };
 
+// Cover (Infiltrator): recurso "simple" da feature Cover Work (0 a 3; progressão "increasing" faz o
+// refresh de cena do sistema zerar o valor). Ações que ganham ou gastam Cover ficam listadas no flag
+// coverActions do item ({ nomeDaAção: variação }); o módulo confere o saldo no preUseAction e
+// aplica a variação no postUseAction (edgeheart-character.js). O Takedown também rola o dado.
+// Outras features que só pedem "role um dado e some" usam o flag rolls ({ nomeDaAção: { formula, flavor } }):
+// o módulo rola a fórmula (com os dados do personagem, ex: @tier) depois que a ação termina.
+const COVER_ACTIONS = { gain: "Ganhar Cover", setup: "Setup", takedown: "Takedown" };
+
+function hiddenSelf(name, img, description) {
+  return targetEffect({ name, img, statuses: ["hidden"], description });
+}
+
+const INFILTRATOR = {
+  key: "infiltrator",
+  classItems: [
+    { name: "Credenciais Falsas", img: CPR("dlc/cyberware/poser_chip"), description: "<p>Um conjunto de credenciais falsas: crachá, identidade digital e histórico forjado. De quem é o rosto na foto, e quanto tempo até alguém conferir?</p>" },
+    { name: "Arma com Silenciador", img: CPR("weapons/mediumPistol"), description: "<p>Uma arma com silenciador de um trabalho que oficialmente nunca aconteceu. O número de série foi raspado; a memória, não.</p>" }
+  ],
+  guide: {
+    traits: { agility: 1, strength: -1, finesse: 2, instinct: 1, presence: 0, knowledge: 0 },
+    primaryWeapon: "Mono-Katana", secondaryWeapon: "Faca de Combate", armor: "Jaqueta de Sintcouro"
+  },
+  class: {
+    name: "Infiltrator",
+    img: CPR("classes/infiltrator/class-icon.png"),
+    description: `<p><strong>Ghost, furtividade, assassinato, sabotagem</strong><br>"A melhor entrada é aquela de que ninguém se lembra."</p>
+<p><em>Jogue de Infiltrator se você quiser…</em> Mover-se sem ser visto, passar pela segurança, desaparecer do perigo, sabotar operações e não deixar rastro.</p>
+<p>Outros mercenários sabem se esconder, se esgueirar ou passar pela segurança. Os Infiltrators transformam esses momentos numa profissão. Eles sentem o segundo exato em que um alvo fica vulnerável.</p>
+<p><strong>Itens de Classe:</strong> Um conjunto de credenciais falsas ou uma arma com silenciador de um trabalho que oficialmente nunca aconteceu.</p>
+<p><em>Nota: atributos sugeridos e equipamento variam por subclasse — veja a nota de "Build Sugerida" na subclasse escolhida.</em></p>`,
+    domains: ["ghost"],
+    hitPoints: 5,
+    evasion: 12,
+    backgroundQuestions: [
+      "Qual foi o primeiro lugar que você invadiu e que deveria ter sido impossível?",
+      "Você virou Infiltrator por treinamento, coerção, desespero ou traição?",
+      "Qual alvo você não conseguiu eliminar, e quanto isso te custou?"
+    ],
+    connections: [
+      "Qual personagem conhece uma das suas identidades falsas?",
+      "Em quem você confia para cobrir a sua saída?",
+      "Que segredo você descobriu sobre outro personagem e escolheu não usar?"
+    ],
+    hopeFeature: (() => {
+      const hidden = hiddenSelf("Clean Exit", CPR("programs/see_ya"), "<p>Escondido pelo Clean Exit.</p>");
+      return {
+        name: "Clean Exit", img: hidden.img, form: "reaction",
+        description: "<p>Gaste 3 Esperança quando você fosse ser descoberto, disparar um alarme ou ser alvo de um ataque. Você fica imediatamente <em>Escondido</em> e se move para um ponto dentro do alcance Próximo.</p><ul><li>Se isso foi disparado por um ataque, o ataque tem desvantagem.</li><li>Se foi disparado por uma descoberta ou alarme, ele é adiado até o seu próximo Holofote.</li></ul>",
+        effects: [hidden],
+        actions: featureAction({ name: "Clean Exit", img: hidden.img, actionType: "reaction", costs: [{ key: "hope", value: 3 }], effects: [hidden], target: { type: "self", amount: null } })
+      };
+    })(),
+    classFeatures: [{
+      name: "Cover Work", img: CPR("gear/agent"), form: "action",
+      description: "<p>Você tem um recurso chamado <strong>Cover</strong>. Quando você rola com Esperança usando uma carta de Ghost, furtividade, disfarce, despiste ou uma rota preparada, ganhe 1 Cover. Você pode guardar até 3 Cover.</p><p>Gaste 1 Cover para fazer uma das opções:</p><ul><li><strong>Setup:</strong> ganhe +2 numa rolagem para se esconder, infiltrar, sabotar, se passar por alguém ou burlar a segurança.</li><li><strong>Takedown:</strong> some 1d6 à rolagem de dano quando causar dano a um alvo de quem você está <em>Escondido</em>, que não sabe da sua presença ou que está <em>Vulnerável</em>.</li></ul><p>Você perde todo o Cover não gasto quando a cena termina.</p><p><em>Na ficha: o contador desta feature mostra o seu Cover. Use \"Ganhar Cover\" depois de uma rolagem com Esperança que se encaixe; Setup e Takedown gastam 1 Cover (o Takedown já rola o dado). No fim da cena o Cover zera sozinho.</em></p>",
+      resource: { type: "simple", value: 0, max: "3", icon: CPR("gear/agent"), recovery: "scene", progression: "increasing" },
+      flags: { [MODULE_ID]: { cover: true, coverActions: { [COVER_ACTIONS.gain]: 1, [COVER_ACTIONS.setup]: -1, [COVER_ACTIONS.takedown]: -1 } } },
+      actions: {
+        ...featureAction({ name: COVER_ACTIONS.gain, img: CPR("gear/agent"), target: { type: "self", amount: null } }),
+        ...featureAction({ name: COVER_ACTIONS.setup, img: CPR("gear/lock_picking_set"), target: { type: "self", amount: null } }),
+        ...featureAction({ name: COVER_ACTIONS.takedown, img: CPR("weapons/CombatKnife"), target: { type: "self", amount: null } })
+      }
+    }]
+  },
+  subclasses: [
+    {
+      name: "Silent Killer", img: CPR("classes/infiltrator/subclasses/silent-killer.png"),
+      description: `<p><em>Jogue de Silent Killer se você quiser eliminar alvos com precisão e terminar lutas antes que elas comecem.</em></p>
+<p><strong>Build Sugerida:</strong> Acuidade +2, Agilidade +1, Instinto +1, Presença 0, Conhecimento 0, Força −1. Equipamento recomendado: Mono-Katana (primária, uma mão) + Faca de Combate (secundária) + Jaqueta de Sintcouro — ataques de perto, saindo do Escondido.</p>`,
+      spellcastingTrait: "finesse",
+      suggestedTraits: { agility: 1, strength: -1, finesse: 2, instinct: 1, presence: 0, knowledge: 0 },
+      foundation: [
+        {
+          name: "Opening Strike", img: CPR("weapons/CombatKnife_excellent"), form: "action",
+          description: "<p>Uma vez por Holofote, quando você causa dano a um alvo enquanto está <em>Escondido</em> dele ou enquanto ele está <em>Vulnerável</em>, some à rolagem de dano uma quantidade de d6 igual ao seu Tier.</p><p><em>Na ficha: a ação rola os d6 do seu Tier para somar ao dano.</em></p>",
+          flags: { [MODULE_ID]: { rolls: { "Opening Strike": { formula: "(@tier)d6", flavor: "Opening Strike (d6 por Tier) — some ao dano" } } } },
+          actions: featureAction({ name: "Opening Strike", img: CPR("weapons/CombatKnife_excellent"), target: { type: "self", amount: null } })
+        },
+        (() => {
+          const hidden = hiddenSelf("No Witnesses", CPR("status/unconcious"), "<p>Escondido de novo pelo No Witnesses.</p>");
+          return {
+            name: "No Witnesses", img: hidden.img, form: "action",
+            description: "<p>Quando você derrota ou incapacita um alvo com um ataque feito enquanto estava Escondido, pode ficar Escondido de novo imediatamente e se mover para um ponto dentro do alcance Muito Próximo.</p>",
+            effects: [hidden],
+            actions: featureAction({ name: "No Witnesses", img: hidden.img, effects: [hidden], target: { type: "self", amount: null } })
+          };
+        })()
+      ],
+      specialization: [{
+        name: "Kill Window", img: CPR("status/wounded_mortally"), form: "passive",
+        description: "<p>Quando você gasta Cover em <strong>Takedown</strong>, rola um d8 em vez de um d6. Além disso, se o alvo estiver Vulnerável, ele também marca 1 Estresse.</p>",
+        flags: { [MODULE_ID]: { takedownDie: "d8" } }
+      }],
+      mastery: [(() => {
+        const vulnerable = targetEffect({ name: "Perfect Ambush", img: CPR("critical_injuries/crushed_windpipe"), statuses: ["vulnerable"],
+          description: "<p>Sobreviveu a um Perfect Ambush e ficou permanentemente Vulnerável.</p>" });
+        return {
+          name: "Perfect Ambush", img: vulnerable.img, form: "action",
+          description: "<p>Uma vez por descanso longo, quando você acerta um ataque contra um alvo de quem está <em>Escondido</em>, não role os dados de dano da arma. Em vez disso, use o maior valor possível desses dados.</p><p>Se o alvo sobreviver ao ataque, ele fica permanentemente <em>Vulnerável</em>.</p>",
+          effects: [vulnerable],
+          actions: featureAction({ name: "Perfect Ambush", img: vulnerable.img, uses: { max: 1, recovery: "longRest" }, effects: [vulnerable] })
+        };
+      })()]
+    },
+    {
+      name: "Phantom", img: CPR("classes/infiltrator/subclasses/phantom.png"),
+      description: `<p><em>Jogue de Phantom se você quiser passar por espaços vigiados, se reposicionar por pontos cegos, tirar aliados do perigo e desaparecer antes que o inimigo consiga te prender.</em></p>
+<p><em>(A lista de subclasses do PDF chama esta de "Deep Cover", mas a seção dela se chama Phantom.)</em></p>
+<p><strong>Build Sugerida:</strong> Agilidade +2, Acuidade +1, Instinto +1, Presença 0, Conhecimento 0, Força −1. Equipamento recomendado: SMG Compacta (primária, uma mão) + Faca de Combate (secundária) + Jaqueta de Sintcouro — mobilidade e Evasão alta.</p>`,
+      spellcastingTrait: "agility",
+      suggestedTraits: { agility: 2, strength: -1, finesse: 1, instinct: 1, presence: 0, knowledge: 0 },
+      foundation: [
+        {
+          name: "Ghost Route", img: CPR("gear/grapple_gun"), form: "passive",
+          description: "<p>Quando você se move enquanto está <em>Escondido</em>, pode se mover dentro do alcance Distante em vez do Próximo.</p><p>Se você começar esse movimento dentro do alcance Muito Próximo de um aliado, pode levá-lo junto. Esse aliado não fica Escondido, a menos que já estivesse.</p>"
+        },
+        {
+          name: "Now You See Me", img: CPR("programs/eraser"), form: "reaction",
+          description: "<p>Uma vez por cena, quando um ataque contra você erra ou tem desvantagem, você pode ganhar 1 Cover.</p>",
+          flags: { [MODULE_ID]: { coverActions: { "Now You See Me": 1 } } },
+          actions: featureAction({ name: "Now You See Me", img: CPR("programs/eraser"), actionType: "reaction", uses: { max: 1, recovery: "scene" }, target: { type: "self", amount: null } })
+        }
+      ],
+      specialization: [{
+        name: "Extraction Window", img: CPR("dlc/gear/the-transporter"), form: "reaction",
+        description: "<p>Quando um aliado dentro do alcance Próximo fosse ser alvo de um ataque, descoberto ou pego por um perigo, você pode gastar 1 Cover para fazer esse aliado se mover imediatamente para um ponto dentro do alcance Próximo.</p><p>O ataque que disparou isso tem desvantagem contra ele, ou o aliado tem vantagem na rolagem para evitar o perigo.</p>",
+        flags: { [MODULE_ID]: { coverActions: { "Extraction Window": -1 } } },
+        actions: featureAction({ name: "Extraction Window", img: CPR("dlc/gear/the-transporter"), actionType: "reaction", target: { type: "friendly", amount: 1 } })
+      }],
+      mastery: [(() => {
+        const hidden = hiddenSelf("Impossible Exit", CPR("programs/speedy_gonzalvez"), "<p>Escondido depois do Impossible Exit.</p>");
+        return {
+          name: "Impossible Exit", img: hidden.img, form: "action",
+          description: "<p>Uma vez por descanso, você pode gastar 3 Cover para revelar uma rota de fuga que preparou ou percebeu. Você e qualquer aliado dentro do alcance Próximo podem se mover imediatamente dentro do alcance Distante, ignorando terreno difícil, alarmes simples e zonas controladas por inimigos durante esse movimento.</p><p>Depois desse movimento, você fica <em>Escondido</em>. Todo aliado que terminar o movimento em cobertura, escuridão, fumaça, multidão ou outro esconderijo plausível também fica Escondido.</p>",
+          effects: [hidden],
+          flags: { [MODULE_ID]: { coverActions: { "Impossible Exit": -3 } } },
+          actions: featureAction({ name: "Impossible Exit", img: hidden.img, uses: { max: 1, recovery: "shortRest" }, effects: [hidden], target: { type: "self", amount: null } })
+        };
+      })()]
+    }
+  ]
+};
+
+// Escolhas de feature (flag pick): a ação com o nome pick.action abre uma escolha entre pick.options
+// (tratada em edgeheart-character.js); o valor fica no flag "picked" e aparece no selo da ficha.
+// Integrated Chrome: o Atributo Calibrado é a escolha da feature; a ação "Integrated Chrome" marca 1
+// Estresse e rola o d6 (d8 com Reinforced Build e Força calibrada). O flag integratedChrome também faz
+// a Rolagem de Humanidade tratar a Carga Cibernética como 1 menor.
+const CHROME_ACTIONS = { calibrate: "Calibrar Atributo", use: "Integrated Chrome" };
+
+const AUGMENTED = {
+  key: "augmented",
+  classItems: [
+    { name: "Kit de Manutenção de Implante", img: CPR("dlc/gear/master_mechanics_tool_kit"), description: "<p>Um kit de manutenção para o seu implante mais importante: chaves de precisão, gel condutor, peças de reposição e um manual cheio de anotações suas.</p>" },
+    { name: "Peça Original do Corpo", img: CPR("cyberware/meatarm"), description: "<p>A peça original do seu corpo que foi substituída por cromo. Por que você ainda a guarda?</p>" }
+  ],
+  guide: {
+    traits: { agility: 2, strength: 0, finesse: 1, instinct: 1, presence: 0, knowledge: -1 },
+    primaryWeapon: "SMG Compacta", secondaryWeapon: "Faca de Combate", armor: "Jaqueta de Sintcouro"
+  },
+  class: {
+    name: "Augmented",
+    img: CPR("classes/augmented/class-icon.png"),
+    description: `<p><strong>Chrome, cyberware, movimento, otimização do corpo</strong><br>"A carne era o protótipo."</p>
+<p><em>Jogue de Augmented se você quiser…</em> Levar seu corpo além dos limites naturais com membros reforçados, implantes de mobilidade, sentidos aprimorados e precisão construída em cromo.</p>
+<p>Augmenteds são mercenários que transformaram o próprio corpo no seu ganha-pão. Eles sabem se mover com ossos de metal, golpear com membros calibrados, sobreviver com órgãos artificiais e forçar seus sistemas sem queimar na hora.</p>
+<p><strong>Itens de Classe:</strong> Um kit de manutenção para o seu implante mais importante ou a peça original do seu corpo que foi substituída por cromo.</p>
+<p><em>Nota: atributos sugeridos e equipamento variam por subclasse — veja a nota de "Build Sugerida" na subclasse escolhida.</em></p>`,
+    domains: ["chrome"],
+    hitPoints: 6,
+    evasion: 11,
+    backgroundQuestions: [
+      "Qual foi o seu primeiro implante, e por que você o colocou?",
+      "De que parte do seu corpo original você mais sente falta?",
+      "Você escolheu virar Augmented, ou o seu corpo foi reconstruído depois de algo terrível?"
+    ],
+    connections: [
+      "Qual personagem te conheceu antes do cromo?",
+      "Quem te ajudou a sobreviver a uma instalação ruim?",
+      "Quem trata o seu corpo como uma pessoa, e não como uma máquina?"
+    ],
+    hopeFeature: {
+      name: "Chrome Surge", img: CPR("status/stim"), form: "action",
+      description: "<p>Gaste 3 Esperança quando fizer uma Rolagem de Agilidade, Força ou Acuidade. Role um d8 e some o resultado à rolagem. Se a rolagem tiver sucesso, escolha uma:</p><ul><li>Mova-se imediatamente dentro do alcance Próximo.</li><li>Limpe 1 Estresse.</li><li>Ganhe +2 de Evasão até o seu próximo Holofote.</li></ul><p><em>Na ficha: a ação gasta a Esperança e rola o d8 para somar à rolagem.</em></p>",
+      flags: { [MODULE_ID]: { rolls: { "Chrome Surge": { formula: "1d8", flavor: "Chrome Surge (d8) — some à Rolagem de Agilidade, Força ou Acuidade" } } } },
+      actions: featureAction({ name: "Chrome Surge", img: CPR("status/stim"), costs: [{ key: "hope", value: 3 }], target: { type: "self", amount: null } })
+    },
+    classFeatures: [{
+      name: "Integrated Chrome", img: CPR("cyberware/cyberarm"), form: "action",
+      description: "<p>Seu cyberware está totalmente integrado ao seu sistema nervoso. Quando você termina um descanso, escolha Agilidade, Força ou Acuidade como o seu <strong>Atributo Calibrado</strong>.</p><p>Quando você faz uma rolagem de ação usando o Atributo Calibrado ou usa uma carta de Chrome, pode marcar 1 Estresse para rolar um d6 e somar o resultado à rolagem.</p><p>Além disso, quando você rola o Dado de Humanidade para resistir à Ciberpsicose, trate a sua Carga Cibernética como 1 menor, até o mínimo de 0.</p><p><em>Na ficha: \"Calibrar Atributo\" escolhe o Atributo Calibrado (mostrado no selo do cabeçalho); \"Integrated Chrome\" marca 1 Estresse e rola o d6. A Rolagem de Humanidade já desconta 1 da Carga.</em></p>",
+      flags: { [MODULE_ID]: {
+        integratedChrome: true,
+        pick: { action: CHROME_ACTIONS.calibrate, title: "Atributo Calibrado", icon: "fa-gears", prompt: "Escolha o Atributo Calibrado até o próximo descanso.",
+          options: { agility: "Agilidade", strength: "Força", finesse: "Acuidade" } }
+      } },
+      actions: {
+        ...featureAction({ name: CHROME_ACTIONS.calibrate, img: CPR("gear/tech_scanner"), target: { type: "self", amount: null } }),
+        ...featureAction({ name: CHROME_ACTIONS.use, img: CPR("cyberware/cyberarm"), costs: [{ key: "stress", value: 1 }], target: { type: "self", amount: null } })
+      }
+    }]
+  },
+  subclasses: [
+    {
+      name: "Reflex Suite", img: CPR("classes/augmented/subclasses/reflex-suite.png"),
+      description: `<p><em>Jogue de Reflex Suite se você quiser se mover mais rápido que o tempo de reação humano e transformar o seu sistema nervoso numa arma.</em></p>
+<p><strong>Build Sugerida:</strong> Agilidade +2, Acuidade +1, Instinto +1, Força 0, Presença 0, Conhecimento −1. Equipamento recomendado: SMG Compacta (primária, uma mão) + Faca de Combate (secundária) + Jaqueta de Sintcouro — Evasão alta e Agilidade calibrada.</p>`,
+      spellcastingTrait: "agility",
+      suggestedTraits: { agility: 2, strength: 0, finesse: 1, instinct: 1, presence: 0, knowledge: -1 },
+      foundation: [
+        {
+          name: "Neural Reflexes", img: CPR("dlc/cyberware/reflex-co-processor"), form: "passive",
+          description: "<p>Quando você usa <em>Integrated Chrome</em> numa Rolagem de Agilidade ou Acuidade, pode se mover imediatamente dentro do alcance Muito Próximo depois que a rolagem se resolve. Se a rolagem tiver sucesso com Esperança, pode se mover dentro do alcance Próximo.</p>"
+        },
+        {
+          name: "Fast Enough", img: CPR("cyberware/sandevistan"), form: "reaction",
+          description: "<p>Uma vez por descanso, quando um ataque contra você fosse acertar, pode marcar 1 Estresse para rolar um d6 e somar o resultado à sua Evasão contra esse ataque.</p>",
+          flags: { [MODULE_ID]: { rolls: { "Fast Enough": { formula: "1d6", flavor: "Fast Enough (d6) — some à Evasão contra este ataque" } } } },
+          actions: featureAction({ name: "Fast Enough", img: CPR("cyberware/sandevistan"), actionType: "reaction", costs: [{ key: "stress", value: 1 }], uses: { max: 1, recovery: "shortRest" }, target: { type: "self", amount: null } })
+        }
+      ],
+      specialization: [{
+        name: "Motion Blur", img: CPR("dlc/cyberware/wyzard-technologies_romanova-cyberlegs"), form: "passive",
+        description: "<p>Quando você se move dentro do alcance Próximo ou mais longe durante o seu Holofote, o próximo ataque contra você antes do seu próximo Holofote tem desvantagem.</p>"
+      }],
+      mastery: [(() => {
+        const loop = targetEffect({ name: "Accelerated Loop", img: CPR("status/timewarp"), duration: "scene",
+          description: "<p>Reflexware em aceleração total até a cena terminar ou você sofrer dano Severo. Na primeira vez em cada Holofote que usar Integrated Chrome numa Rolagem de Agilidade ou Acuidade bem-sucedida, limpe 1 Estresse ou mova-se dentro do alcance Muito Próximo.</p>" });
+        return {
+          name: "Accelerated Loop", img: loop.img, form: "action",
+          description: "<p>Uma vez por descanso longo, você pode levar o seu reflexware à aceleração total. Até a cena terminar ou você sofrer dano Severo, na primeira vez em cada Holofote que você usar <em>Integrated Chrome</em> numa Rolagem de Agilidade ou Acuidade bem-sucedida, pode limpar 1 Estresse ou se mover imediatamente dentro do alcance Muito Próximo.</p>",
+          effects: [loop],
+          actions: featureAction({ name: "Accelerated Loop", img: loop.img, uses: { max: 1, recovery: "longRest" }, effects: [loop], target: { type: "self", amount: null } })
+        };
+      })()]
+    },
+    {
+      name: "Titan Frame", img: CPR("classes/augmented/subclasses/titan-frame.png"),
+      description: `<p><em>Jogue de Titan Frame se você quiser virar uma montanha de cromo pesado e força industrial que se recusa a sair do lugar a menos que você permita.</em></p>
+<p><strong>Build Sugerida:</strong> Força +2, Agilidade +1, Instinto +1, Acuidade 0, Presença 0, Conhecimento −1. Equipamento recomendado: Martelo de Arrombamento (primária, duas mãos) + Colete Balístico — Força calibrada para o Reinforced Build.</p>`,
+      spellcastingTrait: "strength",
+      suggestedTraits: { agility: 1, strength: 2, finesse: 0, instinct: 1, presence: 0, knowledge: -1 },
+      foundation: [
+        {
+          name: "Reinforced Build", img: CPR("cyberware/implanted_linearframe_sigma"), form: "passive",
+          description: "<p>Quando o seu Atributo Calibrado é Força, ganhe +1 na Pontuação de Armadura. Além disso, quando usar <em>Integrated Chrome</em> numa Rolagem de Força, role um d8 em vez de um d6.</p><p><em>Na ficha: o +1 de Armadura liga sozinho quando você calibra Força e desliga nos outros atributos.</em></p>",
+          flags: { [MODULE_ID]: { reinforcedBuild: true } },
+          effects: [{
+            name: "Reinforced Build", img: CPR("cyberware/implanted_linearframe_sigma"), transfer: true, type: "base",
+            description: "<p>+1 na Pontuação de Armadura enquanto o Atributo Calibrado for Força.</p>",
+            system: { changes: [{ type: "armor", phase: "initial", priority: 20, value: { max: "1", current: 0, damageThresholds: null, interaction: "none" } }], duration: { description: "" }, rangeDependence: null, stacking: null, targetDispositions: [], conditionals: [] },
+            duration: { value: null, units: "seconds", expiry: null, expired: false },
+            tint: "#ffffff", statuses: [], disabled: true
+          }]
+        },
+        {
+          name: "Load-Bearing Body", img: CPR("cyberware/implanted_linearframe_beta"), form: "passive",
+          description: "<p>Você tem vantagem em rolagens para resistir a ser empurrado, derrubado, desarmado, movido contra a sua vontade ou ficar temporariamente <em>Imobilizado</em>.</p>"
+        }
+      ],
+      specialization: [{
+        name: "Impact Absorbers", img: CPR("cyberware/grafted_muscle_and_bone_lace"), form: "reaction",
+        description: "<p>Uma vez por cena, quando você fosse marcar um ou mais Pontos de Vida por dano físico ou de impacto, pode marcar 1 Estresse para reduzir a gravidade em um limiar.</p><p>Se isso evitar que você marque qualquer Ponto de Vida, você pode se mover imediatamente dentro do alcance Muito Próximo ou forçar o atacante a marcar 1 Estresse.</p>",
+        actions: featureAction({ name: "Impact Absorbers", img: CPR("cyberware/grafted_muscle_and_bone_lace"), actionType: "reaction", costs: [{ key: "stress", value: 1 }], uses: { max: 1, recovery: "scene" }, target: { type: "self", amount: null } })
+      }],
+      mastery: [(() => {
+        const walking = targetEffect({ name: "Heavy Chrome Walking", img: CPR("dlc/gear/linearframe_omega"), duration: "scene",
+          description: "<p>Reforço de corpo inteiro ativo até a cena terminar ou você sofrer dano Severo: +3 nos limiares de dano; em ataques Corpo a Corpo, some o dado do Atributo Calibrado ao dano; ao ter sucesso numa Rolagem de Força ou ataque contra um alvo Corpo a Corpo, pode empurrá-lo até o alcance Próximo e deixá-lo temporariamente Vulnerável.</p>",
+          changes: [
+            { key: "system.damageThresholds.major", type: "add", value: 3, priority: null, phase: "initial" },
+            { key: "system.damageThresholds.severe", type: "add", value: 3, priority: null, phase: "initial" }
+          ] });
+        return {
+          name: "Heavy Chrome Walking", img: walking.img, form: "action",
+          description: "<p>Uma vez por descanso longo, quando você marca um Espaço de Armadura, pode ativar o seu reforço de corpo inteiro até a cena terminar ou você sofrer dano Severo. Enquanto esta feature estiver ativa:</p><ul><li>Quando acertar uma rolagem de ataque Corpo a Corpo, pode somar o dado do Atributo Calibrado à rolagem de dano.</li><li>Ganhe +3 nos seus limiares de dano.</li><li>Quando tiver sucesso numa Rolagem de Força ou ataque com arma contra um alvo dentro do alcance Corpo a Corpo, pode empurrá-lo até o alcance Próximo e deixá-lo temporariamente <em>Vulnerável</em>.</li></ul>",
+          effects: [walking],
+          actions: featureAction({ name: "Heavy Chrome Walking", img: walking.img, uses: { max: 1, recovery: "longRest" }, effects: [walking], target: { type: "self", amount: null } })
+        };
+      })()]
+    }
+  ]
+};
+
+const TECH = {
+  key: "tech",
+  classItems: [
+    { name: "Kit de Ferramentas Personalizado", img: CPR("gear/carryall"), description: "<p>Um kit de ferramentas personalizado cheio de adaptadores ilegais e peças recuperadas. Metade das ferramentas você mesmo fabricou.</p>" },
+    { name: "Máquina Quebrada", img: CPR("upgrades/backup_drive"), description: "<p>Uma máquina quebrada que você se recusa a parar de consertar. O que ela era, e por que importa tanto?</p>" }
+  ],
+  guide: {
+    traits: { agility: 1, strength: -1, finesse: 0, instinct: 1, presence: 0, knowledge: 2 },
+    primaryWeapon: "Lançador de Sucata", secondaryWeapon: null, armor: "Colete Balístico"
+  },
+  class: {
+    name: "Tech",
+    img: CPR("classes/tech/class-icon.png"),
+    description: `<p><strong>Systems, engenharia, drones, equipamento</strong><br>"Me dá peças, ferramentas e dez minutos."</p>
+<p><em>Jogue de Tech se você quiser…</em> Construir ferramentas, consertar sistemas, posicionar dispositivos, controlar drones, modificar equipamento e transformar preparação em poder.</p>
+<p>Techs resolvem problemas e entendem que toda máquina tem um jeito de quebrar, entortar ou se tornar útil. Eles fazem planos impossíveis funcionarem só o tempo suficiente para fazer diferença.</p>
+<p><strong>Itens de Classe:</strong> Um kit de ferramentas personalizado cheio de adaptadores ilegais e peças recuperadas ou uma máquina quebrada que você se recusa a parar de consertar.</p>
+<p><em>Nota: atributos sugeridos e equipamento variam por subclasse — veja a nota de "Build Sugerida" na subclasse escolhida.</em></p>`,
+    domains: ["systems"],
+    hitPoints: 5,
+    evasion: 10,
+    backgroundQuestions: [
+      "Que máquina, arma, drone ou dispositivo você se recusa a abandonar?",
+      "Que peça de tecnologia te deixou na mão quando você mais precisava?",
+      "Você virou Tech porque amava máquinas, ou porque as pessoas eram menos confiáveis?"
+    ],
+    connections: [
+      "Quem quebrou algo importante que você ainda não perdoou?",
+      "Quem confia mais nas suas máquinas do que em você?",
+      "Qual personagem te ajudou a carregar, esconder ou reconstruir algo ilegal?"
+    ],
+    hopeFeature: {
+      name: "Make It Work", img: CPR("gear/duct_tape"), form: "reaction",
+      description: "<p>Gaste 3 Esperança depois que você ou um aliado dentro do alcance Próximo falhar numa rolagem de ação usando um dispositivo, arma ou carta de Systems. Descreva o seu conserto de emergência; o alvo pode rolar de novo os Dados de Dualidade e usar o novo resultado.</p>",
+      actions: featureAction({ name: "Make It Work", img: CPR("gear/duct_tape"), actionType: "reaction", costs: [{ key: "hope", value: 3 }], target: { type: "friendly", amount: 1 } })
+    },
+    classFeatures: [{
+      name: "Jury-Rig", img: CPR("gear/tech_tool"), form: "action",
+      description: "<p>Uma vez por cena, quando você tem alguns momentos e acesso às suas ferramentas, pode modificar, consertar ou improvisar com um dispositivo, arma ou máquina dentro do alcance Corpo a Corpo. Escolha uma:</p><ul><li><strong>Boost:</strong> na próxima vez que o item modificado for usado antes de a cena terminar, some +1d6 à rolagem de ação, Rolagem de Interface ou rolagem de dano dele.</li><li><strong>Patch:</strong> restaure um item quebrado, travado, desativado ou danificado para que funcione até a cena terminar, ou permita que uma criatura usando o item limpe um Espaço de Armadura.</li><li><strong>Rewire:</strong> conecte ou desconecte o item de uma rede, contorne os controles locais dele ou permita que ele seja operado do alcance Distante até a cena terminar.</li></ul><p>Você pode marcar 1 Estresse para usar Jury-Rig de novo na mesma cena.</p><p><em>Na ficha: \"Jury-Rig\" é o uso da cena; \"Jury-Rig Extra\" marca 1 Estresse para usar de novo; \"Rolar Boost\" rola o d6 quando o item modificado for usado.</em></p>",
+      flags: { [MODULE_ID]: { rolls: { "Rolar Boost": { formula: "1d6", flavor: "Jury-Rig: Boost (d6) — some à rolagem do item modificado" } } } },
+      actions: {
+        ...featureAction({ name: "Jury-Rig", img: CPR("gear/tech_tool"), uses: { max: 1, recovery: "scene" }, target: { type: "self", amount: null } }),
+        ...featureAction({ name: "Jury-Rig Extra", costs: [{ key: "stress", value: 1 }], target: { type: "self", amount: null } }),
+        ...featureAction({ name: "Rolar Boost", img: CPR("upgrades/nos"), target: { type: "self", amount: null } })
+      }
+    }]
+  },
+  subclasses: [
+    {
+      name: "Rigger", img: CPR("classes/tech/subclasses/rigger.png"),
+      description: `<p><em>Jogue de Rigger se você quiser controlar drones, operar máquinas remotamente e apoiar aliados por meio de equipamento.</em></p>
+<p><strong>Build Sugerida:</strong> Conhecimento +2, Agilidade +1, Instinto +1, Acuidade 0, Presença 0, Força −1. Equipamento recomendado: Lançador de Sucata (primária, duas mãos) + Colete Balístico — o drone faz o trabalho de perto enquanto você fica no alcance Próximo.</p>`,
+      spellcastingTrait: "knowledge",
+      suggestedTraits: { agility: 1, strength: -1, finesse: 0, instinct: 1, presence: 0, knowledge: 2 },
+      foundation: [{
+        name: "Companion Drone", img: CPR("dlc/cyberware/drone_remote"), form: "action",
+        description: "<p>Você tem um pequeno drone ou máquina companheira que pode se mover de forma independente dentro do alcance Distante, carregar objetos pequenos, gravar, escanear e interagir com controles.</p><p>Você pode Ajudar um aliado dentro do alcance Próximo do drone, não importa onde você esteja. Se a rolagem dele envolver equipamento ou sistemas conectados, use um d8 como dado de Ajuda.</p><p>Quando o drone fosse sofrer dano, marque 1 Estresse para tirá-lo do perigo. Caso contrário, ele fica desativado até o seu próximo descanso.</p><p><em>Na ficha: \"Ajuda do Drone\" gasta 1 Esperança e rola o d8 de Ajuda; \"Proteger Drone\" marca 1 Estresse.</em></p>",
+        flags: { [MODULE_ID]: { rolls: { "Ajuda do Drone": { formula: "1d8", flavor: "Companion Drone: dado de Ajuda (d8) — some à rolagem do aliado" } } } },
+        actions: {
+          ...featureAction({ name: "Ajuda do Drone", img: CPR("upgrades/communications_center"), costs: [{ key: "hope", value: 1 }], target: { type: "friendly", amount: 1 } }),
+          ...featureAction({ name: "Proteger Drone", img: CPR("upgrades/hardened_circuitry"), actionType: "reaction", costs: [{ key: "stress", value: 1 }], target: { type: "self", amount: null } })
+        }
+      }],
+      specialization: [{
+        name: "Remote Hands", img: CPR("dlc/cyberware/raven_microcybernetics_microwaldo"), form: "passive",
+        description: "<p>Você pode usar Jury-Rig por meio do drone como se estivesse tocando o alvo. Depois de usar <strong>Boost</strong> ou <strong>Patch</strong>, o drone pode se mover imediatamente dentro do alcance Próximo.</p>"
+      }],
+      mastery: [(() => {
+        const network = targetEffect({ name: "Drone Network", img: CPR("dlc/gear/raven_microcybernetics_cybercam_ex-1"), duration: "scene",
+          description: "<p>Rede de drones ativa até a cena terminar ou você sofrer dano Severo: o drone opera dentro do alcance Muito Distante, o Jury-Rig usado por meio dele aplica dois efeitos, e você pode marcar 1 Estresse para reduzir em 1d8 o dano de um aliado dentro do alcance Próximo do drone.</p>" });
+        return {
+          name: "Drone Network", img: network.img, form: "action",
+          description: "<p>Uma vez por descanso longo, espalhe uma rede de drones até a cena terminar ou você sofrer dano Severo. Enquanto ativa:</p><ul><li>Seu drone pode operar dentro do alcance Muito Distante.</li><li>O Jury-Rig usado por meio dele pode aplicar dois efeitos.</li><li>Quando um aliado dentro do alcance Próximo dele sofrer dano, marque 1 Estresse para reduzir esse dano em <strong>1d8</strong>.</li></ul>",
+          effects: [network],
+          flags: { [MODULE_ID]: { rolls: { "Reduzir Dano (Drone Network)": { formula: "1d8", flavor: "Drone Network (d8) — reduza o dano do aliado" } } } },
+          actions: {
+            ...featureAction({ name: "Drone Network", img: network.img, uses: { max: 1, recovery: "longRest" }, effects: [network], target: { type: "self", amount: null } }),
+            ...featureAction({ name: "Reduzir Dano (Drone Network)", img: CPR("upgrades/insulated_wiring"), actionType: "reaction", costs: [{ key: "stress", value: 1 }], target: { type: "friendly", amount: 1 } })
+          }
+        };
+      })()]
+    },
+    {
+      name: "Saboteur", img: CPR("classes/tech/subclasses/saboteur.png"),
+      description: `<p><em>Jogue de Saboteur se você quiser plantar cargas, desativar defesas e virar o ambiente contra os seus inimigos.</em></p>
+<p><strong>Build Sugerida:</strong> Acuidade +2, Conhecimento +1, Agilidade +1, Instinto 0, Presença 0, Força −1. Equipamento recomendado: Mono-Katana (primária, uma mão) + Cabo de Gancho (secundária) + Jaqueta de Sintcouro — chegar perto para plantar as cargas.</p>`,
+      spellcastingTrait: "finesse",
+      suggestedTraits: { agility: 1, strength: -1, finesse: 2, instinct: 0, presence: 0, knowledge: 1 },
+      foundation: [(() => {
+        const disrupt = targetEffect({ name: "Disrupt", img: CPR("ammo/grenade_emp"), statuses: ["vulnerable"],
+          description: "<p>Marcou 1 Estresse e ficou temporariamente Vulnerável por uma carga (Disrupt).</p>" });
+        return {
+          name: "Planted Charge", img: CPR("ammo/grenade_basic"), form: "action",
+          description: "<p>Quando você pode tocar um objeto, superfície ou máquina, marque 1 Estresse para plantar uma carga. Acione-a mais tarde na cena para escolher uma:</p><ul><li><strong>Breach:</strong> abra, quebre ou desmorone o alvo.</li><li><strong>Disable:</strong> trave, tranque ou desligue o alvo até ser consertado.</li><li><strong>Disrupt:</strong> um adversário dentro do alcance Muito Próximo marca 1 Estresse e fica temporariamente <em>Vulnerável</em>.</li></ul><p>Você pode ter uma carga ativa por vez.</p>",
+          effects: [disrupt],
+          actions: {
+            ...featureAction({ name: "Plantar Carga", img: CPR("ammo/grenade_basic"), costs: [{ key: "stress", value: 1 }], target: { type: "self", amount: null } }),
+            ...featureAction({ name: "Acionar: Disrupt", img: disrupt.img, effects: [disrupt] })
+          }
+        };
+      })()],
+      specialization: [{
+        name: "Cascading Failure", img: CPR("ammo/grenade_armorpiercing"), form: "passive",
+        description: "<p>Você pode ter duas cargas ativas. Quando uma é acionada:</p><ul><li><strong>Breach:</strong> você ou um aliado Próximo a ela pode se mover imediatamente dentro do alcance Próximo.</li><li><strong>Disable:</strong> um adversário usando o alvo também marca 1 Estresse.</li><li><strong>Disrupt:</strong> o adversário afetado tem desvantagem na próxima rolagem de ação antes do seu próximo Holofote.</li></ul>"
+      }],
+      mastery: [(() => {
+        const restrained = targetEffect({ name: "Controlled Demolition", img: CPR("ammo/rocket_armorpiercing"), statuses: ["restrained"],
+          description: "<p>Pego pela demolição controlada: temporariamente Imobilizado.</p>" });
+        return {
+          name: "Controlled Demolition", img: restrained.img, form: "action",
+          description: "<p>Uma vez por descanso longo, quando você aciona uma carga, destrua, desmorone, abra ou desative o alvo dela para criar uma grande brecha, rota de fuga ou obstrução.</p><p>Adversários dentro do alcance Próximo fazem uma Rolagem de Reação (16). Em uma falha, sofrem 3d10 de dano físico e ficam temporariamente <em>Imobilizados</em>. Em um sucesso, sofrem metade do dano.</p><p><em>Na ficha: a ação rola os 3d10 e aplica Imobilizado nos alvos que falharem.</em></p>",
+          effects: [restrained],
+          flags: { [MODULE_ID]: { rolls: { "Controlled Demolition": { formula: "3d10", flavor: "Controlled Demolition (3d10 físico) — metade para quem passar na Rolagem de Reação (16)" } } } },
+          actions: featureAction({ name: "Controlled Demolition", img: restrained.img, uses: { max: 1, recovery: "longRest" }, effects: [restrained], target: { type: "hostile", amount: null } })
+        };
+      })()]
+    }
+  ]
+};
+
+// Terms of Engagement: cada opção é uma ação que só registra a escolha no chat (a descrição vai no card).
+const TERMS_ACTIONS = [
+  { name: "Pressure", img: CPR("status/choking1"), target: { type: "hostile", amount: 1 }, description: "<p><strong>Pressure:</strong> um alvo afetado marca 1 Estresse.</p>" },
+  { name: "Opening", img: CPR("status/readied_action"), target: { type: "hostile", amount: 1 }, description: "<p><strong>Opening:</strong> a próxima rolagem de ação feita por você ou um aliado contra um alvo afetado ganha +2.</p>" },
+  { name: "Reassurance", img: CPR("status/speedheal"), target: { type: "friendly", amount: 1 }, description: "<p><strong>Reassurance:</strong> você ou um aliado dentro do alcance Próximo limpa 1 Estresse.</p>" }
+];
+
+const BROKER = {
+  key: "broker",
+  classItems: [
+    { name: "Lista de Contatos", img: CPR("gear/disposable_cellphone"), description: "<p>Uma lista de contatos que vale mais do que o seu saldo bancário. Quem está no topo dela, e quem foi riscado?</p>" },
+    { name: "Chip de Contrato", img: CPR("gear/memory_chip"), description: "<p>Um chip de contrato com um grande e ilegal acordo corporativo. Quem pagaria para tê-lo, e quem mataria para apagá-lo?</p>" }
+  ],
+  guide: {
+    traits: { agility: 0, strength: -1, finesse: 0, instinct: 1, presence: 2, knowledge: 1 },
+    primaryWeapon: "Cassetete de Choque", secondaryWeapon: "Luva de Choque", armor: "Jaqueta de Sintcouro"
+  },
+  class: {
+    name: "Broker",
+    img: CPR("classes/broker/class-icon.png"),
+    description: `<p><strong>Influence, contatos, manipulação, reputação</strong><br>"Todo mundo tem um preço. O truque é descobrir em que moeda eles aceitam."</p>
+<p><em>Jogue de Broker se você quiser…</em> Negociar contratos, manipular facções, comandar pressão social, construir redes de favores, usar a reputação como arma e vencer antes de as armas aparecerem.</p>
+<p>Brokers são negociadores, rostos públicos e predadores sociais que entendem que o poder raramente está nas mãos de quem segura a arma. Eles sabem quem paga, quem pode ser comprado e quem precisa desaparecer antes do próximo contrato.</p>
+<p><strong>Itens de Classe:</strong> Uma lista de contatos que vale mais do que o seu saldo bancário ou um chip de contrato com um grande e ilegal acordo corporativo.</p>
+<p><em>Nota: atributos sugeridos e equipamento variam por subclasse — veja a nota de "Build Sugerida" na subclasse escolhida.</em></p>`,
+    domains: ["influence"],
+    hitPoints: 5,
+    evasion: 10,
+    backgroundQuestions: [
+      "Quem te deu o seu primeiro contato de verdade?",
+      "Qual facção te deve algo, e qual facção te quer morto?",
+      "Que segredo você guarda porque vale mais sem ser vendido?"
+    ],
+    connections: [
+      "Qual personagem você recrutou, resgatou, contratou ou comprou para tirar de uma encrenca?",
+      "Quem sabe quando você está mentindo?",
+      "Quem tem com você uma dívida de que nenhum dos dois fala?"
+    ],
+    hopeFeature: {
+      name: "Fine Print", img: CPR("dlc/gear/the-observer"), form: "reaction",
+      description: "<p>Gaste 3 Esperança depois que você ou um aliado dentro do alcance Distante falhar numa Rolagem de Presença. Revele um segredo, suborno, ameaça ou interrupção perfeita. A falha vira um sucesso com Medo.</p><p>Se a rolagem que falhou foi feita diretamente contra uma criatura, ela também marca 1 Estresse.</p>",
+      actions: featureAction({ name: "Fine Print", img: CPR("dlc/gear/the-observer"), actionType: "reaction", costs: [{ key: "hope", value: 3 }], target: { type: "friendly", amount: 1 } })
+    },
+    classFeatures: [{
+      name: "Terms of Engagement", img: CPR("gear/pocket_amplifier"), form: "action",
+      description: "<p>Quando você tem sucesso numa Rolagem de Presença ou carta de Influence contra uma criatura ou grupo, escolha uma:</p><ul><li><strong>Pressure:</strong> um alvo afetado marca 1 Estresse.</li><li><strong>Opening:</strong> a próxima rolagem de ação feita por você ou um aliado contra um alvo afetado ganha +2.</li><li><strong>Reassurance:</strong> você ou um aliado dentro do alcance Próximo limpa 1 Estresse.</li></ul><p>Num sucesso com Esperança, você pode marcar 1 Estresse para escolher uma opção adicional.</p><p><em>Na ficha: cada opção é uma ação que registra a escolha no chat; \"Opção Adicional\" marca o Estresse.</em></p>",
+      actions: Object.assign({},
+        ...TERMS_ACTIONS.map(t => featureAction(t)),
+        featureAction({ name: "Opção Adicional", costs: [{ key: "stress", value: 1 }], target: { type: "self", amount: null } }))
+    }]
+  },
+  subclasses: [
+    {
+      name: "Fixer", img: CPR("classes/broker/subclasses/fixer.png"),
+      description: `<p><em>Jogue de Fixer se você quiser arranjar trabalhos, cobrar favores e navegar pela economia oculta da cidade.</em></p>
+<p><strong>Build Sugerida:</strong> Presença +2, Conhecimento +1, Instinto +1, Agilidade 0, Acuidade 0, Força −1. Equipamento recomendado: Cassetete de Choque (primária, uma mão) + Luva de Choque (secundária) + Jaqueta de Sintcouro — as duas armas usam Presença.</p>`,
+      spellcastingTrait: "presence",
+      suggestedTraits: { agility: 0, strength: -1, finesse: 0, instinct: 1, presence: 2, knowledge: 1 },
+      foundation: [{
+        name: "Black-Market Network", img: CPR("upgrades/smuggling_upgrade"), form: "action",
+        description: "<p>Uma vez por descanso, numa área povoada, declare que conhece um contato que pode fornecer equipamento restrito, abrigo, transporte, informação ou acesso a alguém difícil de alcançar. O mestre diz o que ele quer em troca.</p><p>Quando você ou um aliado usar a ajuda do contato, ganhe +2 numa rolagem de ação relevante.</p>",
+        actions: featureAction({ name: "Black-Market Network", img: CPR("upgrades/smuggling_upgrade"), uses: { max: 1, recovery: "shortRest" }, target: { type: "self", amount: null } })
+      }],
+      specialization: [{
+        name: "Contacts Everywhere", img: CPR("gear/radio_communicator"), form: "action",
+        description: "<p>Uma vez por descanso, chame ajuda imediata de um contato. Descreva como ele intervém e escolha uma:</p><ul><li>Reduza em 1 os Pontos de Vida marcados por você ou por um aliado.</li><li>Ganhe +3 na sua próxima rolagem de ação.</li><li>Some 2d8 à sua próxima rolagem de dano.</li></ul><p><em>Na ficha: \"Rolar 2d8\" rola o dano extra da terceira opção.</em></p>",
+        flags: { [MODULE_ID]: { rolls: { "Rolar 2d8": { formula: "2d8", flavor: "Contacts Everywhere (2d8) — some à próxima rolagem de dano" } } } },
+        actions: {
+          ...featureAction({ name: "Contacts Everywhere", img: CPR("gear/radio_communicator"), uses: { max: 1, recovery: "shortRest" }, target: { type: "self", amount: null } }),
+          ...featureAction({ name: "Rolar 2d8", img: CPR("default/Default_Dice"), target: { type: "self", amount: null } })
+        }
+      }],
+      mastery: [{
+        name: "Everybody Owes Somebody", img: CPR("dlc/gear/savannah-eagle"), form: "action",
+        description: "<p>Uma vez por descanso longo, pergunte ao mestre quem na cena pode ser comprado, pressionado ou virado. A sua primeira Rolagem de Presença ou carta de Influence contra essa pessoa tem vantagem.</p><p>Num sucesso, escolha duas opções de <em>Terms of Engagement</em> em vez de uma.</p>",
+        actions: featureAction({ name: "Everybody Owes Somebody", img: CPR("dlc/gear/savannah-eagle"), uses: { max: 1, recovery: "longRest" }, target: { type: "self", amount: null } })
+      }]
+    },
+    {
+      name: "Icon", img: CPR("classes/broker/subclasses/icon.png"),
+      description: `<p><em>Jogue de Icon se você quiser usar como arma a reputação, a performance, a fama, o medo, a propaganda e a percepção pública.</em></p>
+<p><strong>Build Sugerida:</strong> Presença +2, Agilidade +1, Acuidade +1, Instinto 0, Conhecimento 0, Força −1. Equipamento recomendado: Cassetete de Choque (primária, uma mão) + Luva de Choque (secundária) + Traje Ícone de Rua — a reputação faz parte do figurino.</p>`,
+      spellcastingTrait: "presence",
+      suggestedTraits: { agility: 1, strength: -1, finesse: 1, instinct: 0, presence: 2, knowledge: 0 },
+      foundation: [{
+        name: "Public Persona", img: CPR("dlc/cyberware/external_vidscreen"), form: "action",
+        description: "<p>Escolha o que o seu nome significa na rua:</p><ul><li><strong>Beloved:</strong> quando usa <em>Terms of Engagement</em> para você ou um aliado limpar Estresse, esse alvo limpa 2 Estresse em vez de 1.</li><li><strong>Feared:</strong> quando usa <em>Terms of Engagement</em> para fazer um alvo marcar Estresse, pode marcar 1 Estresse para deixá-lo temporariamente Vulnerável.</li><li><strong>Famous:</strong> quando usa <em>Terms of Engagement</em> para dar +2 numa rolagem, dê +4 em vez disso.</li></ul><p>Você pode trocar a sua Public Persona quando faz um descanso longo, explicando como a sua imagem muda.</p><p><em>Na ficha: \"Escolher Public Persona\" guarda a escolha, mostrada no selo do cabeçalho.</em></p>",
+        flags: { [MODULE_ID]: { pick: { action: "Escolher Public Persona", title: "Public Persona", icon: "fa-star", prompt: "Escolha o que o seu nome significa na rua (troca no descanso longo).",
+          options: { beloved: "Beloved", feared: "Feared", famous: "Famous" } } } },
+        actions: featureAction({ name: "Escolher Public Persona", img: CPR("dlc/cyberware/external_vidscreen"), target: { type: "self", amount: null } })
+      }],
+      specialization: [{
+        name: "Live Feed", img: CPR("gear/video_camera"), form: "action",
+        description: "<p>Uma vez por descanso, quando você tem sucesso numa Rolagem de Presença ou usa uma carta de Influence enquanto é observado por uma multidão, gravado ou transmitido para um grupo, pode amplificar o momento.</p><p>Escolha qualquer número de criaturas dentro do alcance Próximo que possam te ver ou ouvir. Aliados limpam 1 Estresse. Adversários marcam 1 Estresse.</p>",
+        actions: featureAction({ name: "Live Feed", img: CPR("gear/video_camera"), uses: { max: 1, recovery: "shortRest" }, target: { type: "any", amount: null } })
+      }],
+      mastery: [(() => {
+        const brand = targetEffect({ name: "Living Brand", img: CPR("status/prime_time"), duration: "scene",
+          description: "<p>Reputação assumida até a cena terminar ou você sofrer dano Severo. Na primeira vez em cada Holofote que tiver sucesso numa Rolagem de Presença ou carta de Influence: um aliado ganha 1 Esperança, um adversário marca 1 Estresse, ou você limpa 1 Estresse.</p>" });
+        return {
+          name: "Living Brand", img: brand.img, form: "action",
+          description: "<p>Uma vez por descanso longo, você pode assumir totalmente a sua reputação até a cena terminar ou você sofrer dano Severo. Enquanto esta feature estiver ativa, na primeira vez em cada Holofote em que você tiver sucesso numa Rolagem de Presença ou com uma carta de Influence, escolha uma:</p><ul><li>Um aliado que possa te ver ou ouvir ganha 1 Esperança.</li><li>Um adversário que possa te ver ou ouvir marca 1 Estresse.</li><li>Você limpa 1 Estresse.</li></ul>",
+          effects: [brand],
+          actions: featureAction({ name: "Living Brand", img: brand.img, uses: { max: 1, recovery: "longRest" }, effects: [brand], target: { type: "self", amount: null } })
+        };
+      })()]
+    }
+  ]
+};
+
+const RECLAIMER = {
+  key: "reclaimer",
+  classItems: [
+    { name: "Mapa de Rotas Rachado", img: CPR("dlc/gear/optitech_magviewer"), description: "<p>Um mapa de rotas rachado, cheio de marcações pessoais: atalhos, esconderijos, zonas mortas e nomes que só você entende.</p>" },
+    { name: "Pedaço de Sucata", img: CPR("upgrades/combat_plow"), description: "<p>Um pedaço de sucata do lugar que deveria ter te matado. Você o carrega para lembrar que saiu de lá.</p>" }
+  ],
+  guide: {
+    traits: { agility: 2, strength: 0, finesse: 1, instinct: 1, presence: 0, knowledge: -1 },
+    primaryWeapon: "Carabina de Assalto", secondaryWeapon: null, armor: "Jaqueta de Sintcouro"
+  },
+  class: {
+    name: "Reclaimer",
+    img: CPR("classes/reclaimer/class-icon.png"),
+    description: `<p><strong>Frontier, sobrevivência, ruínas, zonas hostis</strong><br>"O velho mundo está morto. Isso não quer dizer que esteja vazio."</p>
+<p><em>Jogue de Reclaimer se você quiser…</em> Sobreviver longe do controle corporativo, atravessar zonas mortas, ler o terreno, recuperar tecnologia perdida, navegar por ruínas, explorar ambientes hostis e transformar o próprio campo de batalha numa ferramenta.</p>
+<p>Reclaimers são sobreviventes que sabem viver onde a civilização falhou. Eles atravessam cidades mortas e enxergam as rotas, os abrigos e os recursos do velho mundo esperando para serem usados.</p>
+<p><strong>Itens de Classe:</strong> Um mapa de rotas rachado, cheio de marcações pessoais, ou um pedaço de sucata do lugar que deveria ter te matado.</p>
+<p><em>Nota: atributos sugeridos e equipamento variam por subclasse — veja a nota de "Build Sugerida" na subclasse escolhida.</em></p>`,
+    domains: ["frontier"],
+    hitPoints: 6,
+    evasion: 11,
+    backgroundQuestions: [
+      "O que você recuperou das ruínas que mudou a sua vida?",
+      "Você foi criado fora das cidades, na estrada, ou num lugar que as corporações abandonaram?",
+      "Que veículo, rota ou peça de sucata você se recusa a abandonar?"
+    ],
+    connections: [
+      "Qual personagem você guiou por um lugar que deveria tê-lo matado?",
+      "Quem confia mais nas suas rotas do que no mapa?",
+      "Qual personagem já te viu arriscar tudo por um veículo, uma estrada ou uma peça de tecnologia antiga?"
+    ],
+    hopeFeature: (() => {
+      const vulnerable = targetEffect({ name: "Home Ground (Vulnerável)", img: CPR("ammo/grenade_teargas"), statuses: ["vulnerable"],
+        description: "<p>O terreno se virou contra ele: marcou 1 Estresse e ficou temporariamente Vulnerável.</p>" });
+      const restrained = targetEffect({ name: "Home Ground (Imobilizado)", img: CPR("ammo/grenade_teargas"), statuses: ["restrained"],
+        description: "<p>O terreno se virou contra ele: marcou 1 Estresse e ficou temporariamente Imobilizado.</p>" });
+      return {
+        name: "Home Ground", img: CPR("ammo/grenade_teargas"), form: "reaction",
+        description: "<p>Gaste 3 Esperança quando um adversário dentro do alcance Distante se move, ataca ou tem como alvo você ou um aliado, para usar o terreno contra ele. Ele faz uma Rolagem de Reação (14).</p><p>Em uma falha, fica temporariamente <em>Vulnerável</em> ou temporariamente <em>Imobilizado</em> e marca 1 Estresse. Se estiver operando um veículo, você pode deixar o veículo <strong>Damaged</strong> em vez disso. Em um sucesso, ele marca 1 Estresse.</p><p><em>Na ficha: uma ação para cada condição; use a que você escolher quando o alvo falhar.</em></p>",
+        effects: [vulnerable, restrained],
+        actions: {
+          ...featureAction({ name: "Home Ground: Vulnerável", img: CPR("ammo/grenade_teargas"), actionType: "reaction", costs: [{ key: "hope", value: 3 }], effects: [vulnerable] }),
+          ...featureAction({ name: "Home Ground: Imobilizado", img: CPR("ammo/grenade_teargas"), actionType: "reaction", costs: [{ key: "hope", value: 3 }], effects: [restrained] })
+        }
+      };
+    })(),
+    classFeatures: [(() => {
+      const route = targetEffect({ name: "Surveyed Route", img: CPR("gear/binoculars"), duration: "scene",
+        description: "<p>Surveyed Route ativa até a cena terminar ou você sofrer dano Severo: você e os aliados dentro do alcance Próximo ignoram terreno difícil; ao causar dano a um adversário na zona, pode forçá-lo a marcar 1 Estresse; ao falhar numa rolagem de ação, pode encerrar a Surveyed Route para rolar de novo os Dados de Dualidade.</p>" });
+      return {
+        name: "Surveyed Route", img: route.img, form: "action",
+        description: "<p>Gaste 1 Esperança e tire um momento para ler o terreno, as ruínas ou as ruas ao seu redor. Faça uma Rolagem de Instinto (12). Em um sucesso, a área dentro do alcance Distante vira a sua <strong>Surveyed Route</strong> até a cena terminar ou você sofrer dano Severo. Enquanto estiver dentro da sua Surveyed Route:</p><ul><li>Você e os aliados dentro do alcance Próximo podem ignorar terreno difícil ao se mover ou dirigir.</li><li>Quando você causa dano a um adversário na zona, pode forçá-lo a marcar 1 Estresse.</li><li>Quando falha numa rolagem de ação, você pode encerrar a sua Surveyed Route para rolar de novo os Dados de Dualidade.</li></ul>",
+        effects: [route],
+        actions: withActionId(buildCardAction({ name: "Surveyed Route", img: route.img, trait: "instinct", difficulty: 12, targetType: "self", cost: [{ key: "hope", value: 1 }], effects: [route] }))
+      };
+    })()]
+  },
+  subclasses: [
+    {
+      name: "Outrider", img: CPR("classes/reclaimer/subclasses/outrider.png"),
+      description: `<p><em>Jogue de Outrider se você quiser dominar veículos, liderar perseguições e sobreviver a estradas impossíveis.</em></p>
+<p><strong>Build Sugerida:</strong> Agilidade +2, Instinto +1, Acuidade +1, Força 0, Presença 0, Conhecimento −1. Equipamento recomendado: Carabina de Assalto (primária, duas mãos) + Jaqueta de Sintcouro — atirar de longe, de dentro do veículo.</p>`,
+      spellcastingTrait: "agility",
+      suggestedTraits: { agility: 2, strength: 0, finesse: 1, instinct: 1, presence: 0, knowledge: -1 },
+      foundation: [{
+        name: "Signature Vehicle", img: CPR("vehicles/super_car"), form: "action",
+        description: "<p>Você tem um veículo pessoal. Ao operá-lo, pode usar Agilidade em vez do atributo indicado.</p><p>Uma vez por cena, impeça o seu Signature Vehicle de ficar <strong>Damaged</strong> ou <strong>Disabled</strong>. Você pode designar um novo Signature Vehicle durante um descanso.</p>",
+        actions: featureAction({ name: "Proteger Veículo", img: CPR("vehicles/super_car"), actionType: "reaction", uses: { max: 1, recovery: "scene" }, target: { type: "self", amount: null } })
+      }],
+      specialization: [{
+        name: "Stunt Driver", img: CPR("dlc/vehicles/zonda_metrocar"), form: "action",
+        description: "<p>Uma vez por cena, enquanto opera o seu Signature Vehicle, descreva uma manobra e faça uma Rolagem de Agilidade (15). Em um sucesso, escolha duas. Em uma falha, escolha uma, e depois o seu veículo fica Damaged ou você marca 1 Estresse.</p><ul><li>Mova-se dentro do alcance Distante.</li><li>Dê +2 a um aliado na próxima rolagem de ação dele.</li><li>Faça um adversário marcar 1 Estresse.</li></ul>",
+        actions: withActionId(buildCardAction({ name: "Stunt Driver", img: CPR("dlc/vehicles/zonda_metrocar"), trait: "agility", difficulty: 15, targetType: "self", uses: { max: 1, recovery: "scene" } }))
+      }],
+      mastery: [(() => {
+        const vulnerable = targetEffect({ name: "Drive Off", img: CPR("vehicles/motorbike"), statuses: ["vulnerable"],
+          description: "<p>Atingido pelo Drive Off: temporariamente Vulnerável.</p>" });
+        return {
+          name: "Drive Off", img: vulnerable.img, form: "action",
+          description: "<p>Uma vez por descanso longo, quando você tem sucesso numa rolagem de direção com o seu Signature Vehicle, pode se mover dentro do alcance Distante ou limpar 1 Estresse.</p><p>Além disso, um adversário faz uma Rolagem de Reação (16). Em uma falha, sofre <strong>3d10 de dano físico</strong> e fica temporariamente <em>Vulnerável</em>. Em um sucesso, sofre metade do dano.</p><p><em>Na ficha: a ação rola os 3d10 e deixa o alvo Vulnerável se ele falhar.</em></p>",
+          effects: [vulnerable],
+          flags: { [MODULE_ID]: { rolls: { "Drive Off": { formula: "3d10", flavor: "Drive Off (3d10 físico) — metade se o alvo passar na Rolagem de Reação (16)" } } } },
+          actions: featureAction({ name: "Drive Off", img: vulnerable.img, uses: { max: 1, recovery: "longRest" }, effects: [vulnerable] })
+        };
+      })()]
+    },
+    {
+      name: "Zonebreaker", img: CPR("classes/reclaimer/subclasses/zonebreaker.png"),
+      description: `<p><em>Jogue de Zonebreaker se você quiser dominar o terreno, transformar ruínas em armas e deixar o próprio campo de batalha perigoso.</em></p>
+<p><strong>Build Sugerida:</strong> Instinto +2, Agilidade +1, Força +1, Acuidade 0, Conhecimento 0, Presença −1. Equipamento recomendado: SMG Compacta (primária, uma mão) + Drone Tático (secundária, de Instinto) + Colete Balístico — ficar dentro da Surveyed Route e segurar a posição.</p>`,
+      spellcastingTrait: "instinct",
+      suggestedTraits: { agility: 1, strength: 1, finesse: 0, instinct: 2, presence: -1, knowledge: 0 },
+      foundation: [{
+        name: "Field Salvage", img: CPR("gear/carryall"), form: "action",
+        description: "<p>Uma vez por cena, você pode recolher material útil da área ao redor. Escolha uma peça de Field Salvage:</p><ul><li><strong>Patch:</strong> você ou um aliado dentro do alcance Corpo a Corpo limpa um Espaço de Armadura.</li><li><strong>Tool:</strong> você ou um aliado ganha +2 na próxima ação.</li><li><strong>Hazard:</strong> na próxima vez que você causar dano a um adversário dentro da sua Surveyed Route, some 1d6 de dano físico à rolagem de dano.</li></ul><p>O Field Salvage não usado se perde quando você faz um descanso.</p><p><em>Na ficha: \"Field Salvage\" controla o uso da cena; \"Rolar Hazard\" rola o d6.</em></p>",
+        flags: { [MODULE_ID]: { rolls: { "Rolar Hazard": { formula: "1d6", flavor: "Field Salvage: Hazard (d6 físico) — some ao dano" } } } },
+        actions: {
+          ...featureAction({ name: "Field Salvage", img: CPR("gear/carryall"), uses: { max: 1, recovery: "scene" }, target: { type: "self", amount: null } }),
+          ...featureAction({ name: "Rolar Hazard", img: CPR("ammo/grenade_incendiary"), target: { type: "self", amount: null } })
+        }
+      }],
+      specialization: [(() => {
+        const restrained = targetEffect({ name: "Bad Ground", img: CPR("upgrades/deployable_spike_strip"), statuses: ["restrained"],
+          description: "<p>O terreno se virou contra ele: marcou 1 Estresse e ficou temporariamente Imobilizado.</p>" });
+        return {
+          name: "Bad Ground", img: restrained.img, form: "reaction",
+          description: "<p>Uma vez por descanso, quando um adversário dentro da sua Surveyed Route se move dentro do alcance Próximo ou mais longe, você pode descrever como o terreno se vira contra ele. Ele faz uma Rolagem de Reação (15).</p><p>Em uma falha, o adversário fica temporariamente <em>Imobilizado</em>, ou um veículo fica Damaged, e ele marca 1 Estresse. Em um sucesso, ele marca 1 Estresse.</p>",
+          effects: [restrained],
+          actions: featureAction({ name: "Bad Ground", img: restrained.img, actionType: "reaction", uses: { max: 1, recovery: "shortRest" }, effects: [restrained] })
+        };
+      })()],
+      mastery: [(() => {
+        const zone = targetEffect({ name: "Dead Zone", img: CPR("status/radiation_high"), duration: "scene",
+          description: "<p>Dead Zone ativa até a cena terminar ou você sofrer dano Severo: adversários que se movem dentro do alcance Muito Próximo de você marcam 1 Estresse; adversários tratam a área como terreno difícil; ao causar dano a um adversário na zona, some 1d8 de dano físico.</p>" });
+        return {
+          name: "Dead Zone", img: zone.img, form: "action",
+          description: "<p>Uma vez por descanso longo, quando você cria uma Surveyed Route, pode transformá-la numa <strong>Dead Zone</strong> até a cena terminar ou você sofrer dano Severo. Dentro da sua Dead Zone:</p><ul><li>Adversários que se movem dentro do alcance Muito Próximo de você marcam 1 Estresse.</li><li>Adversários tratam a área inteira como terreno difícil.</li><li>Quando você causa dano a um adversário na Dead Zone, some 1d8 de dano físico à rolagem de dano.</li></ul>",
+          effects: [zone],
+          flags: { [MODULE_ID]: { rolls: { "Rolar Dead Zone": { formula: "1d8", flavor: "Dead Zone (d8 físico) — some ao dano" } } } },
+          actions: {
+            ...featureAction({ name: "Dead Zone", img: zone.img, uses: { max: 1, recovery: "longRest" }, effects: [zone], target: { type: "self", amount: null } }),
+            ...featureAction({ name: "Rolar Dead Zone", img: CPR("status/radiation_low"), target: { type: "self", amount: null } })
+          }
+        };
+      })()]
+    }
+  ]
+};
+
+const TRAUMA_DOC = {
+  key: "trauma-doc",
+  classItems: [
+    { name: "Kit de Trauma", img: CPR("gear/medtech_bag"), description: "<p>Um kit de trauma cheio de fármacos e ferramentas ilegais. Metade do conteúdo não tem registro; a outra metade foi registrada no nome de outra pessoa.</p>" },
+    { name: "Etiqueta de Paciente", img: CPR("critical_injuries/body_critical_injury"), description: "<p>A etiqueta de paciente manchada de sangue de alguém que você não conseguiu salvar. Você ainda lembra o nome.</p>" }
+  ],
+  guide: {
+    traits: { agility: 1, strength: -1, finesse: 0, instinct: 2, presence: 0, knowledge: 1 },
+    primaryWeapon: "SMG Compacta", secondaryWeapon: "Drone Tático", armor: "Colete Balístico"
+  },
+  class: {
+    name: "Trauma Doc",
+    img: CPR("classes/trauma-doc/class-icon.png"),
+    description: `<p><strong>Medtech, medicina, cirurgia, sobrevivência</strong><br>"A morte é só uma falha de sistema com uma janela de reparo estreita."</p>
+<p><em>Jogue de Trauma Doc se você quiser…</em> Manter a Crew viva, fazer cirurgia no campo de batalha, estabilizar cyberware, usar drones médicos, reanimar aliados e transformar ferimentos num problema que você sabe resolver.</p>
+<p>Trauma Docs são médicos de campo, cirurgiões de clínica clandestina e milagreiros do cyberware que sabem manter as pessoas vivas quando o mundo já decidiu que elas deveriam estar mortas.</p>
+<p><strong>Itens de Classe:</strong> Um kit de trauma cheio de fármacos e ferramentas ilegais ou a etiqueta de paciente manchada de sangue de alguém que você não conseguiu salvar.</p>
+<p><em>Nota: atributos sugeridos e equipamento variam por subclasse — veja a nota de "Build Sugerida" na subclasse escolhida.</em></p>`,
+    domains: ["medtech"],
+    hitPoints: 5,
+    evasion: 10,
+    backgroundQuestions: [
+      "Quem foi a primeira pessoa que você não conseguiu salvar?",
+      "Que procedimento você fez que deveria ter sido impossível?",
+      "Que droga, implante ou técnica ilegal você conhece bem demais?"
+    ],
+    connections: [
+      "Quem se recusa a seguir as suas instruções médicas?",
+      "Qual personagem sabe o que você faz quando não há suprimentos para todo mundo?",
+      "Qual personagem você remendou depois de um trabalho sobre o qual ele ainda não fala?"
+    ],
+    hopeFeature: (() => {
+      const vulnerable = targetEffect({ name: "Stay With Me", img: CPR("status/quickfix"), statuses: ["vulnerable"], duration: "scene",
+        description: "<p>Mantido vivo pelo Stay With Me: temporariamente Vulnerável até receber atendimento médico ou a cena terminar.</p>" });
+      return {
+        name: "Stay With Me", img: vulnerable.img, form: "reaction",
+        description: "<p>Gaste 3 Esperança quando uma criatura dentro do alcance Próximo fosse marcar o último Ponto de Vida não marcado ou fazer um Movimento de Morte. Ela não sofre as consequências do Movimento de Morte e continua viva e consciente, limpando 1 Ponto de Vida, mas fica temporariamente <em>Vulnerável</em> até receber atendimento médico ou a cena terminar.</p>",
+        effects: [vulnerable],
+        actions: featureAction({ name: "Stay With Me", img: vulnerable.img, actionType: "reaction", costs: [{ key: "hope", value: 3 }], effects: [vulnerable], target: { type: "friendly", amount: 1 } })
+      };
+    })(),
+    classFeatures: [{
+      name: "Emergency Medicine", img: CPR("gear/medscanner"), form: "action",
+      description: "<p>Quando você tem um momento para tratar uma criatura dentro do alcance Corpo a Corpo, faça uma Rolagem de Interface (12). Em um sucesso, escolha uma:</p><ul><li>O alvo limpa 1 Estresse.</li><li>O alvo limpa uma condição física temporária, como <em>Vulnerável</em> ou <em>Imobilizado</em>.</li><li>O alvo estabiliza um implante danificado, sistema de suporte de vida ou componente de cyberware até o próximo descanso dele.</li></ul><p>Uma vez por descanso, quando você tem sucesso nessa rolagem, o alvo pode limpar 1 Ponto de Vida além de escolher um dos efeitos acima. Uma criatura só pode limpar um Ponto de Vida com Emergency Medicine uma vez por descanso.</p><p><em>Na ficha: \"Emergency Medicine\" faz a Rolagem de Interface (12); \"Limpar 1 PV\" controla o uso por descanso.</em></p>",
+      actions: {
+        ...withActionId(buildCardAction({ name: "Emergency Medicine", img: CPR("gear/medscanner"), difficulty: 12, range: "Melee", targetType: "friendly", targetAmount: 1 })),
+        ...featureAction({ name: "Limpar 1 PV", img: CPR("status/antibiotics"), uses: { max: 1, recovery: "shortRest" }, target: { type: "friendly", amount: 1 } })
+      }
+    }]
+  },
+  subclasses: [
+    {
+      name: "Combat Medic", img: CPR("classes/trauma-doc/subclasses/combat-medic.png"),
+      description: `<p><em>Jogue de Combat Medic se você quiser manter a Crew viva e fazer tratamentos de emergência no meio do combate.</em></p>
+<p><strong>Build Sugerida:</strong> Instinto +2, Agilidade +1, Conhecimento +1, Acuidade 0, Presença 0, Força −1. Equipamento recomendado: SMG Compacta (primária, uma mão) + Drone Tático (secundária, de Instinto) + Colete Balístico — mobilidade para chegar até quem caiu.</p>`,
+      spellcastingTrait: "instinct",
+      suggestedTraits: { agility: 1, strength: -1, finesse: 0, instinct: 2, presence: 0, knowledge: 1 },
+      foundation: [
+        {
+          name: "Rapid Response", img: CPR("drugs/stim"), form: "reaction",
+          description: "<p>Quando um aliado dentro do alcance Próximo marca um ou mais Pontos de Vida, você pode marcar 1 Estresse para se mover imediatamente até o alcance Corpo a Corpo dele. Na próxima vez que usar Emergency Medicine nesse aliado antes de a cena terminar, você rola com vantagem.</p>",
+          actions: featureAction({ name: "Rapid Response", img: CPR("drugs/stim"), actionType: "reaction", costs: [{ key: "stress", value: 1 }], target: { type: "friendly", amount: 1 } })
+        },
+        {
+          name: "Field Extraction", img: CPR("gear/inflatable_bed_and_sleepingbag"), form: "passive",
+          description: "<p>Quando você usa Emergency Medicine com sucesso numa criatura, pode movê-la imediatamente dentro do alcance Muito Próximo. Esse movimento pode colocá-la atrás de cobertura, fora do perigo imediato ou longe da visão inimiga.</p>"
+        }
+      ],
+      specialization: [{
+        name: "Mass Casualty Protocol", img: CPR("cyberware/medscanner"), form: "action",
+        description: "<p>Uma vez por descanso, quando você usa Emergency Medicine com sucesso, também pode tratar uma segunda criatura dentro do alcance Muito Próximo do alvo original.</p>",
+        actions: featureAction({ name: "Mass Casualty Protocol", img: CPR("cyberware/medscanner"), uses: { max: 1, recovery: "shortRest" }, target: { type: "friendly", amount: 1 } })
+      }],
+      mastery: [{
+        name: "Combat Triage", img: CPR("cyberware/biomonitor"), form: "action",
+        description: "<p>Uma vez por descanso longo, quando uma cena perigosa começa ou quando um aliado dentro do alcance Distante marca um ou mais Pontos de Vida, você pode dar uma ordem de triagem. Escolha até três aliados dentro do alcance Distante que possam te ouvir, te ver ou receber o seu sinal. Cada aliado escolhido pode se mover imediatamente dentro do alcance Muito Próximo e depois escolher uma:</p><ul><li>Limpar 1 Ponto de Vida e 1 Estresse.</li><li>Limpar uma condição física temporária.</li><li>Ganhar +2 na próxima rolagem.</li></ul>",
+        actions: featureAction({ name: "Combat Triage", img: CPR("cyberware/biomonitor"), uses: { max: 1, recovery: "longRest" }, target: { type: "friendly", amount: 3 } })
+      }]
+    },
+    {
+      name: "Street Surgeon", img: CPR("classes/trauma-doc/subclasses/street-surgeon.png"),
+      description: `<p><em>Jogue de Street Surgeon se você quiser usar medicina ilegal, remendos de cyberware, procedimentos de clínica clandestina e estimulantes perigosos para levar corpos além dos limites seguros.</em></p>
+<p><strong>Build Sugerida:</strong> Conhecimento +2, Acuidade +1, Instinto +1, Agilidade 0, Presença 0, Força −1. Equipamento recomendado: Lançador de Sucata (primária, duas mãos, de Conhecimento) + Jaqueta de Sintcouro — o mesmo atributo para atacar e para os protocolos.</p>`,
+      spellcastingTrait: "knowledge",
+      suggestedTraits: { agility: 0, strength: -1, finesse: 1, instinct: 1, presence: 0, knowledge: 2 },
+      foundation: [{
+        name: "Black-Clinic Procedure", img: CPR("gear/generic_street_drugs"), form: "action",
+        description: "<p>Quando você usa Emergency Medicine com sucesso numa criatura, pode dar a ela um aprimoramento perigoso além do efeito normal. Escolha um:</p><ul><li>Ela soma 1d8 à próxima rolagem de dano.</li><li>Ela ganha +2 na próxima Rolagem de Agilidade, Força ou Acuidade.</li><li>Ela ganha +2 de Evasão contra o próximo ataque que a tiver como alvo.</li></ul><p>Depois que a rolagem ou efeito aprimorado se resolver, ela marca 1 Estresse.</p><p><em>Na ficha: \"Rolar 1d8\" rola o dano extra da primeira opção.</em></p>",
+        flags: { [MODULE_ID]: { rolls: { "Rolar 1d8": { formula: "1d8", flavor: "Black-Clinic Procedure (d8) — some à rolagem de dano; depois, o alvo marca 1 Estresse" } } } },
+        actions: featureAction({ name: "Rolar 1d8", img: CPR("gear/generic_street_drugs"), target: { type: "self", amount: null } })
+      }],
+      specialization: [{
+        name: "Bad Medicine", img: CPR("gear/vial_poison"), form: "action",
+        description: "<p>Uma vez por descanso, quando você tem sucesso com uma carta de Medtech, ataque com arma ou Rolagem de Interface contra um adversário dentro do alcance Próximo, pode virar o seu conhecimento médico contra ele.</p><p>O alvo marca 1 Estresse. Na próxima vez que esse alvo causar dano, reduza o dano em 1 Ponto de Vida.</p>",
+        actions: featureAction({ name: "Bad Medicine", img: CPR("gear/vial_poison"), uses: { max: 1, recovery: "shortRest" }, target: { type: "hostile", amount: 1 } })
+      }],
+      mastery: [{
+        name: "Miracle Cocktail", img: CPR("dlc/gear/distilling_compound"), form: "action",
+        description: "<p>Uma vez por descanso longo, quando você usa Emergency Medicine com sucesso numa criatura, pode inundar o corpo dela com estabilizantes ilegais, drogas de combate, bloqueadores nervosos ou comandos de emergência de cyberware.</p><p>Além dos benefícios normais da Emergency Medicine, o alvo pode se mover imediatamente dentro do alcance Próximo e fazer uma rolagem de ação com vantagem. Se essa ação causar dano, some 2d8 à rolagem de dano.</p><p><em>Na ficha: a ação controla o uso e rola os 2d8.</em></p>",
+        flags: { [MODULE_ID]: { rolls: { "Miracle Cocktail": { formula: "2d8", flavor: "Miracle Cocktail (2d8) — some à rolagem de dano da ação com vantagem" } } } },
+        actions: featureAction({ name: "Miracle Cocktail", img: CPR("dlc/gear/distilling_compound"), uses: { max: 1, recovery: "longRest" }, target: { type: "friendly", amount: 1 } })
+      }]
+    }
+  ]
+};
+
 // Classes importadas, na ordem em que aparecem nos compêndios.
-const CLASSES = [RUNNER, SOLO, WARDEN];
+const CLASSES = [RUNNER, INFILTRATOR, SOLO, AUGMENTED, TECH, BROKER, RECLAIMER, TRAUMA_DOC, WARDEN];
 
 // ---------- Life Paths (substituem Ancestry) e Affiliations (substituem Community) ----------
 
@@ -943,10 +1690,12 @@ async function importLifePathsAndAffiliations() {
 //   oficiais (Chain Lightning "2d8+4" = flat x2). Com "prof" o dano escalava com a Proficiência.
 // - save = Rolagem de Reação do alvo. difficulty null = Dificuldade igual ao resultado da sua
 //   rolagem (Chain Lightning); damageMod "half" = metade do dano no sucesso (Earthquake).
+// - trait: rolagem de atributo (ex: "instinct") em vez de Rolagem de Interface; effects: efeitos
+//   do item (targetEffect) aplicados nos alvos pela ação; img: ícone da ação.
 function buildCardAction({
   actionType = "action", difficulty = null, damageStr = null, scaleDamage = null,
   range = null, targetType = "hostile", targetAmount = null, cost = [], uses = null,
-  save = null, name = null, damageFormula = null
+  save = null, name = null, damageFormula = null, trait = null, effects = [], img = null
 } = {}) {
   const dmg = damageStr ? parseDamage(damageStr) : null;
   // damageFormula: { formula, dmgType } para dano que não cabe em "XdY+Z" (ex: por Estresse
@@ -960,15 +1709,15 @@ function buildCardAction({
         : null;
   return {
     name: name ?? (actionType === "reaction" ? "Rolagem de Reação" : "Rolagem de Interface"),
-    img: "icons/skills/trades/academics-merchant-scribe.webp",
+    img: img ?? "icons/skills/trades/academics-merchant-scribe.webp",
     baseAction: true,
     systemPath: "actions",
     type: "attack",
     range: range ? (RANGE_MAP[range] || "melee") : "",
     target: { type: targetType, amount: targetAmount },
     roll: {
-      trait: null,
-      type: "spellcast",
+      trait,
+      type: trait ? "trait" : "spellcast",
       difficulty,
       bonus: null,
       advState: "neutral",
@@ -993,7 +1742,7 @@ function buildCardAction({
     uses: uses
       ? { value: null, max: String(uses.max), recovery: uses.recovery, consumeOnSuccess: !!uses.onSuccess }
       : { value: null, max: null, recovery: null, consumeOnSuccess: false },
-    effects: [],
+    effects: effects.map(e => ({ _id: e._id, onSave: false })),
     save: save ?? { trait: null, difficulty: null, damageMod: "none" },
     originItem: { type: "itemCollection" },
     triggers: [],
@@ -1142,6 +1891,32 @@ const ASSAULT_CARDS = [
   { name: "Relentless Assault", img: CPR("weapons/heavySMG_excellent"), level: 10, recallCost: 3, type: "ability", clone: "Onslaught", description: "<p>Quando você acerta um ataque com a sua arma, nunca causa dano abaixo do limiar Maior do alvo. O alvo sempre marca no mínimo 2 Pontos de Vida.</p><p>Além disso, quando uma criatura dentro do alcance da sua arma causa dano a um aliado com um ataque que não inclui você, você pode marcar 1 Estresse para forçá-la a fazer uma Rolagem de Reação (15). Em uma falha, o alvo marca 1 Ponto de Vida.</p>" }
 ];
 
+// Ghost: releituras das cartas oficiais de Midnight (Ghost Skin = Invisibility, Black Route = Rift Walker).
+// damageType troca o tipo de dano copiado da carta oficial (Throwing Blades é físico, Rain of Blades é mágico).
+const GHOST_CARDS = [
+  { name: "Pick and Pull", img: CPR("gear/lock_picking_set"), level: 1, recallCost: 0, type: "ability", clone: "Pick and Pull", description: "<p>Você tem vantagem em rolagens de ação para abrir fechaduras não digitais, burlar segurança física, desarmar armadilhas, desativar alarmes simples ou roubar itens de um alvo, na furtividade ou na força.</p>" },
+  { name: "Throwing Blades", img: CPR("weapons/thrown_weapon"), level: 1, recallCost: 1, type: "spell", clone: "Rain of Blades", damageType: "physical", description: "<p>Gaste 1 Esperança para fazer uma Rolagem de Interface e liberar uma rajada de lâminas de arremesso, microdrones ou fragmentos inteligentes silenciados que atingem todos os alvos dentro do alcance Muito Próximo.</p><p>Os alvos atingidos sofrem d8+2 de dano físico usando a sua Proficiência. Se um alvo atingido estiver Vulnerável, sofre 1d8 de dano extra.</p>" },
+  { name: "Digital Face", img: CPR("dlc/cyberware/realskinn-faceplate"), level: 1, recallCost: 0, type: "spell", clone: "Uncanny Disguise", description: "<p>Quando você tem alguns minutos para se preparar, pode marcar 1 Estresse para aplicar uma máscara sintética ou camada de pele inteligente igual a qualquer humanoide que já viu. Enquanto disfarçado, tem vantagem em Rolagens de Presença para evitar ser examinado.</p><p>Coloque nesta carta marcadores iguais ao seu atributo de Interface. Quando você faz uma ação disfarçado, gaste um marcador. Depois que a ação que gasta o último marcador se resolve, o disfarce cai.</p>" },
+  { name: "Wirebind", img: CPR("cyberware/slice_n_dice"), level: 2, recallCost: 0, type: "spell", clone: "Shadowbind", description: "<p>Faça uma Rolagem de Interface contra todos os adversários dentro do alcance Muito Próximo. Os alvos contra os quais tiver sucesso ficam temporariamente <em>Imobilizados</em> por fios-armadilha, amarras inteligentes, gel adesivo ou sistemas de segurança sequestrados.</p>" },
+  { name: "Shadow Asset", img: CPR("dlc/gear/suzumebachi_assassin_drone"), level: 2, recallCost: 1, type: "spell", clone: "Midnight Spirit", description: "<p>Gaste 1 Esperança para posicionar um recurso silencioso de infiltração, como um microdrone, isca óptica ou marcador de assassinato. Até o seu próximo descanso, o Shadow Asset pode seguir uma criatura em silêncio, vigiar um lugar, criar uma distração ou te ajudar a manter o disfarce. Ele não pode manipular fisicamente o ambiente. Quando você faz uma ação envolvendo uma criatura ou lugar vigiado pelo seu Shadow Asset, ganha vantagem.</p><p>Você também pode queimar o recurso para atingir um adversário: faça uma Rolagem de Interface contra um alvo dentro do alcance Muito Distante. Num acerto, role uma quantidade de d6 igual ao seu atributo de Interface e cause esse total de dano techno ao alvo. Depois, o Shadow Asset se dissipa. Você só pode ter um por vez.</p>" },
+  { name: "Ghost Skin", img: CPR("cyberware/color_shift"), level: 3, recallCost: 1, type: "spell", clone: "Invisibility", description: "<p>Faça uma Rolagem de Interface (10). Em um sucesso, marque 1 Estresse e escolha você ou um aliado dentro do alcance Corpo a Corpo para ficar <strong>Invisível</strong> por camuflagem óptica, pele fantasma ou tecnologia que embaralha sensores. Uma criatura Invisível não pode ser vista, a não ser por métodos de detecção apropriados, e rolagens de ataque contra ela têm desvantagem.</p><p>Coloque nesta carta marcadores iguais ao seu atributo de Interface. Quando a criatura Invisível faz uma ação, gaste um marcador. Depois que a ação que gasta o último marcador se resolve, o efeito termina. Você só pode rodar Ghost Skin em uma criatura por vez.</p>" },
+  { name: "Blackout Veil", img: CPR("ammo/grenade_smoke"), level: 3, recallCost: 1, type: "spell", clone: "Veil of Night", description: "<p>Faça uma Rolagem de Interface (13). Em um sucesso, você cria uma cortina de escuridão, chaff de sinal ou interferência entre dois pontos dentro do alcance Distante. Você conta como Escondido para as criaturas do outro lado do véu e tem vantagem nos ataques que faz através dele.</p><p>O véu fica até você rodar outro protocolo.</p>" },
+  { name: "Stealth Expertise", img: CPR("cyberware/tactile_boot"), level: 4, recallCost: 0, type: "ability", clone: "Stealth Expertise", description: "<p>Quando você rola com Medo tentando se mover sem ser notado por uma área perigosa, pode marcar 1 Estresse para rolar com Esperança em vez disso.</p><p>Se um aliado dentro do alcance Próximo também estiver tentando se mover sem ser notado e rolar com Medo, você pode marcar 1 Estresse para mudar o resultado dele para uma rolagem com Esperança.</p>" },
+  { name: "Weakpoint Tag", img: CPR("cyberware/homing_tracer"), level: 4, recallCost: 1, type: "spell", clone: "Glyph of Nightfall", description: "<p>Faça uma Rolagem de Interface contra um alvo dentro do alcance Muito Próximo. Em um sucesso, gaste 1 Esperança para marcá-lo com um rastreador oculto, glifo de mira ou scanner de ponto fraco, reduzindo temporariamente a Dificuldade dele num valor igual ao seu atributo de Interface (mínimo 1).</p>" },
+  { name: "Dead Drop Exit", img: CPR("dlc/gear/hidden-compartment"), level: 5, recallCost: 2, type: "spell", clone: "Phantom Retreat", description: "<p>Gaste 1 Esperança para preparar uma saída escondida onde você está, como um corredor de serviço, ângulo cego de câmera ou rota de extração planejada. Até o seu próximo descanso, você pode gastar 1 Esperança para acionar o plano de saída.</p><p>Quando fizer isso, você se move imediatamente até a saída preparada ou a uma posição segura dentro do alcance Muito Próximo dela, fica Escondido, e este protocolo termina. Esse movimento precisa seguir uma rota que possa plausivelmente existir na ficção.</p>" },
+  { name: "Hush Field", img: CPR("dlc/cyberware/signal_jammer"), level: 5, recallCost: 1, type: "spell", clone: "Hush", description: "<p>Faça uma Rolagem de Interface contra um alvo dentro do alcance Próximo. Em um sucesso, gaste 1 Esperança para instalar tecnologia supressora ao redor do alvo, cobrindo tudo dentro do alcance Muito Próximo dele e seguindo-o quando se move.</p><p>O alvo e tudo na área ficam <strong>Silenciados</strong> até o mestre gastar 1 Medo no turno dele para limpar a condição, você rodar Hush Field de novo ou sofrer dano Maior. Enquanto Silenciados, não podem fazer barulho nem rodar protocolos de comunicação ou usar efeitos que exijam comandos audíveis, verbais ou transmitidos.</p>" },
+  { name: "Black Route", img: CPR("programs/worm"), level: 6, recallCost: 2, type: "spell", clone: "Rift Walker", description: "<p>Faça uma Rolagem de Interface (15). Em um sucesso, você mapeia, abre ou prepara uma rota secreta pela área. Até o seu próximo descanso, você e os aliados que guiar podem usar essa rota para ir e voltar entre o local atual e outro dentro do alcance Muito Distante que você já tenha alcançado nesta cena.</p><p>Usando a rota, vocês têm vantagem em rolagens para evitar detecção, burlar segurança comum ou fugir de perseguição. A rota fica disponível até você decidir fechá-la ou o mestre gastar 1 Medo para revelar que ela foi comprometida.</p>" },
+  { name: "Mass Disguise", img: CPR("dlc/cyberware/personalized-faceplate"), level: 6, recallCost: 0, type: "spell", clone: "Mass Disguise", description: "<p>Quando você tem alguns minutos de silêncio para se concentrar, pode marcar 1 Estresse para mudar a aparência de todas as criaturas voluntárias dentro do alcance Próximo, usando equipamentos de rosto falso, identidades projetadas, camadas de pele inteligente, máscaras sintéticas ou tecnologia de disfarce coordenada. As novas formas precisam ter estrutura corporal e tamanho gerais parecidos, e podem ser alguém ou algo que você já viu ou algo totalmente inventado.</p><p>Uma criatura disfarçada tem vantagem em Rolagens de Presença para evitar ser examinada. Ative uma Contagem Regressiva (8). Ela avança como consequência escolhida pelo mestre. Quando dispara, os disfarces caem.</p>" },
+  { name: "Ghost-Synced", img: CPR("cyberware/internal_agent"), level: 7, recallCost: 2, type: "ability", clone: "Midnight-Touched", description: "<p>Quando 4 ou mais cartas de domínio do seu loadout forem da Competência Ghost, ganhe o seguinte:</p><ul><li>Uma vez por descanso, quando você tem 0 de Esperança e o mestre fosse ganhar 1 Medo, você pode ganhar 1 Esperança em vez disso.</li><li>Quando você acerta um ataque, pode marcar 1 Estresse para somar o resultado do seu Dado de Medo à rolagem de dano.</li></ul>" },
+  { name: "Vanishing Dodge", img: CPR("cyberware/kerenzikov"), level: 7, recallCost: 1, type: "spell", clone: "Vanishing Dodge", description: "<p>Quando um ataque contra você que causaria dano físico falha, você pode gastar 1 Esperança para disparar uma explosão de fumaça, cintilação de pele fantasma, salto de fase, piscada de emergência ou deslocamento óptico.</p><p>Você fica Escondido e se move para um ponto dentro do alcance Próximo do atacante. Continua Escondido até a próxima vez que fizer uma rolagem de ação.</p>" },
+  { name: "Shadowhunter", img: CPR("dlc/cyberware/kiroshi_monovision"), level: 8, recallCost: 2, type: "ability", clone: "Shadowhunter", description: "<p>Seus sistemas de combate, instintos e treinamento de assassinato funcionam melhor com pouca visibilidade.</p><p>Enquanto estiver envolto em penumbra, escuridão, fumaça, chuva forte, neblina densa, multidão ou interferência visual, você ganha +1 de Evasão e faz rolagens de ataque com vantagem.</p>" },
+  { name: "Feedback Charge", img: CPR("cyberware/emp_threading"), level: 8, recallCost: 1, type: "spell", clone: "Spellcharge", description: "<p>Quando você sofre dano techno, coloque nesta carta marcadores iguais aos Pontos de Vida que marcou. Você pode guardar marcadores iguais ao seu atributo de Interface.</p><p>Quando acerta um ataque, pode gastar qualquer quantidade de marcadores para somar um d6 por marcador à rolagem de dano.</p>" },
+  { name: "Fearmask", img: CPR("blackice/src/hellhound"), level: 9, recallCost: 2, type: "spell", clone: "Night Terror", description: "<p>Uma vez por descanso longo, escolha quaisquer alvos dentro do alcance Muito Próximo para te perceberem como uma ameaça de pesadelo, assassino impossível, fantasma de sensor corrompido ou alucinação disparada pelo medo. Os alvos precisam ter sucesso numa Rolagem de Reação (16) ou ficam temporariamente <strong>Horrified</strong>. Enquanto Horrified, ficam Vulneráveis.</p><p>Roube do mestre uma quantidade de Medo igual ao número de alvos Horrified, até o total de Medo na reserva dele. Role uma quantidade de d6 igual ao Medo roubado e cause o total de dano a cada alvo Horrified. Descarte o Medo roubado.</p>" },
+  { name: "Studying the Victim", img: CPR("dlc/cyberware/kill_display"), level: 9, recallCost: 1, type: "ability", clone: "Twilight Toll", description: "<p>Escolha um alvo dentro do alcance Distante. Quando você tem sucesso numa rolagem de ação contra ele que não resulta em rolagem de dano, coloque um marcador nesta carta. Quando causar dano a esse alvo, gaste qualquer quantidade de marcadores para somar um d12 por marcador à rolagem de dano.</p><p>Você só pode manter Studying the Victim em uma criatura por vez. Quando escolher um novo alvo ou fizer um descanso, limpe os marcadores não usados.</p>" },
+  { name: "Total Blackout", img: CPR("status/emp"), level: 10, recallCost: 2, type: "spell", clone: "Eclipse", description: "<p>Faça uma Rolagem de Interface (16). Uma vez por descanso longo, em um sucesso, mergulhe a área inteira dentro do alcance Distante em escuridão completa, apagão de sinal, saturação de fumaça, negação de sensores ou interferência que devora a luz, que só você e seus aliados conseguem atravessar com a vista.</p><p>Rolagens de ataque contra você ou um aliado dentro desse apagão têm desvantagem. Além disso, quando você ou um aliado tem sucesso com Esperança contra um adversário dentro do apagão, o alvo marca 1 Estresse.</p><p>O protocolo dura até o mestre gastar 1 Medo no turno dele para limpar o efeito ou você sofrer dano Severo.</p>" },
+  { name: "Specter Mode", img: CPR("blackice/src/wisp"), level: 10, recallCost: 1, type: "spell", clone: "Specter of the Dark", description: "<p>Marque 1 Estresse para ficar <strong>Spectral</strong> até fazer uma ação contra outra criatura. Enquanto Spectral, seu corpo fica envolto em camuflagem ativa, chaff de sinal e software de movimento preditivo.</p><p>Você fica Escondido, não aciona câmeras ou alarmes comuns e não pode ser alvo direto de ataques físicos, a menos que uma criatura esteja dentro do alcance Corpo a Corpo ou o mestre gaste 1 Medo para te revelar.</p><p>Enquanto Spectral, você passa por câmeras, grades de laser e outras barreiras controladas pela segurança como se tivesse o acesso correto. Isso não permite atravessar paredes sólidas ou barreiras sem um ponto de entrada plausível. Outras criaturas ainda podem ver sinais breves da sua passagem.</p>" }
+];
+
 // Nomes em português para as ações/efeitos copiados das cartas oficiais.
 const OFFICIAL_ACTION_NAMES = {
   "Mark Stress": "Marcar Estresse", "Spend Hope": "Gastar Esperança", "Avoid Condition": "Evitar Condição",
@@ -1178,12 +1953,160 @@ function cloneOfficialCard(official, cardName, img) {
   return { actions, effects, resource: foundry.utils.deepClone(src.system.resource ?? null), domainTouched: src.system.domainTouched ?? null };
 }
 
+// Chrome: releituras das cartas oficiais de Bone (Gripware Override = Wall Walk, Jumpjet Protocol = Flight).
+const CHROME_CARDS = [
+  { name: "Boosted Maneuvers", img: CPR("cyberware/cyberleg"), level: 1, recallCost: 0, type: "ability", clone: "Deft Maneuvers", description: "<p>Uma vez por descanso, marque 1 Estresse para correr para qualquer lugar dentro do alcance Distante sem fazer uma Rolagem de Agilidade.</p><p>Se terminar esse movimento dentro do alcance Corpo a Corpo de um adversário e atacá-lo imediatamente, ganhe +1 na rolagem de ataque.</p>" },
+  { name: "Quick Thinking", img: CPR("dlc/cyberware/kiroshi_optishield"), level: 1, recallCost: 1, type: "ability", clone: "I See It Coming", description: "<p>Quando você é alvo de um ataque feito de além do alcance Corpo a Corpo, pode marcar 1 Estresse para rolar um d4 e ganhar um bônus na Evasão igual ao resultado contra esse ataque.</p>" },
+  { name: "Gripware Override", img: CPR("cyberware/grip_foot"), level: 1, recallCost: 1, type: "spell", clone: "Wall Walk", description: "<p>Gaste 1 Esperança para permitir que uma criatura que você pode tocar escale paredes e tetos tão facilmente quanto anda no chão.</p><p>Isso dura até o fim da cena ou até você rodar Gripware Override de novo.</p>" },
+  { name: "Strategic Approach", img: CPR("cyberware/image_enhance"), level: 2, recallCost: 1, type: "ability", clone: "Strategic Approach", description: "<p>Depois de um descanso longo, coloque nesta carta marcadores iguais ao seu Conhecimento (mínimo 1). Na primeira vez que você se move dentro do alcance Próximo de um adversário e o ataca, pode gastar um marcador para escolher uma:</p><ul><li>Você faz o ataque com vantagem.</li><li>Você limpa 1 Estresse de um aliado dentro do alcance Corpo a Corpo do adversário.</li><li>Você soma um d8 à rolagem de dano.</li></ul><p>Quando você faz um descanso longo, limpe todos os marcadores não usados.</p>" },
+  { name: "Combat Drive", img: CPR("cyberware/battleglove"), level: 2, recallCost: 2, type: "ability", clone: "Ferocity", description: "<p>Quando você faz um adversário marcar 1 ou mais Pontos de Vida, pode gastar 2 Esperança para aumentar a sua Evasão pela quantidade de Pontos de Vida que ele marcou.</p><p>O bônus dura até depois do próximo ataque feito contra você.</p>" },
+  { name: "Bracing Frame", img: CPR("cyberware/artificial_shoulder_mount"), level: 3, recallCost: 1, type: "ability", clone: "Brace", description: "<p>Quando você marca um Espaço de Armadura para reduzir o dano, pode marcar 1 Estresse para marcar um Espaço de Armadura adicional.</p>" },
+  { name: "Jumpjet Protocol", img: CPR("dlc/cyberware/zero_gravity_thrusters"), level: 3, recallCost: 1, type: "spell", clone: "Flight", description: "<p>Faça uma Rolagem de Agilidade (15). Em um sucesso, coloque nesta carta marcadores iguais à sua Agilidade (mínimo 1).</p><p>Quando você faz uma rolagem de ação enquanto voa, gaste um marcador desta carta. Depois que a ação que gasta o último marcador se resolve, você desce até o chão logo abaixo de você.</p>" },
+  { name: "Kinetic Boost", img: CPR("cyberware/jump_booster"), level: 4, recallCost: 1, type: "ability", clone: "Boost", description: "<p>Marque 1 Estresse para tomar impulso num aliado voluntário dentro do alcance Próximo, se lançar no ar e fazer um ataque aéreo contra um alvo dentro do alcance Distante.</p><p>Você tem vantagem no ataque, soma um d10 à rolagem de dano e termina o movimento dentro do alcance Corpo a Corpo do alvo.</p>" },
+  { name: "Reflex Redirect", img: CPR("cyberware/popup_shield"), level: 4, recallCost: 1, type: "ability", clone: "Redirect", description: "<p>Quando um ataque feito contra você de além do alcance Corpo a Corpo falha, role uma quantidade de d6 igual à sua Proficiência.</p><p>Se algum resultado for 6, você pode marcar 1 Estresse para redirecionar o ataque e causar dano a um adversário dentro do alcance Muito Próximo.</p>" },
+  { name: "Combat Scan", img: CPR("cyberware/cybereye"), level: 5, recallCost: 1, type: "ability", clone: "Know Thy Enemy", description: "<p>Ao observar uma criatura, você pode fazer uma Rolagem de Instinto contra ela. Em um sucesso, gaste 1 Esperança e peça ao mestre um conjunto de informações sobre o alvo, entre estas opções:</p><ul><li>Os Pontos de Vida e Estresse não marcados dele.</li><li>A Dificuldade e os limiares de dano dele.</li><li>As táticas e os dados de dano do ataque padrão dele.</li><li>As features e Experiências dele.</li></ul><p>Além disso, em um sucesso, você pode marcar 1 Estresse para remover 1 Medo da reserva de Medo do mestre.</p>" },
+  { name: "Signature Move", img: CPR("cyberware/scratchers"), level: 5, recallCost: 1, type: "ability", clone: "Signature Move", description: "<p>Dê um nome e descreva o seu golpe característico.</p><p>Uma vez por descanso, quando você executa esse golpe como parte de uma ação, pode rolar um d20 como Dado de Esperança. Em um sucesso, limpe 1 Estresse.</p>" },
+  { name: "Rapid Riposte", img: CPR("dlc/cyberware/extra-joined-cyberarm"), level: 6, recallCost: 0, type: "ability", clone: "Rapid Riposte", description: "<p>Quando um ataque feito contra você de dentro do alcance Corpo a Corpo falha, você pode marcar 1 Estresse e aproveitar a oportunidade para causar ao atacante o dano de uma das suas armas ativas.</p>" },
+  { name: "Recovery Cycle", img: CPR("dlc/cyberware/cyberpillow"), level: 6, recallCost: 1, type: "ability", clone: "Recovery", description: "<p>Durante um descanso curto, você pode escolher um movimento de tempo livre de descanso longo em vez do de descanso curto.</p><p>Você pode gastar 1 Esperança para deixar um aliado fazer o mesmo.</p>" },
+  { name: "Chrome-Synced", img: CPR("cyberware/superchrome_covering"), level: 7, recallCost: 2, type: "ability", clone: "Bone-Touched", description: "<p>Quando 4 ou mais cartas de domínio do seu loadout forem da Competência Chrome, ganhe o seguinte:</p><ul><li>+1 de Agilidade.</li><li>Uma vez por descanso, você pode gastar 3 Esperança para fazer um ataque que teve sucesso contra você falhar.</li></ul>" },
+  { name: "Cruel Precision", img: CPR("dlc/cyberware/smart_lens"), level: 7, recallCost: 1, type: "ability", clone: "Cruel Precision", description: "<p>Quando você acerta um ataque com uma arma, ganhe um bônus na rolagem de dano igual à sua Acuidade ou à sua Agilidade.</p>" },
+  { name: "Crowd Control", img: CPR("cyberware/grapple_hand"), level: 8, recallCost: 1, type: "ability", clone: "Wrangle", description: "<p>Faça uma Rolagem de Agilidade contra todos os alvos dentro do alcance Próximo.</p><p>Gaste 1 Esperança para mover os alvos contra os quais teve sucesso, e quaisquer aliados voluntários dentro do alcance Próximo, para outro ponto dentro do alcance Próximo.</p>" },
+  { name: "Breaking Blow", img: CPR("weapons/Sledgehammer"), level: 8, recallCost: 3, type: "ability", clone: "Breaking Blow", description: "<p>Quando você acerta um ataque, pode marcar 1 Estresse para fazer o próximo ataque bem-sucedido contra esse mesmo alvo causar 2d12 de dano extra.</p>" },
+  { name: "On the Brink", img: CPR("dlc/cyberware/heuristic-health-monitor"), level: 9, recallCost: 1, type: "ability", clone: "On the Brink", description: "<p>Quando você tem 2 ou menos Pontos de Vida não marcados, não sofre dano Menor.</p>" },
+  { name: "Splintering Strike", img: CPR("cyberware/rippers"), level: 9, recallCost: 3, type: "ability", clone: "Splintering Strike", description: "<p>Gaste 1 Esperança e faça um ataque contra todos os adversários dentro do alcance da sua arma. Uma vez por descanso longo, em um sucesso contra qualquer alvo, some o dano causado e redistribua esse dano como quiser entre os alvos contra os quais teve sucesso.</p><p>Quando você causa dano a um alvo, role um dado de dano adicional e some o resultado ao dano causado a esse alvo.</p>" },
+  { name: "Deathrun", img: CPR("drugs/synthcoke"), level: 10, recallCost: 1, type: "ability", clone: "Deathrun", description: "<p>Gaste 3 Esperança para correr em linha reta pelo campo de batalha até um ponto dentro do alcance Distante, fazendo um ataque contra todos os adversários dentro do alcance da sua arma ao longo do caminho. Escolha a ordem em que causa dano aos alvos contra os quais teve sucesso.</p><p>Para o primeiro, role o dano da arma com +1 de Proficiência. Depois, remova um dado da rolagem de dano e cause o dano restante ao próximo alvo. Continue removendo um dado para cada alvo seguinte até acabarem os dados de dano ou os adversários. Você não pode ter como alvo o mesmo adversário mais de uma vez por ataque.</p>" },
+  { name: "Swift Step", img: CPR("cyberware/skate_foot"), level: 10, recallCost: 2, type: "ability", clone: "Swift Step", description: "<p>Quando um ataque feito contra você falha, limpe 1 Estresse. Se não puder limpar Estresse, ganhe 1 Esperança.</p>" }
+];
+
+// Systems: releituras das cartas oficiais de Codex. Os "Protocol Suite" são os Livros (tipo grimoire)
+// e reúnem vários protocolos; Displacement Route = Blink Out e Magnetic Override = Telekinesis (Arcana).
+// O asterisco que o PDF põe antes dos nomes dos Suites de nível 1 a 4 não entra no nome da carta.
+const SYSTEMS_CARDS = [
+  { name: "Ava Utility Kit", img: CPR("gear/tech_bag"), level: 1, recallCost: 2, type: "grimoire", clone: "Book of Ava", description: "<p><strong>Power Push:</strong> faça uma Rolagem de Interface contra um alvo dentro do alcance Corpo a Corpo. Em um sucesso, ele é arremessado até o alcance Distante e sofre d10+2 de dano techno usando a sua Proficiência.</p><p><strong>Reactive Plating:</strong> gaste 1 Esperança para instalar placas reativas, reforço de fibra inteligente ou um remendo de armadura temporário num alvo que você pode tocar. Ele ganha +1 na Pontuação de Armadura até o próximo descanso dele ou até você rodar Reactive Plating de novo.</p><p><strong>Spike Printer:</strong> faça uma Rolagem de Interface (12) para fabricar e lançar um espigão endurecido, parafuso de ancoragem, estilhaço cinético ou projétil de liga comprimida dentro do alcance Distante. Se usar como arma, faça a Rolagem de Interface contra a Dificuldade do alvo. Em um sucesso, cause d6 de dano físico usando a sua Proficiência.</p>" },
+  { name: "Illiat Software Pack", img: CPR("dlc/cyberware/chipware_compartment"), level: 1, recallCost: 2, type: "grimoire", clone: "Book of Illiat", description: "<p><strong>Neural Lullaby:</strong> faça uma Rolagem de Interface contra um alvo dentro do alcance Muito Próximo. Em um sucesso, você inunda o sistema nervoso, o cyberware ou a transmissão sensorial dele com um pulso sedativo. Ele fica <em>Adormecido</em> até sofrer dano ou o mestre gastar 1 Medo no turno dele para limpar essa condição.</p><p><strong>Arc Barrage:</strong> uma vez por descanso, gaste qualquer quantidade de Esperança e dispare micromísseis, tiros de drone, flechettes inteligentes ou projéteis de energia compactos que atingem um alvo à sua escolha dentro do alcance Próximo. Role uma quantidade de d6 igual à Esperança gasta e cause esse total de dano techno ao alvo.</p><p><strong>Direct Message:</strong> gaste 1 Esperança para abrir uma linha de comunicação criptografada com um alvo que você pode ver. A conexão dura até o seu próximo descanso ou até você rodar Direct Message de novo.</p>" },
+  { name: "Tyfar Field Kit", img: CPR("weapons/flamethrower"), level: 1, recallCost: 2, type: "grimoire", clone: "Book of Tyfar", description: "<p><strong>Wild Flame:</strong> faça uma Rolagem de Interface contra até três adversários dentro do alcance Corpo a Corpo. Os alvos contra os quais tiver sucesso sofrem 2d6 de dano techno e marcam 1 Estresse, enquanto uma rajada de chamas, plasma ou spray químico volátil sai do seu equipamento.</p><p><strong>Utility Arm:</strong> você posiciona uma mão mecânica, garra de drone ou manipulador remoto, com o mesmo tamanho e força que você, dentro do alcance Distante.</p><p><strong>Smoke Field:</strong> faça uma Rolagem de Interface (13) para soltar uma nuvem temporária espessa de fumaça, névoa, chaff de sinal ou vapor que se acumula numa área fixa dentro do alcance Muito Próximo. A névoa encobre fortemente essa área e tudo o que está nela.</p>" },
+  { name: "Sitil Disguise Rig", img: CPR("dlc/cyberware/holo_projector_palm"), level: 2, recallCost: 2, type: "grimoire", clone: "Book of Sitil", description: "<p><strong>Adjust Appearance:</strong> você muda a sua aparência e roupas com tecido que curva a luz, projeção facial, malha de pele ou tecnologia de disfarce para evitar ser reconhecido.</p><p><strong>Target Splitter:</strong> gaste 2 Esperança para ativar este auxílio de mira em você ou num aliado dentro do alcance Próximo. Na próxima vez que o alvo atacar, ele pode acertar um alvo adicional dentro do alcance contra quem a rolagem de ataque teria sucesso. Você só pode manter este protocolo em uma criatura por vez.</p><p><strong>Hard-Light Decoy:</strong> faça uma Rolagem de Interface (14). Em um sucesso, crie uma projeção visual temporária, duplicata de hard-light, objeto falso ou holograma tático, não maior que você, dentro do alcance Próximo, que dura enquanto você olhar para ela. Ela resiste a um exame até um observador chegar ao alcance Corpo a Corpo.</p>" },
+  { name: "Vagras Security Kit", img: CPR("upgrades/dna_lock"), level: 2, recallCost: 2, type: "grimoire", clone: "Book of Vagras", description: "<p><strong>Smart Lock:</strong> faça uma Rolagem de Interface (15) num objeto que você está tocando e que pode ser fechado, como fechadura, baú, porta, caixa, painel, cofre ou maleta. Uma vez por descanso, em um sucesso, você criptografa, reforça e sela o objeto para que só possa ser aberto por criaturas com a sua senha. Alguém com tecnologia compatível e uma hora para estudar o protocolo consegue quebrá-lo.</p><p><strong>Emergency Door:</strong> quando não houver adversários dentro do alcance Corpo a Corpo, faça uma Rolagem de Interface (13). Em um sucesso, gaste 1 Esperança para abrir uma porta de trânsito de curto alcance, rota de rompimento, painel de deslocamento ou passagem de emergência de onde você está até um ponto dentro do alcance Distante que você possa ver. Ela se fecha depois que uma criatura passa.</p><p><strong>Reveal:</strong> faça uma Rolagem de Interface. Se houver algo escondido por meios tecnológicos, digitais ou artificiais dentro do alcance Próximo, ele é revelado.</p>" },
+  { name: "Korvax Control Suite", img: CPR("upgrades/av_4_engine_upgrade"), level: 3, recallCost: 2, type: "grimoire", clone: "Book of Korvax", description: "<p><strong>Gravity Clamp:</strong> faça uma Rolagem de Interface para erguer temporariamente no ar um alvo que você pode ver e movê-lo dentro do alcance Próximo da posição original.</p><p><strong>Memory Scrub:</strong> gaste 1 Esperança para forçar um alvo dentro do alcance Corpo a Corpo a fazer uma Rolagem de Reação (15). Em uma falha, você sobrescreve, embaralha ou suprime o último minuto da memória de curto prazo dele, fazendo-o esquecer o último minuto da conversa.</p><p><strong>Repulsion Circle:</strong> marque 1 Estresse para instalar um campo de repulsão temporário, anel de choque ou perímetro cinético no chão onde você está. Todos os adversários dentro do alcance Corpo a Corpo, ou que entrarem nele, sofrem 2d12+4 de dano techno e são arremessados até o alcance Muito Próximo.</p>" },
+  { name: "Norai Heavy Package", img: CPR("cyberware/popup_grenade_launcher"), level: 3, recallCost: 2, type: "grimoire", clone: "Book of Norai", description: "<p><strong>Tether Clamp:</strong> faça uma Rolagem de Interface contra um alvo dentro do alcance Distante. Em um sucesso, ele fica temporariamente <em>Imobilizado</em> e marca 1 Estresse. Se o alvo for uma criatura voadora, este protocolo a derruba e a deixa temporariamente Imobilizada.</p><p><strong>Firebomb:</strong> faça uma Rolagem de Interface contra um alvo dentro do alcance Muito Distante. Em um sucesso, lance contra ele uma carga explosiva, carga de plasma, projétil volátil ou bomba entregue por drone que explode no impacto. O alvo e todas as criaturas dentro do alcance Muito Próximo dele fazem uma Rolagem de Reação (13). Quem falhar sofre d20+5 de dano techno usando a sua Proficiência. Quem tiver sucesso sofre metade do dano.</p>" },
+  { name: "Exota Fabrication Suite", img: CPR("dlc/cyberware/professional_cyberhand"), level: 4, recallCost: 3, type: "grimoire", clone: "Book of Exota", description: "<p><strong>Repudiate:</strong> você pode interromper um efeito tecnológico, digital ou techno em andamento. Faça uma Rolagem de Reação usando o seu atributo de Interface. Uma vez por descanso, em um sucesso, o efeito para e quaisquer consequências são evitadas.</p><p><strong>Deploy Construct:</strong> gaste 1 Esperança para posicionar um construto animado, enxame de drones, máquina improvisada ou unidade de hardware autônoma que obedece a comandos básicos. Faça uma Rolagem de Interface para comandá-lo a agir. Quando necessário, ele usa a sua Evasão e atributos, e os ataques dele causam 2d10+3 de dano físico. Você só pode manter um construto por vez, e ele se desfaz quando sofre qualquer dano.</p>" },
+  { name: "Displacement Route", img: CPR("upgrades/hover_upgrade"), level: 4, recallCost: 1, type: "spell", clone: "Blink Out", description: "<p>Faça uma Rolagem de Interface (12). Em um sucesso, gaste 1 Esperança para acionar uma rota de deslocamento de curto alcance, equipamento de salto de emergência, módulo de salto de fase ou sistema de realocação tática que te move para outro ponto que você pode ver dentro do alcance Distante.</p><p>Se houver criaturas voluntárias dentro do alcance Muito Próximo, gaste 1 Esperança extra por criatura para levá-las junto.</p>" },
+  { name: "Manifest Cover", img: CPR("status/cover"), level: 5, recallCost: 2, type: "spell", clone: "Manifest Wall", description: "<p>Faça uma Rolagem de Interface (15). Uma vez por descanso, em um sucesso, gaste 1 Esperança para criar uma parede temporária, barreira de hard-light, barricada portátil, escudo cinético ou estrutura instantânea entre dois pontos dentro do alcance Distante. Ela pode ter até 15 metros de altura e se formar em qualquer ângulo.</p><p>Criaturas ou objetos no caminho são empurrados para o lado que você escolher. A parede fica até o seu próximo descanso ou até você rodar Manifest Cover de novo.</p>" },
+  { name: "Long-Range Extraction", img: CPR("upgrades/range_upgrade"), level: 5, recallCost: 2, type: "spell", clone: "Teleport", description: "<p>Uma vez por descanso longo, você pode extrair ou deslocar instantaneamente você e qualquer quantidade de alvos voluntários dentro do alcance Próximo para um lugar onde já esteve, usando um sinalizador de retorno, equipamento de deslocamento ou ponto de extração pré-mapeado. Faça uma Rolagem de Interface (16) com estes modificadores:</p><ol><li>Se você conhece bem o lugar: +3.</li><li>Se visita o lugar com frequência: +1.</li><li>Se já visitou o lugar uma vez: +0.</li><li>Se só esteve lá uma vez: −2.</li></ol><p>Em um sucesso, você chega aonde pretendia. Em uma falha, chega fora do curso, e a margem de falha determina o quão longe.</p>" },
+  { name: "System Ban", img: CPR("programs/banhammer"), level: 6, recallCost: 0, type: "spell", clone: "Banish", description: "<p>Faça uma Rolagem de Interface contra um alvo dentro do alcance Próximo. Em um sucesso, role uma quantidade de d20 igual ao seu atributo de Interface. O alvo faz uma Rolagem de Reação com Dificuldade igual ao seu maior resultado. Em um sucesso, ele marca 1 Estresse, mas não é banido.</p><p>Uma vez por descanso, em uma falha, ele é banido deste campo de batalha, camada de sinal ou espaço físico ativo. Quando os personagens rolam com Medo, a Dificuldade sofre −1 e o alvo faz outra Rolagem de Reação. Em um sucesso, ele volta do banimento.</p>" },
+  { name: "Magnetic Override", img: CPR("upgrades/heavy_chasis"), level: 6, recallCost: 0, type: "spell", clone: "Telekinesis", description: "<p>Faça uma Rolagem de Interface contra um alvo dentro do alcance Distante. Em um sucesso, você usa força magnética, maquinário remoto, tecnologia gravitacional, drones industriais ou um conjunto de manipuladores pesados para movê-lo para qualquer lugar dentro do alcance Distante da posição original.</p><p>Você pode arremessar o alvo erguido como ataque, fazendo uma Rolagem de Interface adicional contra o segundo alvo que quer atingir. Em um sucesso, cause d12+4 de dano físico ao segundo alvo usando a sua Proficiência. Depois, este protocolo termina.</p>" },
+  { name: "Homet Access Suite", img: CPR("upgrades/smuggling_upgrade"), level: 7, recallCost: 0, type: "grimoire", clone: "Book of Homet", description: "<p><strong>Phase Breach:</strong> faça uma Rolagem de Interface (13). Uma vez por descanso, em um sucesso, você e todas as criaturas que estão te tocando podem atravessar uma parede ou porta dentro do alcance Próximo usando um módulo de fase, bypass molecular, campo de rompimento ou rota de deslocamento de matéria de emergência. O efeito termina quando todos estão do outro lado.</p><p><strong>Blacksite Gate:</strong> faça uma Rolagem de Interface (14). Uma vez por descanso longo, em um sucesso, abra um portal para uma instalação selada, camada oculta de rede, bunker profundo, esconderijo fora da rede, blacksite restrita ou espaço estranho onde você já esteve. O portal dura até o seu próximo descanso.</p>" },
+  { name: "Systems-Synced", img: CPR("upgrades/enhanced_interface_plug_integration"), level: 7, recallCost: 2, type: "ability", clone: "Codex-Touched", description: "<p>Quando 4 ou mais cartas de domínio do seu loadout forem da Competência Systems, ganhe o seguinte:</p><ul><li>Você pode marcar 1 Estresse para somar a sua Proficiência a uma Rolagem de Interface.</li><li>Uma vez por descanso, troque esta carta por qualquer carta do seu cofre sem pagar o Custo de Recordação.</li></ul>" },
+  { name: "Vyola Neural Suite", img: CPR("cyberware/neural_link"), level: 8, recallCost: 2, type: "grimoire", clone: "Book of Vyola", description: "<p><strong>Memory Delve:</strong> faça uma Rolagem de Interface contra um alvo dentro do alcance Distante. Em um sucesso, espie a mente, o arquivo de memória, o resíduo neural ou a percepção gravada do alvo e faça uma pergunta ao mestre. O mestre descreve as memórias que o alvo tem ligadas à resposta.</p><p><strong>Neural Loadshare:</strong> uma vez por descanso longo, gaste 1 Esperança para escolher duas criaturas voluntárias. Você cria um link temporário de suporte neural entre elas. Quando uma delas fosse marcar Estresse, pode escolher qual das duas marca. Este protocolo dura até o próximo descanso delas.</p>" },
+  { name: "Safehouse Deployment", img: CPR("dlc/gear/furniture-set"), level: 8, recallCost: 3, type: "spell", clone: "Safe Haven", description: "<p>Quando você tem alguns minutos de calma para se concentrar, pode gastar 2 Esperança para montar, destrancar ou revelar o seu <strong>Safehouse</strong>: um grande abrigo escondido, base móvel, bunker ou sala operacional oculta onde você e seus aliados podem se abrigar. Quando fizer isso, uma entrada escondida aparece em algum lugar dentro do alcance Próximo. Lá dentro, você pode tornar a entrada invisível.</p><p>Você e qualquer um lá dentro sempre podem sair. Depois que você sai, a porta precisa ser montada de novo. Quando você descansa no seu próprio Safehouse, pode escolher um movimento de tempo livre adicional.</p>" },
+  { name: "Ronin Alteration Suite", img: CPR("cyberware/chemskin"), level: 9, recallCost: 4, type: "grimoire", clone: "Book of Ronin", description: "<p><strong>Adaptive Shell:</strong> faça uma Rolagem de Interface (15). Em um sucesso, envolva-se em camuflagem adaptativa, blindagem de material inteligente, máscara de hard-light ou uma carcaça compacta de disfarce, transformando-se num objeto inanimado de até o dobro do seu tamanho normal. Você pode ficar nessa forma até sofrer dano.</p><p><strong>Permanent Weakpoint:</strong> uma vez por descanso longo, faça uma Rolagem de Interface contra um alvo dentro do alcance Próximo. Em um sucesso, ele fica permanentemente Vulnerável. Ele não pode limpar essa condição de jeito nenhum.</p>" },
+  { name: "Ultra Thermal Pulse", img: CPR("status/on_fire_deadly"), level: 9, recallCost: 4, type: "spell", clone: "Disintegration Wave", description: "<p>Faça uma Rolagem de Interface (18). Uma vez por descanso longo, em um sucesso, o mestre diz quais adversários dentro do alcance Distante têm Dificuldade 18 ou menor.</p><p>Marque 1 Estresse para cada um que você quiser atingir com este protocolo. Eles morrem instantaneamente.</p>" },
+  { name: "Yarrow Master Suite", img: CPR("status/prime_time"), level: 10, recallCost: 2, type: "grimoire", clone: "Book of Yarrow", description: "<p><strong>Time Dilation Field:</strong> faça uma Rolagem de Interface (18). Em um sucesso, você aciona um campo ilegal de dilatação temporal, overclock de percepção ou atraso causal localizado. O tempo para temporariamente para todos dentro do alcance Distante, menos você. Ele volta a correr na próxima vez que você faz uma rolagem de ação que tem outra criatura como alvo.</p><p><strong>Techno Immunity:</strong> gaste 5 Esperança para ficar imune a dano techno até o seu próximo descanso.</p>" },
+  { name: "Transcendent Link", img: CPR("gear/braindance_viewer"), level: 10, recallCost: 1, type: "spell", clone: "Transcendent Union", description: "<p>Uma vez por descanso longo, gaste 5 Esperança para ativar este protocolo em duas ou mais criaturas voluntárias.</p><p>Até o seu próximo descanso, quando uma criatura conectada por este link fosse marcar Estresse ou Pontos de Vida, as criaturas conectadas podem escolher quem marca.</p>" }
+];
+
+// Influence: releituras das cartas oficiais de Grace (Voice of Authority = Voice of Reason, de Splendor).
+// Bait the Mark não tem carta oficial equivalente: fica só com o texto.
+const INFLUENCE_CARDS = [
+  { name: "Smooth Operator", img: CPR("dlc/cyberware/neutongue"), level: 1, recallCost: 0, type: "ability", clone: "Deft Deceiver", description: "<p>Gaste 1 Esperança para ganhar vantagem numa rolagem para enganar, despistar, blefar, iludir ou convencer alguém a acreditar numa mentira que você contou.</p>" },
+  { name: "Captive Audience", img: CPR("dlc/cyberware/mood_eye"), level: 1, recallCost: 0, type: "spell", clone: "Enrapture", description: "<p>Faça uma Rolagem de Interface contra um alvo dentro do alcance Próximo. Em um sucesso, ele fica temporariamente <strong>Captivated</strong>. Enquanto Captivated, a atenção do alvo fica presa em você, estreitando o campo de visão dele e abafando qualquer som que não seja a sua voz, transmissão, performance ou projeção.</p><p>Uma vez por descanso, em um sucesso, você pode marcar 1 Estresse para forçar o alvo Captivated a marcar 1 Estresse também.</p>" },
+  { name: "Rally Broadcast", img: CPR("cyberware/audiovox"), level: 1, recallCost: 1, type: "ability", clone: "Inspirational Words", description: "<p>Depois de um descanso longo, coloque nesta carta marcadores iguais à sua Presença. Quando você fala com um aliado ou o incentiva diretamente, pode gastar um marcador desta carta para dar a ele um benefício entre estes:</p><ol><li>O aliado limpa 1 Estresse.</li><li>O aliado limpa 1 Ponto de Vida.</li><li>O aliado ganha 1 Esperança.</li></ol><p>Quando você faz um descanso longo, limpe todos os marcadores não usados.</p>" },
+  { name: "Truth Filter", img: CPR("cyberware/voice_stress_analyzer"), level: 2, recallCost: 1, type: "spell", clone: "Tell No Lies", description: "<p>Faça uma Rolagem de Interface contra um alvo dentro do alcance Muito Próximo. Em um sucesso, ele não pode mentir para você enquanto estiver dentro do alcance Próximo, mas não é obrigado a falar. Se você fizer uma pergunta e ele se recusar a responder, ele marca 1 Estresse e o efeito termina.</p><p>Normalmente o alvo não percebe que este protocolo foi ativado nele até ser levado a dizer a verdade.</p>" },
+  { name: "Public Provocation", img: CPR("dlc/gear/graf3"), level: 2, recallCost: 2, type: "ability", clone: "Troublemaker", description: "<p>Quando você provoca, insulta, expõe ou atiça um alvo dentro do alcance Distante, faça uma Rolagem de Presença contra ele.</p><p>Uma vez por descanso, em um sucesso, role uma quantidade de d4 igual à sua Proficiência. O alvo marca Estresse igual ao maior resultado.</p>" },
+  { name: "Sensory Overload", img: CPR("dlc/gear/telectronics_minimag_speakers"), level: 3, recallCost: 1, type: "spell", clone: "Hypnotic Shimmer", description: "<p>Faça uma Rolagem de Interface contra todos os alvos dentro do alcance Próximo de você. Uma vez por descanso, em um sucesso, crie uma exibição esmagadora de anúncios piscando, estática de braindance, distorção sonora, cores de hard-light ou projeções táticas que deixa temporariamente <strong>Stunned</strong> os alvos contra os quais teve sucesso e os força a marcar 1 Estresse.</p><p>Enquanto Stunned, eles não podem usar reações nem fazer qualquer outra ação até limparem essa condição.</p>" },
+  { name: "Voice of Authority", img: CPR("cyberware/chyron"), level: 3, recallCost: 1, type: "ability", clone: "Voice of Reason", description: "<p>Você fala com uma confiança sem igual, presença de comando ou autoridade cultivada. Tem vantagem em rolagens de ação para acalmar situações violentas ou convencer alguém a seguir a sua liderança.</p><p>Além disso, você ganha coragem sob pressão: quando todo o seu Estresse está marcado, ganhe +1 de Proficiência nas rolagens de dano.</p>" },
+  { name: "Crisis Counseling", img: CPR("gear/personal_carepak"), level: 4, recallCost: 1, type: "ability", clone: "Soothing Speech", description: "<p>Durante um descanso curto, quando você dedica tempo para confortar, estabilizar, orientar ou apoiar emocionalmente outro personagem enquanto usa nele o movimento de tempo livre Cuidar dos Ferimentos, ele limpa 1 Ponto de Vida adicional.</p><p>Quando fizer isso, você também limpa 2 Pontos de Vida.</p>" },
+  { name: "Bait the Mark", img: CPR("dlc/cyberware/leads_turn_on_show_off_nails"), level: 4, recallCost: 1, type: "ability", description: "<p>Descreva como você provoca, desafia, humilha, expõe ou atiça um alvo dentro do alcance Próximo e faça uma Rolagem de Presença contra ele.</p><p>Em um sucesso, o alvo marca 1 Estresse e, na próxima vez que o mestre der o Holofote a ele, ele precisa te atacar, e faz o ataque com desvantagem.</p>" },
+  { name: "Thought Profile", img: CPR("cyberware/braindance_recorder"), level: 5, recallCost: 2, type: "spell", clone: "Thought Delver", description: "<p>Você lê padrões nos outros por microexpressões, estresse na voz, vazamentos neurais, câmeras de vigilância ou perfil emocional. Gaste 1 Esperança para ler os pensamentos superficiais e vagos de um alvo dentro do alcance Distante.</p><p>Faça uma Rolagem de Interface contra o alvo para ir atrás de pensamentos mais profundos e escondidos. Numa rolagem com Medo, o alvo pode, a critério do mestre, perceber que você está lendo ele.</p>" },
+  { name: "Discord Trigger", img: CPR("dlc/cyberware/animal_behaviour_chip"), level: 5, recallCost: 1, type: "spell", clone: "Words of Discord", description: "<p>Sussurre palavras de discórdia, transmita uma ordem falsa, explore uma rivalidade ou acione um comando comportamental num adversário dentro do alcance Corpo a Corpo, e faça uma Rolagem de Interface (13). Em um sucesso, o alvo marca 1 Estresse e ataca outro adversário em vez de você ou seus aliados.</p><p>Terminado esse ataque, o alvo percebe o que aconteceu. Na próxima vez que você rodar Discord Trigger nele, sofra −5 na Rolagem de Interface.</p>" },
+  { name: "Never Off Camera", img: CPR("cyberware/shoulder_cam"), level: 6, recallCost: 2, type: "ability", clone: "Never Upstaged", description: "<p>Quando você marca 1 ou mais Pontos de Vida por um ataque, pode marcar 1 Estresse para colocar nesta carta marcadores iguais aos Pontos de Vida marcados.</p><p>No seu próximo ataque bem-sucedido, ganhe +5 na rolagem de dano por marcador na carta e depois limpe todos os marcadores.</p>" },
+  { name: "Talk To Me", img: CPR("dlc/cyberware/cyberaudio_suite"), level: 6, recallCost: 0, type: "ability", clone: "Share the Burden", description: "<p>Uma vez por descanso, assuma o Estresse de uma criatura voluntária dentro do alcance Corpo a Corpo. O alvo descreve que conhecimento íntimo, estática emocional, medo pessoal ou memória privada vaza da mente dele nesse momento entre vocês.</p><p>Transfira para você qualquer quantidade do Estresse marcado dele e ganhe 1 Esperança por Estresse transferido.</p>" },
+  { name: "Endless Charisma", img: CPR("dlc/gear/smart-vanity"), level: 7, recallCost: 1, type: "ability", clone: "Endless Charisma", description: "<p>Depois de fazer uma rolagem de ação para persuadir, mentir, negociar, se apresentar, comandar, manipular ou conquistar simpatia, você pode gastar 1 Esperança para rolar de novo o Dado de Esperança ou de Medo.</p>" },
+  { name: "Influence-Synced", img: CPR("cyberware/light_tattoo"), level: 7, recallCost: 2, type: "ability", clone: "Grace-Touched", description: "<p>Quando 4 ou mais cartas de domínio do seu loadout forem da Competência Influence, ganhe o seguinte:</p><ul><li>Você pode marcar um Espaço de Armadura em vez de marcar 1 Estresse.</li><li>Quando você fosse forçar um alvo a marcar uma quantidade de Pontos de Vida, pode forçá-lo a marcar essa mesma quantidade de Estresse em vez disso.</li></ul>" },
+  { name: "Remote Persona", img: CPR("cyberware/microvideo"), level: 8, recallCost: 0, type: "spell", clone: "Astral Projection", description: "<p>Uma vez por descanso longo, marque 1 Estresse para criar uma cópia projetada, persona remota, avatar de hard-light, corpo de transmissão hackeada ou procurador social de você mesmo, que pode aparecer em qualquer lugar onde você já esteve.</p><p>Você vê e ouve pela projeção como se fosse você e afeta o mundo como se estivesse lá. Uma criatura que investigue a projeção percebe que ela é artificial, digital ou gerada por tecnologia. O efeito dura até o seu próximo descanso ou até a projeção sofrer qualquer dano.</p>" },
+  { name: "Mass Captivation", img: CPR("gear/electric_guitar"), level: 8, recallCost: 3, type: "spell", clone: "Mass Enrapture", description: "<p>Faça uma Rolagem de Interface contra todos os alvos dentro do alcance Distante. Os alvos contra os quais tiver sucesso ficam temporariamente <strong>Captivated</strong>. Enquanto Captivated, a atenção do alvo fica presa em você, estreitando o campo de visão dele e abafando qualquer som que não seja a sua voz, transmissão, performance ou projeção.</p><p>Marque 1 Estresse para forçar todos os alvos Captivated a marcar 1 Estresse, encerrando este protocolo.</p>" },
+  { name: "Adaptive Persona", img: CPR("cyberware/techhair"), level: 9, recallCost: 3, type: "spell", clone: "Copycat", description: "<p>Uma vez por descanso longo, esta carta pode imitar as features de outra carta de domínio de nível 8 ou menor no loadout de outro jogador. Gaste Esperança igual à metade do nível da carta para ganhar acesso à feature.</p><p>Isso dura até o seu próximo descanso ou até o outro jogador colocar a carta no cofre.</p>" },
+  { name: "Master of the Craft", img: CPR("cyberware/skill_chip"), level: 9, recallCost: 0, type: "ability", clone: "Master of the Craft", description: "<p>Ganhe +2 permanente em duas das suas Experiências ou +3 permanente em uma delas. Depois, coloque esta carta no seu cofre permanentemente.</p>" },
+  { name: "Signal Boost", img: CPR("gear/radio_scanner_music_player"), level: 10, recallCost: 1, type: "spell", clone: "Encore", description: "<p>Quando um aliado dentro do alcance Próximo causa dano a um adversário, você pode fazer uma Rolagem de Interface contra esse mesmo alvo. Em um sucesso, você causa ao alvo o mesmo dano que o aliado causou.</p><p>Se a Rolagem de Interface tiver sucesso com Medo, coloque esta carta no seu cofre.</p>" },
+  { name: "Notorious", img: CPR("dlc/gear/wall-art"), level: 10, recallCost: 0, type: "ability", clone: "Notorious", description: "<p>As pessoas sabem quem você é e o que você fez, e te tratam diferente por causa disso. Quando você usa a sua fama para conseguir o que quer, pode marcar 1 Estresse antes de rolar para ganhar +10 no resultado.</p><p>Sua comida e bebida são sempre de graça aonde quer que vá, e todo o resto que você compra tem o preço reduzido em uma sacola de dinheiro, crédito, escambo ou ouro, até o mínimo de um punhado. Esta carta não conta para o máximo de 5 cartas de domínio do seu loadout e não pode ser colocada no cofre.</p>" }
+];
+
+// Frontier: releituras das cartas oficiais de Sage (Solar Flare Array = Stunning Sunlight, de Splendor).
+// Street Instinct e Forecast Model não têm equivalente oficial: ficam com o texto (e uma ação simples).
+const FRONTIER_CARDS = [
+  { name: "Street Instinct", img: CPR("cyberware/olfactory_boost"), level: 1, recallCost: 0, type: "ability", description: "<p>Uma vez por descanso, quando você entra num ambiente urbano, em ruínas ou hostil, faça uma Rolagem de Instinto (12). Em um sucesso, coloque um marcador de Rua nesta carta. Num sucesso com Esperança, coloque dois.</p><ul><li><strong>Cover Line:</strong> quando você é alvo de um ataque de além do alcance Corpo a Corpo, gaste este marcador para ganhar +2 de Evasão contra esse ataque.</li><li><strong>Open Lane:</strong> gaste este marcador para se mover para um ponto dentro do alcance Distante.</li><li><strong>Hazard Mark:</strong> quando causar dano, gaste este marcador para somar 1d6 de dano.</li></ul><p>Limpe os marcadores não usados ao descansar.</p>" },
+  { name: "Trapline Launcher", img: CPR("weapons/Crossbow"), level: 1, recallCost: 1, type: "spell", clone: "Vicious Entangle", damageType: "physical", description: "<p>Faça uma Rolagem de Interface contra um alvo dentro do alcance Distante. Num acerto, você dispara uma linha de captura no alvo. Ele sofre 1d8+1 de dano físico e fica Imobilizado.</p><p>Além disso, você pode gastar 1 Esperança para lançar uma segunda linha contra outro adversário dentro do alcance Próximo do alvo, deixando-o temporariamente Imobilizado.</p>" },
+  { name: "Trail Reader", img: CPR("cyberware/radar_sonar_implant"), level: 1, recallCost: 0, type: "ability", clone: "Gifted Tracker", description: "<p>Quando você rastreia uma criatura, veículo ou comboio específico, pode gastar qualquer quantidade de Esperança e fazer essa mesma quantidade de perguntas ao mestre. Quando encontrar alvos rastreados desse jeito, ganhe +1 de Evasão contra eles.</p><ol><li>Em que direção eles foram?</li><li>Há quanto tempo passaram por aqui?</li><li>O que eles estavam fazendo aqui?</li><li>Quantos deles estavam aqui?</li></ol>" },
+  { name: "Field Swarm", img: CPR("upgrades/onboard_rocket_pod"), level: 2, recallCost: 1, type: "grimoire", clone: "Conjure Swarm", damageType: "physical", description: "<p><strong>Guardian Swarm:</strong> marque 1 Estresse para soltar microdrones de escudo que te cercam. Quando sofrer dano, reduza a gravidade em um limiar. Você pode gastar 1 Esperança para manter o enxame ativo depois de sofrer dano.</p><p><strong>Razor Swarm:</strong> faça uma Rolagem de Interface contra todos os adversários dentro do alcance Próximo. Gaste 1 Esperança para lançar o enxame numa explosão de impactos de microdrones. Os alvos contra os quais teve sucesso sofrem 2d8+3 de dano físico.</p>" },
+  { name: "Scout Companion", img: CPR("dlc/gear/savannah-panther"), level: 2, recallCost: 1, type: "spell", clone: "Natural Familiar", description: "<p>Gaste 1 Esperança para chamar uma ciberfera ou drone batedor para o seu lado até o seu próximo descanso, até rodar Scout Companion de novo ou até o companheiro ser alvo de um ataque. Se gastar 1 Esperança extra, pode chamar um companheiro que voa.</p><p>Você pode se comunicar com ele, fazer uma Rolagem de Interface para comandá-lo a realizar tarefas simples e marcar 1 Estresse para ver pelos olhos dele. Quando você causa dano a um adversário dentro do alcance Corpo a Corpo do companheiro, soma um d6 à rolagem de dano.</p>" },
+  { name: "Corrosive Round", img: CPR("ammo/paintball_acid"), level: 3, recallCost: 1, type: "spell", clone: "Corrosive Projectile", description: "<p>Faça uma Rolagem de Interface contra um alvo dentro do alcance Distante. Em um sucesso, cause d6+4 de dano techno usando a sua Proficiência.</p><p>Além disso, marque 2 ou mais de Estresse para deixá-lo permanentemente <strong>Corroded</strong>. Enquanto Corroded, o alvo sofre −1 na Dificuldade para cada 2 de Estresse que você gastou. Esta condição é cumulativa.</p>" },
+  { name: "Deployable Ascender", img: CPR("gear/rope"), level: 3, recallCost: 1, type: "spell", clone: "Towering Stalk", description: "<p>Uma vez por descanso, você pode instalar uma torre de ancoragem, linha de escalada ou equipamento de subida rápida dentro do alcance Próximo, fácil de escalar. A altura dele pode chegar até o alcance Distante.</p><p>Marque 1 Estresse para usar este protocolo como ataque: faça uma Rolagem de Interface contra um adversário ou grupo de adversários dentro do alcance Próximo. O equipamento que surge ergue no ar os alvos contra os quais teve sucesso e os derruba, causando d8 de dano físico usando a sua Proficiência.</p>" },
+  { name: "Grapple Snare", img: CPR("dlc/gear/ion_cuffs"), level: 4, recallCost: 1, type: "spell", clone: "Death Grip", description: "<p>Faça uma Rolagem de Interface contra um alvo dentro do alcance Próximo e escolha uma:</p><ol><li>Você puxa o alvo para o alcance Corpo a Corpo ou se puxa para o alcance Corpo a Corpo dele.</li><li>Você aperta o alvo e o força a marcar 2 de Estresse.</li><li>Todos os adversários entre você e o alvo precisam ter sucesso numa Rolagem de Reação (13) ou são pegos pelos cabos, sofrendo 3d6+2 de dano físico.</li></ol><p>Em um sucesso, a armadilha sai das suas mãos, equipamento, veículo ou drone, causando o efeito escolhido e deixando o alvo temporariamente Imobilizado.</p>" },
+  { name: "Forecast Model", img: CPR("gear/radar_detector"), level: 4, recallCost: 1, type: "spell", description: "<p>Uma vez por descanso, gaste 2 Esperança para fazer uma avaliação tática do ambiente atual, usando dados de rota, scans do terreno, marcas locais, sinais de gangue, mapas antigos ou instinto de sobrevivência. Faça ao mestre uma pergunta de sim ou não sobre a área, rota, perigo, estrutura ou situação atual. O mestre responde com sinceridade com base no que está presente ou é razoavelmente detectável.</p><p>Depois da resposta, na próxima vez que você ou um aliado agir diretamente com base nessa informação, ganha +2 na rolagem de ação.</p>",
+    actions: featureAction({ name: "Forecast Model", img: CPR("gear/radar_detector"), costs: [{ key: "hope", value: 2 }], uses: { max: 1, recovery: "shortRest" }, target: { type: "self", amount: null } }) },
+  { name: "Razor Mesh", img: CPR("cyberware/skin_weave"), level: 5, recallCost: 1, type: "spell", clone: "Thorn Skin", description: "<p>Uma vez por descanso, gaste 1 Esperança para se cobrir de malha de lâminas, espinhos reativos ou nanofibras defensivas e coloque nesta carta marcadores iguais ao seu atributo de Interface.</p><p>Quando sofrer dano, pode gastar qualquer quantidade de marcadores para rolar essa quantidade de d6. Some os resultados e reduza o dano recebido nesse valor. Se estiver dentro do alcance Corpo a Corpo do atacante, cause esse mesmo dano de volta a ele. Quando descansar, limpe os marcadores não usados.</p>" },
+  { name: "Field Bunker", img: CPR("gear/tent_and_camping_equipment"), level: 5, recallCost: 1, type: "spell", clone: "Wild Fortress", description: "<p>Faça uma Rolagem de Interface (13). Em um sucesso, gaste 2 Esperança para montar um bunker de sobrevivência, barricada natural, domo de sucata, abrigo de casco rígido, cobertura de emergência ou estrutura defensiva de montagem rápida, onde você e um aliado podem se proteger.</p><p>Dentro do bunker, uma criatura não pode ser alvo de ataques e não pode atacar. Ataques contra o bunker têm sucesso automaticamente. O bunker tem os limiares de dano abaixo e dura até marcar 3 Pontos de Vida (use marcadores nesta carta). <strong>Limiares: 15/30.</strong></p>" },
+  { name: "Convoy Vehicles", img: CPR("vehicles/helicopter"), level: 6, recallCost: 0, type: "spell", clone: "Conjured Steeds", description: "<p>Gaste qualquer quantidade de Esperança para chamar ou garantir essa mesma quantidade de veículos simples, motos, feras, cibermontarias, drones ou transportes de sobrevivência que você e seus aliados podem conduzir até o seu próximo descanso longo ou até os veículos sofrerem qualquer dano.</p><p>Os veículos dobram o seu deslocamento em viagem e, em perigo, permitem se mover dentro do alcance Distante sem rolar. Criaturas conduzindo um veículo sofrem −2 nas rolagens de ataque e ganham +2 nas rolagens de dano.</p>" },
+  { name: "Scavenger", img: CPR("gear/mre"), level: 6, recallCost: 1, type: "ability", clone: "Forager", description: "<p>Como um movimento de tempo livre adicional, role um d6 para ver o que você recolhe. Descreva com o mestre e adicione ao inventário como consumível. O grupo pode carregar até cinco consumíveis recolhidos por vez.</p><ol><li>Uma ração única, estimulante ou item de conforto (limpa 2 de Estresse).</li><li>Uma relíquia bonita, bugiganga valiosa ou achado do mercado negro (ganha 2 de Esperança).</li><li>Um chip de acesso antigo, marcador de rota ou módulo de campo (+2 numa Rolagem de Interface).</li><li>Um frasco médico, curativo de trauma ou estabilizador de emergência (limpa 2 PV).</li><li>Um amuleto da sorte, dado viciado ou ficha do velho mundo (rola de novo qualquer dado).</li><li>Escolha uma das opções acima.</li></ol>" },
+  { name: "Frontier-Synced", img: CPR("gear/radiation_suit"), level: 7, recallCost: 2, type: "ability", clone: "Sage-Touched", description: "<p>Quando 4 ou mais cartas de domínio do seu loadout forem da Competência Frontier, ganhe o seguinte:</p><ul><li>Enquanto estiver num ambiente urbano, em ruínas ou hostil, ganhe +2 nas Rolagens de Interface.</li><li>Uma vez por descanso, você pode dobrar a sua Agilidade ou Instinto numa rolagem que usa esse atributo. Escolha isso antes de rolar.</li></ul>" },
+  { name: "Survival Overclock", img: CPR("drugs/boost"), level: 7, recallCost: 2, type: "spell", clone: "Wild Surge", description: "<p>Uma vez por descanso longo, marque 1 Estresse para ativar um overclock de sobrevivência, levando além dos limites seguros o seu equipamento de sobrevivência, software de reflexos, filtros de perigo, assistências de movimento, scanners de terreno e estimulantes de emergência. Descreva como entra em modo de sobrevivência e coloque um d6 nesta carta com o 1 virado para cima.</p><p>Enquanto o Dado de Survival Overclock estiver ativo, some o valor dele a todas as suas rolagens de ação. Depois de somar o valor a uma rolagem, aumente o valor do dado em um. Quando o valor passaria de 6 ou você descansar, o overclock queima e você marca 1 Estresse adicional.</p>" },
+  { name: "Field Markers", img: CPR("gear/roadflare"), level: 8, recallCost: 2, type: "spell", clone: "Forest Sprites", description: "<p>Faça uma Rolagem de Interface (13). Em um sucesso, gaste qualquer quantidade de Esperança para criar a mesma quantidade de marcadores de campo em pontos à sua escolha dentro do alcance Distante, com estes benefícios:</p><ul><li>Aliados ganham +3 nas rolagens de ataque contra adversários dentro do alcance Muito Próximo de um marcador.</li><li>Aliados que marcam Armadura dentro do alcance Muito Próximo de um marcador podem marcar uma Armadura extra.</li></ul><p>Um marcador some depois de dar um benefício ou sofrer qualquer dano.</p>" },
+  { name: "Solar Flare Array", img: CPR("gear/flashlight"), level: 8, recallCost: 2, type: "spell", clone: "Stunning Sunlight", description: "<p>Faça uma Rolagem de Interface para disparar uma rajada de cartuchos de sinalização incandescentes contra todos os adversários dentro do alcance Distante. Em um sucesso, gaste qualquer quantidade de Esperança e force essa quantidade de alvos contra os quais teve sucesso a fazer uma Rolagem de Reação (14).</p><p>Quem tiver sucesso sofre 3d20+3 de dano techno. Quem falhar sofre 4d20+5 de dano techno e fica temporariamente <strong>Blinded</strong>. Enquanto Blinded, tem desvantagem em rolagens de ataque e não pode ter como alvo nada além do alcance Próximo, a menos que perceba por outro sentido.</p>" },
+  { name: "Frontier Shrine", img: CPR("gear/glowstick"), level: 9, recallCost: 2, type: "ability", clone: "Fane of the Wilds", description: "<p>Depois de um descanso longo, coloque nesta carta marcadores iguais à quantidade de cartas de domínio de Frontier no seu loadout e cofre. Quando fizer uma Rolagem de Interface, pode gastar qualquer quantidade de marcadores depois da rolagem para ganhar +1 por marcador gasto.</p><p>Quando tiver um sucesso crítico numa Rolagem de Interface de um protocolo de Frontier, ganhe um marcador. Quando fizer um descanso longo, limpe os marcadores não usados.</p>" },
+  { name: "Zone Reconfiguration", img: CPR("upgrades/housing_capacity"), level: 9, recallCost: 1, type: "spell", clone: "Plant Dominion", description: "<p>Faça uma Rolagem de Interface (18). Uma vez por descanso longo, em um sucesso, você reconfigura a zona de combate ao redor em qualquer lugar dentro do alcance Distante, usando equipamento de engenharia de campo, cargas de demolição, barricadas portáteis, drones de construção, foamcrete, espinhos de estrada, lasers de corte ou infraestrutura comprometida.</p><p>Por exemplo: abrir caminho por destroços densos, derrubar coberturas instáveis, abrir uma brecha numa zona destruída, erguer um muro de sucata e barricadas, expor infraestrutura enterrada, criar uma rampa ou ponte, ou alterar a cobertura disponível no campo de batalha. A mudança precisa ser algo plausível de fazer com maquinário, demolição ou construção.</p>" },
+  { name: "Ruinbreaker Rig", img: CPR("gear/linearframe_sigma"), level: 10, recallCost: 2, type: "spell", clone: "Force of Nature", description: "<p>Marque 1 Estresse para ativar um exo-equipamento pesado de sobrevivência. Enquanto ativo, suportes hidráulicos travam no lugar, ferramentas de corte se abrem, placas de armadura se reposicionam, filtros de perigo entram em overclock e o seu equipamento entra em modo de rompimento total. Você ganha:</p><ul><li>Quando tem sucesso num ataque ou Rolagem de Interface, some +10 ao dano.</li><li>Quando causa dano suficiente para derrotar uma criatura dentro do alcance Próximo, você arranca blindagem utilizável, drena uma célula de energia ou aciona espuma de reparo de emergência e limpa um Espaço de Armadura.</li><li>Você não pode ficar Imobilizado.</li></ul><p>Antes de fazer uma rolagem de ação, você precisa gastar 1 Esperança. Se não puder, o equipamento superaquece, trava ou queima a carga de emergência, e você volta ao estado normal.</p>" },
+  { name: "Zone Suppression Array", img: CPR("gear/cryopump"), level: 10, recallCost: 2, type: "spell", clone: "Tempest", description: "<p>Escolha um modo de supressão e faça uma Rolagem de Interface contra todos os alvos dentro do alcance Distante. Os alvos contra os quais tiver sucesso sofrem os efeitos até o mestre gastar 1 Medo no turno dele para encerrar este protocolo.</p><ol><li><strong>Cryofoam Flood:</strong> você rompe cilindros criogênicos, linhas de refrigeração ou tanques de supressão de emergência pela zona. Cause 2d20+8 de dano techno; os alvos ficam temporariamente Vulneráveis.</li><li><strong>Vector Fan Grid:</strong> você ativa ventiladores industriais, drones de turbina, respiros de pressão, barreiras de trânsito ou motores de força direcional. Cause 3d10+10 de dano techno e escolha a direção da pressão. Os alvos não podem se mover contra essa direção.</li><li><strong>Chaffstorm Screen:</strong> você enche a zona de poeira, chaff, fumaça, partículas de sucata, ruído de sensor e interferência visual hostil. Cause 5d6+9 de dano techno. Ataques feitos de além do alcance Corpo a Corpo têm desvantagem.</li></ol>" }
+];
+
+// Medtech: releituras das cartas oficiais de Splendor (Lean On Me vem de Valor; Trauma Field = Healing
+// Field e Rejuvenation Barrier, de Sage).
+const MEDTECH_CARDS = [
+  { name: "Vital Beacon", img: CPR("gear/homing_tracer"), level: 1, recallCost: 1, type: "spell", clone: "Bolt Beacon", description: "<p>Faça uma Rolagem de Interface contra um alvo dentro do alcance Distante. Em um sucesso, gaste 1 Esperança para marcá-lo com um scanner vital, laser cirúrgico, sinalizador bioelétrico ou rastreador diagnóstico, causando d8+2 de dano techno usando a sua Proficiência.</p><p>O alvo fica temporariamente Vulnerável e visivelmente marcado até a condição ser limpa.</p>" },
+  { name: "Field Patch", img: CPR("drugs/antibiotics"), level: 1, recallCost: 1, type: "spell", clone: "Mending Touch", description: "<p>Quando você pode tirar alguns minutos para se concentrar numa criatura que está ajudando, gaste 2 Esperança para usar espuma de trauma, suturas, gel de nanitos, bloqueadores de dor, software de terapia ou estabilizadores de emergência e limpar 1 PV ou 1 Estresse.</p><p>Uma vez por descanso longo, quando você usa esse tempo para aprender algo novo sobre a criatura ou revelar algo sobre você, pode limpar 2 PV ou 2 de Estresse dela em vez disso.</p>" },
+  { name: "Reassurance", img: CPR("status/veritas"), level: 1, recallCost: 0, type: "ability", clone: "Reassurance", description: "<p>Uma vez por descanso, depois que um aliado tenta uma rolagem de ação, mas antes das consequências acontecerem, você pode orientar, acalmar a respiração dele, acionar um estabilizador, gritar um comando treinado ou ajudá-lo a atravessar o choque.</p><p>Quando fizer isso, o aliado pode rolar os dados de novo.</p>" },
+  { name: "Emergency Procedure", img: CPR("gear/air_hypo"), level: 2, recallCost: 1, type: "spell", clone: "Healing Hands", description: "<p>Faça uma Rolagem de Interface (13) tendo como alvo uma criatura que não seja você dentro do alcance Corpo a Corpo. Em um sucesso, marque 1 Estresse para limpar 2 PV ou 2 de Estresse do alvo. Em uma falha, marque 1 Estresse para limpar 1 PV ou 1 Estresse do alvo.</p><p>Você não pode curar o mesmo alvo com Emergency Procedure de novo até o seu próximo descanso longo.</p>" },
+  { name: "Last Record", img: CPR("cyberware/memory_chip"), level: 2, recallCost: 1, type: "spell", clone: "Final Words", description: "<p>Você consegue extrair o último registro biológico, neural ou cibernético de um cadáver, implante danificado, chip de memória ou biomonitor morto. Faça uma Rolagem de Interface (13). Num sucesso com Esperança, descobre a resposta para três perguntas. Num sucesso com Medo, para uma pergunta.</p><p>A informação é confiável, mas você não descobre nada além do que o alvo sabia ou testemunhou em vida. Numa falha, ou depois de conseguir as respostas, o corpo, implante ou fonte de dados fica inutilizável para este protocolo.</p>" },
+  { name: "Second Wind", img: CPR("drugs/speedheal"), level: 3, recallCost: 2, type: "ability", clone: "Second Wind", description: "<p>Uma vez por descanso, quando você acerta um ataque contra um adversário, pode acionar adrenalina, picos de endorfina, bloqueadores de dor, drogas de combate ou reflexos de sobrevivência para limpar 3 de Estresse ou 1 PV.</p><p>Num sucesso com Esperança, você também aciona isso num aliado dentro do alcance Próximo, que limpa 3 de Estresse ou 1 PV.</p>" },
+  { name: "Lean On Me", img: CPR("status/sedative"), level: 3, recallCost: 1, type: "ability", clone: "Lean on Me", description: "<p>Uma vez por descanso longo, quando você estabiliza, consola, apoia ou ajuda um aliado a atravessar uma rolagem de ação que falhou, vocês dois podem limpar 2 de Estresse.</p><p>Isso pode ser trazê-lo de volta de um pânico, forçá-lo a respirar, aplicar uma dose calmante, reiniciar o feedback neural dele ou simplesmente se recusar a deixá-lo entrar em espiral.</p>" },
+  { name: "Death Lock", img: CPR("status/deathtrance"), level: 4, recallCost: 1, type: "spell", clone: "Life Ward", description: "<p>Gaste 3 Esperança e escolha um aliado dentro do alcance Próximo. Ele é colocado sob um protocolo de trava de morte, como um override cardíaco, backup neural, bomba de sangue de emergência, curativo de estase de trauma ou Autoinjetor de Última Chance.</p><p>Quando esse aliado fosse fazer um movimento de morte, ele limpa 1 Ponto de Vida em vez disso. O efeito termina quando salva o alvo de um movimento de morte, quando você usa Death Lock em outro alvo ou quando faz um descanso longo.</p>" },
+  { name: "Trauma Field", img: CPR("gear/generic_pharmaceuticals"), level: 4, recallCost: 2, type: "spell", clone: "Healing Field", description: "<p>Uma vez por descanso longo, você pode criar um campo de trauma ao seu redor usando drones médicos, névoa de nanitos, autoinjetores ou sinalizadores de triagem de emergência. Você e todos os aliados dentro do alcance Próximo limpam 1 PV.</p><p>Gaste 2 Esperança para que você e todos os aliados dentro do alcance Próximo limpem 2 PV em vez disso.</p>" },
+  { name: "Emergency Fabricator", img: CPR("cyberware/tool_hand"), level: 5, recallCost: 1, type: "spell", clone: "Shape Material", description: "<p>Gaste 1 Esperança para montar um fabricador médico compacto, impressora de trauma ou ferramenta de reconstrução de emergência. Você pode criar, remodelar, reforçar ou consertar um objeto ou material dentro do alcance Próximo, não maior que você. Este protocolo é feito para uso médico, de sobrevivência e de emergência: por exemplo, imprimir um suporte protético temporário, selar uma ferida, criar uma ferramenta, estabilizar cyberware danificado ou moldar tecido sintético.</p><p>Se você usar este protocolo para ajudar uma criatura a agir apesar de um ferimento ou sistema falhando, ela ganha +2 na próxima rolagem de ação. Este protocolo não pode criar armas, máquinas complexas, eletrônicos avançados, munição, bens valiosos ou cyberware permanente.</p>" },
+  { name: "Shock Charge", img: CPR("ammo/battery"), level: 5, recallCost: 2, type: "spell", clone: "Smite", description: "<p>Uma vez por descanso, gaste 3 Esperança para carregar uma arma, implante, equipamento de desfibrilação, ferramenta cirúrgica ou golpe de sobrecarga neural.</p><p>Na próxima vez que rolar dano, dobre o resultado da rolagem de dano.</p>" },
+  { name: "Trauma Ward", img: CPR("cyberware/enhanced_antibodies"), level: 6, recallCost: 2, type: "spell", clone: "Zone of Protection", description: "<p>Faça uma Rolagem de Interface (16). Uma vez por descanso longo, em um sucesso, escolha um ponto dentro do alcance Distante e monte ali uma ala de trauma para todos os aliados dentro do alcance Muito Próximo desse ponto. Ela pode aparecer como um perímetro de drones médicos, clínica de hard-light, tenda cirúrgica, cortina de nanitos, campo de estabilização de emergência ou zona automatizada de suporte de vida.</p><p>Quando fizer isso, coloque um d6 nesta carta com o 1 virado para cima. Quando um aliado na zona sofre dano, ele o reduz pelo valor do dado. Depois, aumente o valor do dado em um. Quando o valor passaria de 6, o efeito termina.</p>" },
+  { name: "Restoration Suite", img: CPR("cyberware/toxin_binders"), level: 6, recallCost: 2, type: "spell", clone: "Restoration", description: "<p>Depois de um descanso, coloque nesta carta marcadores iguais ao seu atributo de Interface. Toque uma criatura e gaste qualquer quantidade de marcadores para limpar 1 PV ou 1 Estresse por marcador.</p><p>Você também pode gastar 2 marcadores ao tocar uma criatura para limpar uma condição ou tratar um problema físico, cibernético ou psicológico. O mestre pode exigir mais marcadores dependendo da gravidade. Depois de um descanso, limpe todos os marcadores.</p>" },
+  { name: "Combat Transfusion", img: CPR("cyberware/vampyres"), level: 7, recallCost: 1, type: "spell", clone: "Healing Strike", description: "<p>Quando você causa dano a um alvo, pode gastar 2 Esperança para limpar 1 PV de um aliado dentro do alcance Próximo.</p><p>Isso pode ser acionar um curativo de trauma ligado, liberar nanitos armazenados ou usar a biologia ou o maquinário exposto do inimigo para alimentar um tratamento de emergência.</p>" },
+  { name: "Medtech-Synced", img: CPR("cyberware/biomonitor"), level: 7, recallCost: 2, type: "ability", clone: "Splendor-Touched", description: "<p>Quando 4 ou mais cartas de domínio do seu loadout forem da Competência Medtech, ganhe o seguinte:</p><ul><li>+3 no seu limiar de dano Severo.</li><li>Uma vez por descanso, quando um dano recebido fosse te fazer marcar PV, você pode marcar essa quantidade de Estresse ou gastar essa quantidade de Esperança em vez disso.</li></ul>" },
+  { name: "Impact Reducer", img: CPR("cyberware/hardend_shielding"), level: 8, recallCost: 2, type: "spell", clone: "Shield Aura", description: "<p>Marque 1 Estresse para aplicar uma aura protetora num alvo dentro do alcance Próximo, como blindagem de emergência, supressão de dor ou reforço de nanitos. Quando o alvo marca um Espaço de Armadura, reduz a gravidade em um limiar extra.</p><p>Se este protocolo fizer uma criatura que sofreria dano não marcar nenhum PV, o efeito termina. Você só pode manter Impact Reducer em uma criatura por vez.</p>" },
+  { name: "Rejuvenation Barrier", img: CPR("gear/cryotank"), level: 8, recallCost: 1, type: "spell", clone: "Rejuvenation Barrier", description: "<p>Faça uma Rolagem de Interface (15). Uma vez por descanso, em um sucesso, crie uma barreira temporária de blindagem móvel de suporte de vida ao seu redor, no alcance Próximo. Você e os aliados dentro da barreira quando o protocolo é ativado limpam 1d4 PV.</p><p>Enquanto a barreira estiver ativa, você e os aliados dentro dela têm resistência a dano físico vindo de fora da barreira. Quando você se move, a barreira te acompanha.</p>" },
+  { name: "Clinical Authority", img: CPR("dlc/cyberware/psiberstuff_watch-man"), level: 9, recallCost: 2, type: "spell", clone: "Overwhelming Aura", description: "<p>Faça uma Rolagem de Interface (15) para ativar um amplificador neurológico de presença. Em um sucesso, gaste 2 Esperança para fazer a sua Presença ficar igual ao seu atributo de Interface até o seu próximo descanso longo.</p><p>Enquanto este protocolo estiver ativo, uma criatura precisa marcar 1 Estresse quando te tiver como alvo de um ataque.</p>" },
+  { name: "Trauma Lance", img: CPR("weapons/microwaver"), level: 9, recallCost: 2, type: "spell", clone: "Salvation Beam", description: "<p>Faça uma Rolagem de Interface (16). Em um sucesso, marque qualquer quantidade de Estresse para ter como alvo uma linha de aliados dentro do alcance Distante com drones cirúrgicos, espuma de trauma, pulsos de suporte de vida ou sistemas de reparo de emergência.</p><p>Você pode limpar PV dos alvos igual à quantidade de Estresse marcado, dividido entre eles como quiser.</p>" },
+  { name: "Invigoration", img: CPR("drugs/surge"), level: 10, recallCost: 3, type: "spell", clone: "Invigoration", description: "<p>Quando você ou um aliado dentro do alcance Próximo já usou uma feature que tem limite de uso, como uma vez por descanso ou uma vez por sessão, você pode gastar qualquer quantidade de Esperança e rolar essa quantidade de d6. Se algum resultado for 6, a feature pode ser usada de novo.</p><p>Isso pode representar estimulantes de emergência, backups de memória, reinício neural, descarga de adrenalina, overclock de cyberware ou forçar um corpo além dos limites seguros.</p>" },
+  { name: "Lazarus Procedure", img: CPR("drugs/rapidetox"), level: 10, recallCost: 3, type: "spell", clone: "Resurrection", description: "<p>Faça uma Rolagem de Interface (20) sobre o corpo de uma criatura que morreu na cena atual. O corpo precisa estar em grande parte recuperável, ou deve haver um cérebro, núcleo neural, backup cibernético ou implante vital intacto com que você possa trabalhar. Em um sucesso, traga a criatura de volta à vida usando cirurgia de emergência, órgãos sintéticos, reinício neural, tecido clonado ou substituição cibernética.</p><p>A criatura restaurada limpa todos os PV marcados e depois marca 3 de Estresse. Ela volta viva, consciente e estável, mas abalada física e psicologicamente. Até o próximo descanso longo dela, fica temporariamente Vulnerável e não pode se beneficiar de Lazarus Procedure de novo. Depois, role um d6. Num resultado de 5 ou menos, coloque esta carta no seu cofre permanentemente.</p>" }
+];
+
+// Troca o tipo de todo dano das ações (ex: "physical" no lugar do "magical" da carta oficial).
+function setDamageType(actions, type) {
+  for (const action of Object.values(actions ?? {})) {
+    const damage = action.damage;
+    if (!damage) continue;
+    for (const part of [damage.main, ...Object.values(damage.parts ?? {})]) {
+      if (part?.type) part.type = [type];
+    }
+  }
+}
+
 // Competências (domínios homebrew). Para adicionar uma, registre aqui com as cartas dela;
 // importDomainCards registra o domínio no Homebrew do sistema e cria as cartas.
 const COMPETENCIES = [
   { id: "network", label: "Network", src: ICON("competency-network"), cardImg: "systems/daggerheart/assets/icons/domains/domain-card/blade.png", cards: NETWORK_CARDS },
   { id: "aegis", label: "Aegis", src: ICON("competency-aegis"), cardImg: "systems/daggerheart/assets/icons/domains/domain-card/valor.png", cards: AEGIS_CARDS },
-  { id: "assault", label: "Assault", src: ICON("competency-assault"), cardImg: "systems/daggerheart/assets/icons/domains/domain-card/blade.png", cards: ASSAULT_CARDS }
+  { id: "assault", label: "Assault", src: ICON("competency-assault"), cardImg: "systems/daggerheart/assets/icons/domains/domain-card/blade.png", cards: ASSAULT_CARDS },
+  { id: "ghost", label: "Ghost", src: ICON("competency-ghost"), cardImg: "systems/daggerheart/assets/icons/domains/domain-card/midnight.png", cards: GHOST_CARDS },
+  { id: "chrome", label: "Chrome", src: ICON("competency-chrome"), cardImg: "systems/daggerheart/assets/icons/domains/domain-card/bone.png", cards: CHROME_CARDS },
+  { id: "systems", label: "Systems", src: ICON("competency-systems"), cardImg: "systems/daggerheart/assets/icons/domains/domain-card/codex.png", cards: SYSTEMS_CARDS },
+  { id: "influence", label: "Influence", src: ICON("competency-influence"), cardImg: "systems/daggerheart/assets/icons/domains/domain-card/grace.png", cards: INFLUENCE_CARDS },
+  { id: "frontier", label: "Frontier", src: ICON("competency-frontier"), cardImg: "systems/daggerheart/assets/icons/domains/domain-card/sage.png", cards: FRONTIER_CARDS },
+  { id: "medtech", label: "Medtech", src: ICON("competency-medtech"), cardImg: "systems/daggerheart/assets/icons/domains/domain-card/splendor.png", cards: MEDTECH_CARDS }
 ];
 
 // A chave em system.actions precisa ser igual ao _id da ação: o sistema grava usos e outros
@@ -1225,6 +2148,7 @@ async function importDomainCards() {
         const official = officialCards.find(o => o.name === card.clone);
         if (official) c = { ...card, ...cloneOfficialCard(official, card.name, card.img) };
         else console.warn(`Edgeheart | Carta oficial "${card.clone}" não encontrada; ${card.name} fica só com texto.`);
+        if (card.damageType) setDamageType(c.actions, card.damageType);
       }
       return {
       _id: cardId(competency.id, c.name),
@@ -1711,7 +2635,7 @@ function competencyCards(id) {
   const levels = [...new Set(competency.cards.map(c => c.level))].sort((a, b) => a - b);
   return levels.map(level => `<h2>NÍVEL ${level}</h2>` + competency.cards.filter(c => c.level === level).map(card =>
     `<h3>@UUID[Compendium.world.${PACKS.domains.name}.Item.${cardId(id, card.name)}]{${card.name}}</h3>`
-    + `<p><em>Nível ${card.level} · ${card.type === "spell" ? "Protocol" : "Ability"} · Custo de Recordação ${card.recallCost}</em></p>`
+    + `<p><em>Nível ${card.level} · ${{ spell: "Protocol", grimoire: "Protocol Suite" }[card.type] ?? "Ability"} · Custo de Recordação ${card.recallCost}</em></p>`
     + card.description
   ).join("")).join("");
 }

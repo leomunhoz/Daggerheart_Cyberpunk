@@ -166,3 +166,54 @@ Rode a macro **"Importar Edgeheart (Núcleo)"** de novo para recriar os compênd
 - **Kill Chain Die:** a feature Kill Chain mostra o dado atual na ficha (e no selo do cabeçalho) e tem três ações: Rolar, Aumentar (d4 → d6 → d8 → d10 → d12 → d20) e Resetar. O dado volta a d4 sozinho no fim da cena; No Way Back o ajusta para d10.
 - **Competência Assault:** as 21 cartas, releituras das cartas oficiais de Blade, com a automação copiada delas (incluindo o Assault-Synced, ativo com 4+ cartas de Assault no loadout).
 - A página de Assault do diário agora é gerada das cartas do compêndio, com links.
+
+## v1.9.0 — Classe Infiltrator e Competência Ghost
+
+- Nova classe **Infiltrator** (Competência Ghost, Evasão 12, PV 5), com as subclasses **Silent Killer** (Acuidade) e **Phantom** (Agilidade).
+- **Cover:** a feature Cover Work mostra o Cover atual (0 a 3) na ficha e no selo do cabeçalho. Ações: Ganhar Cover, Setup (gasta 1, +2 na rolagem) e Takedown (gasta 1 e rola o d6, ou d8 com Kill Window). Now You See Me ganha 1, Extraction Window gasta 1 e Impossible Exit gasta 3. Sem Cover suficiente a ação não começa, e cancelar a janela não gasta Cover. No fim da cena o Cover zera sozinho.
+- Opening Strike rola os d6 do seu Tier; Clean Exit, No Witnesses e Impossible Exit deixam você Escondido; Perfect Ambush deixa o alvo Vulnerável.
+- **Competência Ghost:** as 21 cartas, releituras das cartas oficiais de Midnight (Ghost Skin vem de Invisibility e Black Route de Rift Walker), com a automação copiada delas. Throwing Blades causa dano físico.
+- A página de Ghost do diário agora é gerada das cartas do compêndio, com links.
+
+## v1.10.0 — Classe Augmented e Competência Chrome
+
+- Nova classe **Augmented** (Competência Chrome, Evasão 11, PV 6), com as subclasses **Reflex Suite** (Agilidade) e **Titan Frame** (Força).
+- **Integrated Chrome:** a ação "Calibrar Atributo" escolhe o Atributo Calibrado (Agilidade, Força ou Acuidade), mostrado no selo do cabeçalho; a ação "Integrated Chrome" marca 1 Estresse e rola o d6 (d8 com Reinforced Build e Força calibrada). A Rolagem de Humanidade e a chance de controle da aba Chrome já tratam a Carga Cibernética como 1 menor.
+- Reinforced Build dá +1 de Armadura só enquanto Força estiver calibrada; Heavy Chrome Walking dá +3 nos limiares até o fim da cena.
+- Chrome Surge rola o d8, Fast Enough rola o d6 (e o Opening Strike do Infiltrator usa o mesmo mecanismo de "rolar ao usar").
+- **Competência Chrome:** as 21 cartas, releituras das cartas oficiais de Bone (Gripware Override vem de Wall Walk e Jumpjet Protocol de Flight), com a automação copiada delas.
+- A página de Chrome do diário agora é gerada das cartas do compêndio, com links.
+
+## v1.11.0 — Classe Tech e Competência Systems
+
+- Nova classe **Tech** (Competência Systems, Evasão 10, PV 5), com as subclasses **Rigger** (Conhecimento) e **Saboteur** (Acuidade).
+- **Jury-Rig:** ações "Jury-Rig" (1× por cena), "Jury-Rig Extra" (marca 1 Estresse) e "Rolar Boost" (d6).
+- Companion Drone: "Ajuda do Drone" gasta 1 Esperança e rola o d8 de Ajuda; "Proteger Drone" marca 1 Estresse. Drone Network rola o d8 de redução de dano.
+- Planted Charge: "Plantar Carga" (1 Estresse) e "Acionar: Disrupt" (alvo Vulnerável); Controlled Demolition rola os 3d10 e deixa os alvos Imobilizados.
+- **Competência Systems:** as 21 cartas, releituras das cartas oficiais de Codex (os "Protocol Suite" são os Livros, do tipo grimório; Displacement Route vem de Blink Out e Magnetic Override de Telekinesis), com a automação copiada delas.
+- A página de Systems do diário agora é gerada das cartas do compêndio, com links; o tipo "Protocol Suite" aparece nas cartas-grimório.
+
+## v1.12.0 — Classe Broker e Competência Influence
+
+- Nova classe **Broker** (Competência Influence, Evasão 10, PV 5), com as subclasses **Fixer** e **Icon** (as duas de Presença).
+- **Terms of Engagement:** as opções Pressure, Opening e Reassurance são ações que registram a escolha no chat; "Opção Adicional" marca 1 Estresse.
+- **Public Persona:** "Escolher Public Persona" guarda Beloved, Feared ou Famous e mostra a escolha no selo do cabeçalho. O Atributo Calibrado do Augmented passou a usar o mesmo mecanismo de escolha.
+- Contacts Everywhere rola os 2d8; Black-Market Network, Live Feed, Everybody Owes Somebody e Living Brand controlam os usos por descanso.
+- **Competência Influence:** as 21 cartas, releituras das cartas oficiais de Grace (Voice of Authority vem de Voice of Reason), com a automação copiada delas. Bait the Mark não tem equivalente oficial e fica só com o texto.
+- A página de Influence do diário agora é gerada das cartas do compêndio, com links.
+
+## v1.13.0 — Classe Reclaimer e Competência Frontier
+
+- Nova classe **Reclaimer** (Competência Frontier, Evasão 11, PV 6), com as subclasses **Outrider** (Agilidade) e **Zonebreaker** (Instinto).
+- **Surveyed Route:** gasta 1 Esperança e faz a Rolagem de Instinto (12); no sucesso, aplica o efeito Surveyed Route até o fim da cena. Stunt Driver faz a Rolagem de Agilidade (15), 1× por cena.
+- Home Ground tem uma ação para cada condição (Vulnerável ou Imobilizado); Drive Off rola os 3d10; Field Salvage e Dead Zone rolam os dados de dano extra.
+- **Competência Frontier:** as 21 cartas, releituras das cartas oficiais de Sage, com a automação copiada delas (Trapline Launcher e Field Swarm causam dano físico; Solar Flare Array vem de Stunning Sunlight). Street Instinct e Forecast Model não têm equivalente oficial.
+- A página de Frontier do diário agora é gerada das cartas do compêndio, com links.
+
+## v1.14.0 — Classe Trauma Doc e Competência Medtech
+
+- Nova classe **Trauma Doc** (Competência Medtech, Evasão 10, PV 5), com as subclasses **Combat Medic** (Instinto) e **Street Surgeon** (Conhecimento).
+- **Emergency Medicine:** faz a Rolagem de Interface (12) num aliado Corpo a Corpo; "Limpar 1 PV" controla o uso por descanso. Stay With Me deixa o alvo Vulnerável até o fim da cena.
+- Black-Clinic Procedure rola o d8 e Miracle Cocktail os 2d8; Mass Casualty Protocol, Combat Triage e Bad Medicine controlam os usos por descanso.
+- **Competência Medtech:** as 21 cartas, releituras das cartas oficiais de Splendor (Lean On Me vem de Valor; Trauma Field e Rejuvenation Barrier vêm de Sage), com a automação copiada delas.
+- A página de Medtech do diário agora é gerada das cartas do compêndio, com links. Com isso, as 9 classes do PDF estão no módulo.
