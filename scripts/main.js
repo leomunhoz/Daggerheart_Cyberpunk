@@ -2677,6 +2677,37 @@ async function resetPacks() {
   }
 }
 
+// ---------- Pastas da barra de compêndios ----------
+// Mesma estrutura da pasta "Daggerheart SRD" do sistema. O packFolders do manifesto só vale para
+// compêndios que vêm dentro do módulo; os do Edgeheart são criados no mundo pela macro, então as
+// pastas são Folders (tipo Compendium) do mundo, achadas pelo flag packFolder.
+const PACK_FOLDERS = [
+  { key: "root", name: "Edgeheart SRD", color: "#00e5ff", parent: null, packs: ["adversaries", "journals"] },
+  { key: "options", name: "Opções de Personagem", color: "#000000", parent: "root", packs: ["ancestries", "communities", "classes", "subclasses", "domains"] },
+  { key: "items", name: "Itens", color: "#000000", parent: "root", packs: ["armors", "weapons", "cyberware"] }
+];
+
+async function ensurePackFolders() {
+  const folders = {};
+  for (const def of PACK_FOLDERS) {
+    const parent = def.parent ? folders[def.parent].id : null;
+    let folder = game.folders.find(f => f.type === "Compendium" && f.getFlag(MODULE_ID, "packFolder") === def.key);
+    if (!folder) {
+      folder = await Folder.create({ name: def.name, type: "Compendium", color: def.color, folder: parent, sorting: "m", flags: { [MODULE_ID]: { packFolder: def.key } } });
+    } else if (folder.name !== def.name || (folder.folder?.id ?? null) !== parent) {
+      await folder.update({ name: def.name, folder: parent });
+    }
+    folders[def.key] = folder;
+  }
+  for (const def of PACK_FOLDERS) {
+    for (const [index, key] of def.packs.entries()) {
+      const pack = game.packs.get(`${PACK_SCOPE}.${PACKS[key]?.name}`);
+      if (!pack) continue;
+      if (pack.folder?.id !== folders[def.key].id || pack.config.sort !== index) await pack.configure({ folder: folders[def.key].id, sort: index });
+    }
+  }
+}
+
 async function importEdgeheartCore() {
   if (!game.user.isGM) {
     ui.notifications.warn("Apenas o GM pode importar o conteúdo do Edgeheart.");
@@ -2691,6 +2722,7 @@ async function importEdgeheartCore() {
   await importCyberware();
   await importAdversaryExample();
   await importJournals();
+  await ensurePackFolders();
   ui.notifications.info("Edgeheart: importação concluída! Confira os compêndios Edgeheart: Classes, Subclasses, Trajetórias, Afiliações, Armas, Armaduras, Cartas de Competência, Cyberware, Adversários e Diários.");
   console.log("Edgeheart | Importação concluída.");
 }
@@ -2719,4 +2751,6 @@ Hooks.once("ready", () => {
   ensureMacro();
   // Nome/ícone das Competências já registradas se atualizam sem precisar reimportar.
   if (game.user === game.users.activeGM && game.settings.get("daggerheart", "Homebrew")?.domains?.network) ensureHomebrewDomains();
+  // Mundos que já importaram antes das pastas existirem também ficam organizados.
+  if (game.user === game.users.activeGM) ensurePackFolders();
 });

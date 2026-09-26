@@ -1,5 +1,8 @@
 # Changelog
 
+## v1.15.1
+- Os compêndios ficam na pasta **Edgeheart SRD** da barra de compêndios, com a mesma estrutura do Daggerheart SRD: Adversários e Diários na raiz, **Opções de Personagem** (Trajetórias, Afiliações, Classes, Subclasses, Cartas de Competência) e **Itens** (Armaduras, Armas, Cyberware). Mundos já importados são organizados ao carregar.
+
 ## v1.15.0
 - **Network** passa a copiar a automação das cartas oficiais: 15 de Arcana e 6 de Bone, Grace, Codex e Midnight. Onde o PDF muda os números, vale o PDF (Firewall em d12, Threat Prediction pela Interface, Hard Shutdown em techno).
 - Nas cartas com várias ações, cada ação tem nome próprio (os protocolos do PDF ou a tradução do nome oficial).
