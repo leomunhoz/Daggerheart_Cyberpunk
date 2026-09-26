@@ -587,13 +587,10 @@ function defineSheet() {
       badge.className = `eh-header-badge${s.cyberpsycho ? " eh-psycho" : ""}${s.lost ? " eh-lost" : ""}`;
       badge.dataset.action = "ehOpenChrome";
       const killChain = KillChain.feature(this.document);
-      const cover = Cover.feature(this.document);
       const picks = Pick.items(this.document);
-      badge.dataset.tooltip = ["Humanidade", "Carga Cibernética", killChain && "Kill Chain Die", cover && "Cover", ...picks.map(i => i.getFlag(MODULE_ID, "pick").title)].filter(Boolean).join(" / ");
+      badge.dataset.tooltip = ["Humanidade", "Carga Cibernética", killChain && "Kill Chain Die", ...picks.map(i => i.getFlag(MODULE_ID, "pick").title)].filter(Boolean).join(" / ");
       badge.innerHTML = `<i class="fa-solid fa-heart-pulse"></i> d${s.die} <span class="eh-sep">|</span> <i class="fa-solid fa-microchip"></i> ${s.load}`
-        + (killChain ? ` <span class="eh-sep">|</span> <i class="fa-solid fa-crosshairs"></i> ${KillChain.faces(killChain)}` : "")
-        + (cover ? ` <span class="eh-sep">|</span> <i class="fa-solid fa-user-secret"></i> ${Cover.value(cover)}/${Cover.max(cover)}` : "")
-        + picks.map(i => ` <span class="eh-sep">|</span> <i class="fa-solid ${i.getFlag(MODULE_ID, "pick").icon ?? "fa-list-check"}"></i> ${Pick.label(i)}`).join("")
+        + (killChain ? ` <span class="eh-sep">|</span> <i class="fa-solid fa-crosshairs"></i> ${KillChain.faces(killChain)}` : "")        + picks.map(i => ` <span class="eh-sep">|</span> <i class="fa-solid ${i.getFlag(MODULE_ID, "pick").icon ?? "fa-list-check"}"></i> ${Pick.label(i)}`).join("")
         + (s.cyberpsycho ? ` <span class="eh-flag">CIBERPSICOSE</span>` : "")
         + (s.lost ? ` <span class="eh-flag">PERDIDO</span>` : "");
       anchor.after(badge);

@@ -1,5 +1,8 @@
 # Changelog
 
+## v1.16.1
+- O Cover do Infiltrator não aparece mais no selo do cabeçalho: ele já tem o contador na própria feature Cover Work.
+
 ## v1.16.0
 - **Os compêndios vêm prontos dentro do módulo.** É só ativar: a pasta **Edgeheart SRD** aparece sozinha, com tudo organizado como o Daggerheart SRD, e as Competências se registram ao carregar o mundo. A macro "Importar Edgeheart (Núcleo)" não é mais necessária.
 - Mundos que usavam a versão antiga recebem um aviso para apagar os compêndios duplicados e a macro; personagens já criados não perdem nada.
