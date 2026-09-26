@@ -27,10 +27,10 @@ Os nomes de classes, habilidades, cartas e Competências seguem o PDF em inglês
 ## Como usar
 
 1. Coloque a pasta `edgeheart-cyberpunk` em `Data/modules/` e ative o módulo no mundo.
-2. Como mestre, rode a macro **"Importar Edgeheart (Núcleo)"**. Ela cria os compêndios do grupo **Edgeheart SRD**.
+2. Pronto: os compêndios já aparecem na pasta **Edgeheart SRD** da barra de compêndios.
 3. Crie um personagem: ele já nasce com a Ficha Edgeheart, e a criação mostra só as classes do Edgeheart.
 
-Rodar a macro de novo recria os compêndios com a versão atual. Personagens já criados mantêm os itens que já têm.
+Mundos que usavam a versão antiga (com a macro "Importar Edgeheart") recebem um aviso para apagar os compêndios duplicados; personagens já criados não perdem nada.
 
 ## Princípio do projeto
 

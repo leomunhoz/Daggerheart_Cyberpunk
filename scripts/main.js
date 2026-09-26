@@ -1,19 +1,12 @@
-/* Edgeheart - Cyberpunk para Daggerheart (Núcleo v0.3)
- * Agora com o schema REAL do sistema, confirmado a partir de exports oficiais:
- * Shortsword/Battleaxe (weapon), Chainmail Armor (armor), Loreborne (community),
- * Drakona (ancestry), Get Back Up (domainCard), Acid Burrower (adversary Actor).
- *
- * - Armas: ataque e dano agora são automáticos (trait, alcance, dado, bônus).
- * - Armaduras: thresholds e armor score automáticos.
- * - Features de arma/armadura (ex: "Flexible: +1 Evasão") ainda ficam só como texto na
- *   descrição — automatizar isso como ActiveEffect exige modelar cada efeito único
- *   (são dezenas diferentes), então deixei pra uma rodada futura se você quiser.
- * - Adiciona 1 adversário de exemplo (Neon Claw Ganger) já no formato certo de Actor,
- *   como prova de conceito antes de eu gerar o bestiário inteiro.
+/* Edgeheart - Cyberpunk para Daggerheart
+ * Conteúdo do Edgeheart definido em código (classes, cartas, cyberware, diários...).
+ * Os compêndios vêm prontos dentro do módulo (packs/, declarados no module.json); este arquivo
+ * também tem o gerador que os preenche: game.modules.get("edgeheart-cyberpunk").api.buildPacks()
+ * (ferramenta de desenvolvimento — quem só usa o módulo não precisa rodar nada).
  */
 
 const MODULE_ID = "edgeheart-cyberpunk";
-const PACK_SCOPE = "world";
+const PACK_SCOPE = MODULE_ID;
 
 const PACKS = {
   classes: { name: "edgeheart-classes", label: "Edgeheart: Classes", type: "Item" },
@@ -28,12 +21,13 @@ const PACKS = {
   journals: { name: "edgeheart-journals", label: "Edgeheart: Diários", type: "JournalEntry" }
 };
 
+// Compêndio do módulo (declarado no module.json), destravado para o gerador escrever nele.
 async function getOrCreatePack(key) {
-  const { name, label, type } = PACKS[key];
-  const id = `${PACK_SCOPE}.${name}`;
-  let pack = game.packs.get(id);
-  if (pack) return pack;
-  return CompendiumCollection.createCompendium({ type, label, name });
+  const id = `${PACK_SCOPE}.${PACKS[key].name}`;
+  const pack = game.packs.get(id);
+  if (!pack) throw new Error(`Edgeheart | Compêndio ${id} não encontrado. Ele está no module.json? Reinicie o servidor do Foundry depois de declarar compêndios novos.`);
+  if (pack.locked) await pack.configure({ locked: false });
+  return pack;
 }
 
 // ---------- Pastas dentro dos compêndios (organização) ----------
@@ -2574,7 +2568,7 @@ async function importCyberware() {
 
 // ---------- Diários (mesmo formato dos diários do sistema: uma entrada com páginas de texto) ----------
 // O texto de cada página fica em journals/<pasta>/<arquivo>.html. Dentro dele, {{id:CHAVE}} vira o
-// stableId(CHAVE), para linkar itens importados: @UUID[Compendium.world.edgeheart-classes.Item.{{id:runner:class}}]{Runner}.
+// stableId(CHAVE), para linkar itens importados: @UUID[Compendium.edgeheart-cyberpunk.edgeheart-classes.Item.{{id:runner:class}}]{Runner}.
 
 const JOURNALS = [
   {
@@ -2619,7 +2613,7 @@ function cyberwareTable() {
       const access = def.access
         ? `<strong>${ACCESS_LABELS[def.access.level]}: ${COMPETENCY_LABELS[def.access.competency]}${def.choice === "tacticalMesh" ? " ou Influence" : ""}.</strong> ` : "";
       return `<tr><td>${String(def.n).padStart(2, "0")}</td>`
-        + `<td>@UUID[Compendium.world.${PACKS.cyberware.name}.Item.${stableId(`cyberware:${def.n}`)}]{${def.name}}</td>`
+        + `<td>@UUID[Compendium.${PACK_SCOPE}.${PACKS.cyberware.name}.Item.${stableId(`cyberware:${def.n}`)}]{${def.name}}</td>`
         + `<td>${def.choice === "competency" ? "1–3" : def.cost}</td><td>${access}${def.text}</td></tr>`;
     }).join("");
     return `<h3>Tier ${tier} — ${tiers[tier - 1]}</h3><table><thead><tr><th>Rolagem</th><th>Cyberware</th><th>Custo</th><th>Feature</th></tr></thead><tbody>${rows}</tbody></table>`;
@@ -2632,7 +2626,7 @@ function competencyCards(id) {
   if (!competency) return "";
   const levels = [...new Set(competency.cards.map(c => c.level))].sort((a, b) => a - b);
   return levels.map(level => `<h2>NÍVEL ${level}</h2>` + competency.cards.filter(c => c.level === level).map(card =>
-    `<h3>@UUID[Compendium.world.${PACKS.domains.name}.Item.${cardId(id, card.name)}]{${card.name}}</h3>`
+    `<h3>@UUID[Compendium.${PACK_SCOPE}.${PACKS.domains.name}.Item.${cardId(id, card.name)}]{${card.name}}</h3>`
     + `<p><em>Nível ${card.level} · ${{ spell: "Protocol", grimoire: "Protocol Suite" }[card.type] ?? "Ability"} · Custo de Recordação ${card.recallCost}</em></p>`
     + card.description
   ).join("")).join("");
@@ -2662,59 +2656,86 @@ async function importJournals() {
 
 // ---------- Orquestração ----------
 
-async function resetPacks() {
+// Esvazia os compêndios do módulo (documentos e pastas internas) antes de gerar de novo.
+async function clearPacks() {
   for (const key of Object.keys(PACKS)) {
-    const id = `${PACK_SCOPE}.${PACKS[key].name}`;
-    const pack = game.packs.get(id);
-    if (pack) {
-      try {
-        await pack.deleteCompendium();
-        console.log(`Edgeheart | Compêndio ${id} apagado pra recriar do zero.`);
-      } catch (err) {
-        console.warn(`Edgeheart | Não consegui apagar ${id}, vou reusar como está.`, err);
-      }
-    }
+    const pack = await getOrCreatePack(key);
+    const ids = (await pack.getIndex()).map(i => i._id);
+    if (ids.length) await pack.documentClass.deleteDocuments(ids, { pack: pack.collection });
+    const folderIds = pack.folders.map(f => f.id);
+    if (folderIds.length) await Folder.deleteDocuments(folderIds, { pack: pack.collection });
   }
 }
 
-// ---------- Pastas da barra de compêndios ----------
-// Mesma estrutura da pasta "Daggerheart SRD" do sistema. O packFolders do manifesto só vale para
-// compêndios que vêm dentro do módulo; os do Edgeheart são criados no mundo pela macro, então as
-// pastas são Folders (tipo Compendium) do mundo, achadas pelo flag packFolder.
-const PACK_FOLDERS = [
-  { key: "root", name: "Edgeheart SRD", color: "#00e5ff", parent: null, packs: ["adversaries", "journals"] },
-  { key: "options", name: "Opções de Personagem", color: "#000000", parent: "root", packs: ["ancestries", "communities", "classes", "subclasses", "domains"] },
-  { key: "items", name: "Itens", color: "#000000", parent: "root", packs: ["armors", "weapons", "cyberware"] }
-];
+// Versões até a 1.15 criavam os compêndios e as pastas no mundo, pela macro "Importar Edgeheart
+// (Núcleo)". Com os compêndios dentro do módulo, esses ficam duplicados: o mestre é avisado uma
+// vez e pode apagá-los (personagens já criados não são afetados, os itens deles já estão na ficha).
+const LEGACY_MACRO = "Importar Edgeheart (Núcleo)";
 
-async function ensurePackFolders() {
-  const folders = {};
-  for (const def of PACK_FOLDERS) {
-    const parent = def.parent ? folders[def.parent].id : null;
-    let folder = game.folders.find(f => f.type === "Compendium" && f.getFlag(MODULE_ID, "packFolder") === def.key);
-    if (!folder) {
-      folder = await Folder.create({ name: def.name, type: "Compendium", color: def.color, folder: parent, sorting: "m", flags: { [MODULE_ID]: { packFolder: def.key } } });
-    } else if (folder.name !== def.name || (folder.folder?.id ?? null) !== parent) {
-      await folder.update({ name: def.name, folder: parent });
+function legacyContent() {
+  return {
+    packs: game.packs.filter(p => p.metadata.packageType === "world" && Object.values(PACKS).some(d => d.name === p.metadata.name)),
+    folders: game.folders.filter(f => f.type === "Compendium" && f.getFlag(MODULE_ID, "packFolder")),
+    macros: game.macros.filter(m => m.name === LEGACY_MACRO && m.getFlag(MODULE_ID, "core"))
+  };
+}
+
+// As pastas antigas não são apagadas: têm os mesmos nomes das pastas do manifesto, e o Foundry as
+// reaproveita para os compêndios do módulo. Só perdem a marca de "pasta antiga".
+async function removeLegacyContent() {
+  const { packs, folders, macros } = legacyContent();
+  for (const pack of packs) await pack.deleteCompendium();
+  for (const folder of folders) await folder.unsetFlag(MODULE_ID, "packFolder");
+  if (macros.length) await Macro.deleteDocuments(macros.map(m => m.id));
+  await repairPackFolders();
+  return packs.length + macros.length;
+}
+
+// O Foundry distribui os compêndios nas pastas do manifesto (packFolders) uma vez por mundo. Se a
+// pasta de um compêndio do módulo foi apagada depois, ele fica apontando para uma pasta que não existe;
+// aqui a estrutura do manifesto é recriada e o compêndio volta para ela. Compêndios que o mestre moveu
+// para outra pasta existente (ou deixou soltos) não são tocados.
+async function repairPackFolders() {
+  const mod = game.modules.get(MODULE_ID);
+  const broken = game.packs.filter(p => p.metadata.packageName === MODULE_ID && p.config.folder && !game.folders.get(p.config.folder));
+  if (!broken.length) return;
+  const place = async (def, parent) => {
+    let folder = game.folders.find(f => f.type === "Compendium" && f.name === def.name && (f.folder?.id ?? null) === (parent?.id ?? null));
+    folder ??= await Folder.create({ name: def.name, type: "Compendium", sorting: def.sorting ?? "m", color: def.color?.css ?? def.color ?? null, folder: parent?.id ?? null });
+    for (const [index, name] of [...def.packs].entries()) {
+      const pack = broken.find(p => p.metadata.name === name);
+      if (pack) await pack.configure({ folder: folder.id, sort: index });
     }
-    folders[def.key] = folder;
-  }
-  for (const def of PACK_FOLDERS) {
-    for (const [index, key] of def.packs.entries()) {
-      const pack = game.packs.get(`${PACK_SCOPE}.${PACKS[key]?.name}`);
-      if (!pack) continue;
-      if (pack.folder?.id !== folders[def.key].id || pack.config.sort !== index) await pack.configure({ folder: folders[def.key].id, sort: index });
-    }
+    for (const child of def.folders ?? []) await place(child, folder);
+  };
+  for (const def of mod.packFolders) await place(def, null);
+}
+
+async function offerLegacyCleanup() {
+  const { packs, folders, macros } = legacyContent();
+  if (!packs.length && !folders.length && !macros.length) return;
+  const remove = await foundry.applications.api.DialogV2.confirm({
+    window: { title: "Edgeheart: compêndios antigos" },
+    content: `<p>Os compêndios do Edgeheart agora vêm prontos dentro do módulo (pasta <strong>Edgeheart SRD</strong>). Este mundo ainda tem a versão antiga, criada pela macro de importação:</p>
+      <ul>${packs.map(p => `<li>${p.title}</li>`).join("")}${macros.length ? `<li>Macro "${LEGACY_MACRO}"</li>` : ""}</ul>
+      <p>Apagar a versão antiga? Personagens já criados não perdem nada: os itens deles já estão na ficha.</p>`,
+    rejectClose: false
+  });
+  if (remove) {
+    await removeLegacyContent();
+    ui.notifications.info("Edgeheart: compêndios antigos apagados.");
   }
 }
 
-async function importEdgeheartCore() {
+// Gerador dos compêndios do módulo (ferramenta de desenvolvimento). Recria todo o conteúdo a partir
+// deste código e trava os compêndios de novo no final.
+async function buildPacks() {
   if (!game.user.isGM) {
-    ui.notifications.warn("Apenas o GM pode importar o conteúdo do Edgeheart.");
+    ui.notifications.warn("Apenas o GM pode gerar os compêndios do Edgeheart.");
     return;
   }
-  ui.notifications.info("Edgeheart: importando... isso pode levar alguns segundos.");
-  await resetPacks();
+  ui.notifications.info("Edgeheart: gerando os compêndios do módulo...");
+  await clearPacks();
   const equipment = await importWeaponsAndArmor();
   await importClassesAndSubclasses(equipment);
   await importLifePathsAndAffiliations();
@@ -2722,35 +2743,19 @@ async function importEdgeheartCore() {
   await importCyberware();
   await importAdversaryExample();
   await importJournals();
-  await ensurePackFolders();
-  ui.notifications.info("Edgeheart: importação concluída! Confira os compêndios Edgeheart: Classes, Subclasses, Trajetórias, Afiliações, Armas, Armaduras, Cartas de Competência, Cyberware, Adversários e Diários.");
-  console.log("Edgeheart | Importação concluída.");
-}
-
-async function ensureMacro() {
-  if (!game.user.isGM) return;
-  const name = "Importar Edgeheart (Núcleo)";
-  let macro = game.macros.find(m => m.name === name && m.getFlag(MODULE_ID, "core"));
-  const img = CPR("default/Default_Cyberware");
-  if (macro) {
-    if (macro.img !== img) await macro.update({ img });
-    return;
-  }
-  macro = await Macro.create({
-    name, type: "script", img,
-    command: `game.modules.get("${MODULE_ID}").api.importEdgeheartCore();`,
-    flags: { [MODULE_ID]: { core: true } }
-  });
-  await game.user.assignHotbarMacro(macro, null); // null = primeiro espaço livre
-  ui.notifications.info('Edgeheart: macro "Importar Edgeheart (Núcleo)" criada na barra de macros.');
+  for (const key of Object.keys(PACKS)) await game.packs.get(`${PACK_SCOPE}.${PACKS[key].name}`)?.configure({ locked: true });
+  ui.notifications.info("Edgeheart: compêndios gerados.");
+  console.log("Edgeheart | Compêndios do módulo gerados.");
 }
 
 Hooks.once("ready", () => {
   const mod = game.modules.get(MODULE_ID);
-  if (mod) mod.api = { ...(mod.api ?? {}), importEdgeheartCore };
-  ensureMacro();
-  // Nome/ícone das Competências já registradas se atualizam sem precisar reimportar.
-  if (game.user === game.users.activeGM && game.settings.get("daggerheart", "Homebrew")?.domains?.network) ensureHomebrewDomains();
-  // Mundos que já importaram antes das pastas existirem também ficam organizados.
-  if (game.user === game.users.activeGM) ensurePackFolders();
+  // importEdgeheartCore: nome antigo, mantido para a macro de versões anteriores.
+  if (mod) mod.api = { ...(mod.api ?? {}), buildPacks, importEdgeheartCore: buildPacks, removeLegacyContent, repairPackFolders };
+  if (game.user !== game.users.activeGM) return;
+  // As Competências precisam estar no Homebrew do sistema para as cartas serem válidas; num mundo
+  // novo isso acontece aqui, sem rodar nada. Nome/ícone também se atualizam entre versões.
+  ensureHomebrewDomains();
+  repairPackFolders();
+  offerLegacyCleanup();
 });

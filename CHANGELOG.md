@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.16.0
+- **Os compêndios vêm prontos dentro do módulo.** É só ativar: a pasta **Edgeheart SRD** aparece sozinha, com tudo organizado como o Daggerheart SRD, e as Competências se registram ao carregar o mundo. A macro "Importar Edgeheart (Núcleo)" não é mais necessária.
+- Mundos que usavam a versão antiga recebem um aviso para apagar os compêndios duplicados e a macro; personagens já criados não perdem nada.
+- Se a pasta de um compêndio do módulo for apagada, ele volta sozinho para a estrutura do Edgeheart SRD.
+
 ## v1.15.1
 - Os compêndios ficam na pasta **Edgeheart SRD** da barra de compêndios, com a mesma estrutura do Daggerheart SRD: Adversários e Diários na raiz, **Opções de Personagem** (Trajetórias, Afiliações, Classes, Subclasses, Cartas de Competência) e **Itens** (Armaduras, Armas, Cyberware). Mundos já importados são organizados ao carregar.
 

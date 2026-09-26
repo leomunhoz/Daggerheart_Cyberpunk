@@ -620,8 +620,8 @@ function defineSheet() {
     static #openChrome() { this.changeTab("chrome", "primary"); }
 
     static #openCyberware() {
-      const pack = game.packs.get("world.edgeheart-cyberware");
-      if (!pack) return ui.notifications.warn("Compêndio de Cyberware não encontrado. Rode a macro 'Importar Edgeheart (Núcleo)'.");
+      const pack = game.packs.get(`${MODULE_ID}.edgeheart-cyberware`);
+      if (!pack) return ui.notifications.warn("Compêndio de Cyberware não encontrado. Confira se o módulo Edgeheart está ativo.");
       pack.render(true);
     }
 
@@ -1045,7 +1045,7 @@ Hooks.on("renderActorDirectory", (app, html) => {
 // Criação de personagem da Ficha Edgeheart: enquanto ela estiver aberta, o navegador de compêndios
 // do sistema (aberto pelos botões da criação) mostra só classes, subclasses, Trajetórias e Afiliações
 // dos compêndios do Edgeheart. Só esconde linhas da lista; nada do sistema é alterado.
-const EDGEHEART_PACK_UUID = "Compendium.world.edgeheart-";
+const EDGEHEART_PACK_UUID = `Compendium.${MODULE_ID}.edgeheart-`;
 const CREATION_ONLY_TYPES = ["class", "subclass", "ancestry", "community"];
 
 function edgeheartCreationOpen() {

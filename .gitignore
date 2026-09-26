@@ -10,5 +10,8 @@ Desktop.ini
 _tmp-*
 *.log
 
-# Compêndios gerados pelo Foundry (o módulo cria os compêndios no mundo pela macro de importação)
-packs/
+# Arquivos de trava do LevelDB dos compêndios (os dados em packs/ vão para o repositório)
+packs/**/LOCK
+packs/**/LOG
+packs/**/LOG.old
+!packs/**/*.log
