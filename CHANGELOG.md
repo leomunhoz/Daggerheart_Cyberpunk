@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.24.0
+- **Armas e armaduras dos Tiers 2 a 4:** mais 48 armas (24 primárias e 24 secundárias) e 20 armaduras, somando 64 armas e 25 armaduras. Os compêndios ficam organizados em Tier 1 a 4, como os oficiais.
+- **Nomes em inglês, como no PDF**, também no Tier 1 (Assault Carbine, Riot Buckler, Ballistic Vest…). As características continuam em português.
+- Características iguais às oficiais usam a **feature do próprio sistema**, com a automação dela: Reliable, Deadly, Paired, Protective, Hooked, Long, Self-Correcting, Flexible, Heavy, Reinforced, Shifting, Impenetrable e Fortified.
+- As outras ganham ações no padrão do sistema: o alvo marca Estresse (Scatter, Crater, Pain Loop…), Vulnerável por 1 Esperança (Resonance, Jolt), Imobilizado (Impale, Net), Escondido (Smoke, Blink Cut) e custos de Estresse ou Esperança. Escudos e armaduras pesadas somam Armadura e tiram Evasão ou atributos sozinhos.
+- Os diários de armas e armaduras ganharam links para os itens.
 ## v1.23.0
 - **Competências Redline e Blackwall**, com 21 cartas cada. Não pertencem a nenhuma classe: o acesso vem do cyberware (Motor de Overclock Vermelho, Kernel Berserker, Córtex Black ICE, Coprocessador Blackwall).
 - **Blackwall** copia a automação do **Dread** oficial, carta a carta, com os números do PDF: Drain Signal com d8 que limpa 2 PV, Blackwall Shroud com marcadores de Esperança, Corrupted Shell com +1 a cada 2 Estresse, Total System Crash com d20 pela Interface, e assim por diante. System Decay, Ghost Fog e Relic Edge ganham ações próprias.

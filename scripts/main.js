@@ -183,31 +183,6 @@ const ICONS = {
     "Conhece o Jogo": CPR("default/Defult_Card_Hand"),
     "Família Encontrada": CPR("dlc/gear/furniture-set"),
     "Padrão Proibido": CPR("blackice/src/skunk")
-  },
-  weapons: {
-    "Carabina de Assalto": CPR("weapons/AssaultRifle"),
-    "SMG Compacta": CPR("weapons/SMG"),
-    "Espingarda de Rua": CPR("weapons/Shotgun"),
-    "Martelo de Arrombamento": CPR("weapons/Sledgehammer"),
-    "Mono-Katana": CPR("weapons/Sword"),
-    "Arco Inteligente": CPR("weapons/Bow"),
-    "Cassetete de Choque": CPR("weapons/StunBaton"),
-    "Lançador de Sucata": CPR("weapons/GrenadeLauncher"),
-    "Pistola de Reserva": CPR("weapons/mediumPistol"),
-    "Faca de Combate": CPR("weapons/CombatKnife"),
-    "Escudo Anti-Motim": CPR("armor/bullet_proof_shield"),
-    "Luva de Choque": CPR("cyberware/battleglove"),
-    "Cabo de Gancho": CPR("gear/grapple_gun"),
-    "Bomba de Fumaça": CPR("ammo/grenade_smoke"),
-    "Drone Tático": CPR("dlc/gear/the-observer"),
-    "Dardo Atordoante": CPR("weapons/dartgun")
-  },
-  armor: {
-    "Traje Ícone de Rua": CPR("armor/light-armorjack_body"),
-    "Jaqueta de Sintcouro": CPR("clothing/generic_jacket"),
-    "Colete Balístico": CPR("armor/kevlar_body"),
-    "Blindagem Anti-Motim": CPR("armor/heavy-armorjack_body"),
-    "Traje de Perigo": CPR("gear/radiation_suit")
   }
 };
 
@@ -285,131 +260,239 @@ function buildAttackAction({ name, trait, range, damageStr, burden, img }) {
   };
 }
 
-function buildWeaponData([name, trait, range, damageStr, burdenLabel, featureText], img = ICONS.weapons[name] ?? CPR("default/Default_Weapon")) {
+// ---------- Armas e armaduras (Tiers 1 a 4) ----------
+// Nomes em inglês, como no PDF; características em PT. Onde a característica do PDF é igual a uma
+// feature oficial (Reliable, Deadly, Paired, Flexible, Shifting...), o item recebe a feature do sistema
+// depois de criado (official: [...]) e o próprio sistema cria os efeitos e ações dela, como na ficha do
+// item. As outras ganham ações/efeitos no padrão do sistema (alvo marca Estresse, Vulnerável, custo) ou
+// ficam só com o texto quando dependem da narrativa.
+
+const gearCost = (key, value, extra = {}) => ({ scalable: false, key, value, step: null, consumeOnSuccess: false, itemId: null, ...extra });
+const gearChange = (key, value) => ({ key, type: "add", value, priority: null, phase: "initial" });
+// Pontuação de Armadura dada por arma (mesmo formato da feature oficial Protective).
+const gearArmor = value => ({ type: "armor", value: { max: String(value), current: 0, damageThresholds: null, interaction: "none" }, priority: 20, phase: "initial" });
+const ALL_TRAITS = ["agility", "strength", "finesse", "instinct", "presence", "knowledge"];
+
+// Condição aplicada no alvo por uma ação da característica (padrão Entangling: gaste 1 Esperança, Vulnerável).
+function gearCondition(name, statuses, costs = [], target = null) {
+  const fx = targetEffect({ name, img: CPR(statuses.includes("hidden") ? "status/hidden" : statuses.includes("restrained") ? "status/grappled" : "status/wounded_seriously"), statuses });
+  return { effects: [fx], actions: featureAction({ name, costs, effects: [fx], target }) };
+}
+// "O alvo marca N Estresse" (padrão Scary / Enervating Blast).
+const gearStress = (name, n = 1, costs = []) => ({ actions: resourceCardAction({ name, resources: { stress: n }, cost: costs }) });
+const gearCostAction = (name, costs) => ({ actions: featureAction({ name, costs }) });
+const gearDamage = (name, formula, type, costs = []) => ({ actions: damageCardAction({ name, formula, type, cost: costs }) });
+// Junta vários pedaços (official, changes, effects, actions).
+function gear(...parts) {
+  return parts.reduce((acc, p) => ({
+    official: [...acc.official, ...(p.official ?? [])],
+    changes: [...acc.changes, ...(p.changes ?? [])],
+    effects: [...acc.effects, ...(p.effects ?? [])],
+    actions: { ...acc.actions, ...(p.actions ?? {}) }
+  }), { official: [], changes: [], effects: [], actions: {} });
+}
+const official = (...keys) => ({ official: keys });
+const passive = (...changes) => ({ changes });
+
+// W(tier, nome, ícone, atributo, alcance, dano, empunhadura, "Característica|texto", extras)
+const W = (tier, name, img, trait, range, damage, burden, feature, extras = {}) => ({ tier, name, img: CPR(img), trait, range, damage, burden, feature, ...gear(extras) });
+// A(tier, nome, ícone, "maior/severo", armadura, "Característica|texto", extras)
+const A = (tier, name, img, thresholds, score, feature, extras = {}) => ({ tier, name, img: CPR(img), thresholds, score, feature, ...gear(extras) });
+
+const PRIMARY_WEAPONS = [
+  W(1, "Assault Carbine", "weapons/AssaultRifle", "Agility", "Far", "d8+2 phy", "Two-Handed", "Controlled Fire|numa rolagem com Esperança, ganhe +1 na próxima rolagem de ataque dentro da cena."),
+  W(1, "Compact SMG", "weapons/SMG", "Agility", "Close", "d6+2 phy", "One-Handed", "Spray|marque 1 Estresse para ter como alvo outra criatura dentro do alcance Muito Próximo do alvo original.", gearCostAction("Spray", [gearCost("stress", 1)])),
+  W(1, "Street Shotgun", "weapons/Shotgun", "Strength", "Very Close", "d8+3 phy", "Two-Handed", "Scatter|num ataque bem-sucedido, outro alvo dentro do alcance Muito Próximo do alvo marca 1 Estresse.", gearStress("Scatter")),
+  W(1, "Breach Hammer", "weapons/Sledgehammer", "Strength", "Melee", "d10+3 phy", "Two-Handed", "Breach|num ataque bem-sucedido contra um objeto, porta, barricada, cobertura ou veículo, some +1 de Proficiência."),
+  W(1, "Mono-Katana", "weapons/Sword", "Finesse", "Melee", "d8+2 phy", "One-Handed", "Clean Cut|quando você causa dano Maior, o alvo também marca 1 Estresse.", gearStress("Clean Cut")),
+  W(1, "Smartbow", "weapons/Bow", "Finesse", "Far", "d8 tech", "Two-Handed", "Draw|se você não se moveu durante o seu Holofote antes de atacar, ganhe +2 na rolagem de ataque."),
+  W(1, "Shock Baton", "weapons/StunBaton", "Presence", "Melee", "d8 tech", "One-Handed", "Shock Pulse|num ataque bem-sucedido, o alvo tem desvantagem na próxima Rolagem de Reação que fizer."),
+  W(1, "Scrap Launcher", "weapons/GrenadeLauncher", "Knowledge", "Close", "d8+1 phy", "Two-Handed", "Junkshot|numa rolagem com Medo, o alvo sofre 1d6 de dano e a arma emperra até você marcar 1 Estresse para destravá-la.", gear(gearDamage("Junkshot", "1d6", "physical"), gearCostAction("Destravar", [gearCost("stress", 1)]))),
+
+  W(2, "Military Rifle", "weapons/AssaultRifle_excellent", "Agility", "Far", "d8+5 phy", "Two-Handed", "Aim Down|marque 1 Estresse para atacar um alvo até o alcance Muito Distante com vantagem.", gearCostAction("Aim Down", [gearCost("stress", 1)])),
+  W(2, "Riot Shotgun", "weapons/Shotgun_excellent", "Strength", "Very Close", "d10+4 phy", "Two-Handed", "Crowd Breaker|em dano Maior, todos os adversários dentro do alcance Muito Próximo do alvo precisam se afastar ou marcar 1 Estresse.", gearStress("Crowd Breaker")),
+  W(2, "Pulse Halberd", "weapons/Naginata", "Strength", "Very Close", "d10+5 tech", "Two-Handed", "Reach Arc|numa rolagem com Esperança, outro alvo em linha dentro do alcance marca 1 Estresse.", gearStress("Reach Arc")),
+  W(2, "Vibroblade", "weapons/Machete_excellent", "Finesse", "Melee", "d8+5 phy", "One-Handed", "Vibrating Edge|quando você tira 1 num dado de dano, trate como 6.", official("selfCorrecting")),
+  W(2, "Arc Caster", "weapons/microwaver", "Knowledge", "Far", "d6+5 tech", "Two-Handed", "Chain Signal|num ataque bem-sucedido com Esperança, cause metade do dano a outro alvo conectado dentro do alcance Próximo."),
+  W(2, "Heavy Nailgun", "weapons/air_pistol", "Strength", "Close", "d8+6 phy", "Two-Handed", "Impale|em dano Severo, o alvo fica temporariamente Imobilizado.", gearCondition("Impale", ["restrained"])),
+  W(2, "Smart Pistol Rig", "weapons/mediumPistol_excellent", "Finesse", "Far", "d6+4 phy", "One-Handed", "Target Assist|ao errar, você pode gastar 1 Esperança para rolar de novo o Dado de Esperança ou de Medo.", gearCostAction("Target Assist", [gearCost("hope", 1)])),
+  W(2, "Sonic Cutter", "weapons/shrieker", "Presence", "Close", "d8+4 tech", "One-Handed", "Resonance|num ataque bem-sucedido, gaste 1 Esperança para deixar o alvo temporariamente Vulnerável.", gearCondition("Resonance", ["vulnerable"], [{ key: "hope", value: 1 }])),
+
+  W(3, "Rail Rifle", "weapons/SniperRifle", "Knowledge", "Very Far", "d8+8 phy", "Two-Handed", "Rail Punch|em dano Maior ou Severo, ignore qualquer redução de dano."),
+  W(3, "Auto-Shotgun", "weapons/Shotgun_poor", "Strength", "Close", "d10+7 phy", "Two-Handed", "Double Barrel|role o dano duas vezes e fique com o maior resultado."),
+  W(3, "Plasma Carbine", "weapons/AssaultRifle_poor", "Agility", "Far", "d8+7 tech", "Two-Handed", "Overheat|marque 1 Estresse antes de atacar para somar 1d6 de dano techno. Num sucesso com Esperança, o alvo fica temporariamente Overheated e sofre 2d6 de dano techno extra quando agir.", gear(gearDamage("Overheat", "1d6", "magical", [gearCost("stress", 1)]), gearDamage("Dano de Overheated", "2d6", "magical"))),
+  W(3, "Paired Techblades", "weapons/Sword_excellent", "Finesse", "Melee", "d8+7 phy", "Two-Handed", "Flowing Cut|num ataque bem-sucedido com Esperança, outro adversário dentro do alcance Corpo a Corpo sofre metade do dano causado, ou você ganha +1 de Evasão contra o próximo ataque que te tiver como alvo."),
+  W(3, "Gravity Maul", "weapons/Sledgehammer_excellent", "Strength", "Melee", "d12+7 tech", "Two-Handed", "Crater|num ataque bem-sucedido, todos os alvos dentro do alcance Muito Próximo do alvo marcam 1 Estresse.", gearStress("Crater")),
+  W(3, "Drone Spear", "weapons/Naginata_excellent", "Instinct", "Very Close", "d10+6 phy", "Two-Handed", "Return Flight|depois de atacar, esta arma volta para você e você pode se reposicionar imediatamente dentro do alcance Muito Próximo."),
+  W(3, "Black ICE Projector", "default/default-blackice", "Knowledge", "Far", "d6+8 tech", "Two-Handed", "System Bite|numa rolagem com Esperança, o alvo fica temporariamente Degraded e rola um d12 em vez de um d20 nas rolagens de ataque.", gearCondition("Degraded", [])),
+  W(3, "Runner Whip", "cyberweapons/cybersnake", "Presence", "Close", "d8+6 tech", "One-Handed", "Lash Field|num ataque bem-sucedido, puxe o alvo até o alcance Corpo a Corpo ou empurre-o até o alcance Próximo, e crie uma Breach contra ele."),
+
+  W(4, "Prototype Railcannon", "weapons/RocketLauncher", "Knowledge", "Very Far", "d10+11 phy", "Two-Handed", "Linebreaker|este ataque tem como alvo todos os adversários em linha dentro do alcance.", official("long")),
+  W(4, "Smart Stormrifle", "weapons/heavySMG_excellent", "Agility", "Far", "d8+12 phy", "Two-Handed", "Auto Aim|gaste até 3 Esperança e ataque essa mesma quantidade de alvos dentro do alcance. Role uma vez para cada alvo.", gearCostAction("Auto Aim", [gearCost("hope", 1, { scalable: true, step: 1 })])),
+  W(4, "Siege Shotgun", "weapons/Shotgun_excellent", "Strength", "Close", "d12+10 phy", "Two-Handed", "Room Clearer|em dano Maior ou Severo, todos os adversários dentro do alcance Próximo precisam se afastar de você e ficam temporariamente Vulneráveis.", gearCondition("Room Clearer", ["vulnerable"])),
+  W(4, "Steel-Whip Guillotine", "weapons/HelicopterBlade", "Finesse", "Close", "d8+11 phy", "One-Handed", "Sever|quando você tira o valor máximo em qualquer dado de dano, o alvo marca 1 Estresse.", gearStress("Sever")),
+  W(4, "Singularity Hammer", "weapons/Sledgehammer_poor", "Strength", "Melee", "d12+12 tech", "Two-Handed", "Collapse Point|num ataque bem-sucedido, gaste 2 Esperança para puxar todos os alvos dentro do alcance Muito Próximo do alvo para o alcance Corpo a Corpo dele e causar metade do dano a esses alvos.", gearCostAction("Collapse Point", [gearCost("hope", 2)])),
+  W(4, "Neural Lance", "weapons/Naginata_poor", "Presence", "Far", "d8+10 tech", "Two-Handed", "Mind Spike|em dano Maior ou Severo, o alvo não pode ter como alvo ninguém além do alcance Muito Próximo até a sua próxima ação."),
+  W(4, "Blackwall Emitter", "status/black_lace", "Knowledge", "Far", "d6+12 tech", "Two-Handed", "Red Static|numa rolagem com Medo, você pode somar +1 de Proficiência à rolagem de dano e depois marcar 1 Estresse.", gearCostAction("Red Static", [gearCost("stress", 1)])),
+  W(4, "Stormblade", "weapons/Sword_poor", "Finesse", "Melee", "d10+9 tech", "One-Handed", "Blink Cut|num ataque bem-sucedido com Esperança, teleporte-se dentro do alcance Próximo e fique Escondido até a sua próxima ação.", gearCondition("Blink Cut", ["hidden"], [], { type: "self", amount: null }))
+];
+
+const SECONDARY_WEAPONS = [
+  W(1, "Holdout Pistol", "weapons/mediumPistol", "Finesse", "Far", "d6 phy", "One-Handed", "Quickdraw|você não marca Estresse para equipar esta arma em perigo."),
+  W(1, "Combat Knife", "weapons/CombatKnife", "Agility", "Melee", "d6+1 phy", "One-Handed", "Paired|+2 no dano da arma primária contra alvos dentro do alcance Corpo a Corpo.", official("paired")),
+  W(1, "Riot Buckler", "armor/bullet_proof_shield", "Strength", "Melee", "d4 phy", "One-Handed", "Guard|+1 na Pontuação de Armadura.", official("protective")),
+  W(1, "Shock Glove", "cyberware/battleglove", "Presence", "Melee", "d6 tech", "One-Handed", "Touch Arc|numa rolagem com Esperança, o alvo marca 1 Estresse.", gearStress("Touch Arc")),
+  W(1, "Grapple Wire", "gear/grapple_gun", "Finesse", "Close", "d6 phy", "One-Handed", "Hooked|num ataque bem-sucedido, puxe o alvo até o alcance Corpo a Corpo ou puxe-se até o alcance Muito Próximo dele.", official("hooked")),
+  W(1, "Smoke Popper", "ammo/grenade_smoke", "Knowledge", "Close", "d4 tech", "One-Handed", "Smoke|marque 1 Estresse para soltar fumaça dentro do alcance Muito Próximo e ficar Escondido enquanto estiver dentro da cortina.", gearCondition("Smoke", ["hidden"], [{ key: "stress", value: 1 }], { type: "self", amount: null })),
+  W(1, "Tactical Drone", "dlc/gear/the-observer", "Instinct", "Close", "d6 tech", "One-Handed", "Spotter|gaste 1 Esperança para dar +2 ao seu próximo ataque com a arma primária.", gearCostAction("Spotter", [gearCost("hope", 1)])),
+  W(1, "Stun Dart", "weapons/dartgun", "Finesse", "Far", "d6 tech", "One-Handed", "Sedative|em dano Maior, o alvo tem desvantagem na próxima rolagem de ação."),
+
+  W(2, "Heavy Pistol", "weapons/heavyPistol", "Finesse", "Far", "d6+3 phy", "One-Handed", "Heavy Round|em dano Maior, some +1 de Proficiência à rolagem de dano."),
+  W(2, "Mono-Knife", "weapons/CombatKnife_excellent", "Agility", "Melee", "d8+2 phy", "One-Handed", "Serrated|quando você tira 1 num dado de dano, ele causa 6 de dano.", official("selfCorrecting")),
+  W(2, "Impact Shield", "armor/bullet_proof_shield", "Strength", "Melee", "d6+2 phy", "One-Handed", "Protective|+1 na Pontuação de Armadura; quando você marca um Espaço de Armadura, pode empurrar um atacante Corpo a Corpo até o alcance Próximo.", passive(gearArmor(1))),
+  W(2, "Arc Knuckles", "cyberweapons/big_knucks", "Presence", "Melee", "d8 tech", "One-Handed", "Jolt|num ataque bem-sucedido, gaste 1 Esperança para deixar o alvo temporariamente Vulnerável.", gearCondition("Jolt", ["vulnerable"], [{ key: "hope", value: 1 }])),
+  W(2, "Micro-Net Launcher", "weapons/GrenadeLauncher_poor", "Finesse", "Very Close", "d6+3 phy", "One-Handed", "Net|num ataque bem-sucedido, não cause dano para deixar o alvo temporariamente Imobilizado.", gearCondition("Net", ["restrained"])),
+  W(2, "Signal Jammer", "gear/scrambler_descrambler", "Knowledge", "Close", "d6+2 tech", "One-Handed", "Scramble|num ataque bem-sucedido, o alvo não pode se beneficiar de sensores ou suporte remoto até a sua próxima ação."),
+  W(2, "Watchdog Drone", "dlc/gear/raven_microcybernetics_cybercam_ex-1", "Instinct", "Close", "d6+3 phy", "One-Handed", "Harrier|numa rolagem com Esperança, o alvo não pode ficar Escondido nem ter vantagem antes da sua próxima ação."),
+  W(2, "Flash Charge", "ammo/grenade_flashbang", "Agility", "Close", "d4+4 phy", "One-Handed", "Blindside|marque 1 Estresse para deixar todos os alvos dentro do alcance Muito Próximo do alvo temporariamente Vulneráveis até agirem.", gearCondition("Blindside", ["vulnerable"], [{ key: "stress", value: 1 }])),
+
+  W(3, "Hand Cannon", "weapons/veryHeavyPistol", "Finesse", "Far", "d6+6 phy", "One-Handed", "Reaction Shot|quando um adversário dentro do alcance Próximo falha num ataque contra você, você pode fazer uma rolagem de ataque de reação contra ele."),
+  W(3, "Phase Dagger", "weapons/CombatKnife_poor", "Agility", "Melee", "d8+5 tech", "One-Handed", "Ghost Edge|numa rolagem com Esperança, este ataque ignora cobertura física ou redução de dano."),
+  W(3, "Tower Shield Rig", "armor/bullet_proof_shield", "Strength", "Melee", "d6+5 phy", "One-Handed", "Barrier|+2 na Pontuação de Armadura; −1 de Evasão.", passive(gearArmor(2), gearChange("system.evasion", -1))),
+  W(3, "Neural Spike", "weapons/stun_gun", "Presence", "Melee", "d8+5 tech", "One-Handed", "Pain Loop|em dano Maior ou Severo, o alvo marca 1 Estresse.", gearStress("Pain Loop")),
+  W(3, "Kinetic Tonfa", "weapons/LeadPipe_excellent", "Strength", "Melee", "d8+5 phy", "One-Handed", "Counterweight|quando um adversário te ataca, você pode marcar 1 Estresse para ganhar +2 de Evasão contra esse ataque. Se o ataque errar, o atacante marca 1 Estresse.", gear(gearCostAction("Counterweight", [gearCost("stress", 1)]), gearStress("Atacante Marca 1 Estresse"))),
+  W(3, "Counter-ICE Shard", "programs/eraser", "Knowledge", "Far", "d6+6 tech", "One-Handed", "Rebound|quando você rola com Medo neste ataque, pode rolar de novo o Dado de Medo ou ganhar 1 Esperança."),
+  W(3, "Hunter-Seeker Drone", "dlc/gear/suzumebachi_assassin_drone", "Instinct", "Far", "d6+6 phy", "One-Handed", "Marked|num ataque bem-sucedido, o próximo ataque contra o alvo ganha +2."),
+  W(3, "Concussion Pistol", "weapons/air_pistol", "Finesse", "Close", "d8+4 phy", "One-Handed", "Knockback|num ataque bem-sucedido, empurre o alvo até o alcance Próximo. Se ele colidir com algo, também marca 1 Estresse.", gearStress("Colisão")),
+
+  W(4, "Executive Sidearm", "weapons/mediumPistol_excellent", "Finesse", "Far", "d6+9 phy", "One-Handed", "Reliable|+1 nas rolagens de ataque.", official("reliable")),
+  W(4, "Molecular Razor", "weapons/Machete", "Agility", "Melee", "d8+8 phy", "One-Handed", "Perfect Cut|em dano Severo, o alvo marca 1 Ponto de Vida adicional.", official("deadly")),
+  W(4, "Bastion Shield", "armor/bullet_proof_shield", "Strength", "Melee", "d6+9 phy", "One-Handed", "Bulwark|+2 na Pontuação de Armadura; quando um aliado dentro do alcance Muito Próximo marca PV, você pode marcar um Espaço de Armadura para reduzir a gravidade em um limiar.", passive(gearArmor(2))),
+  W(4, "Synaptic Needle", "weapons/dartgun", "Presence", "Melee", "d8+8 tech", "One-Handed", "Neural Crash|em dano Severo, o alvo tem desvantagem em todas as rolagens até o mestre gastar 1 Medo para limpar essa condição.", gearCondition("Neural Crash", [])),
+  W(4, "Gravity Chain", "weapons/Tomahawk", "Strength", "Close", "d8+8 phy", "One-Handed", "Dragline|num ataque bem-sucedido, mova o alvo para qualquer lugar dentro do alcance Próximo da posição atual dele."),
+  W(4, "Blackbox Injector", "gear/tech_tool", "Knowledge", "Melee", "d6+10 tech", "One-Handed", "Exploit|numa rolagem com Esperança, crie uma Breach contra o alvo."),
+  W(4, "Assassin Drone", "dlc/gear/suzumebachi_assassin_drone", "Instinct", "Far", "d6+10 phy", "One-Handed", "Silent Kill|se você estiver Escondido ao atacar, some 1d8 à rolagem de dano.", gearDamage("Silent Kill", "1d8", "physical")),
+  W(4, "Singularity Charge", "weapons/thrown_weapon", "Finesse", "Close", "d10+7 tech", "One-Handed", "Implode|em dano Maior ou Severo, todos os alvos dentro do alcance Muito Próximo do alvo são puxados para o alcance Corpo a Corpo dele e sofrem metade do dano.")
+];
+
+const ARMORS = [
+  A(1, "Street Icon Fit", "armor/light-armorjack_body", "5/11", 3, "Recognizable|uma vez por cena, escolha uma criatura que já ouviu falar da sua reputação. Ganhe vantagem na sua primeira rolagem contra ela."),
+  A(1, "Synthleather Jacket", "clothing/generic_jacket", "6/13", 3, "Flexible|+1 de Evasão.", official("flexible")),
+  A(1, "Ballistic Vest", "armor/kevlar_body", "7/15", 4, "Reinforced|quando você marca o seu último Espaço de Armadura, aumente os seus limiares de dano em +2 até limpar pelo menos 1 Espaço de Armadura.", official("reinforced")),
+  A(1, "Riot Shell", "armor/heavy-armorjack_body", "8/17", 4, "Heavy|−1 de Evasão; <strong>Cover Brace:</strong> marque um Espaço de Armadura para ganhar +2 de Evasão contra um ataque recebido.", official("heavy")),
+  A(1, "Hazard Suit", "gear/radiation_suit", "6/13", 3, "Sealed|você tem vantagem em rolagens para resistir a fumaça, veneno, gás, contaminação, doença ou exposição ambiental."),
+
+  A(2, "Luxurious Coat", "clothing/generic_top", "7/16", 3, "First Impression|uma vez por cena, escolha uma criatura. Ela precisa te tratar como alguém importante, perigoso, rico ou que vale a pena ouvir, até que se prove o contrário."),
+  A(2, "Smartweave Coat", "armor/leathers_body", "7/16", 3, "Adaptive|quando você é alvo de um ataque, pode marcar um Espaço de Armadura para dar desvantagem à rolagem de ataque.", official("shifting")),
+  A(2, "Gang Colors Jacket", "clothing/generic_jacket", "8/18", 4, "Claimed|você tem vantagem em rolagens para intimidar, negociar ou evitar ser desafiado em território de gangue, espaços criminosos ou ruas disputadas."),
+  A(2, "Armored Bodysuit", "armor/bodyweight_suit", "8/20", 4, "Stealth|ganhe +2 nas rolagens para ficar ou continuar Escondido."),
+  A(2, "Reactive Mesh", "dlc/armor/sycust_fleshweave", "9/22", 4, "Feedback|quando um adversário te causa dano dentro do alcance Corpo a Corpo, ele marca 1 Estresse.", gearStress("Feedback")),
+  A(2, "Exo-Riot Plating", "armor/metalgear_body", "10/24", 5, "Anchored|você tem vantagem em rolagens para resistir a ser empurrado, derrubado, movido ou Imobilizado."),
+  A(2, "Insulated Hazmat", "dlc/armor/esporma_enviroment_suit", "8/18", 4, "Grounded|quando você marca um Espaço de Armadura contra dano techno, reduza a gravidade em um limiar adicional."),
+
+  A(3, "Light Exosuit", "armor/medium-armorjack_body", "11/27", 5, "Agile Frame|+1 de Evasão.", official("flexible")),
+  A(3, "Ghostweave Cloak", "armor/leathers_body", "11/27", 5, "Ghosted|quando você fica Escondido, também pode ficar invisível até se mover."),
+  A(3, "Celebrity Armorweave", "clothing/generic_jewelry", "11/27", 5, "Spotlight Altar|uma vez por cena, você pode se tornar o centro das atenções. Até o seu próximo Holofote, os aliados têm vantagem em rolagens para se esconder, fugir ou agir sem serem notados."),
+  A(3, "Corporate Aegis Suit", "armor/flak_body", "13/31", 5, "Executive Defense|uma vez por descanso, quando você rola com Medo numa Rolagem de Reação, pode transformá-la numa rolagem com Esperança."),
+  A(3, "Reputation Mantle", "clothing/generic_top", "13/31", 5, "Name Carries Weight|quando você rola com Esperança numa Rolagem de Presença, um aliado que possa te ver ou ouvir limpa 1 Estresse.", { actions: resourceCardAction({ name: "Name Carries Weight", heal: true, resources: { stress: 1 }, target: { type: "friendly", amount: 1 } }) }),
+  A(3, "Ceramite Plate", "armor/heavy-armorjack_body", "15/35", 6, "Heavy|−1 de Evasão; <strong>Ceramite:</strong> antes de marcar o seu último Espaço de Armadura, role um d6. Num 5 ou mais, reduza a gravidade em um limiar sem marcar um Espaço de Armadura.", official("heavy")),
+  A(3, "Trauma Armor", "armor/medium-armorjack_body", "13/31", 5, "Life Support|uma vez por descanso curto, quando você fosse marcar o seu último Ponto de Vida, pode marcar 1 Estresse em vez disso.", official("impenetrable")),
+
+  A(4, "Angel Skin Prototype", "armor/bodyweight_suit", "13/36", 5, "Emergency Halo|quando você fosse gastar 1 Esperança para ajudar um aliado ou usar uma feature defensiva, pode marcar um Espaço de Armadura em vez disso."),
+  A(4, "Holo-Reactive Mantle", "armor/leathers_body", "13/36", 6, "Shifting|quando você é alvo de um ataque, marque um Espaço de Armadura para dar desvantagem à rolagem de ataque.", official("shifting")),
+  A(4, "Nullweave Armor", "dlc/armor/sycust_fleshweave", "15/40", 6, "Signal Dead|você não pode ser alvo de sensores, drones ou sistemas remotos além do alcance Distante, a menos que já tenha sido detectado."),
+  A(4, "Street Regalia", "armor/light-armorjack_body", "15/40", 6, "Legendary Cyberpunk|uma vez por cena, quando você fosse rolar com Medo numa rolagem, pode transformá-la numa rolagem com Esperança."),
+  A(4, "Vagras Bulwark Harness", "armor/metalgear_body", "17/44", 7, "Very Heavy|−2 de Evasão; <strong>Walking Barricade:</strong> você conta como cobertura para os aliados dentro do alcance Muito Próximo. Quando um aliado dentro do alcance Muito Próximo é alvo de um ataque, você pode marcar um Espaço de Armadura para dar desvantagem a esse ataque.", passive(gearChange("system.evasion", -2))),
+  A(4, "Siege Exo-Frame", "dlc/armor/scavenged-armor", "18/48", 8, "Difficult|−1 em todos os atributos; <strong>Fortified:</strong> quando você marca um Espaço de Armadura, reduza a gravidade em dois limiares em vez de um.", gear(official("fortified"), passive(...ALL_TRAITS.map(t => gearChange(`system.traits.${t}.value`, -1)))))
+];
+
+function gearDescription(feature) {
+  const [name, text] = feature.split("|");
+  return `<p><strong>${name}:</strong> ${text}</p>`;
+}
+
+// Efeito passivo da característica (ex: −1 de Evasão, +2 de Armadura), aplicado enquanto o item está equipado.
+function gearPassiveEffect(item) {
+  if (!item.changes.length) return [];
+  return [{
+    name: item.feature.split("|")[0], img: item.img, description: gearDescription(item.feature),
+    transfer: true, type: "base", statuses: [], disabled: false, tint: "#ffffff",
+    system: { changes: item.changes, duration: { description: "" }, rangeDependence: null, stacking: null, targetDispositions: [], conditionals: [] },
+    duration: { value: null, units: "seconds", expiry: null, expired: false }
+  }];
+}
+
+function buildWeaponData(w, secondary) {
   return {
-    name,
-    type: "weapon",
-    img,
+    _id: stableId(`weapon:${w.name}`),
+    name: w.name, type: "weapon", img: w.img,
+    effects: [...gearPassiveEffect(w), ...w.effects],
     system: {
-      description: `<p><strong>Característica:</strong> ${featureText}</p>`,
-      actions: {},
-      tier: 1,
-      equipped: false,
-      secondary: false,
-      burden: burdenLabel === "Two-Handed" ? "twoHanded" : "oneHanded",
+      description: gearDescription(w.feature),
+      actions: withDefaultActionImg(w.actions, w.img),
+      tier: w.tier, equipped: false, secondary,
+      burden: w.burden === "Two-Handed" ? "twoHanded" : "oneHanded",
       weaponFeatures: [],
-      attack: buildAttackAction({ name, trait, range, damageStr, burden: burdenLabel, img }),
+      attack: buildAttackAction({ name: w.name, trait: w.trait, range: w.range, damageStr: w.damage, burden: w.burden, img: w.img }),
       rules: { attack: { roll: { trait: null } } },
-      attribution: { source: "Edgeheart (homebrew)", page: null, artist: "" },
-      gmNotes: "",
-      resource: null,
-      quantity: 1
+      attribution: ATTRIBUTION, gmNotes: "", resource: null, quantity: 1
     }
   };
 }
 
-function buildArmorData([name, thresholds, score, featureText, evasionMod]) {
-  const [major, severe] = thresholds.split("/").map(Number);
-  const img = ICONS.armor[name] ?? CPR("default/Default_Armor");
-  const effects = evasionMod ? [{
-    name: name + " (Característica)",
-    img,
-    description: `<p><strong>Característica:</strong> ${featureText}</p>`,
-    transfer: true,
-    type: "base",
-    system: {
-      changes: [{ key: "system.evasion", type: "add", value: evasionMod, priority: null, phase: "initial" }],
-      duration: { description: "" },
-      rangeDependence: null, stacking: null, targetDispositions: [], conditionals: []
-    },
-    duration: { value: null, units: "seconds", expiry: null, expired: false },
-    tint: "#ffffff", statuses: [], disabled: false
-  }] : [];
+function buildArmorData(a) {
+  const [major, severe] = a.thresholds.split("/").map(Number);
   return {
-    name,
-    type: "armor",
-    img,
-    effects,
+    _id: stableId(`armor:${a.name}`),
+    name: a.name, type: "armor", img: a.img,
+    effects: [...gearPassiveEffect(a), ...a.effects],
     system: {
-      armor: { current: 0, max: Number(score) },
-      description: `<p><strong>Característica:</strong> ${featureText}</p>`,
-      actions: {},
-      tier: 1,
-      equipped: false,
-      armorFeatures: [],
+      armor: { current: 0, max: Number(a.score) },
+      description: gearDescription(a.feature),
+      actions: withDefaultActionImg(a.actions, a.img),
+      tier: a.tier, equipped: false, armorFeatures: [],
       baseThresholds: { major, severe },
-      attribution: { source: "Edgeheart (homebrew)", page: null, artist: "" },
-      gmNotes: "",
-      resource: null,
-      quantity: 1
+      attribution: ATTRIBUTION, gmNotes: "", resource: null, quantity: 1
     }
   };
 }
 
-const PRIMARY_WEAPONS_T1 = [
-  ["Carabina de Assalto", "Agility", "Far", "d8+2 phy", "Two-Handed", "Fogo Controlado: Em uma rolagem com Esperança, ganhe um bônus de +1 na sua próxima rolagem de ataque dentro da cena."],
-  ["SMG Compacta", "Agility", "Close", "d6+2 phy", "One-Handed", "Rajada: Marque 1 Estresse para atingir outra criatura dentro do alcance Muito Próximo do seu alvo original."],
-  ["Espingarda de Rua", "Strength", "Very Close", "d8+3 phy", "Two-Handed", "Dispersão: Em um ataque bem-sucedido, outro alvo dentro do alcance Muito Próximo do alvo original marca 1 Estresse."],
-  ["Martelo de Arrombamento", "Strength", "Melee", "d10+3 phy", "Two-Handed", "Arrombamento: Em um ataque bem-sucedido contra um objeto, porta, barricada, cobertura ou veículo, adicione +1 de Proficiência."],
-  ["Mono-Katana", "Finesse", "Melee", "d8+2 phy", "One-Handed", "Corte Limpo: Quando você causa dano Maior, o alvo também marca 1 Estresse."],
-  ["Arco Inteligente", "Finesse", "Far", "d8 tech", "Two-Handed", "Mira Calculada: Se você não se moveu durante seu Holofote antes de atacar, ganhe um bônus de +2 na rolagem de ataque."],
-  ["Cassetete de Choque", "Presence", "Melee", "d8 tech", "One-Handed", "Pulso de Choque: Em um ataque bem-sucedido, o alvo sofre desvantagem na próxima Rolagem de Reação que fizer."],
-  ["Lançador de Sucata", "Knowledge", "Close", "d8+1 phy", "Two-Handed", "Disparo de Sucata: Em uma rolagem com Medo, o alvo sofre 1d6 de dano e a arma emperra até você marcar 1 Estresse para destravá-la."]
-];
-
-const SECONDARY_WEAPONS_T1 = [
-  ["Pistola de Reserva", "Finesse", "Far", "d6 phy", "One-Handed", "Saque Rápido: Você não marca Estresse para equipar esta arma em perigo."],
-  ["Faca de Combate", "Agility", "Melee", "d6+1 phy", "One-Handed", "Combo: +2 no dano da arma primária contra alvos dentro do alcance Corpo a Corpo."],
-  ["Escudo Anti-Motim", "Strength", "Melee", "d4 phy", "One-Handed", "Guarda: +1 na Pontuação de Armadura."],
-  ["Luva de Choque", "Presence", "Melee", "d6 tech", "One-Handed", "Descarga por Toque: Em uma rolagem com Esperança, o alvo marca 1 Estresse."],
-  ["Cabo de Gancho", "Finesse", "Close", "d6 phy", "One-Handed", "Fisgado: Em um ataque bem-sucedido, puxe o alvo para o alcance Corpo a Corpo ou puxe-se até o alcance Muito Próximo dele."],
-  ["Bomba de Fumaça", "Knowledge", "Close", "d4 tech", "One-Handed", "Fumaça: Marque 1 Estresse para lançar fumaça dentro do alcance Muito Próximo e ficar Oculto enquanto estiver dentro da cortina de fumaça."],
-  ["Drone Tático", "Instinct", "Close", "d6 tech", "One-Handed", "Observador: Gaste 1 Esperança para dar ao seu próximo ataque com a arma primária um bônus de +2."],
-  ["Dardo Atordoante", "Finesse", "Far", "d6 tech", "One-Handed", "Sedativo: Em dano Maior, o alvo sofre desvantagem na próxima rolagem de ação que fizer."]
-];
-
-const ARMOR_T1 = [
-  ["Traje Ícone de Rua", "5/11", "3", "Reconhecível: Uma vez por cena, escolha uma criatura que já ouviu falar da sua reputação. Ganhe vantagem na sua primeira rolagem contra ela."],
-  ["Jaqueta de Sintcouro", "6/13", "3", "Flexível: +1 na Evasão.", 1],
-  ["Colete Balístico", "7/15", "4", "Reforçado: Quando você marca seu último Espaço de Armadura, aumente seus limiares de dano em +2 até limpar pelo menos 1 Espaço de Armadura."],
-  ["Blindagem Anti-Motim", "8/17", "4", "Pesada: −1 na Evasão; Escudo de Cobertura: Marque 1 Espaço de Armadura para ganhar um bônus de +2 na Evasão contra um ataque recebido.", -1],
-  ["Traje de Perigo", "6/13", "3", "Selado: Você tem vantagem em rolagens para resistir a fumaça, veneno, gás, contaminação, doença ou exposição ambiental."]
-];
+// Aplica as features oficiais depois de criar: o sistema monta os efeitos e ações delas (updateItemFeatures).
+async function applyOfficialFeatures(docs, list, key) {
+  for (const doc of docs) {
+    const keys = list.find(i => i.name === doc.name)?.official ?? [];
+    if (keys.length) await doc.update({ [`system.${key}`]: keys.map(value => ({ value })) });
+  }
+}
 
 async function importWeaponsAndArmor() {
   const weaponsPack = await getOrCreatePack("weapons");
   const armorsPack = await getOrCreatePack("armors");
 
-  // Estrutura idêntica ao compêndio oficial daggerheart.items (conferida no .zip do sistema):
-  // Primary Weapons > Physical Weapons / Magical Weapons > Tier 1
-  // Secondary Weapons > Tier 1 (sem separar físico/mágico)
+  // Estrutura do compêndio oficial daggerheart.weapons / armors:
+  // Armas Primárias > Armas Físicas / Armas Tech > Tier N; Armas Secundárias > Tier N; Armaduras > Tier N.
   const primaryTop = await makeFolder(weaponsPack, "Armas Primárias");
   const primaryPhysical = await makeFolder(weaponsPack, "Armas Físicas", { parent: primaryTop.id });
   const primaryMagical = await makeFolder(weaponsPack, "Armas Tech", { parent: primaryTop.id });
-  const primaryPhysicalT1 = await makeFolder(weaponsPack, "Nível 1", { parent: primaryPhysical.id });
-  const primaryMagicalT1 = await makeFolder(weaponsPack, "Nível 1", { parent: primaryMagical.id });
-
   const secondaryTop = await makeFolder(weaponsPack, "Armas Secundárias");
-  const secondaryT1 = await makeFolder(weaponsPack, "Nível 1", { parent: secondaryTop.id });
+  const folders = { physical: {}, magical: {}, secondary: {}, armor: {} };
+  for (const tier of [1, 2, 3, 4]) {
+    folders.physical[tier] = await makeFolder(weaponsPack, `Tier ${tier}`, { parent: primaryPhysical.id });
+    folders.magical[tier] = await makeFolder(weaponsPack, `Tier ${tier}`, { parent: primaryMagical.id });
+    folders.secondary[tier] = await makeFolder(weaponsPack, `Tier ${tier}`, { parent: secondaryTop.id });
+    folders.armor[tier] = await makeFolder(armorsPack, `Tier ${tier}`);
+  }
 
-  const armorTier1 = await makeFolder(armorsPack, "Nível 1");
+  const weaponData = [
+    ...PRIMARY_WEAPONS.map(w => ({ ...buildWeaponData(w, false), folder: folders[/tech/i.test(w.damage) ? "magical" : "physical"][w.tier].id })),
+    ...SECONDARY_WEAPONS.map(w => ({ ...buildWeaponData(w, true), folder: folders.secondary[w.tier].id }))
+  ];
+  const armorData = ARMORS.map(a => ({ ...buildArmorData(a), folder: folders.armor[a.tier].id }));
 
-  const primaryData = PRIMARY_WEAPONS_T1.map(row => {
-    const d = buildWeaponData(row);
-    const isMagical = /tech/i.test(row[3]);
-    d.folder = isMagical ? primaryMagicalT1.id : primaryPhysicalT1.id;
-    return d;
-  });
-  const secondaryData = withFolder(SECONDARY_WEAPONS_T1.map(row => {
-    const d = buildWeaponData(row);
-    d.system.secondary = true;
-    return d;
-  }), secondaryT1.id);
-
-  const armorData = withFolder(ARMOR_T1.map(buildArmorData), armorTier1.id);
-
-  const createdWeapons = await Item.createDocuments([...primaryData, ...secondaryData], { pack: weaponsPack.collection });
-  const createdArmor = await Item.createDocuments(armorData, { pack: armorsPack.collection });
+  const createdWeapons = await Item.createDocuments(weaponData, { pack: weaponsPack.collection, keepId: true });
+  const createdArmor = await Item.createDocuments(armorData, { pack: armorsPack.collection, keepId: true });
+  await applyOfficialFeatures(createdWeapons, [...PRIMARY_WEAPONS, ...SECONDARY_WEAPONS], "weaponFeatures");
+  await applyOfficialFeatures(createdArmor, ARMORS, "armorFeatures");
   return { weapons: createdWeapons, armor: createdArmor };
 }
 
@@ -428,7 +511,7 @@ const RUNNER = {
   ],
   guide: {
     traits: { agility: 1, strength: 0, finesse: -1, instinct: 1, presence: 0, knowledge: 2 },
-    primaryWeapon: "Lançador de Sucata", secondaryWeapon: null, armor: "Colete Balístico"
+    primaryWeapon: "Scrap Launcher", secondaryWeapon: null, armor: "Ballistic Vest"
   },
   class: {
     name: "Runner",
@@ -484,7 +567,7 @@ const RUNNER = {
     {
       name: "Breach Specialist", img: CPR("classes/runner/subclasses/breach-specialist.png"),
       description: `<p><em>Jogue de Breach Specialist se você quiser transformar invasão em arma, quebrar sistemas inimigos, derrubar defesas e transformar redes em vetores de ataque.</em></p>
-<p><strong>Build Sugerida:</strong> Conhecimento +2, Agilidade +1, Instinto +1, Presença 0, Força 0, Finesse −1. Equipamento recomendado: Lançador de Sucata (primária, duas mãos — sem arma secundária) + Colete Balístico — favorece o assalto direto a sistemas e sobreviver ao alcance corpo a corpo que o Rootkill te leva.</p>`,
+<p><strong>Build Sugerida:</strong> Conhecimento +2, Agilidade +1, Instinto +1, Presença 0, Força 0, Finesse −1. Equipamento recomendado: Scrap Launcher (primária, duas mãos — sem arma secundária) + Ballistic Vest — favorece o assalto direto a sistemas e sobreviver ao alcance corpo a corpo que o Rootkill te leva.</p>`,
       spellcastingTrait: "knowledge",
       // Atributos sugeridos da "Build Sugerida" (a criação de personagem usa estes no lugar dos da classe).
       suggestedTraits: { agility: 1, strength: 0, finesse: -1, instinct: 1, presence: 0, knowledge: 2 },
@@ -527,7 +610,7 @@ const RUNNER = {
       // texto usam "Net Diver"; ficou o nome da seção.
       name: "Net Diver", img: CPR("classes/runner/subclasses/signal-ghost.png"),
       description: `<p><em>Jogue de Net Diver se você quiser entrar em redes hostis, controlar sistemas conectados e completar o trabalho de dentro da arquitetura digital.</em></p>
-<p><strong>Build Sugerida:</strong> Instinto +2, Finesse +1, Agilidade +1, Presença 0, Conhecimento 0, Força −1. Equipamento recomendado: Arco Inteligente (primária, duas mãos — sem arma secundária) + Jaqueta de Sintcouro — favorece manter-se móvel e cobrir aliados à distância enquanto usa o Deep Dive.</p>`,
+<p><strong>Build Sugerida:</strong> Instinto +2, Finesse +1, Agilidade +1, Presença 0, Conhecimento 0, Força −1. Equipamento recomendado: Smartbow (primária, duas mãos — sem arma secundária) + Synthleather Jacket — favorece manter-se móvel e cobrir aliados à distância enquanto usa o Deep Dive.</p>`,
       spellcastingTrait: "instinct",
       suggestedTraits: { agility: 1, strength: -1, finesse: 1, instinct: 2, presence: 0, knowledge: 0 },
       foundation: [(() => {
@@ -567,7 +650,7 @@ const WARDEN = {
   ],
   guide: {
     traits: { agility: 0, strength: 2, finesse: -1, instinct: 1, presence: 1, knowledge: 0 },
-    primaryWeapon: "Martelo de Arrombamento", secondaryWeapon: null, armor: "Blindagem Anti-Motim"
+    primaryWeapon: "Breach Hammer", secondaryWeapon: null, armor: "Riot Shell"
   },
   class: {
     name: "Warden",
@@ -614,7 +697,7 @@ const WARDEN = {
     {
       name: "Bulwark", img: CPR("classes/warden/subclasses/bulwark.png"),
       description: `<p><em>Jogue de Bulwark se você quiser se tornar armadura pesada, escudo anti-motim e a pessoa em quem os inimigos se arrependem de bater.</em></p>
-<p><strong>Build Sugerida:</strong> Força +2, Instinto +1, Presença +1, Agilidade 0, Conhecimento 0, Acuidade −1. Equipamento recomendado: Martelo de Arrombamento (primária, duas mãos) + Blindagem Anti-Motim — a armadura mais pesada do Tier 1, para aproveitar o Impact Frame.</p>`,
+<p><strong>Build Sugerida:</strong> Força +2, Instinto +1, Presença +1, Agilidade 0, Conhecimento 0, Acuidade −1. Equipamento recomendado: Breach Hammer (primária, duas mãos) + Riot Shell — a armadura mais pesada do Tier 1, para aproveitar o Impact Frame.</p>`,
       spellcastingTrait: "strength",
       suggestedTraits: { agility: 0, strength: 2, finesse: -1, instinct: 1, presence: 1, knowledge: 0 },
       foundation: [{
@@ -649,7 +732,7 @@ const WARDEN = {
     {
       name: "Riotbreaker", img: CPR("classes/warden/subclasses/riotbreaker.png"),
       description: `<p><em>Jogue de Riotbreaker se você quiser quebrar investidas, controlar o espaço, empurrar inimigos e transformar defesa em força.</em></p>
-<p><strong>Build Sugerida:</strong> Presença +2, Força +1, Instinto +1, Agilidade 0, Conhecimento 0, Acuidade −1. Equipamento recomendado: Cassetete de Choque (primária, uma mão) + Escudo Anti-Motim (secundária) + Blindagem Anti-Motim — controle de perto com uma mão livre para o escudo.</p>`,
+<p><strong>Build Sugerida:</strong> Presença +2, Força +1, Instinto +1, Agilidade 0, Conhecimento 0, Acuidade −1. Equipamento recomendado: Shock Baton (primária, uma mão) + Riot Buckler (secundária) + Riot Shell — controle de perto com uma mão livre para o escudo.</p>`,
       spellcastingTrait: "presence",
       suggestedTraits: { agility: 0, strength: 1, finesse: -1, instinct: 1, presence: 2, knowledge: 0 },
       foundation: [{
@@ -693,7 +776,7 @@ const SOLO = {
   ],
   guide: {
     traits: { agility: 1, strength: 0, finesse: 2, instinct: 1, presence: 0, knowledge: -1 },
-    primaryWeapon: "Arco Inteligente", secondaryWeapon: null, armor: "Jaqueta de Sintcouro"
+    primaryWeapon: "Smartbow", secondaryWeapon: null, armor: "Synthleather Jacket"
   },
   class: {
     name: "Solo",
@@ -742,7 +825,7 @@ const SOLO = {
     {
       name: "Deadeye", img: CPR("classes/solo/subclasses/deadeye.png"),
       description: `<p><em>Jogue de Deadeye se você quiser eliminar alvos prioritários, aproveitar aberturas e fazer cada tiro valer.</em></p>
-<p><strong>Build Sugerida:</strong> Acuidade +2, Agilidade +1, Instinto +1, Força 0, Presença 0, Conhecimento −1. Equipamento recomendado: Arco Inteligente (primária, duas mãos) + Jaqueta de Sintcouro — ataques de longe, ficando parado para aproveitar o Draw do arco.</p>`,
+<p><strong>Build Sugerida:</strong> Acuidade +2, Agilidade +1, Instinto +1, Força 0, Presença 0, Conhecimento −1. Equipamento recomendado: Smartbow (primária, duas mãos) + Synthleather Jacket — ataques de longe, ficando parado para aproveitar o Draw do arco.</p>`,
       spellcastingTrait: "finesse",
       suggestedTraits: { agility: 1, strength: 0, finesse: 2, instinct: 1, presence: 0, knowledge: -1 },
       foundation: [(() => {
@@ -769,7 +852,7 @@ const SOLO = {
     {
       name: "Shock Trooper", img: CPR("classes/solo/subclasses/shock-trooper.png"),
       description: `<p><em>Jogue de Shock Trooper se você quiser invadir posições fortificadas, lutar de perto, romper linhas inimigas e continuar avançando pelo perigo.</em></p>
-<p><strong>Build Sugerida:</strong> Força +2, Agilidade +1, Instinto +1, Acuidade 0, Presença 0, Conhecimento −1. Equipamento recomendado: Espingarda de Rua (primária, duas mãos) + Colete Balístico — combate de perto, entrando no alcance Muito Próximo para o Hard Entry.</p>`,
+<p><strong>Build Sugerida:</strong> Força +2, Agilidade +1, Instinto +1, Acuidade 0, Presença 0, Conhecimento −1. Equipamento recomendado: Street Shotgun (primária, duas mãos) + Ballistic Vest — combate de perto, entrando no alcance Muito Próximo para o Hard Entry.</p>`,
       spellcastingTrait: "strength",
       suggestedTraits: { agility: 1, strength: 2, finesse: 0, instinct: 1, presence: 0, knowledge: -1 },
       foundation: [
@@ -828,7 +911,7 @@ const INFILTRATOR = {
   ],
   guide: {
     traits: { agility: 1, strength: -1, finesse: 2, instinct: 1, presence: 0, knowledge: 0 },
-    primaryWeapon: "Mono-Katana", secondaryWeapon: "Faca de Combate", armor: "Jaqueta de Sintcouro"
+    primaryWeapon: "Mono-Katana", secondaryWeapon: "Combat Knife", armor: "Synthleather Jacket"
   },
   class: {
     name: "Infiltrator",
@@ -876,7 +959,7 @@ const INFILTRATOR = {
     {
       name: "Silent Killer", img: CPR("classes/infiltrator/subclasses/silent-killer.png"),
       description: `<p><em>Jogue de Silent Killer se você quiser eliminar alvos com precisão e terminar lutas antes que elas comecem.</em></p>
-<p><strong>Build Sugerida:</strong> Acuidade +2, Agilidade +1, Instinto +1, Presença 0, Conhecimento 0, Força −1. Equipamento recomendado: Mono-Katana (primária, uma mão) + Faca de Combate (secundária) + Jaqueta de Sintcouro — ataques de perto, saindo do Escondido.</p>`,
+<p><strong>Build Sugerida:</strong> Acuidade +2, Agilidade +1, Instinto +1, Presença 0, Conhecimento 0, Força −1. Equipamento recomendado: Mono-Katana (primária, uma mão) + Combat Knife (secundária) + Synthleather Jacket — ataques de perto, saindo do Escondido.</p>`,
       spellcastingTrait: "finesse",
       suggestedTraits: { agility: 1, strength: -1, finesse: 2, instinct: 1, presence: 0, knowledge: 0 },
       foundation: [
@@ -916,7 +999,7 @@ const INFILTRATOR = {
       name: "Phantom", img: CPR("classes/infiltrator/subclasses/phantom.png"),
       description: `<p><em>Jogue de Phantom se você quiser passar por espaços vigiados, se reposicionar por pontos cegos, tirar aliados do perigo e desaparecer antes que o inimigo consiga te prender.</em></p>
 <p><em>(A lista de subclasses do PDF chama esta de "Deep Cover", mas a seção dela se chama Phantom.)</em></p>
-<p><strong>Build Sugerida:</strong> Agilidade +2, Acuidade +1, Instinto +1, Presença 0, Conhecimento 0, Força −1. Equipamento recomendado: SMG Compacta (primária, uma mão) + Faca de Combate (secundária) + Jaqueta de Sintcouro — mobilidade e Evasão alta.</p>`,
+<p><strong>Build Sugerida:</strong> Agilidade +2, Acuidade +1, Instinto +1, Presença 0, Conhecimento 0, Força −1. Equipamento recomendado: Compact SMG (primária, uma mão) + Combat Knife (secundária) + Synthleather Jacket — mobilidade e Evasão alta.</p>`,
       spellcastingTrait: "agility",
       suggestedTraits: { agility: 2, strength: -1, finesse: 1, instinct: 1, presence: 0, knowledge: 0 },
       foundation: [
@@ -966,7 +1049,7 @@ const AUGMENTED = {
   ],
   guide: {
     traits: { agility: 2, strength: 0, finesse: 1, instinct: 1, presence: 0, knowledge: -1 },
-    primaryWeapon: "SMG Compacta", secondaryWeapon: "Faca de Combate", armor: "Jaqueta de Sintcouro"
+    primaryWeapon: "Compact SMG", secondaryWeapon: "Combat Knife", armor: "Synthleather Jacket"
   },
   class: {
     name: "Augmented",
@@ -1012,7 +1095,7 @@ const AUGMENTED = {
     {
       name: "Reflex Suite", img: CPR("classes/augmented/subclasses/reflex-suite.png"),
       description: `<p><em>Jogue de Reflex Suite se você quiser se mover mais rápido que o tempo de reação humano e transformar o seu sistema nervoso numa arma.</em></p>
-<p><strong>Build Sugerida:</strong> Agilidade +2, Acuidade +1, Instinto +1, Força 0, Presença 0, Conhecimento −1. Equipamento recomendado: SMG Compacta (primária, uma mão) + Faca de Combate (secundária) + Jaqueta de Sintcouro — Evasão alta e Agilidade calibrada.</p>`,
+<p><strong>Build Sugerida:</strong> Agilidade +2, Acuidade +1, Instinto +1, Força 0, Presença 0, Conhecimento −1. Equipamento recomendado: Compact SMG (primária, uma mão) + Combat Knife (secundária) + Synthleather Jacket — Evasão alta e Agilidade calibrada.</p>`,
       spellcastingTrait: "agility",
       suggestedTraits: { agility: 2, strength: 0, finesse: 1, instinct: 1, presence: 0, knowledge: -1 },
       foundation: [
@@ -1044,7 +1127,7 @@ const AUGMENTED = {
     {
       name: "Titan Frame", img: CPR("classes/augmented/subclasses/titan-frame.png"),
       description: `<p><em>Jogue de Titan Frame se você quiser virar uma montanha de cromo pesado e força industrial que se recusa a sair do lugar a menos que você permita.</em></p>
-<p><strong>Build Sugerida:</strong> Força +2, Agilidade +1, Instinto +1, Acuidade 0, Presença 0, Conhecimento −1. Equipamento recomendado: Martelo de Arrombamento (primária, duas mãos) + Colete Balístico — Força calibrada para o Reinforced Build.</p>`,
+<p><strong>Build Sugerida:</strong> Força +2, Agilidade +1, Instinto +1, Acuidade 0, Presença 0, Conhecimento −1. Equipamento recomendado: Breach Hammer (primária, duas mãos) + Ballistic Vest — Força calibrada para o Reinforced Build.</p>`,
       spellcastingTrait: "strength",
       suggestedTraits: { agility: 1, strength: 2, finesse: 0, instinct: 1, presence: 0, knowledge: -1 },
       foundation: [
@@ -1096,7 +1179,7 @@ const TECH = {
   ],
   guide: {
     traits: { agility: 1, strength: -1, finesse: 0, instinct: 1, presence: 0, knowledge: 2 },
-    primaryWeapon: "Lançador de Sucata", secondaryWeapon: null, armor: "Colete Balístico"
+    primaryWeapon: "Scrap Launcher", secondaryWeapon: null, armor: "Ballistic Vest"
   },
   class: {
     name: "Tech",
@@ -1138,7 +1221,7 @@ const TECH = {
     {
       name: "Rigger", img: CPR("classes/tech/subclasses/rigger.png"),
       description: `<p><em>Jogue de Rigger se você quiser controlar drones, operar máquinas remotamente e apoiar aliados por meio de equipamento.</em></p>
-<p><strong>Build Sugerida:</strong> Conhecimento +2, Agilidade +1, Instinto +1, Acuidade 0, Presença 0, Força −1. Equipamento recomendado: Lançador de Sucata (primária, duas mãos) + Colete Balístico — o drone faz o trabalho de perto enquanto você fica no alcance Próximo.</p>`,
+<p><strong>Build Sugerida:</strong> Conhecimento +2, Agilidade +1, Instinto +1, Acuidade 0, Presença 0, Força −1. Equipamento recomendado: Scrap Launcher (primária, duas mãos) + Ballistic Vest — o drone faz o trabalho de perto enquanto você fica no alcance Próximo.</p>`,
       spellcastingTrait: "knowledge",
       suggestedTraits: { agility: 1, strength: -1, finesse: 0, instinct: 1, presence: 0, knowledge: 2 },
       foundation: [{
@@ -1170,7 +1253,7 @@ const TECH = {
     {
       name: "Saboteur", img: CPR("classes/tech/subclasses/saboteur.png"),
       description: `<p><em>Jogue de Saboteur se você quiser plantar cargas, desativar defesas e virar o ambiente contra os seus inimigos.</em></p>
-<p><strong>Build Sugerida:</strong> Acuidade +2, Conhecimento +1, Agilidade +1, Instinto 0, Presença 0, Força −1. Equipamento recomendado: Mono-Katana (primária, uma mão) + Cabo de Gancho (secundária) + Jaqueta de Sintcouro — chegar perto para plantar as cargas.</p>`,
+<p><strong>Build Sugerida:</strong> Acuidade +2, Conhecimento +1, Agilidade +1, Instinto 0, Presença 0, Força −1. Equipamento recomendado: Mono-Katana (primária, uma mão) + Grapple Wire (secundária) + Synthleather Jacket — chegar perto para plantar as cargas.</p>`,
       spellcastingTrait: "finesse",
       suggestedTraits: { agility: 1, strength: -1, finesse: 2, instinct: 0, presence: 0, knowledge: 1 },
       foundation: [(() => {
@@ -1219,7 +1302,7 @@ const BROKER = {
   ],
   guide: {
     traits: { agility: 0, strength: -1, finesse: 0, instinct: 1, presence: 2, knowledge: 1 },
-    primaryWeapon: "Cassetete de Choque", secondaryWeapon: "Luva de Choque", armor: "Jaqueta de Sintcouro"
+    primaryWeapon: "Shock Baton", secondaryWeapon: "Shock Glove", armor: "Synthleather Jacket"
   },
   class: {
     name: "Broker",
@@ -1259,7 +1342,7 @@ const BROKER = {
     {
       name: "Fixer", img: CPR("classes/broker/subclasses/fixer.png"),
       description: `<p><em>Jogue de Fixer se você quiser arranjar trabalhos, cobrar favores e navegar pela economia oculta da cidade.</em></p>
-<p><strong>Build Sugerida:</strong> Presença +2, Conhecimento +1, Instinto +1, Agilidade 0, Acuidade 0, Força −1. Equipamento recomendado: Cassetete de Choque (primária, uma mão) + Luva de Choque (secundária) + Jaqueta de Sintcouro — as duas armas usam Presença.</p>`,
+<p><strong>Build Sugerida:</strong> Presença +2, Conhecimento +1, Instinto +1, Agilidade 0, Acuidade 0, Força −1. Equipamento recomendado: Shock Baton (primária, uma mão) + Shock Glove (secundária) + Synthleather Jacket — as duas armas usam Presença.</p>`,
       spellcastingTrait: "presence",
       suggestedTraits: { agility: 0, strength: -1, finesse: 0, instinct: 1, presence: 2, knowledge: 1 },
       foundation: [{
@@ -1284,7 +1367,7 @@ const BROKER = {
     {
       name: "Icon", img: CPR("classes/broker/subclasses/icon.png"),
       description: `<p><em>Jogue de Icon se você quiser usar como arma a reputação, a performance, a fama, o medo, a propaganda e a percepção pública.</em></p>
-<p><strong>Build Sugerida:</strong> Presença +2, Agilidade +1, Acuidade +1, Instinto 0, Conhecimento 0, Força −1. Equipamento recomendado: Cassetete de Choque (primária, uma mão) + Luva de Choque (secundária) + Traje Ícone de Rua — a reputação faz parte do figurino.</p>`,
+<p><strong>Build Sugerida:</strong> Presença +2, Agilidade +1, Acuidade +1, Instinto 0, Conhecimento 0, Força −1. Equipamento recomendado: Shock Baton (primária, uma mão) + Shock Glove (secundária) + Street Icon Fit — a reputação faz parte do figurino.</p>`,
       spellcastingTrait: "presence",
       suggestedTraits: { agility: 1, strength: -1, finesse: 1, instinct: 0, presence: 2, knowledge: 0 },
       foundation: [{
@@ -1321,7 +1404,7 @@ const RECLAIMER = {
   ],
   guide: {
     traits: { agility: 2, strength: 0, finesse: 1, instinct: 1, presence: 0, knowledge: -1 },
-    primaryWeapon: "Carabina de Assalto", secondaryWeapon: null, armor: "Jaqueta de Sintcouro"
+    primaryWeapon: "Assault Carbine", secondaryWeapon: null, armor: "Synthleather Jacket"
   },
   class: {
     name: "Reclaimer",
@@ -1374,7 +1457,7 @@ const RECLAIMER = {
     {
       name: "Outrider", img: CPR("classes/reclaimer/subclasses/outrider.png"),
       description: `<p><em>Jogue de Outrider se você quiser dominar veículos, liderar perseguições e sobreviver a estradas impossíveis.</em></p>
-<p><strong>Build Sugerida:</strong> Agilidade +2, Instinto +1, Acuidade +1, Força 0, Presença 0, Conhecimento −1. Equipamento recomendado: Carabina de Assalto (primária, duas mãos) + Jaqueta de Sintcouro — atirar de longe, de dentro do veículo.</p>`,
+<p><strong>Build Sugerida:</strong> Agilidade +2, Instinto +1, Acuidade +1, Força 0, Presença 0, Conhecimento −1. Equipamento recomendado: Assault Carbine (primária, duas mãos) + Synthleather Jacket — atirar de longe, de dentro do veículo.</p>`,
       spellcastingTrait: "agility",
       suggestedTraits: { agility: 2, strength: 0, finesse: 1, instinct: 1, presence: 0, knowledge: -1 },
       foundation: [{
@@ -1401,7 +1484,7 @@ const RECLAIMER = {
     {
       name: "Zonebreaker", img: CPR("classes/reclaimer/subclasses/zonebreaker.png"),
       description: `<p><em>Jogue de Zonebreaker se você quiser dominar o terreno, transformar ruínas em armas e deixar o próprio campo de batalha perigoso.</em></p>
-<p><strong>Build Sugerida:</strong> Instinto +2, Agilidade +1, Força +1, Acuidade 0, Conhecimento 0, Presença −1. Equipamento recomendado: SMG Compacta (primária, uma mão) + Drone Tático (secundária, de Instinto) + Colete Balístico — ficar dentro da Surveyed Route e segurar a posição.</p>`,
+<p><strong>Build Sugerida:</strong> Instinto +2, Agilidade +1, Força +1, Acuidade 0, Conhecimento 0, Presença −1. Equipamento recomendado: Compact SMG (primária, uma mão) + Tactical Drone (secundária, de Instinto) + Ballistic Vest — ficar dentro da Surveyed Route e segurar a posição.</p>`,
       spellcastingTrait: "instinct",
       suggestedTraits: { agility: 1, strength: 1, finesse: 0, instinct: 2, presence: -1, knowledge: 0 },
       foundation: [{
@@ -1447,7 +1530,7 @@ const TRAUMA_DOC = {
   ],
   guide: {
     traits: { agility: 1, strength: -1, finesse: 0, instinct: 2, presence: 0, knowledge: 1 },
-    primaryWeapon: "SMG Compacta", secondaryWeapon: "Drone Tático", armor: "Colete Balístico"
+    primaryWeapon: "Compact SMG", secondaryWeapon: "Tactical Drone", armor: "Ballistic Vest"
   },
   class: {
     name: "Trauma Doc",
@@ -1493,7 +1576,7 @@ const TRAUMA_DOC = {
     {
       name: "Combat Medic", img: CPR("classes/trauma-doc/subclasses/combat-medic.png"),
       description: `<p><em>Jogue de Combat Medic se você quiser manter a Crew viva e fazer tratamentos de emergência no meio do combate.</em></p>
-<p><strong>Build Sugerida:</strong> Instinto +2, Agilidade +1, Conhecimento +1, Acuidade 0, Presença 0, Força −1. Equipamento recomendado: SMG Compacta (primária, uma mão) + Drone Tático (secundária, de Instinto) + Colete Balístico — mobilidade para chegar até quem caiu.</p>`,
+<p><strong>Build Sugerida:</strong> Instinto +2, Agilidade +1, Conhecimento +1, Acuidade 0, Presença 0, Força −1. Equipamento recomendado: Compact SMG (primária, uma mão) + Tactical Drone (secundária, de Instinto) + Ballistic Vest — mobilidade para chegar até quem caiu.</p>`,
       spellcastingTrait: "instinct",
       suggestedTraits: { agility: 1, strength: -1, finesse: 0, instinct: 2, presence: 0, knowledge: 1 },
       foundation: [
@@ -1521,7 +1604,7 @@ const TRAUMA_DOC = {
     {
       name: "Street Surgeon", img: CPR("classes/trauma-doc/subclasses/street-surgeon.png"),
       description: `<p><em>Jogue de Street Surgeon se você quiser usar medicina ilegal, remendos de cyberware, procedimentos de clínica clandestina e estimulantes perigosos para levar corpos além dos limites seguros.</em></p>
-<p><strong>Build Sugerida:</strong> Conhecimento +2, Acuidade +1, Instinto +1, Agilidade 0, Presença 0, Força −1. Equipamento recomendado: Lançador de Sucata (primária, duas mãos, de Conhecimento) + Jaqueta de Sintcouro — o mesmo atributo para atacar e para os protocolos.</p>`,
+<p><strong>Build Sugerida:</strong> Conhecimento +2, Acuidade +1, Instinto +1, Agilidade 0, Presença 0, Força −1. Equipamento recomendado: Scrap Launcher (primária, duas mãos, de Conhecimento) + Synthleather Jacket — o mesmo atributo para atacar e para os protocolos.</p>`,
       spellcastingTrait: "knowledge",
       suggestedTraits: { agility: 0, strength: -1, finesse: 1, instinct: 1, presence: 0, knowledge: 2 },
       foundation: [{
@@ -3882,7 +3965,8 @@ function buildCyberwareItem(def, folderId) {
   const base = { _id: stableId(`cyberware:${def.n}`), name: def.name, img: def.img, folder: folderId, flags };
 
   if (def.weapon) {
-    const w = buildWeaponData([def.name, def.weapon.trait, def.weapon.range, def.weapon.damage, "One-Handed", ""]);
+    const w = buildWeaponData(W(1, def.name, "default/Default_Weapon", def.weapon.trait, def.weapon.range, def.weapon.damage, "One-Handed", "|"), false);
+    delete w._id;
     return foundry.utils.mergeObject(w, {
       ...base,
       system: { description: cyberDescription(def), secondary: def.weapon.slot === "secondary", tier: cyberTier(def.n), attack: { img: def.img } }

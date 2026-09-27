@@ -14,7 +14,7 @@ Os jogadores são mercenários na New Dark Age: pegam contratos sujos, instalam 
 - **Ficha da Crew:** Reputação, Edge e os Movimentos de Edge, no Grupo do próprio sistema.
 - **60 cyberwares**, que dão acesso a outras Competências.
 - **Trajetórias e Afiliações** no lugar de Ancestralidade e Comunidade.
-- **Armas e armaduras de Tier 1**, com ataque e dano automáticos.
+- **64 armas e 25 armaduras dos Tiers 1 a 4**, com ataque e dano automáticos; as características iguais às oficiais (Reliable, Deadly, Paired, Shifting, Fortified…) usam a automação do sistema.
 - **Level Up do Edgeheart**, que pode ser ligado ou desligado nas configurações.
 - **25 adversários e 16 ambientes** dos Tiers 1 a 4, no formato dos oficiais.
 - **Diários** com o PDF inteiro traduzido, com links para os itens.
@@ -40,7 +40,6 @@ Mundos que usavam a versão antiga (com a macro "Importar Edgeheart") recebem um
 
 ## Próximos passos
 
-- Equipamento dos Tiers 2 a 4
 - Veículos e Eidolons
 - Versão bilíngue (PT/EN)
 
