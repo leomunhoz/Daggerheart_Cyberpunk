@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.24.1
+- Mais automação nas características situacionais, com peças do próprio sistema:
+  - **Vantagem como opção no diálogo de rolagem**, como na armadura oficial Aquatic: Street Icon Fit, Hazard Suit, Gang Colors Jacket e Exo-Riot Plating.
+  - **Bônus que o jogador liga quando vale:** Draw do Smartbow (+2), Controlled Fire da Assault Carbine (+1) e Stealth do Armored Bodysuit (+2). Os de ataque só valem para a própria arma, como a Reliable oficial.
+  - **+1 de Proficiência como botão de dano extra:** Heavy Pistol, Breach Hammer e Blackwall Emitter (este cobra 1 Estresse).
 ## v1.24.0
 - **Armas e armaduras dos Tiers 2 a 4:** mais 48 armas (24 primárias e 24 secundárias) e 20 armaduras, somando 64 armas e 25 armaduras. Os compêndios ficam organizados em Tier 1 a 4, como os oficiais.
 - **Nomes em inglês, como no PDF**, também no Tier 1 (Assault Carbine, Riot Buckler, Ballistic Vest…). As características continuam em português.

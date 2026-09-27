@@ -293,6 +293,17 @@ function gear(...parts) {
 }
 const official = (...keys) => ({ official: keys });
 const passive = (...changes) => ({ changes });
+// Bônus situacional: efeito que começa desligado e o jogador liga quando a condição vale (padrão Opportunist).
+const gearToggle = (name, img, ...changes) => ({ effects: [passiveEffect({ name, img: CPR(img), disabled: true, changes })] });
+// Igual, mas só nos ataques com a própria arma (mesmas condições da feature oficial Reliable).
+const ATTACK_WITH_THIS_WEAPON = [{ type: "weaponRestriction", weaponType: "sameWeapon" }, { type: "actionType", actionTypes: ["attack"] }];
+function gearAttackToggle(name, img, ...changes) {
+  const part = gearToggle(name, img, ...changes);
+  part.effects[0].system.conditionals = ATTACK_WITH_THIS_WEAPON;
+  return part;
+}
+// "Vantagem em rolagens para..." vira uma fonte de vantagem que o diálogo de rolagem oferece (padrão da armadura Aquatic).
+const advantageOn = text => ({ changes: [gearChange("system.advantageSources", text)] });
 
 // W(tier, nome, ícone, atributo, alcance, dano, empunhadura, "Característica|texto", extras)
 const W = (tier, name, img, trait, range, damage, burden, feature, extras = {}) => ({ tier, name, img: CPR(img), trait, range, damage, burden, feature, ...gear(extras) });
@@ -300,12 +311,12 @@ const W = (tier, name, img, trait, range, damage, burden, feature, extras = {}) 
 const A = (tier, name, img, thresholds, score, feature, extras = {}) => ({ tier, name, img: CPR(img), thresholds, score, feature, ...gear(extras) });
 
 const PRIMARY_WEAPONS = [
-  W(1, "Assault Carbine", "weapons/AssaultRifle", "Agility", "Far", "d8+2 phy", "Two-Handed", "Controlled Fire|numa rolagem com Esperança, ganhe +1 na próxima rolagem de ataque dentro da cena."),
+  W(1, "Assault Carbine", "weapons/AssaultRifle", "Agility", "Far", "d8+2 phy", "Two-Handed", "Controlled Fire|numa rolagem com Esperança, ganhe +1 na próxima rolagem de ataque dentro da cena.", gearAttackToggle("Controlled Fire (+1 no ataque)", "weapons/AssaultRifle", gearChange("system.bonuses.roll.bonus", 1))),
   W(1, "Compact SMG", "weapons/SMG", "Agility", "Close", "d6+2 phy", "One-Handed", "Spray|marque 1 Estresse para ter como alvo outra criatura dentro do alcance Muito Próximo do alvo original.", gearCostAction("Spray", [gearCost("stress", 1)])),
   W(1, "Street Shotgun", "weapons/Shotgun", "Strength", "Very Close", "d8+3 phy", "Two-Handed", "Scatter|num ataque bem-sucedido, outro alvo dentro do alcance Muito Próximo do alvo marca 1 Estresse.", gearStress("Scatter")),
-  W(1, "Breach Hammer", "weapons/Sledgehammer", "Strength", "Melee", "d10+3 phy", "Two-Handed", "Breach|num ataque bem-sucedido contra um objeto, porta, barricada, cobertura ou veículo, some +1 de Proficiência."),
+  W(1, "Breach Hammer", "weapons/Sledgehammer", "Strength", "Melee", "d10+3 phy", "Two-Handed", "Breach|num ataque bem-sucedido contra um objeto, porta, barricada, cobertura ou veículo, some +1 de Proficiência.", gearDamage("Breach (+1 Proficiência)", "1d10", "physical")),
   W(1, "Mono-Katana", "weapons/Sword", "Finesse", "Melee", "d8+2 phy", "One-Handed", "Clean Cut|quando você causa dano Maior, o alvo também marca 1 Estresse.", gearStress("Clean Cut")),
-  W(1, "Smartbow", "weapons/Bow", "Finesse", "Far", "d8 tech", "Two-Handed", "Draw|se você não se moveu durante o seu Holofote antes de atacar, ganhe +2 na rolagem de ataque."),
+  W(1, "Smartbow", "weapons/Bow", "Finesse", "Far", "d8 tech", "Two-Handed", "Draw|se você não se moveu durante o seu Holofote antes de atacar, ganhe +2 na rolagem de ataque.", gearAttackToggle("Draw (+2 no ataque)", "weapons/Bow", gearChange("system.bonuses.roll.bonus", 2))),
   W(1, "Shock Baton", "weapons/StunBaton", "Presence", "Melee", "d8 tech", "One-Handed", "Shock Pulse|num ataque bem-sucedido, o alvo tem desvantagem na próxima Rolagem de Reação que fizer."),
   W(1, "Scrap Launcher", "weapons/GrenadeLauncher", "Knowledge", "Close", "d8+1 phy", "Two-Handed", "Junkshot|numa rolagem com Medo, o alvo sofre 1d6 de dano e a arma emperra até você marcar 1 Estresse para destravá-la.", gear(gearDamage("Junkshot", "1d6", "physical"), gearCostAction("Destravar", [gearCost("stress", 1)]))),
 
@@ -333,7 +344,7 @@ const PRIMARY_WEAPONS = [
   W(4, "Steel-Whip Guillotine", "weapons/HelicopterBlade", "Finesse", "Close", "d8+11 phy", "One-Handed", "Sever|quando você tira o valor máximo em qualquer dado de dano, o alvo marca 1 Estresse.", gearStress("Sever")),
   W(4, "Singularity Hammer", "weapons/Sledgehammer_poor", "Strength", "Melee", "d12+12 tech", "Two-Handed", "Collapse Point|num ataque bem-sucedido, gaste 2 Esperança para puxar todos os alvos dentro do alcance Muito Próximo do alvo para o alcance Corpo a Corpo dele e causar metade do dano a esses alvos.", gearCostAction("Collapse Point", [gearCost("hope", 2)])),
   W(4, "Neural Lance", "weapons/Naginata_poor", "Presence", "Far", "d8+10 tech", "Two-Handed", "Mind Spike|em dano Maior ou Severo, o alvo não pode ter como alvo ninguém além do alcance Muito Próximo até a sua próxima ação."),
-  W(4, "Blackwall Emitter", "status/black_lace", "Knowledge", "Far", "d6+12 tech", "Two-Handed", "Red Static|numa rolagem com Medo, você pode somar +1 de Proficiência à rolagem de dano e depois marcar 1 Estresse.", gearCostAction("Red Static", [gearCost("stress", 1)])),
+  W(4, "Blackwall Emitter", "status/black_lace", "Knowledge", "Far", "d6+12 tech", "Two-Handed", "Red Static|numa rolagem com Medo, você pode somar +1 de Proficiência à rolagem de dano e depois marcar 1 Estresse.", gearDamage("Red Static (+1 Proficiência)", "1d6", "magical", [gearCost("stress", 1)])),
   W(4, "Stormblade", "weapons/Sword_poor", "Finesse", "Melee", "d10+9 tech", "One-Handed", "Blink Cut|num ataque bem-sucedido com Esperança, teleporte-se dentro do alcance Próximo e fique Escondido até a sua próxima ação.", gearCondition("Blink Cut", ["hidden"], [], { type: "self", amount: null }))
 ];
 
@@ -347,7 +358,7 @@ const SECONDARY_WEAPONS = [
   W(1, "Tactical Drone", "dlc/gear/the-observer", "Instinct", "Close", "d6 tech", "One-Handed", "Spotter|gaste 1 Esperança para dar +2 ao seu próximo ataque com a arma primária.", gearCostAction("Spotter", [gearCost("hope", 1)])),
   W(1, "Stun Dart", "weapons/dartgun", "Finesse", "Far", "d6 tech", "One-Handed", "Sedative|em dano Maior, o alvo tem desvantagem na próxima rolagem de ação."),
 
-  W(2, "Heavy Pistol", "weapons/heavyPistol", "Finesse", "Far", "d6+3 phy", "One-Handed", "Heavy Round|em dano Maior, some +1 de Proficiência à rolagem de dano."),
+  W(2, "Heavy Pistol", "weapons/heavyPistol", "Finesse", "Far", "d6+3 phy", "One-Handed", "Heavy Round|em dano Maior, some +1 de Proficiência à rolagem de dano.", gearDamage("Heavy Round (+1 Proficiência)", "1d6", "physical")),
   W(2, "Mono-Knife", "weapons/CombatKnife_excellent", "Agility", "Melee", "d8+2 phy", "One-Handed", "Serrated|quando você tira 1 num dado de dano, ele causa 6 de dano.", official("selfCorrecting")),
   W(2, "Impact Shield", "armor/bullet_proof_shield", "Strength", "Melee", "d6+2 phy", "One-Handed", "Protective|+1 na Pontuação de Armadura; quando você marca um Espaço de Armadura, pode empurrar um atacante Corpo a Corpo até o alcance Próximo.", passive(gearArmor(1))),
   W(2, "Arc Knuckles", "cyberweapons/big_knucks", "Presence", "Melee", "d8 tech", "One-Handed", "Jolt|num ataque bem-sucedido, gaste 1 Esperança para deixar o alvo temporariamente Vulnerável.", gearCondition("Jolt", ["vulnerable"], [{ key: "hope", value: 1 }])),
@@ -376,18 +387,18 @@ const SECONDARY_WEAPONS = [
 ];
 
 const ARMORS = [
-  A(1, "Street Icon Fit", "armor/light-armorjack_body", "5/11", 3, "Recognizable|uma vez por cena, escolha uma criatura que já ouviu falar da sua reputação. Ganhe vantagem na sua primeira rolagem contra ela."),
+  A(1, "Street Icon Fit", "armor/light-armorjack_body", "5/11", 3, "Recognizable|uma vez por cena, escolha uma criatura que já ouviu falar da sua reputação. Ganhe vantagem na sua primeira rolagem contra ela.", advantageOn("Primeira rolagem contra quem conhece a sua reputação (1x por cena)")),
   A(1, "Synthleather Jacket", "clothing/generic_jacket", "6/13", 3, "Flexible|+1 de Evasão.", official("flexible")),
   A(1, "Ballistic Vest", "armor/kevlar_body", "7/15", 4, "Reinforced|quando você marca o seu último Espaço de Armadura, aumente os seus limiares de dano em +2 até limpar pelo menos 1 Espaço de Armadura.", official("reinforced")),
   A(1, "Riot Shell", "armor/heavy-armorjack_body", "8/17", 4, "Heavy|−1 de Evasão; <strong>Cover Brace:</strong> marque um Espaço de Armadura para ganhar +2 de Evasão contra um ataque recebido.", official("heavy")),
-  A(1, "Hazard Suit", "gear/radiation_suit", "6/13", 3, "Sealed|você tem vantagem em rolagens para resistir a fumaça, veneno, gás, contaminação, doença ou exposição ambiental."),
+  A(1, "Hazard Suit", "gear/radiation_suit", "6/13", 3, "Sealed|você tem vantagem em rolagens para resistir a fumaça, veneno, gás, contaminação, doença ou exposição ambiental.", advantageOn("Resistir a fumaça, veneno, gás, contaminação, doença ou exposição ambiental")),
 
   A(2, "Luxurious Coat", "clothing/generic_top", "7/16", 3, "First Impression|uma vez por cena, escolha uma criatura. Ela precisa te tratar como alguém importante, perigoso, rico ou que vale a pena ouvir, até que se prove o contrário."),
   A(2, "Smartweave Coat", "armor/leathers_body", "7/16", 3, "Adaptive|quando você é alvo de um ataque, pode marcar um Espaço de Armadura para dar desvantagem à rolagem de ataque.", official("shifting")),
-  A(2, "Gang Colors Jacket", "clothing/generic_jacket", "8/18", 4, "Claimed|você tem vantagem em rolagens para intimidar, negociar ou evitar ser desafiado em território de gangue, espaços criminosos ou ruas disputadas."),
-  A(2, "Armored Bodysuit", "armor/bodyweight_suit", "8/20", 4, "Stealth|ganhe +2 nas rolagens para ficar ou continuar Escondido."),
+  A(2, "Gang Colors Jacket", "clothing/generic_jacket", "8/18", 4, "Claimed|você tem vantagem em rolagens para intimidar, negociar ou evitar ser desafiado em território de gangue, espaços criminosos ou ruas disputadas.", advantageOn("Intimidar, negociar ou evitar desafios em território de gangue ou ruas disputadas")),
+  A(2, "Armored Bodysuit", "armor/bodyweight_suit", "8/20", 4, "Stealth|ganhe +2 nas rolagens para ficar ou continuar Escondido.", gearToggle("Stealth (+2 para ficar Escondido)", "armor/bodyweight_suit", gearChange("system.bonuses.roll.bonus", 2))),
   A(2, "Reactive Mesh", "dlc/armor/sycust_fleshweave", "9/22", 4, "Feedback|quando um adversário te causa dano dentro do alcance Corpo a Corpo, ele marca 1 Estresse.", gearStress("Feedback")),
-  A(2, "Exo-Riot Plating", "armor/metalgear_body", "10/24", 5, "Anchored|você tem vantagem em rolagens para resistir a ser empurrado, derrubado, movido ou Imobilizado."),
+  A(2, "Exo-Riot Plating", "armor/metalgear_body", "10/24", 5, "Anchored|você tem vantagem em rolagens para resistir a ser empurrado, derrubado, movido ou Imobilizado.", advantageOn("Resistir a ser empurrado, derrubado, movido ou Imobilizado")),
   A(2, "Insulated Hazmat", "dlc/armor/esporma_enviroment_suit", "8/18", 4, "Grounded|quando você marca um Espaço de Armadura contra dano techno, reduza a gravidade em um limiar adicional."),
 
   A(3, "Light Exosuit", "armor/medium-armorjack_body", "11/27", 5, "Agile Frame|+1 de Evasão.", official("flexible")),
