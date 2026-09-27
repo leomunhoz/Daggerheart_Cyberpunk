@@ -4035,14 +4035,30 @@ function automateThreatFeature(owner, f, officialAdversaries) {
   return threatFeature(feature);
 }
 
-async function importAdversaries() {
-  const pack = await getOrCreatePack("adversaries");
+// Arte dos adversários (assets/art/adversaries/<nome-em-slug>.png e tokens/<nome-em-slug>.png, no padrão
+// retrato + token do Art for Daggerheart). Sem arte, o adversário fica com o ícone do pacote.
+const artSlug = name => name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+async function adversaryArt() {
+  const base = `modules/${MODULE_ID}/assets/art/adversaries`;
+  const FP = foundry.applications.apps.FilePicker.implementation;
+  const list = async dir => (await FP.browse("data", dir).catch(() => ({ files: [] }))).files.map(f => decodeURIComponent(f.split("/").pop()));
+  const portraits = new Set(await list(base)), tokens = new Set(await list(`${base}/tokens`));
+  const art = {};
+  for (const a of ADVERSARIES) {
+    const file = `${artSlug(a.name)}.png`;
+    if (portraits.has(file)) art[a.name] = { portrait: `${base}/${file}`, token: tokens.has(file) ? `${base}/tokens/${file}` : `${base}/${file}` };
+  }
+  return art;
+}
+
+async function importAdversaries() {  const pack = await getOrCreatePack("adversaries");
   const officialAdversaries = await game.packs.get("daggerheart.adversaries")?.getDocuments() ?? [];
   const folders = {};
   for (const tier of [...new Set(ADVERSARIES.map(a => a.tier))].sort()) folders[tier] = await makeFolder(pack, `Tier ${tier}`, { type: "Actor" });
+  const art = await adversaryArt();
   const data = ADVERSARIES.map(a => ({
-    _id: adversaryId(a.name), name: a.name, img: a.img, type: "adversary", folder: folders[a.tier].id,
-    prototypeToken: { name: a.name, texture: { src: a.img } },
+    _id: adversaryId(a.name), name: a.name, img: art[a.name]?.portrait ?? a.img, type: "adversary", folder: folders[a.tier].id,
+    prototypeToken: { name: a.name, texture: { src: art[a.name]?.token ?? a.img } },
     system: {
       tier: a.tier, type: a.type, difficulty: a.difficulty,
       damageThresholds: { major: a.thresholds[0], severe: a.thresholds[1] },
@@ -4229,6 +4245,180 @@ function buildCyberwareItem(def, folderId) {
   };
 }
 
+// ---------- Eidolons (PDF, cap. 3: Cyberware Especial) ----------
+// Não há equivalente no sistema; o padrão mais próximo é o Beastform (a forma troca token, ataque,
+// Evasão e features, e volta ao normal ao sair). Cada Eidolon é um item de cyberware (flag eidolon,
+// Custo Cibernético 0) com as armas embutidas e as features guardadas em flags.eidolon.parts; o
+// edgeheart-character.js cria essas peças na ficha ao Mobilizar, troca PV, Evasão, Limiares, Armadura e
+// token, soma o Custo de Sincronia na Carga e libera o Competency Link, e desfaz tudo ao Dessincronizar.
+const RANGE_LABELS = { Melee: "Corpo a Corpo", "Very Close": "Muito Próximo", Close: "Próximo", Far: "Distante", "Very Far": "Muito Distante" };
+const EIDOLON_LINK_LABELS = { card: "Acesso de Carta", half: "Meio Acesso", full: "Acesso Total" };
+
+// Arma embutida: usa o atributo de Interface do piloto (definido ao mobilizar).
+const EW = (name, range, damage, feature, extras = {}) => ({ name, range, damage, feature, ...gear(extras) });
+// Feature do Eidolon: form passive | action | reaction; charges = contador (Carga de Perigo etc.).
+const EF = (name, form, text, extras = {}, charges = null) => ({ name, form, text, charges, ...gear(extras) });
+const perScene = name => gearUses(name, "scene");
+
+const EIDOLONS = [
+  { name: "Norai Hermes-Arrow", img: "dlc/cyberware/zero_gravity_thrusters", syncCost: 2, hp: 6, evasion: 18, thresholds: [20, 32], armor: 4,
+    style: "velocidade, perseguição e fuga.", movement: "alcance Distante — planar, propulsores", link: { level: "card", competencies: ["frontier", "ghost"] },
+    lore: "O Hermes-Arrow é um Eidolon mensageiro feito para atravessar zonas de morte antes que o inimigo perceba que a batalha mudou de lugar.",
+    features: [
+      EF("Vector Dash", "passive", "Este Eidolon pode se mover para qualquer lugar dentro do alcance Distante, na horizontal ou na vertical, com saltos, propulsores e planeios controlados. Uma vez por cena, se você passar dentro do alcance Próximo de um adversário, ele marca 1 Estresse.", { actions: resourceCardAction({ name: "Vector Dash", resources: { stress: 1 }, uses: { max: 1, recovery: "scene" } }) }),
+      EF("Hermes Routing", "reaction", "Uma vez por cena, quando você rola com Esperança numa ação de movimento, perseguição ou fuga, limpe 1 Estresse.", { actions: resourceCardAction({ name: "Hermes Routing", heal: true, resources: { stress: 1 }, uses: { max: 1, recovery: "scene" } }) })
+    ],
+    weapons: [
+      EW("Bolt Gun", "Far", "d8+5 phy", "Bolt Gun|depois de um ataque bem-sucedido, você pode se mover dentro do alcance Muito Próximo ou deixar o alvo temporariamente Imobilizado.", gearCondition("Bolt Gun: Imobilizado", ["restrained"])),
+      EW("Shock Kick", "Melee", "d8+4 tech", "Shock Kick|numa rolagem com Esperança, empurre o alvo até o alcance Próximo ou deixe-o temporariamente Vulnerável.", gearCondition("Shock Kick: Vulnerável", ["vulnerable"]))
+    ] },
+  { name: "Tyfar Bulldog", img: "upgrades/armored_chassis", syncCost: 2, hp: 7, evasion: 16, thresholds: [22, 35], armor: 5,
+    style: "combate de linha de frente e fogo direto.", movement: "alcance Próximo — terrestre, jumpjets", link: { level: "card", competencies: ["assault", "chrome"] },
+    lore: "O Bulldog é um Eidolon de assalto confiável, usado por companhias mercenárias, exércitos de segurança e qualquer um pago para sobreviver a um tiroteio.",
+    features: [
+      EF("Linebreaker", "action", "Você pode gastar 1 Esperança para saltar para lugares dentro do alcance Distante. Quando você aterrissa Muito Próximo de um adversário, pode fazer um ataque com arma com vantagem.", gearCostAction("Linebreaker", HOPE1)),
+      EF("Assault Suite", "passive", "Uma vez por cena, quando você usa uma carta de Assault por meio desta estrutura, some +1d12 à rolagem de dano. Além disso, quando você causa dano Maior ou Severo com uma arma do Eidolon, o alvo também marca 1 Estresse.", gear({ actions: damageCardAction({ name: "Assault Suite (+1d12)", formula: "1d12", type: "physical" }) }, gearStress("Assault Suite: alvo marca 1 Estresse")))
+    ],
+    weapons: [
+      EW("Frame Carbine", "Far", "d10+5 phy", "Frame Carbine|numa rolagem com Esperança, ganhe +1 no próximo ataque dentro da cena."),
+      EW("Piston Fist", "Melee", "d10+5 phy", "Piston Fist|ignora redução de dano e soma +1 de Proficiência contra objetos, veículos ou Eidolons.", gearDamage("Piston Fist (+1 Proficiência)", "1d10", "physical"))
+    ] },
+  { name: "Vagras Atlas-Breaker", img: "upgrades/heavy_chasis", syncCost: 3, hp: 10, evasion: 12, thresholds: [28, 48], armor: 7,
+    style: "segurar posição, romper fortificações e sobreviver a fogo pesado.", movement: "alcance Próximo — terrestre, estabilizadores", link: { level: "card", competencies: ["aegis", "systems"] },
+    lore: "O Atlas-Breaker é um Eidolon de cerco feito para carregar o peso de uma cidade desmoronando e revidar ainda mais forte.",
+    features: [
+      EF("Immovable Mass", "passive", "Você tem vantagem em rolagens para resistir a ser empurrado, derrubado, Imobilizado, arrastado ou movido contra a vontade. Quando você marca um Espaço de Armadura, pode forçar um adversário dentro do alcance Próximo a marcar 1 Estresse ou parar de se mover.", gear(advantageOn("Resistir a ser empurrado, derrubado, Imobilizado, arrastado ou movido"), gearStress("Immovable Mass: adversário marca 1 Estresse"))),
+      EF("Bulwark Systems", "reaction", "Uma vez por cena, quando um aliado dentro do alcance Próximo fosse marcar Pontos de Vida, marque qualquer quantidade de Espaços de Armadura para reduzir a gravidade desse dano.", perScene("Bulwark Systems"))
+    ],
+    weapons: [
+      EW("Siege Maul", "Melee", "d12+8 phy", "Siege Maul|em dano Maior ou Severo, todos os adversários dentro do alcance Muito Próximo do alvo marcam 1 Estresse.", gearStress("Siege Maul: adversários marcam 1 Estresse")),
+      EW("Shoulder Mortar", "Far", "d8+8 phy", "Shoulder Mortar|pode atingir inimigos atrás de cobertura se você souber a posição deles, e todos os alvos dentro do alcance Muito Próximo sofrem metade do dano se o ataque tivesse sucesso contra eles.")
+    ] },
+  { name: "Ronin Wraith-9", img: "dlc/cyberware/signal_jammer", syncCost: 3, hp: 6, evasion: 19, thresholds: [18, 30], armor: 4,
+    style: "furtividade, ataques de precisão e sabotagem.", movement: "alcance Próximo — escalar paredes, propulsores silenciosos", link: { level: "half", competencies: ["ghost"] },
+    lore: "O Wraith-9 é um Eidolon fantasma feito para assassinato, sabotagem e para aparecer em lugares onde nenhuma máquina deveria caber.",
+    features: [
+      EF("Specter Cloak", "reaction", "Uma vez por cena, quando você fosse ser detectado por visão, câmeras, sensores, drones ou sistemas de mira, fique Escondido em vez disso. O primeiro ataque que você fizer Escondido com esta estrutura causa +1d8 de dano.", gear(gearCondition("Specter Cloak: Escondido", ["hidden"], [], { type: "self", amount: null }), gearDamage("Specter Cloak (+1d8)", "1d8", "physical"))),
+      EF("Ghost Architecture", "passive", "Quando você rola com Esperança usando uma carta de Ghost, pode se mover dentro do alcance Muito Próximo depois que a ação se resolve.")
+    ],
+    weapons: [
+      EW("Monowire Spear", "Close", "d8+7 phy", "Monowire Spear|numa rolagem com Esperança, puxe-se até o alcance Muito Próximo do alvo."),
+      EW("Suppressed Cannon", "Far", "d8+6 phy", "Suppressed Cannon|se você atacar enquanto Escondido, continua Escondido numa rolagem com Esperança.")
+    ] },
+  { name: "AVA Apollo-Lancet", img: "gear/medtech_bag", syncCost: 3, hp: 8, evasion: 15, thresholds: [24, 40], armor: 6,
+    style: "proteção de emergência e recuperação em combate.", movement: "alcance Próximo — estabilizadores de planeio", link: { level: "half", competencies: ["medtech"] },
+    lore: "O Apollo-Lancet é um Eidolon de resgate de campo de batalha feito para arrastar soldados de volta da morte e consertar o que a guerra deixa para trás.",
+    features: [
+      EF("Trauma Cradle", "reaction", "Uma vez por cena, quando um aliado dentro do alcance Próximo fosse marcar Pontos de Vida, você pode mover esse aliado para qualquer lugar dentro do alcance Muito Próximo. Se esse movimento o colocar atrás de cobertura ou fora do alcance Corpo a Corpo do atacante, ele não sofre esse dano.", perScene("Trauma Cradle")),
+      EF("Apollo Recovery Procedure", "passive", "Uma vez por cena, quando você usa uma carta de Medtech para limpar Pontos de Vida ou Estresse de uma criatura, outra criatura dentro do alcance Muito Próximo dela recebe o mesmo benefício.", perScene("Apollo Recovery Procedure"))
+    ],
+    weapons: [
+      EW("Surgical Laser", "Close", "d8+7 tech", "Surgical Laser|em dano Maior, o alvo fica temporariamente Vulnerável.", gearCondition("Surgical Laser: Vulnerável", ["vulnerable"])),
+      EW("Restraint Latch", "Very Close", "d6+8 phy", "Restraint Latch|numa rolagem com Esperança, o alvo fica temporariamente Imobilizado.", gearCondition("Restraint Latch: Imobilizado", ["restrained"]))
+    ] },
+  { name: "Sitil Cordon-6", img: "upgrades/security_upgrade", syncCost: 2, hp: 7, evasion: 15, thresholds: [23, 37], armor: 6,
+    style: "controle de área e supressão.", movement: "alcance Próximo — terrestre, freios de ancoragem", link: { level: "card", competencies: ["aegis", "influence"] },
+    lore: "O Cordon-6 é um Eidolon de segurança feito para segurar ruas e zonas de extração até não sobrar nada hostil de pé.",
+    features: [
+      EF("Perimeter Lock", "action", "Uma vez por cena, escolha um aliado, veículo, objetivo ou posição dentro do alcance Próximo. Até a sua próxima ação, o primeiro adversário que se mover em direção a ele precisa escolher: parar de se mover, ou marcar 1 Estresse e ficar temporariamente Vulnerável.", gear(perScene("Perimeter Lock"), gearStress("Perimeter Lock: 1 Estresse"), gearCondition("Perimeter Lock: Vulnerável", ["vulnerable"]))),
+      EF("Cordon Protocol", "reaction", "Uma vez por cena, quando um aliado dentro do alcance Próximo fosse forçado a se mover, você pode movê-lo dentro do alcance Muito Próximo e dar a ele +2 de Evasão até a sua próxima ação.", perScene("Cordon Protocol"))
+    ],
+    weapons: [
+      EW("Suppression Array", "Far", "d8+6 phy", "Suppression Array|numa rolagem com Esperança, o alvo não pode se aproximar de um aliado ou posição que você escolher, a menos que marque 1 Estresse."),
+      EW("Riot Ram", "Melee", "d10+5 phy", "Riot Ram|em dano Maior, empurre o alvo até o alcance Próximo ou deixe-o temporariamente Imobilizado.", gearCondition("Riot Ram: Imobilizado", ["restrained"]))
+    ] },
+  { name: "Exota Horizon-Mirage", img: "upgrades/hover_upgrade", syncCost: 4, hp: 8, evasion: 18, thresholds: [25, 43], armor: 6,
+    style: "mobilidade de longo alcance, sobrevivência e luta em terreno hostil.", movement: "alcance Distante — flutuar, atravessar terreno, planar", link: { level: "full", competencies: ["frontier"] },
+    lore: "O Horizon-Mirage é um Eidolon de fronteira de Classe Lendária, feito para travessias, guerra em zonas mortas e batalhas travadas além dos mapas.",
+    features: [
+      EF("Mirage Crossing", "action", "Uma vez por cena, quando você se move, pode levar junto um aliado dentro do alcance Próximo. Durante esse movimento, os dois ignoram terreno difícil, perigos e obstáculos.", perScene("Mirage Crossing")),
+      EF("Dead-Zone Adaptation", "passive", "Quando você rola com Esperança usando uma carta de Frontier, ganhe 1 Carga de Perigo (máximo 3). Gaste 1 Carga para criar uma cobertura que você ou um aliado pode usar para ganhar vantagem em Rolagens de Reação. Gaste 3 Cargas para transformar a área dentro do alcance Próximo em terreno hostil: adversários que se movem ou agem nela marcam 1 Estresse.", gearStress("Terreno Hostil: 1 Estresse"), { max: 3 })
+    ],
+    weapons: [
+      EW("Horizon Rifle", "Very Far", "d10+9 tech", "Horizon Rifle|numa rolagem com Esperança, você pode mover o alvo dentro do alcance Próximo enquanto a gravidade se curva ao redor do impacto."),
+      EW("Grav-Shear Talons", "Melee", "d10+8 tech", "Grav-Shear Talons|em dano Maior, o alvo é empurrado até o alcance Próximo, puxado para o Corpo a Corpo ou fica temporariamente Vulnerável.", gearCondition("Grav-Shear Talons: Vulnerável", ["vulnerable"]))
+    ] },
+  { name: "Korvax Athena-Pallas", img: "upgrades/communications_center", syncCost: 4, hp: 8, evasion: 17, thresholds: [26, 44], armor: 7,
+    style: "comando no campo de batalha, previsão tática e coordenação aérea.", movement: "alcance Distante — passo flutuante, voo", link: { level: "full", competencies: ["aegis"] },
+    lore: "O Athena-Pallas é um Eidolon de comando tático de Classe Lendária que calcula todas as probabilidades, baixas e perdas aceitáveis.",
+    features: [
+      EF("Predictive Command", "passive", "No fim da sua ação, escolha Padrão de Ataque ou Padrão de Defesa. <strong>Attack Pattern:</strong> ataques feitos por aliados dentro do alcance Distante ganham +2 na rolagem de ataque. <strong>Defense Pattern:</strong> ataques feitos contra aliados dentro do alcance Distante têm desvantagem.", gear(gearCostAction("Attack Pattern (+2 nos ataques dos aliados)", []), gearCostAction("Defense Pattern (desvantagem contra aliados)", []))),
+      EF("Analysis Simulation", "reaction", "Uma vez por cena, quando você ou um aliado dentro do alcance Distante fosse falhar numa rolagem de ação, você pode declarar que Athena previu esse resultado. Quem rolou pode rolar de novo o Dado de Esperança e usar o novo resultado.", perScene("Analysis Simulation")),
+      EF("Tactical Mesh", "passive", "Quando você rola com Esperança usando uma carta de Aegis, ganhe 1 Carga de Comando (máximo 2). Gaste 1 Carga de Comando para dar a um aliado dentro do alcance Distante +2 de Evasão contra um ataque. Gaste 2 Cargas de Comando para também deixar esse aliado se mover dentro do alcance Próximo.", {}, { max: 2 })
+    ],
+    weapons: [
+      EW("Spear Rifle", "Very Far", "d10+10 phy", "Spear Rifle|numa rolagem com Esperança, ignore a redução de dano.")
+    ] },
+  { name: "Ronin Ares-Tyrant", img: "dlc/cyberware/dragoon-plating-metalgear", syncCost: 5, hp: 10, evasion: 15, thresholds: [30, 52], armor: 8,
+    style: "força esmagadora, guerra antiblindagem e assalto brutal de perto.", movement: "alcance Próximo — terrestre, jumpjets de assalto", link: { level: "full", competencies: ["redline"] },
+    lore: "O Ares-Tyrant é um Eidolon de assalto de Classe Deus construído em torno de uma inteligência de guerra que não aceita recuar.",
+    features: [
+      EF("Deus-Class Overdrive", "action", "Uma vez por descanso, você pode despertar a impressão de Ares até a cena terminar ou o Eidolon ficar Disabled. Enquanto ativa, os ataques com armas do Eidolon ganham +1 de Proficiência e +1 na rolagem de ataque. Sempre que você rolar com Medo num ataque com esta feature ativa, marque 1 Estresse ou o mestre ganha 1 Medo.", (() => {
+        const fx = targetEffect({ name: "Deus-Class Overdrive", img: CPR("status/beserker"), duration: "scene", changes: [gearChange("system.proficiency", 1), gearChange("system.bonuses.roll.bonus", 1)] });
+        return { effects: [fx], actions: featureAction({ name: "Deus-Class Overdrive", effects: [fx], target: { type: "self", amount: null }, uses: { max: 1, recovery: "shortRest" } }) };
+      })()),
+      EF("Ares Redline Kernel", "passive", "Quando você rola com Esperança usando uma carta de Redline, ganhe 1 Carga de Calor (máximo 3). Antes de uma rolagem de dano, gaste Cargas para somar +1d6 por Carga. Se gastar 3 Cargas, você pode fazer imediatamente um ataque com arma como reação e depois marcar 2 de Estresse.", { actions: damageCardAction({ name: "Gastar Cargas de Calor (+1d6 cada)", formula: "(@scale)d6", type: "physical", cost: [gearCost("resource", 1, { scalable: true, step: 1 })] }) }, { max: 3 })
+    ],
+    weapons: [
+      EW("Mass Driver", "Far", "d12+11 phy", "Mass Driver|em dano Maior, o alvo é arremessado até o alcance Próximo e marca 1 Estresse. Se esse movimento o jogar contra uma parede, veículo, estrutura, Eidolon ou outra criatura, ele também fica temporariamente Vulnerável.", gear(gearStress("Mass Driver: 1 Estresse"), gearCondition("Mass Driver: Vulnerável", ["vulnerable"]))),
+      EW("Thermal Talon", "Melee", "d12+10 tech", "Thermal Talon|em dano Maior, o alvo também fica Overheated e sofre 2d6 de dano techno extra se ainda estiver Overheated no fim da ação dele.", gearDamage("Dano de Overheated", "2d6", "magical"))
+    ] },
+  { name: "Hephaestus Forge-Saint", img: "dlc/gear/master_mechanics_tool_kit", syncCost: 5, hp: 9, evasion: 14, thresholds: [28, 50], armor: 8,
+    style: "engenharia de campo, conserto, controle de estruturas e maquinário.", movement: "alcance Próximo — terrestre, estabilizadores industriais", link: { level: "full", competencies: ["systems"] },
+    lore: "O Forge-Saint é um Eidolon de fabricação de Classe Deus, feito para reconstruir tecnologia perdida em condições de campo de batalha.",
+    features: [
+      EF("Miracle Fabricator", "action", "Uma vez por cena, crie, conserte, reforce ou remodele um objeto grande dentro do alcance Próximo. O efeito precisa ser fisicamente possível, mas pode acontecer numa velocidade impossível.", perScene("Miracle Fabricator")),
+      EF("Hephaestus Reconstruction Engine", "passive", "Quando você rola com Esperança usando uma carta de Systems, ganhe 1 Carga de Forja (máximo 3). Gaste 1 Carga para somar +1d6 a uma rolagem envolvendo maquinário, conserto ou fabricação. Gaste 3 Cargas para consertar um veículo Damaged, limpar 1 Espaço de Armadura de um Eidolon ou criar uma grande peça de cobertura temporária.", { actions: featureAction({ name: "Gastar Carga de Forja (+1d6)", dice: "1d6", costs: [{ key: "resource", value: 1 }] }) }, { max: 3 })
+    ],
+    weapons: [
+      EW("Forge Cannon", "Far", "d10+10 tech", "Forge Cannon|numa rolagem com Esperança, desative temporariamente uma arma, drone, veículo ou maquinário usado pelo alvo até o mestre gastar 1 Medo para reativá-lo."),
+      EW("Industrial Grasp", "Melee", "d12+9 phy", "Industrial Grasp|em dano Maior, o alvo fica temporariamente Imobilizado. Se o alvo for um objeto, estrutura, veículo ou Eidolon, some também +1 de Proficiência à rolagem de dano.", gear(gearCondition("Industrial Grasp: Imobilizado", ["restrained"]), gearDamage("Industrial Grasp (+1 Proficiência)", "1d12", "physical")))
+    ] }
+];
+
+const EIDOLON_RULES = "<p><strong>Mobilizar:</strong> o Eidolon substitui os seus PV, Evasão, Limiares, Armadura e armas; a sua Esperança, Estresse, Experiências e features de classe continuam. O Custo de Sincronia soma na Carga Cibernética enquanto sincronizado, e o Competency Link só vale enquanto sincronizado.</p><p><strong>Sem Soul Bond:</strong> marque 2 Estresse e role o Dado de Humanidade; se for igual ou menor que a Carga Cibernética total, a sincronização falha.</p><p><strong>Disabled</strong> (último PV do Eidolon): Stay Inside, Hard Disconnect (2 Estresse e Rolagem de Humanidade) ou Emergency Overclock (você marca os PV no lugar do Eidolon e 1 PV no fim de cada ação).</p><p><strong>Escala de Eidolon:</strong> contra estruturas, veículos ou maquinário comuns, o dano do Eidolon sobe um nível de gravidade; armas leves e ameaças de baixo nível causam um nível a menos a ele (não vale contra elite, antiblindagem, veículos militares, outros Eidolons ou entidades da Blackwall).</p>";
+
+function buildEidolonParts(e) {
+  const weapons = e.weapons.map((w, i) => {
+    const data = buildWeaponData(W(4, w.name, e.img, "Knowledge", w.range, w.damage, "One-Handed", w.feature, { actions: w.actions, effects: w.effects }), i > 0);
+    delete data._id;
+    data.system.description = gearDescription(w.feature) + "<p><em>Arma embutida do Eidolon: usa o atributo de Interface do piloto.</em></p>";
+    data.system.attack.img = CPR(e.img);
+    return data;
+  });
+  const features = e.features.map(f => ({
+    name: f.name, type: "feature", img: CPR(e.img),
+    system: {
+      description: `<p>${f.text}</p>`, gmNotes: "", attribution: ATTRIBUTION, featureForm: f.form,
+      actions: withDefaultActionImg(f.actions, CPR(e.img)),
+      resource: f.charges ? { type: "simple", value: 0, max: String(f.charges.max), icon: CPR(e.img), recovery: null, progression: "increasing" } : null
+    },
+    effects: [...gearPassiveEffect({ ...f, img: CPR(e.img), feature: `${f.name}|${f.text}` }), ...f.effects]
+  }));
+  const frame = {
+    name: `Estrutura: ${e.name}`, type: "armor", img: CPR(e.img),
+    system: { armor: { current: 0, max: e.armor }, description: "<p>Blindagem do Eidolon (vale só enquanto sincronizado).</p>", actions: {}, tier: 4, equipped: true, armorFeatures: [], baseThresholds: { major: e.thresholds[0], severe: e.thresholds[1] }, attribution: ATTRIBUTION, gmNotes: "", resource: null, quantity: 1 }
+  };
+  return [...weapons, ...features, frame];
+}
+
+function buildEidolonItem(e, folderId) {
+  const link = `${EIDOLON_LINK_LABELS[e.link.level]} — ${e.link.competencies.map(c => COMPETENCY_LABELS[c] ?? c).join(" e ")}`;
+  const weaponsText = e.weapons.map(w => `<li><strong>${w.name}:</strong> arma embutida de alcance ${RANGE_LABELS[w.range] ?? w.range}, ${w.damage.replace(" phy", " de dano físico").replace(" tech", " de dano techno")}. ${w.feature.split("|")[1]}</li>`).join("");
+  const featuresText = e.features.map(f => `<li><strong>${f.name}:</strong> ${f.text}</li>`).join("");
+  return {
+    _id: stableId(`eidolon:${e.name}`), name: e.name, type: "feature", img: CPR(e.img), folder: folderId,
+    flags: { [MODULE_ID]: { cyberware: true, cyberCost: 0, eidolon: {
+      syncCost: e.syncCost, hp: e.hp, evasion: e.evasion, thresholds: e.thresholds, armor: e.armor, link: e.link,
+      bonded: false, hpMarked: 0, armorMarked: 0, disabled: false, parts: buildEidolonParts(e)
+    } } },
+    system: {
+      description: `<p><em>${e.lore}</em></p><p><strong>Estilo de Combate:</strong> ${e.style}<br><strong>Custo de Sincronia:</strong> ${e.syncCost} | <strong>PV:</strong> ${e.hp} | <strong>Evasão:</strong> ${e.evasion} | <strong>Limiares:</strong> ${e.thresholds.join("/")} | <strong>Armadura:</strong> ${e.armor}<br><strong>Movimento:</strong> ${e.movement}<br><strong>Competency Link:</strong> ${link}</p><ul>${featuresText}${weaponsText}</ul>${EIDOLON_RULES}<p><em>Mobilize pela aba Chrome da Ficha Edgeheart.</em></p>`,
+      gmNotes: "", attribution: ATTRIBUTION, featureForm: "passive", actions: {}, resource: null
+    }
+  };
+}
+
 async function importCyberware() {
   const pack = await getOrCreatePack("cyberware");
   const folders = {};
@@ -4236,6 +4426,8 @@ async function importCyberware() {
     folders[tier] = await makeFolder(pack, `Tier ${tier} — ${["Comum", "Incomum", "Raro", "Lendário"][tier - 1]}`);
   }
   const data = CYBERWARE.map(def => buildCyberwareItem(def, folders[cyberTier(def.n)].id));
+  const eidolonFolder = await makeFolder(pack, "Eidolons (Cyberware Especial)");
+  data.push(...EIDOLONS.map(e => buildEidolonItem(e, eidolonFolder.id)));
   await Item.createDocuments(data, { pack: pack.collection, keepId: true });
 }
 

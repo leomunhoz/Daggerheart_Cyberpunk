@@ -38,6 +38,11 @@ export const Humanity = {
     return actor.items.filter(i => i.getFlag(MODULE_ID, "cyberware"));
   },
 
+  // Cyberware comum (sem os Eidolons, que são Cyberware Especial com seção própria na aba Chrome).
+  commonCyberware(actor) {
+    return this.cyberware(actor).filter(i => !i.getFlag(MODULE_ID, "eidolon"));
+  },
+
   hasHumanityMod(actor, kind) {
     return this.cyberware(actor).some(i => i.getFlag(MODULE_ID, "humanity") === kind);
   },
@@ -62,6 +67,10 @@ export const Humanity = {
       const a = item.getFlag(MODULE_ID, "access");
       if (a?.competency && a?.level) add(a.competency, a.level, item.name);
     }
+    // Competency Link do Eidolon sincronizado (só vale enquanto sincronizado).
+    const linked = Eidolon.synced(actor);
+    const link = linked?.getFlag(MODULE_ID, "eidolon")?.link;
+    for (const d of link?.competencies ?? []) add(d, link.level, `${linked.name} (Competency Link)`);
     return Object.values(map).map(e => ({
       ...e,
       kind: e.full ? "full" : e.half ? "half" : "card",
@@ -98,7 +107,8 @@ export const Humanity = {
 
   cyberLoad(actor) {
     const installed = this.cyberware(actor).reduce((sum, i) => sum + Number(i.getFlag(MODULE_ID, "cyberCost")), 0);
-    return installed + Number(actor.getFlag(MODULE_ID, "cyberLoadMod") ?? 0);
+    // Custo de Sincronia do Eidolon soma na Carga só enquanto sincronizado.
+    return installed + Number(actor.getFlag(MODULE_ID, "cyberLoadMod") ?? 0) + Eidolon.syncCost(actor);
   },
 
   // Carga usada na Rolagem de Humanidade: Integrated Chrome (Augmented) trata a Carga como 1 menor.
@@ -130,7 +140,9 @@ export const Humanity = {
       canReduce: !this.isLost(actor),
       load: this.cyberLoad(actor),
       loadMod: Number(actor.getFlag(MODULE_ID, "cyberLoadMod") ?? 0),
-      cyberware: this.cyberware(actor).map(i => {
+      eidolons: Eidolon.view(actor),
+      syncCost: Eidolon.syncCost(actor),
+      cyberware: this.commonCyberware(actor).map(i => {
         const a = i.getFlag(MODULE_ID, "access");
         return {
           uuid: i.uuid, name: i.name, img: i.img,
@@ -320,12 +332,13 @@ const AccessClass = {
     const classDomains = actor.system.class?.value?.system?.domains ?? [];
     const registered = CONFIG.DH.DOMAIN.allDomains();
     const domains = Humanity.cyberware(actor).map(i => i.getFlag(MODULE_ID, "access")?.competency).filter(Boolean);
+    domains.push(...(Eidolon.synced(actor)?.getFlag(MODULE_ID, "eidolon")?.link?.competencies ?? []));
     return [...new Set(domains)].filter(d => !classDomains.includes(d) && registered[d]).sort();
   },
 
   // Por que o acesso não virou item de classe (mostrado na aba Chrome).
   blockedReason(actor) {
-    if (!Humanity.cyberware(actor).some(i => i.getFlag(MODULE_ID, "access"))) return null;
+    if (!Humanity.cyberware(actor).some(i => i.getFlag(MODULE_ID, "access")) && !Eidolon.synced(actor)) return null;
     if (this.realMulticlass(actor)) return "O personagem já tem uma multiclasse; os acessos cibernéticos ficam só como referência.";
     if (!game.system.settings.automation.levelupAuto) return "Com a automação de Level Up desligada, o sistema pede o domínio da multiclasse numa janela; os acessos ficam só como referência.";
     const missing = Humanity.cyberware(actor).map(i => i.getFlag(MODULE_ID, "access")?.competency)
@@ -533,7 +546,11 @@ function defineSheet() {
         ehEndCyberpsychosis: EdgeheartCharacterSheet.#endCyberpsychosis,
         ehOpenChrome: EdgeheartCharacterSheet.#openChrome,
         ehOpenCyberware: EdgeheartCharacterSheet.#openCyberware,
-        ehChooseCyberware: EdgeheartCharacterSheet.#chooseCyberware
+        ehChooseCyberware: EdgeheartCharacterSheet.#chooseCyberware,
+        ehEidolonMobilize: EdgeheartCharacterSheet.#eidolonMobilize,
+        ehEidolonUnsync: EdgeheartCharacterSheet.#eidolonUnsync,
+        ehEidolonRepair: EdgeheartCharacterSheet.#eidolonRepair,
+        ehEidolonBond: EdgeheartCharacterSheet.#eidolonBond
       }
     };
 
@@ -624,6 +641,23 @@ function defineSheet() {
     static async #chooseCyberware(_event, target) {
       const item = await fromUuid(target.dataset.itemUuid);
       if (item) await Cyberware.choose(item);
+    }
+
+    static async #eidolonMobilize(_event, target) {
+      const item = await fromUuid(target.dataset.itemUuid);
+      if (item) await Eidolon.mobilize(this.document, item);
+    }
+
+    static async #eidolonUnsync() { await Eidolon.unsync(this.document); }
+
+    static async #eidolonRepair(_event, target) {
+      const item = await fromUuid(target.dataset.itemUuid);
+      if (item) await Eidolon.repair(item);
+    }
+
+    static async #eidolonBond(_event, target) {
+      const item = await fromUuid(target.dataset.itemUuid);
+      if (item) await item.setFlag(MODULE_ID, "eidolon.bonded", !item.getFlag(MODULE_ID, "eidolon").bonded);
     }
   };
 }
@@ -819,6 +853,214 @@ const IntegratedChrome = {
   }
 };
 
+// ---------- Eidolons (Cyberware Especial) ----------
+// Mesmo padrão do Beastform do sistema, feito pelo módulo porque o Eidolon também troca os PV:
+// Mobilizar guarda o estado do piloto (PV marcados, itens equipados, token) em flags.eidolonSync,
+// desequipa as armas e armadura dele, cria as peças do Eidolon (armas embutidas com a Interface do
+// piloto, features e a armadura "Estrutura") e aplica um efeito com os PV máximos e a Evasão do Eidolon.
+// Os Limiares vêm da armadura Estrutura (o sistema soma o nível, então a base é o valor do PDF − nível).
+// Dessincronizar guarda o dano do Eidolon no item e devolve tudo ao piloto.
+const Eidolon = {
+  items(actor) {
+    return actor.items.filter(i => i.getFlag(MODULE_ID, "eidolon"));
+  },
+
+  state(actor) {
+    return actor?.getFlag(MODULE_ID, "eidolonSync") ?? null;
+  },
+
+  synced(actor) {
+    const s = this.state(actor);
+    return s ? actor.items.get(s.itemId) ?? null : null;
+  },
+
+  syncCost(actor) {
+    return Number(this.synced(actor)?.getFlag(MODULE_ID, "eidolon")?.syncCost ?? 0);
+  },
+
+  parts(actor) {
+    return actor.items.filter(i => i.getFlag(MODULE_ID, "eidolonPart"));
+  },
+
+  effect(actor) {
+    return actor.effects.find(e => e.getFlag(MODULE_ID, "eidolonEffect"));
+  },
+
+  view(actor) {
+    const s = this.state(actor);
+    return this.items(actor).map(i => {
+      const d = i.getFlag(MODULE_ID, "eidolon");
+      const synced = s?.itemId === i.id;
+      return {
+        uuid: i.uuid, name: i.name, img: i.img, syncCost: d.syncCost, hp: d.hp, evasion: d.evasion, armor: d.armor,
+        thresholds: d.thresholds.join("/"), bonded: d.bonded, disabled: d.disabled, hpMarked: synced && !s.overclock ? actor.system.resources.hitPoints.value : d.hpMarked,
+        link: `${ACCESS[d.link.level]}: ${d.link.competencies.map(c => COMPETENCIES[c] ?? c).join(", ")}`,
+        synced, overclock: synced && !!s.overclock, canMobilize: !s && !d.disabled
+      };
+    });
+  },
+
+  async setTokens(actor, src) {
+    await actor.update({ "prototypeToken.texture.src": src });
+    for (const token of actor.getActiveTokens(false, true)) await token.update({ "texture.src": src });
+  },
+
+  // Rolagem de Humanidade de sincronização (sem Soul Bond ou Hard Disconnect usa a do sistema da ficha).
+  async unbondedSync(actor, data, item) {
+    const ok = await foundry.applications.api.DialogV2.confirm({
+      window: { title: "Sincronizar sem Soul Bond" },
+      content: `<p><strong>${actor.name}</strong> não tem Soul Bond com <strong>${item.name}</strong>. Marcar 2 Estresse e rolar o Dado de Humanidade? Se o resultado for igual ou menor que a Carga Cibernética total (com o Custo de Sincronia), a sincronização falha.</p>`
+    });
+    if (!ok) return false;
+    const stress = actor.system.resources.stress;
+    await actor.update({ "system.resources.stress.value": Math.min(stress.max, stress.value + 2) });
+    const die = Humanity.die(actor);
+    const load = Humanity.rollLoad(actor) + Number(data.syncCost);
+    const roll = await new Roll(`1d${die}`).evaluate();
+    const success = roll.total > load;
+    await roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor }),
+      flavor: `<div class="eh-chat"><h3>Sincronização sem Soul Bond</h3><p>d${die} = <strong>${roll.total}</strong> contra Carga Cibernética total <strong>${load}</strong> (com o Custo de Sincronia de ${item.name})</p><p class="eh-outcome ${success ? "eh-ok" : "eh-bad"}">${success ? "A sincronização funciona." : "A sincronização falha (ou o mestre introduz uma consequência grave)."}</p></div>`
+    });
+    return success;
+  },
+
+  async mobilize(actor, item) {
+    if (this.state(actor)) return ui.notifications.warn(`${actor.name} já está sincronizado com um Eidolon.`);
+    const data = item.getFlag(MODULE_ID, "eidolon");
+    if (data.disabled) return ui.notifications.warn(`${item.name} está Disabled: conserte antes de mobilizar.`);
+    if (!data.bonded && !(await this.unbondedSync(actor, data, item))) return;
+
+    const level = actor.system.levelData?.level?.current ?? 1;
+    const pilotHp = actor.system.resources.hitPoints.value;
+    const equipped = actor.items.filter(i => ["weapon", "armor"].includes(i.type) && i.system.equipped && !i.getFlag(MODULE_ID, "eidolonPart")).map(i => i.id);
+    if (equipped.length) await actor.updateEmbeddedDocuments("Item", equipped.map(id => ({ _id: id, "system.equipped": false })));
+
+    const trait = actor.system.spellcastModifierTrait?.key ?? "knowledge";
+    const parts = foundry.utils.deepClone(data.parts).map(part => {
+      part.flags = { ...(part.flags ?? {}), [MODULE_ID]: { ...(part.flags?.[MODULE_ID] ?? {}), eidolonPart: item.id } };
+      if (part.type === "weapon") { part.system.equipped = true; part.system.attack.roll.trait = trait; }
+      if (part.type === "armor") {
+        part.system.equipped = true;
+        part.system.armor.current = data.armorMarked ?? 0;
+        part.system.baseThresholds = { major: data.thresholds[0] - level, severe: data.thresholds[1] - level };
+      }
+      return part;
+    });
+    await actor.createEmbeddedDocuments("Item", parts);
+    await actor.createEmbeddedDocuments("ActiveEffect", [{
+      name: `Eidolon: ${item.name}`, img: item.img, type: "base",
+      description: "<p>Sincronizado com o Eidolon: PV, Evasão, Limiares, Armadura e armas são os da estrutura.</p>",
+      flags: { [MODULE_ID]: { eidolonEffect: true } },
+      system: {
+        changes: [
+          { key: "system.resources.hitPoints.max", type: "override", value: data.hp, priority: 50, phase: "initial" },
+          { key: "system.evasion", type: "override", value: data.evasion, priority: 50, phase: "initial" }
+        ],
+        duration: { description: "" }, rangeDependence: null, stacking: null, targetDispositions: [], conditionals: []
+      }
+    }]);
+    await actor.update({
+      "system.resources.hitPoints.value": data.hpMarked ?? 0,
+      [`flags.${MODULE_ID}.eidolonSync`]: { itemId: item.id, pilotHp, equipped, tokenImg: actor.prototypeToken.texture.src, overclock: false }
+    });
+    await this.setTokens(actor, item.img);
+    await queueAccessSync(actor);
+    await chat(actor, `<p><strong>${actor.name}</strong> mobilizou <strong>${item.name}</strong>. Custo de Sincronia <strong>+${data.syncCost}</strong> na Carga Cibernética enquanto sincronizado.</p>`);
+  },
+
+  async unsync(actor, { quiet = false } = {}) {
+    const s = this.state(actor);
+    if (!s) return;
+    const item = actor.items.get(s.itemId);
+    const frame = this.parts(actor).find(i => i.type === "armor");
+    if (item) {
+      const data = item.getFlag(MODULE_ID, "eidolon");
+      const hpMarked = s.overclock ? data.hp : actor.system.resources.hitPoints.value;
+      await item.update({
+        [`flags.${MODULE_ID}.eidolon.hpMarked`]: Math.min(hpMarked, data.hp),
+        [`flags.${MODULE_ID}.eidolon.armorMarked`]: frame?.system.armor.current ?? 0,
+        [`flags.${MODULE_ID}.eidolon.disabled`]: data.disabled || hpMarked >= data.hp
+      });
+    }
+    const pilotHp = s.overclock ? actor.system.resources.hitPoints.value : s.pilotHp;
+    const partIds = this.parts(actor).map(i => i.id);
+    if (partIds.length) await actor.deleteEmbeddedDocuments("Item", partIds);
+    const effect = this.effect(actor);
+    if (effect) await effect.delete();
+    const equipped = (s.equipped ?? []).filter(id => actor.items.get(id));
+    if (equipped.length) await actor.updateEmbeddedDocuments("Item", equipped.map(id => ({ _id: id, "system.equipped": true })));
+    await actor.update({ "system.resources.hitPoints.value": pilotHp, [`flags.${MODULE_ID}.eidolonSync`]: new foundry.data.operators.ForcedDeletion() });
+    await this.setTokens(actor, s.tokenImg);
+    await queueAccessSync(actor);
+    if (!quiet) await chat(actor, `<p><strong>${actor.name}</strong> dessincronizou${item ? ` de <strong>${item.name}</strong>` : ""}.</p>`);
+  },
+
+  async repair(item) {
+    await item.update({ [`flags.${MODULE_ID}.eidolon.hpMarked`]: 0, [`flags.${MODULE_ID}.eidolon.armorMarked`]: 0, [`flags.${MODULE_ID}.eidolon.disabled`]: false });
+    await chat(item.parent, `<p><strong>${item.name}</strong> foi consertado: PV e Espaços de Armadura limpos.</p>`);
+  },
+
+  // Último PV do Eidolon marcado: as três escolhas do PDF.
+  async disabled(actor) {
+    const item = this.synced(actor);
+    if (!item) return;
+    await item.setFlag(MODULE_ID, "eidolon.disabled", true);
+    const choice = await foundry.applications.api.DialogV2.wait({
+      window: { title: `${item.name} está Disabled` },
+      content: `<p><strong>${item.name}</strong> marcou o último Ponto de Vida e ficou <strong>Disabled</strong>: não pode se mover, atacar nem usar features até ser consertado ou reativado. Escolha uma:</p>
+        <ul><li><strong>Stay Inside:</strong> continue dentro da estrutura, protegido do perigo externo imediato.</li>
+        <li><strong>Hard Disconnect:</strong> dessincronize à força: marque 2 Estresse e faça a Rolagem de Humanidade.</li>
+        <li><strong>Emergency Overclock:</strong> reative em Overclock: você marca os PV no lugar do Eidolon e 1 PV no fim de cada ação sua.</li></ul>`,
+      buttons: [{ action: "stay", label: "Stay Inside" }, { action: "disconnect", label: "Hard Disconnect" }, { action: "overclock", label: "Emergency Overclock" }],
+      rejectClose: false
+    });
+    if (choice === "disconnect") {
+      const stress = actor.system.resources.stress;
+      await actor.update({ "system.resources.stress.value": Math.min(stress.max, stress.value + 2) });
+      await Humanity.roll(actor, { reason: `Hard Disconnect de ${item.name}` });
+      await this.unsync(actor);
+    } else if (choice === "overclock") {
+      const s = this.state(actor);
+      const effect = this.effect(actor);
+      if (effect) await effect.update({ "system.changes": effect.system.changes.filter(c => c.key !== "system.resources.hitPoints.max") });
+      await actor.update({ "system.resources.hitPoints.value": s.pilotHp, [`flags.${MODULE_ID}.eidolonSync.overclock`]: true });
+      await chat(actor, `<p><strong>${item.name}</strong> reativado em <strong>Emergency Overclock</strong>: os PV agora são de ${actor.name}, e cada ação marca 1 PV.</p>`);
+    } else {
+      await chat(actor, `<p><strong>${actor.name}</strong> fica dentro de <strong>${item.name}</strong> (Disabled): protegido do perigo externo imediato.</p>`);
+    }
+  }
+};
+
+// ---------- Ganchos dos Eidolons ----------
+// Último PV do Eidolon (fora do Overclock): pergunta ao dono que fez a alteração.
+Hooks.on("updateActor", (actor, changes, options, userId) => {
+  if (userId !== game.user.id || !foundry.utils.hasProperty(changes, "system.resources.hitPoints.value")) return;
+  const s = Eidolon.state(actor);
+  if (!s || s.overclock) return;
+  const item = Eidolon.synced(actor);
+  if (item?.getFlag(MODULE_ID, "eidolon").disabled) return;
+  const hp = actor.system.resources.hitPoints;
+  if (hp.max > 0 && hp.value >= hp.max) Eidolon.disabled(actor);
+});
+
+// Disabled (Stay Inside): as peças do Eidolon não funcionam. Overclock: 1 PV no fim de cada ação.
+Hooks.on("daggerheart.preUseAction", (action) => {
+  const actor = action.actor;
+  const s = Eidolon.state(actor);
+  if (!s || s.overclock || !action.item?.getFlag(MODULE_ID, "eidolonPart")) return;
+  if (Eidolon.synced(actor)?.getFlag(MODULE_ID, "eidolon").disabled) {
+    ui.notifications.warn("O Eidolon está Disabled: não pode atacar nem usar features até ser consertado ou reativado.");
+    return false;
+  }
+});
+
+Hooks.on("daggerheart.postUseAction", async (action) => {
+  const actor = action.actor;
+  if (!actor?.isOwner || !Eidolon.state(actor)?.overclock) return;
+  const hp = actor.system.resources.hitPoints;
+  await actor.update({ "system.resources.hitPoints.value": Math.min(hp.max, hp.value + 1) });
+});
 // ---------- Ganchos ----------
 
 Hooks.once("init", () => {

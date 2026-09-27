@@ -221,3 +221,14 @@
 .eh-crew-chat h3 .eh-edge-cost { margin-left: auto; }.eh-crew-chat .eh-card-buttons { display: flex; flex-direction: column; gap: 4px; margin-top: 6px; }
 .eh-crew-chat .eh-card-buttons button { width: 100%; }
 .eh-crew-chat .eh-note { opacity: 0.85; font-size: var(--font-size-12, 12px); }
+/* Eidolons na aba Chrome */
+.edgeheart-sheet .eh-eidolon-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.edgeheart-sheet .eh-eidolon-list li { display: flex; gap: 8px; align-items: center; padding: 6px; border-radius: 6px; background: rgba(255, 255, 255, 0.04); }
+.edgeheart-sheet .eh-eidolon-list li.synced { box-shadow: inset 0 0 0 1px var(--eh-neon); }
+.edgeheart-sheet .eh-eidolon-list li.disabled { box-shadow: inset 0 0 0 1px var(--eh-danger); }
+.edgeheart-sheet .eh-eidolon-list img { width: 40px; height: 40px; flex: 0 0 auto; border: none; }
+.edgeheart-sheet .eh-eidolon-info { flex: 1 1 auto; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.edgeheart-sheet .eh-eidolon-stats { font-size: var(--font-size-11, 11px); opacity: 0.8; }
+.edgeheart-sheet .eh-eidolon-actions { display: flex; flex-direction: column; gap: 4px; align-items: stretch; flex: 0 0 auto; }
+.edgeheart-sheet .eh-eidolon-actions button { width: auto; padding: 0 8px; height: 26px; line-height: 24px; white-space: nowrap; }
+.edgeheart-sheet .eh-bond { display: flex; align-items: center; gap: 4px; font-size: var(--font-size-11, 11px); white-space: nowrap; }

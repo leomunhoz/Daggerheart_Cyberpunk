@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.27.0
+- **Eidolons:** os 10 do PDF (Hermes-Arrow, Bulldog, Atlas-Breaker, Wraith-9, Apollo-Lancet, Cordon-6, Horizon-Mirage, Athena-Pallas, Ares-Tyrant e Forge-Saint) como **Cyberware Especial**, na pasta "Eidolons" do compêndio de Cyberware.
+- **Mobilizar** pela aba Chrome da Ficha Edgeheart, no mesmo padrão do Beastform do sistema: enquanto sincronizado, PV, Evasão, Limiares e Armadura são os do Eidolon; as armas embutidas entram equipadas usando a Interface do piloto; as features viram itens da ficha; e o token troca. As armas e a armadura do piloto ficam guardadas.
+- **Custo de Sincronia** soma na Carga Cibernética (e na Rolagem de Humanidade) só enquanto sincronizado. O **Competency Link** libera as cartas pelos Acessos Cibernéticos.
+- **Soul Bond:** sem ele, sincronizar marca 2 Estresse e pede a Rolagem de Humanidade contra a Carga com o Custo de Sincronia; se falhar, a sincronização não acontece.
+- **Disabled** (último PV do Eidolon): diálogo com Stay Inside (as peças do Eidolon ficam bloqueadas), Hard Disconnect (2 Estresse, Rolagem de Humanidade e dessincroniza) e Emergency Overclock (os PV voltam a ser do piloto e cada ação marca 1 PV).
+- **Dessincronizar** guarda no Eidolon os PV e a Armadura marcados, e devolve tudo ao piloto. **Consertar** limpa o dano e o Disabled.
+- O diário de Eidolons ganhou links para os itens.
 ## v1.26.0
 - **Veículos:** os 8 do PDF (Street Bike, Nomad Buggy, Armored Sedan, Crew Van, Interceptor, War Rig, Corporate AV, Ghost Runner), na pasta **Veículos** do compêndio de Loot. São itens de inventário que não ocupam os espaços de arma, e podem ficar na ficha do motorista ou no Inventário da Crew.
 - Cada veículo tem **Ataque do Veículo** (atributo e dano do veículo, com Proficiência), **Manobrar**, **Manter Funcionando** (1 Estresse), **Sofrer Dano Sério** e **Consertar**.

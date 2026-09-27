@@ -17,6 +17,7 @@ Os jogadores são mercenários na New Dark Age: pegam contratos sujos, instalam 
 - **64 armas e 25 armaduras dos Tiers 1 a 4**, com ataque e dano automáticos; as características iguais às oficiais (Reliable, Deadly, Paired, Shifting, Fortified…) usam a automação do sistema.
 - **40 consumíveis e 40 itens de loot**, com as tabelas de rolagem do PDF, no formato dos oficiais.
 - **8 veículos**, com ataque, Manobrar, Cargas e o estado Damaged/Disabled.
+- **10 Eidolons** (Cyberware Especial), mobilizados pela Ficha Edgeheart: PV, Evasão, Limiares, Armadura, armas e token próprios, Custo de Sincronia, Competency Link, Soul Bond e as escolhas do Disabled.
 - **Level Up do Edgeheart**, que pode ser ligado ou desligado nas configurações.
 - **25 adversários e 16 ambientes** dos Tiers 1 a 4, no formato dos oficiais.
 - **Diários** com o PDF inteiro traduzido, com links para os itens.
@@ -42,7 +43,6 @@ Mundos que usavam a versão antiga (com a macro "Importar Edgeheart") recebem um
 
 ## Próximos passos
 
-- Eidolons
 - Versão bilíngue (PT/EN)
 
 O histórico de versões está no [CHANGELOG](CHANGELOG.md).

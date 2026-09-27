@@ -108,6 +108,41 @@
                 {{/if}}
             </fieldset>
 
+            {{!-- EIDOLONS (Cyberware Especial) --}}
+            {{#if eidolons.length}}
+                <fieldset class="eh-card eh-eidolons">
+                    <legend><i class="fa-solid fa-robot"></i> Eidolons{{#if syncCost}} <span class="eh-count" data-tooltip="Custo de Sincronia somado na Carga Cibernética">+{{syncCost}} Carga</span>{{/if}}</legend>
+                    <ul class="eh-eidolon-list">
+                        {{#each eidolons}}
+                            <li class="{{#if synced}}synced{{/if}} {{#if disabled}}disabled{{/if}}">
+                                <img src="{{img}}" alt="">
+                                <div class="eh-eidolon-info">
+                                    <a class="eh-cw-name" data-action="editDoc" data-item-uuid="{{uuid}}">{{name}}</a>
+                                    <span class="eh-eidolon-stats">Sincronia {{syncCost}} · PV {{hpMarked}}/{{hp}} · Evasão {{evasion}} · Limiares {{thresholds}} · Armadura {{armor}}</span>
+                                    <span class="eh-eidolon-stats">{{link}}</span>
+                                    <span class="eh-chips">
+                                        {{#if synced}}<span class="eh-pill eh-pill-stable">{{#if overclock}}Overclock{{else}}Sincronizado{{/if}}</span>{{/if}}
+                                        {{#if disabled}}<span class="eh-pill eh-pill-psycho">Disabled</span>{{/if}}
+                                    </span>
+                                </div>
+                                {{#if @root.editable}}
+                                    <div class="eh-eidolon-actions">
+                                        <label class="eh-bond" data-tooltip="Soul Bond: sem ele, sincronizar marca 2 Estresse e pede Rolagem de Humanidade">
+                                            <input type="checkbox" data-action="ehEidolonBond" data-item-uuid="{{uuid}}" {{#if bonded}}checked{{/if}}> Soul Bond
+                                        </label>
+                                        {{#if synced}}
+                                            <button type="button" data-action="ehEidolonUnsync"><i class="fa-solid fa-plug-circle-xmark"></i> Dessincronizar</button>
+                                        {{else}}
+                                            <button type="button" class="eh-primary" data-action="ehEidolonMobilize" data-item-uuid="{{uuid}}" {{#unless canMobilize}}disabled{{/unless}}><i class="fa-solid fa-plug-circle-bolt"></i> Mobilizar</button>
+                                        {{/if}}
+                                        <button type="button" data-action="ehEidolonRepair" data-item-uuid="{{uuid}}" data-tooltip="Consertar: limpa os PV e os Espaços de Armadura do Eidolon (durante um descanso, com ferramentas e peças)"><i class="fa-solid fa-screwdriver-wrench"></i></button>
+                                    </div>
+                                {{/if}}
+                            </li>
+                        {{/each}}
+                    </ul>
+                </fieldset>
+            {{/if}}
             {{!-- COMPETÊNCIAS --}}
             <fieldset class="eh-card">
                 <legend><i class="fa-solid fa-network-wired"></i> Competências</legend>
@@ -136,6 +171,7 @@
                     <li><strong>Carga Cibernética:</strong> soma do Custo de todo o cyberware instalado.</li>
                     <li><strong>Rolagem de Humanidade:</strong> se o resultado for maior que a Carga, você mantém o controle; se for igual ou menor, entra em Ciberpsicose. É automática quando você rola com Medo com todo o Estresse marcado ou sem Esperança.</li>
                     <li><strong>Ciberpsicose:</strong> rola só o Dado de Medo como d20, sempre com Medo; features que pedem Estresse não marcam. Um aliado pode gastar 1 Esperança para te estabilizar. Terminar a cena assim reduz a Humanidade; abaixo de d4 você está perdido.</li>
+                    <li><strong>Eidolons:</strong> arraste um Eidolon do compêndio de Cyberware para a ficha e use Mobilizar. Enquanto sincronizado, PV, Evasão, Limiares, Armadura e armas são os da estrutura (as armas usam a sua Interface), o Custo de Sincronia soma na Carga e o Competency Link libera cartas. No último PV do Eidolon, escolha Stay Inside, Hard Disconnect ou Emergency Overclock.</li>
                     <li><strong>Competências:</strong> a classe dá Acesso Total a uma; o cyberware pode dar Acesso de Carta, Meio Acesso (até metade do nível) ou Acesso Total.</li>
                 </ul>
             </details>
