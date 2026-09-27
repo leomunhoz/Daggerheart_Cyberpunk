@@ -1,0 +1,257 @@
+{
+  "_about": "Glossário inglês → português da versão pt-BR (Babele). Classes e subclasses ficam em inglês. Marcas e nomes de gangue ficam; o descritivo traduz. Revisado pelo usuário em 2026-09-27.",
+  "decisions": {
+    "Edge": "Ímpeto",
+    "Fixer (termo)": "Intermediário (Fixer)",
+    "Edgerunner": "Mercenário",
+    "Black ICE / ICE": "GELO Negro / GELO",
+    "techno (dano)": "tecno",
+    "Gangues (Neon Claw, Tiger Choir, Blood Saints, Chrome Maw)": "mantém o nome",
+    "Codinomes": "traduzidos (Black Hand → Mão Negra, The Raven → O Corvo)"
+  },
+  "sections": {
+    "competencies": {
+      "title": "Competências",
+      "entries": {
+        "Network": "Rede", "Aegis": "Égide", "Assault": "Assalto", "Ghost": "Fantasma", "Chrome": "Cromo", "Systems": "Sistemas",
+        "Influence": "Influência", "Frontier": "Fronteira", "Medtech": "Medtec", "Redline": "Linha Vermelha", "Blackwall": "Muralha Negra"
+      }
+    },
+    "terms": {
+      "title": "Termos de regra",
+      "entries": {
+        "Competency": "Competência", "Card Access": "Acesso de Carta", "Half Access": "Meio Acesso", "Full Access": "Acesso Total",
+        "Charge / Charges": "Carga / Cargas", "Life Path": "Trajetória", "Affiliation": "Afiliação", "Interface (trait)": "Interface",
+        "techno damage": "dano tecno", "Humanity Die": "Dado de Humanidade", "Cyber Load": "Carga Cibernética", "Cyberpsychosis": "Ciberpsicose",
+        "Cyberware": "Cyberware", "Weaponware": "Armamento implantado", "Breach": "Brecha", "Exploited": "Explorado", "Deep Dive": "Mergulho Profundo",
+        "Degraded": "Degradado", "Overheated": "Superaquecido", "Cloaked": "Camuflado", "Cover (Infiltrator)": "Disfarce", "Kill Chain Die": "Dado de Cadeia de Abate",
+        "Crew": "Equipe", "Edge": "Ímpeto", "Reputation": "Reputação", "Code": "Código", "Fixer (term)": "Intermediário (Fixer)", "Base": "Base",
+        "Teamwork": "Trabalho em Equipe", "Back Me Up": "Me Dá Cobertura", "Get Them Out": "Tira Eles Daqui", "Plan B": "Plano B", "All In": "Tudo ou Nada",
+        "Hidden Cache": "Esconderijo de Suprimentos", "Inside Access": "Acesso Interno", "Sabotage Package": "Pacote de Sabotagem", "Escape Vector": "Rota de Fuga",
+        "Supply": "Suprimento", "Eidolon": "Eidolon", "Sync Cost": "Custo de Sincronia", "Competency Link": "Elo de Competência", "Soul Bond": "Vínculo de Alma",
+        "Mobilize": "Mobilizar", "Unsync": "Dessincronizar", "Stay Inside": "Ficar Dentro", "Hard Disconnect": "Desconexão Forçada", "Emergency Overclock": "Overclock de Emergência",
+        "Frame": "Estrutura", "Damaged": "Danificado", "Disabled": "Inutilizado", "Creds": "Creds", "Stack": "Pilha", "Case": "Maleta", "Vault": "Cofre",
+        "New Dark Age": "Nova Era das Trevas", "Old Net": "Velha Rede", "Black ICE": "GELO Negro", "Edgerunner": "Mercenário",
+        "Vehicle Attack": "Ataque do Veículo", "Maneuver": "Manobrar", "Keep It Running": "Manter Funcionando", "Take Serious Damage": "Sofrer Dano Sério", "Repair": "Consertar",
+        "Swift": "Veloz", "Heavy": "Pesado", "Armored": "Blindado", "Soaring": "Voador", "Cargo": "Cargueiro", "Off-Road": "Fora de Estrada", "Connected": "Conectado"
+      }
+    },
+    "classFeatures": {
+      "title": "Features de classe",
+      "entries": {
+        "Exploit": "Exploração", "Hold Your Breach": "Segure a Brecha", "Zero-Day": "Dia Zero",
+        "Cover Work": "Trabalho de Disfarce", "Clean Exit": "Saída Limpa",
+        "Kill Chain": "Cadeia de Abate", "Fire Superiority": "Superioridade de Fogo",
+        "Integrated Chrome": "Cromo Integrado", "Chrome Surge": "Surto de Cromo",
+        "Jury-Rig": "Gambiarra", "Make It Work": "Faz Funcionar",
+        "Terms of Engagement": "Termos de Engajamento", "Fine Print": "Letras Miúdas",
+        "Surveyed Route": "Rota Mapeada", "Home Ground": "Terreno Conhecido",
+        "Emergency Medicine": "Medicina de Emergência", "Stay With Me": "Fica Comigo",
+        "Guardian Protocol": "Protocolo Guardião", "Not Today": "Hoje Não"
+      }
+    },
+    "classItems": {
+      "title": "Itens de classe",
+      "entries": {
+        "Illegal Cyberdeck": "Cyberdeck Ilegal", "Stolen Access Shard": "Fragmento de Acesso Roubado",
+        "False Credentials": "Credenciais Falsas", "Suppressed Weapon": "Arma com Silenciador",
+        "Named Custom Weapon": "Arma Personalizada com Nome", "Damaged Dog Tag": "Plaqueta Danificada",
+        "Implant Maintenance Kit": "Kit de Manutenção de Implante", "Original Body Part": "Peça Original do Corpo",
+        "Custom Toolkit": "Kit de Ferramentas Personalizado", "Broken Machine": "Máquina Quebrada",
+        "Contact List": "Lista de Contatos", "Contract Chip": "Chip de Contrato",
+        "Cracked Route-Map": "Mapa de Rotas Rachado", "Piece of Salvage": "Pedaço de Sucata",
+        "Trauma Kit": "Kit de Trauma", "Patient Tag": "Etiqueta de Paciente",
+        "Marked Defensive Rig": "Equipamento Defensivo Marcado", "Contract Token": "Ficha de Contrato"
+      }
+    },
+    "subclassFeatures": {
+      "title": "Features de subclasse",
+      "groups": {
+        "Runner": { "Cascade Breach": "Brecha em Cascata", "Exploit Payload": "Pacote de Exploração", "Rootkill": "Morte na Raiz", "Blackout Cascade": "Apagão em Cascata", "Deep Dive": "Mergulho Profundo", "Virtual Overwatch": "Vigilância Virtual", "Hard Crash": "Colapso Total" },
+        "Infiltrator": { "Ghost Route": "Rota Fantasma", "Now You See Me": "Agora Você Me Vê", "Extraction Window": "Janela de Extração", "Impossible Exit": "Saída Impossível", "Opening Strike": "Golpe de Abertura", "Kill Window": "Janela de Abate", "Perfect Ambush": "Emboscada Perfeita", "No Witnesses": "Sem Testemunhas" },
+        "Solo": { "Hard Entry": "Entrada Forçada", "Breach Momentum": "Embalo de Invasão", "Clear the Line": "Limpar a Linha", "No Way Back": "Sem Volta", "Called Shot": "Tiro Anunciado", "Marked Target": "Alvo Marcado", "Kill Confirmed": "Abate Confirmado" },
+        "Augmented": { "Load-Bearing Body": "Corpo de Carga", "Reinforced Build": "Estrutura Reforçada", "Heavy Chrome Walking": "Cromo Pesado Ambulante", "Impact Absorbers": "Absorvedores de Impacto", "Neural Reflexes": "Reflexos Neurais", "Motion Blur": "Borrão de Movimento", "Accelerated Loop": "Ciclo Acelerado", "Fast Enough": "Rápido o Bastante" },
+        "Tech": { "Companion Drone": "Drone Companheiro", "Remote Hands": "Mãos Remotas", "Drone Network": "Rede de Drones", "Planted Charge": "Explosivo Plantado", "Controlled Demolition": "Demolição Controlada", "Cascading Failure": "Falha em Cascata" },
+        "Broker": { "Contacts Everywhere": "Contatos em Todo Lugar", "Black-Market Network": "Rede do Mercado Negro", "Everybody Owes Somebody": "Todo Mundo Deve a Alguém", "Public Persona": "Persona Pública", "Live Feed": "Transmissão ao Vivo", "Living Brand": "Marca Viva" },
+        "Reclaimer": { "Signature Vehicle": "Veículo de Assinatura", "Stunt Driver": "Piloto de Manobras", "Drive Off": "Arrancar", "Bad Ground": "Terreno Ruim", "Field Salvage": "Recuperação de Campo", "Dead Zone": "Zona Morta" },
+        "Trauma Doc": { "Black-Clinic Procedure": "Procedimento de Clínica Clandestina", "Bad Medicine": "Remédio Amargo", "Miracle Cocktail": "Coquetel Milagroso", "Combat Triage": "Triagem de Combate", "Field Extraction": "Extração de Campo", "Rapid Response": "Resposta Rápida", "Mass Casualty Protocol": "Protocolo de Vítimas em Massa" },
+        "Warden": { "Impact Frame": "Estrutura de Impacto", "Hard to Break": "Difícil de Quebrar", "Unbreakable Frame": "Estrutura Inquebrável", "Hard Stop": "Parada Brusca", "Crowd Control": "Controle de Multidão", "Break the Line": "Romper a Linha" }
+      }
+    },
+    "cards": {
+      "title": "Cartas de Competência",
+      "groups": {
+        "Network": { "Personal Firewall": "Firewall Pessoal", "Signal Burst": "Rajada de Sinal", "Threat Prediction": "Previsão de Ameaça", "Ghost Ping": "Ping Fantasma", "Thermal Hijack": "Sequestro Térmico", "Countermeasure": "Contramedida", "Shared Feed": "Transmissão Compartilhada", "Perceptual Spyware": "Spyware Perceptivo", "Defensive Protocols": "Protocolos Defensivos", "Viral Cascade": "Cascata Viral", "Predictive Algorithm": "Algoritmo Preditivo", "Deep Trace": "Rastreio Profundo", "Retaliation Daemon": "Daemon de Retaliação", "Network-Synced": "Sincronizado à Rede", "Optical Scrambler": "Embaralhador Óptico", "Mirror Stack": "Pilha de Espelhos", "Signal Rebound": "Ricochete de Sinal", "Hard Shutdown": "Desligamento Forçado", "Remote Trojan": "Trojan Remoto", "Botnet Cataclysm": "Cataclismo de Botnet", "Probability Rewrite": "Reescrita de Probabilidade" },
+        "Aegis": { "Bare Metal": "Metal Nu", "Interpose": "Interpor", "Kinetic Push": "Empurrão Cinético", "Commanding Bulk": "Porte Imponente", "Impact Frame": "Estrutura de Impacto", "Lockdown Hold": "Chave de Contenção", "Tactical Rally": "Reagrupamento Tático", "Support Tank": "Tanque de Apoio", "Repulsion Pulse": "Pulso de Repulsão", "Armor Tech": "Tecnologia de Armadura", "Rally Strike": "Golpe de Reagrupamento", "Inevitable": "Inevitável", "Rise Up": "Levante-se", "Aegis-Synced": "Sincronizado à Égide", "Shrug It Off": "Nem Sentiu", "Full System Surge": "Surto Total do Sistema", "Shockwave Slam": "Impacto de Onda de Choque", "Hold the Line": "Segurar a Linha", "Lead by Example": "Liderar pelo Exemplo", "Unbreakable": "Inquebrável", "Unyielding Armor": "Armadura Inflexível" },
+        "Assault": { "Corrective Aim": "Mira Corretiva", "Get Back Up": "Levanta Daí", "Sweep Fire": "Fogo de Varredura", "Danger Close": "Perigo Próximo", "War Buddy": "Parceiro de Guerra", "Adaptive Weapon Handling": "Manuseio Adaptativo de Armas", "Emergency Breakaway": "Fuga de Emergência", "Reinforced Combat Armor": "Armadura de Combate Reforçada", "Target Lock": "Mira Travada", "Ace’s Edge": "Trunfo do Ás", "Combat Conditioning": "Condicionamento de Combate", "Last Stand": "Última Resistência", "Overpressure": "Sobrepressão", "Assault-Synced": "Sincronizado ao Assalto", "Grazing Fire": "Fogo Rasante", "Kill Mode": "Modo Abate", "Rally Signal": "Sinal de Reagrupamento", "Execution Protocol": "Protocolo de Execução", "Blood and Chrome": "Sangue e Cromo", "Relentless Assault": "Assalto Implacável", "Walking Arsenal": "Arsenal Ambulante" },
+        "Ghost": { "Pick and Pull": "Surrupiar", "Digital Face": "Rosto Digital", "Throwing Blades": "Lâminas de Arremesso", "Wirebind": "Amarra de Fio", "Shadow Asset": "Recurso das Sombras", "Blackout Veil": "Véu do Apagão", "Ghost Skin": "Pele Fantasma", "Stealth Expertise": "Especialista em Furtividade", "Weakpoint Tag": "Marca de Ponto Fraco", "Hush Field": "Campo de Silêncio", "Dead Drop Exit": "Saída pelo Ponto de Coleta", "Black Route": "Rota Negra", "Mass Disguise": "Disfarce em Massa", "Ghost-Synced": "Sincronizado ao Fantasma", "Vanishing Dodge": "Esquiva Evanescente", "Feedback Charge": "Carga de Retroalimentação", "Shadowhunter": "Caçador das Sombras", "Fearmask": "Máscara do Medo", "Studying the Victim": "Estudando a Vítima", "Specter Mode": "Modo Espectro", "Total Blackout": "Apagão Total" },
+        "Chrome": { "Boosted Maneuvers": "Manobras Impulsionadas", "Gripware Override": "Pegada Sobrecarregada", "Quick Thinking": "Raciocínio Rápido", "Combat Drive": "Impulso de Combate", "Strategic Approach": "Abordagem Estratégica", "Bracing Frame": "Estrutura de Apoio", "Jumpjet Protocol": "Protocolo Jato de Salto", "Kinetic Boost": "Impulso Cinético", "Reflex Redirect": "Redirecionamento Reflexo", "Combat Scan": "Varredura de Combate", "Signature Move": "Golpe Característico", "Rapid Riposte": "Contra-Ataque Rápido", "Recovery Cycle": "Ciclo de Recuperação", "Chrome-Synced": "Sincronizado ao Cromo", "Cruel Precision": "Precisão Cruel", "Breaking Blow": "Golpe Demolidor", "Crowd Control": "Controle de Multidão", "On the Brink": "À Beira do Abismo", "Splintering Strike": "Golpe Estilhaçante", "Deathrun": "Corrida da Morte", "Swift Step": "Passo Veloz" },
+        "Systems": { "Ava Utility Kit": "Kit Utilitário Ava", "Illiat Software Pack": "Pacote de Software Illiat", "Tyfar Field Kit": "Kit de Campo Tyfar", "Sitil Disguise Rig": "Equipamento de Disfarce Sitil", "Vagras Security Kit": "Kit de Segurança Vagras", "Korvax Control Suite": "Suíte de Controle Korvax", "Norai Heavy Package": "Pacote Pesado Norai", "Exota Fabrication Suite": "Suíte de Fabricação Exota", "Displacement Route": "Rota de Deslocamento", "Long-Range Extraction": "Extração de Longo Alcance", "Manifest Cover": "Cobertura Manifesta", "System Ban": "Banimento de Sistema", "Magnetic Override": "Sobreposição Magnética", "Homet Access Suite": "Suíte de Acesso Homet", "Systems-Synced": "Sincronizado aos Sistemas", "Safehouse Deployment": "Implantação de Esconderijo", "Vyola Neural Suite": "Suíte Neural Vyola", "Ultra Thermal Pulse": "Pulso Ultratérmico", "Ronin Alteration Suite": "Suíte de Alteração Ronin", "Transcendent Link": "Elo Transcendente", "Yarrow Master Suite": "Suíte Mestra Yarrow" },
+        "Influence": { "Captive Audience": "Plateia Cativa", "Rally Broadcast": "Transmissão de Convocação", "Smooth Operator": "Bom de Papo", "Public Provocation": "Provocação Pública", "Truth Filter": "Filtro da Verdade", "Sensory Overload": "Sobrecarga Sensorial", "Voice of Authority": "Voz de Autoridade", "Crisis Counseling": "Aconselhamento de Crise", "Bait the Mark": "Isca no Alvo", "Discord Trigger": "Gatilho da Discórdia", "Thought Profile": "Perfil de Pensamento", "Never Off Camera": "Sempre na Câmera", "Talk To Me": "Fala Comigo", "Influence-Synced": "Sincronizado à Influência", "Endless Charisma": "Carisma Infinito", "Mass Captivation": "Cativação em Massa", "Remote Persona": "Persona Remota", "Adaptive Persona": "Persona Adaptável", "Master of the Craft": "Mestre do Ofício", "Notorious": "Notório", "Signal Boost": "Amplificação de Sinal" },
+        "Frontier": { "Street Instinct": "Instinto de Rua", "Trail Reader": "Leitor de Trilhas", "Trapline Launcher": "Lançador de Armadilhas", "Field Swarm": "Enxame de Campo", "Scout Companion": "Companheiro Batedor", "Corrosive Round": "Munição Corrosiva", "Deployable Ascender": "Ascensor Portátil", "Forecast Model": "Modelo de Previsão", "Grapple Snare": "Laço de Captura", "Razor Mesh": "Malha Navalha", "Field Bunker": "Bunker de Campo", "Scavenger": "Catador", "Convoy Vehicles": "Veículos de Comboio", "Frontier-Synced": "Sincronizado à Fronteira", "Survival Overclock": "Overclock de Sobrevivência", "Solar Flare Array": "Matriz de Erupção Solar", "Field Markers": "Marcadores de Campo", "Frontier Shrine": "Santuário da Fronteira", "Zone Reconfiguration": "Reconfiguração de Zona", "Ruinbreaker Rig": "Equipamento Quebra-Ruínas", "Zone Suppression Array": "Matriz de Supressão de Zona" },
+        "Medtech": { "Field Patch": "Remendo de Campo", "Reassurance": "Tranquilização", "Vital Beacon": "Sinalizador Vital", "Emergency Procedure": "Procedimento de Emergência", "Last Record": "Último Registro", "Second Wind": "Segundo Fôlego", "Lean On Me": "Apoie-se em Mim", "Trauma Field": "Campo de Trauma", "Death Lock": "Trava da Morte", "Shock Charge": "Carga de Choque", "Emergency Fabricator": "Fabricador de Emergência", "Restoration Suite": "Suíte de Restauração", "Trauma Ward": "Ala de Trauma", "Medtech-Synced": "Sincronizado à Medtec", "Combat Transfusion": "Transfusão de Combate", "Impact Reducer": "Redutor de Impacto", "Rejuvenation Barrier": "Barreira Rejuvenescedora", "Clinical Authority": "Autoridade Clínica", "Trauma Lance": "Lança de Trauma", "Lazarus Procedure": "Procedimento Lázaro", "Invigoration": "Revigoramento" },
+        "Redline": { "Last-Resort Chip": "Chip de Último Recurso", "Neurospike": "Neuropico", "Pain Conversion": "Conversão de Dor", "Aggression Feedback": "Retroalimentação Agressiva", "Neurochemical Override": "Sobreposição Neuroquímica", "Redline Detonation": "Detonação Linha Vermelha", "System Hijack": "Sequestro de Sistema", "Emergency Stim Share": "Estimulante Compartilhado de Emergência", "Killhook": "Gancho Mortal", "Cortical Splinter": "Estilhaço Cortical", "Feedback Retaliation": "Retaliação por Retroalimentação", "Neuromuscular Lock": "Trava Neuromuscular", "Redline Ward": "Proteção Linha Vermelha", "Redline-Synced": "Sincronizado à Linha Vermelha", "Siphon Strike": "Golpe Sifão", "Adrenaline Stack": "Pilha de Adrenalina", "Shared Overload": "Sobrecarga Compartilhada", "Psycho Surge": "Surto Psicótico", "System Rupture": "Ruptura de Sistema", "Kill-Switch Overdrive": "Overdrive do Interruptor da Morte", "Refuse Shutdown": "Recusar Desligamento" },
+        "Blackwall": { "Blackwall Shroud": "Mortalha da Muralha Negra", "Corruption Spike": "Pico de Corrupção", "Dead Channel": "Canal Morto", "Backlash Daemon": "Daemon de Contragolpe", "Drain Signal": "Drenar Sinal", "Neural Burden Sync": "Sincronia de Fardo Neural", "Panic Script": "Script de Pânico", "Daemon Proxy": "Proxy Daemon", "System Decay": "Decadência de Sistema", "Ghost Fog": "Névoa Fantasma", "Relic Edge": "Gume de Relíquia", "Corrupted Protocol": "Protocolo Corrompido", "Tracewalk": "Caminhada de Rastro", "Blackwall-Synced": "Sincronizado à Muralha Negra", "Blackwall Manifestation": "Manifestação da Muralha Negra", "Corrupted Shell": "Casca Corrompida", "Daemon Army": "Exército de Daemons", "Feed on Panic": "Alimentar-se do Pânico", "Total System Crash": "Colapso Total do Sistema", "Blackwall Host": "Hospedeiro da Muralha Negra", "Invoke Shutdown": "Invocar Desligamento" }
+      }
+    },
+    "lifePaths": {
+      "title": "Trajetórias",
+      "groups": {
+        "Corpo-Raised → Criação Corporativa": { "Corpo-Raised": "Criação Corporativa", "Corporate Design": "Design Corporativo", "Efficient Routine": "Rotina Eficiente" },
+        "Streetborn → Nascido nas Ruas": { "Streetborn": "Nascido nas Ruas", "Alley Reflexes": "Reflexos de Beco", "Cheap Shot": "Golpe Sujo" },
+        "Nomad → Nômade": { "Nomad": "Nômade", "Road Sprint": "Arrancada na Estrada", "Off-Road Born": "Nascido Fora de Estrada" },
+        "Military Surplus → Excedente Militar": { "Military Surplus": "Excedente Militar", "Combat Reactions": "Reações de Combate", "Last One Standing": "Último de Pé" },
+        "Black-Clinic Survivor → Sobrevivente de Clínica Clandestina": { "Black-Clinic Survivor": "Sobrevivente de Clínica Clandestina", "Scar Tissue": "Tecido Cicatricial", "Emergency Rebuild": "Reconstrução de Emergência" },
+        "Wasteland Native → Nativo do Ermo": { "Wasteland Native": "Nativo do Ermo", "Hazard-Bred": "Forjado no Perigo", "Hard as Nails": "Duro como Aço" }
+      }
+    },
+    "affiliations": {
+      "title": "Afiliações",
+      "entries": {
+        "Corporate Asset": "Ativo Corporativo", "Elite Privilege": "Privilégio de Elite",
+        "Gang-Tied": "Ligado a uma Gangue", "Street Wise": "Sagacidade de Rua",
+        "Nomad Convoy": "Comboio Nômade", "Law of the Road": "Lei da Estrada",
+        "Mercenary Network": "Rede de Mercenários", "Unbound": "Sem Amarras",
+        "Black Clinic": "Clínica Clandestina", "Chillax": "Relaxa",
+        "Fixer Network": "Rede de Intermediários", "Know the Deal": "Conhece o Jogo",
+        "Resistance Cell": "Célula de Resistência", "Found Family": "Família Encontrada",
+        "Data Cult": "Culto de Dados", "Forbidden Pattern": "Padrão Proibido"
+      }
+    },
+    "cyberware": {
+      "title": "Cyberware",
+      "entries": {
+        "Ocular Overlay": "Sobreposição Ocular", "Neural Access": "Acesso Neural", "Skillsoft Socket": "Soquete de Skillsoft", "Pain Gate": "Portão de Dor", "Auxiliary Organ": "Órgão Auxiliar",
+        "Gripware Palms": "Palmas Aderentes", "Reflex Spur": "Espora Reflexa", "Biomonitor Suite": "Suíte Biomonitora", "Muscle Threading": "Fibras Musculares", "Shock Palm": "Palma de Choque",
+        "Pop-Up Blade": "Lâmina Retrátil", "Subdermal Comms": "Comunicador Subdérmico", "Dermal Storage": "Armazenamento Dérmico", "Audio Filters": "Filtros de Áudio", "Environmental Filters": "Filtros Ambientais",
+        "Trait Booster": "Reforço de Atributo", "Synaptic Accelerator": "Acelerador Sináptico", "Reinforced Skeleton": "Esqueleto Reforçado", "Stress Regulator": "Regulador de Estresse", "Pain Gate Array": "Matriz de Portões de Dor",
+        "Auxiliary Organ Cluster": "Aglomerado de Órgãos Auxiliares", "Subdermal Plating": "Blindagem Subdérmica", "Smartgun Link": "Link Smartgun", "Street Mantis Blades": "Lâminas Mantis de Rua", "Frontier Routeware": "Rotas de Fronteira",
+        "Tactical Threat Suite": "Suíte Tática de Ameaças", "Voiceprint Modulator": "Modulador de Voz", "Drone-Link Cortex": "Córtex de Link de Drone", "Reflex Cable Legs": "Pernas de Cabo Reflexo", "Synthetic Lungs": "Pulmões Sintéticos",
+        "Military Mantis Blades": "Lâminas Mantis Militares", "Surgical Swarm Hive": "Colmeia de Enxame Cirúrgico", "Netdaemon Cortex": "Córtex Netdaemon", "Ghostskin System": "Sistema Pele-Fantasma", "Overdrive Muscles": "Músculos Overdrive",
+        "Aegis Threat Mesh": "Malha de Ameaça Égide", "Cortical Buffer": "Buffer Cortical", "Second Heart": "Segundo Coração", "Ablative Dermal Shell": "Casca Dérmica Ablativa", "Reflex Ghostware": "Ghostware Reflexo",
+        "Tactical Mesh Implant": "Implante de Malha Tática", "Neural Archive": "Arquivo Neural", "Systems Module Bay": "Baia de Módulos de Sistemas", "Red Overclock Engine": "Motor de Overclock Vermelho", "Black ICE Cortex": "Córtex de GELO Negro",
+        "Last-Chance Auto-Injector": "Autoinjetor de Última Chance", "Blackwall Co-Processor": "Coprocessador da Muralha Negra", "Berserk Kernel": "Kernel Berserker", "Time-Slice Accelerator": "Acelerador de Fatia de Tempo", "Titanium Soul Frame": "Estrutura de Alma de Titânio",
+        "Angel-Skin Plating": "Blindagem Pele-de-Anjo", "Clone Reflex Loop": "Loop de Reflexo Clone", "Ghost in the Suite": "Fantasma na Suíte", "Metamorphic Chassis": "Chassi Metamórfico", "Neural Crown of Command": "Coroa Neural de Comando",
+        "Siege Organ Rig": "Equipamento de Órgão de Cerco", "Overload Governor": "Governador de Sobrecarga", "Perfected Pain Editor": "Editor de Dor Aperfeiçoado", "Omega Organ Cluster": "Aglomerado de Órgãos Ômega", "Humanity Anchor": "Âncora de Humanidade"
+      }
+    },
+    "eidolons": {
+      "title": "Eidolons (nomes mantidos, peças traduzidas)",
+      "groups": {
+        "Norai Hermes-Arrow": { "Bolt Gun": "Arma de Dardos", "Shock Kick": "Chute de Choque", "Vector Dash": "Arrancada Vetorial", "Hermes Routing": "Roteamento Hermes" },
+        "Tyfar Bulldog": { "Frame Carbine": "Carabina da Estrutura", "Piston Fist": "Punho de Pistão", "Linebreaker": "Rompe-Linhas", "Assault Suite": "Suíte de Assalto" },
+        "Vagras Atlas-Breaker": { "Siege Maul": "Marreta de Cerco", "Shoulder Mortar": "Morteiro de Ombro", "Immovable Mass": "Massa Inamovível", "Bulwark Systems": "Sistemas Baluarte" },
+        "Ronin Wraith-9": { "Monowire Spear": "Lança de Monofio", "Suppressed Cannon": "Canhão Silenciado", "Specter Cloak": "Manto Espectral", "Ghost Architecture": "Arquitetura Fantasma" },
+        "AVA Apollo-Lancet": { "Surgical Laser": "Laser Cirúrgico", "Restraint Latch": "Trava de Contenção", "Trauma Cradle": "Berço de Trauma", "Apollo Recovery Procedure": "Procedimento de Recuperação Apollo" },
+        "Sitil Cordon-6": { "Suppression Array": "Matriz de Supressão", "Riot Ram": "Aríete Antimotim", "Perimeter Lock": "Bloqueio de Perímetro", "Cordon Protocol": "Protocolo Cordon" },
+        "Exota Horizon-Mirage": { "Horizon Rifle": "Fuzil Horizon", "Grav-Shear Talons": "Garras Cisalha-Grav", "Mirage Crossing": "Travessia Mirage", "Dead-Zone Adaptation": "Adaptação à Zona Morta" },
+        "Korvax Athena-Pallas": { "Spear Rifle": "Fuzil-Lança", "Predictive Command": "Comando Preditivo", "Analysis Simulation": "Simulação Analítica", "Tactical Mesh": "Malha Tática" },
+        "Ronin Ares-Tyrant": { "Mass Driver": "Acelerador de Massa", "Thermal Talon": "Garra Térmica", "Deus-Class Overdrive": "Overdrive Classe-Deus", "Ares Redline Kernel": "Kernel Linha Vermelha Ares" },
+        "Hephaestus Forge-Saint": { "Forge Cannon": "Canhão de Forja", "Industrial Grasp": "Pegada Industrial", "Miracle Fabricator": "Fabricador Milagroso", "Hephaestus Reconstruction Engine": "Motor de Reconstrução Hephaestus" }
+      }
+    },
+    "weapons": {
+      "title": "Armas",
+      "groups": {
+        "Tier 1": { "Assault Carbine": "Carabina de Assalto", "Breach Hammer": "Martelo de Arrombamento", "Combat Knife": "Faca de Combate", "Compact SMG": "Submetralhadora Compacta", "Grapple Wire": "Fio de Arpéu", "Holdout Pistol": "Pistola de Bolso", "Mono-Katana": "Monokatana", "Riot Buckler": "Broquel Antimotim", "Scrap Launcher": "Lançador de Sucata", "Shock Baton": "Bastão de Choque", "Shock Glove": "Luva de Choque", "Smartbow": "Arco Inteligente", "Smoke Popper": "Lança-Fumaça", "Street Shotgun": "Escopeta de Rua", "Stun Dart": "Dardo Atordoante", "Tactical Drone": "Drone Tático" },
+        "Tier 2": { "Arc Caster": "Lançador de Arco", "Arc Knuckles": "Soqueiras de Arco", "Flash Charge": "Carga de Clarão", "Heavy Nailgun": "Pregadeira Pesada", "Heavy Pistol": "Pistola Pesada", "Impact Shield": "Escudo de Impacto", "Micro-Net Launcher": "Lançador de Microrrede", "Military Rifle": "Fuzil Militar", "Mono-Knife": "Monofaca", "Pulse Halberd": "Alabarda de Pulso", "Riot Shotgun": "Escopeta Antimotim", "Signal Jammer": "Bloqueador de Sinal", "Smart Pistol Rig": "Kit de Pistola Inteligente", "Sonic Cutter": "Cortador Sônico", "Vibroblade": "Vibrolâmina", "Watchdog Drone": "Drone Cão de Guarda" },
+        "Tier 3": { "Auto-Shotgun": "Escopeta Automática", "Black ICE Projector": "Projetor de GELO Negro", "Concussion Pistol": "Pistola de Concussão", "Counter-ICE Shard": "Fragmento Contra-GELO", "Drone Spear": "Lança-Drone", "Gravity Maul": "Marreta Gravitacional", "Hand Cannon": "Canhão de Mão", "Hunter-Seeker Drone": "Drone Caçador", "Kinetic Tonfa": "Tonfa Cinética", "Neural Spike": "Espinho Neural", "Paired Techblades": "Tecnolâminas Gêmeas", "Phase Dagger": "Adaga de Fase", "Plasma Carbine": "Carabina de Plasma", "Rail Rifle": "Fuzil de Trilho", "Runner Whip": "Chicote de Runner", "Tower Shield Rig": "Kit de Escudo Torre" },
+        "Tier 4": { "Assassin Drone": "Drone Assassino", "Bastion Shield": "Escudo Bastião", "Blackbox Injector": "Injetor Caixa-Preta", "Blackwall Emitter": "Emissor da Muralha Negra", "Executive Sidearm": "Pistola Executiva", "Gravity Chain": "Corrente Gravitacional", "Molecular Razor": "Navalha Molecular", "Neural Lance": "Lança Neural", "Prototype Railcannon": "Canhão de Trilho Protótipo", "Siege Shotgun": "Escopeta de Cerco", "Singularity Charge": "Carga de Singularidade", "Singularity Hammer": "Martelo de Singularidade", "Smart Stormrifle": "Fuzil Tempestade Inteligente", "Steel-Whip Guillotine": "Guilhotina Chicote-de-Aço", "Stormblade": "Lâmina Tempestade", "Synaptic Needle": "Agulha Sináptica" }
+      }
+    },
+    "armors": {
+      "title": "Armaduras",
+      "groups": {
+        "Tier 1": { "Street Icon Fit": "Traje Ícone de Rua", "Synthleather Jacket": "Jaqueta de Sintcouro", "Ballistic Vest": "Colete Balístico", "Riot Shell": "Blindagem Antimotim", "Hazard Suit": "Traje de Perigo" },
+        "Tier 2": { "Luxurious Coat": "Casaco Luxuoso", "Smartweave Coat": "Casaco de Trama Inteligente", "Gang Colors Jacket": "Jaqueta com as Cores da Gangue", "Armored Bodysuit": "Macacão Blindado", "Reactive Mesh": "Malha Reativa", "Exo-Riot Plating": "Blindagem Exo-Antimotim", "Insulated Hazmat": "Traje Hazmat Isolado" },
+        "Tier 3": { "Light Exosuit": "Exotraje Leve", "Ghostweave Cloak": "Manto de Trama Fantasma", "Celebrity Armorweave": "Trama Blindada de Celebridade", "Corporate Aegis Suit": "Traje Égide Corporativo", "Reputation Mantle": "Manto da Reputação", "Ceramite Plate": "Placa de Ceramita", "Trauma Armor": "Armadura de Trauma" },
+        "Tier 4": { "Angel Skin Prototype": "Protótipo Pele-de-Anjo", "Holo-Reactive Mantle": "Manto Holorreativo", "Nullweave Armor": "Armadura de Trama Nula", "Street Regalia": "Regalia de Rua", "Vagras Bulwark Harness": "Arnês Baluarte Vagras", "Siege Exo-Frame": "Exoesqueleto de Cerco" }
+      }
+    },
+    "loot": {
+      "title": "Loot",
+      "entries": {
+        "Blackbox Recorder": "Gravador Caixa-Preta", "Breach Cord": "Cordão de Brecha", "Burner ID": "Identidade Descartável", "Clean Needle": "Agulha Limpa", "Climbing Filament": "Filamento de Escalada",
+        "Clinic Cooler": "Caixa Térmica de Clínica", "Collapsible Barricade": "Barricada Dobrável", "Comm Beads": "Contas de Comunicação", "Courier Boots": "Botas de Mensageiro", "Dead Drop Case": "Maleta de Ponto de Coleta",
+        "Debt Chip": "Chip de Dívida", "Decoy Wallet": "Carteira Isca", "Drone Harness": "Arreio de Drone", "Emergency Beacon": "Sinalizador de Emergência", "EMP Thread": "Fio PEM",
+        "Faraday Pouch": "Bolsa de Faraday", "Filter Hood": "Capuz Filtrante", "Forensic Lens": "Lente Forense", "Forger's Sleeve": "Manga do Falsário", "Garage Token": "Ficha de Garagem",
+        "Ghost Plate": "Placa Fantasma", "Hardlight Umbrella": "Guarda-Chuva de Luz Sólida", "Lockspike": "Espeto de Fechadura", "Mag Boots": "Botas Magnéticas", "Memory Shard": "Fragmento de Memória",
+        "Microfab Key": "Chave Microfab", "Mirror Tag": "Etiqueta Espelho", "Old Net Charm": "Amuleto da Velha Rede", "Old World Map": "Mapa do Velho Mundo", "Pocket Drone": "Drone de Bolso",
+        "Portable Shrine": "Santuário Portátil", "Rumor Deck": "Baralho de Boatos", "Shock Blanket": "Cobertor de Emergência", "Signal Cloak": "Manto de Sinal", "Signal Leech": "Sanguessuga de Sinal",
+        "Signal Splitter": "Divisor de Sinal", "Smart Chalk": "Giz Inteligente", "Smart Cuffs": "Algemas Inteligentes", "Sound Sponge": "Esponja Sonora", "Trauma Tag": "Etiqueta de Trauma"
+      }
+    },
+    "consumables": {
+      "title": "Consumíveis",
+      "entries": {
+        "Adrenal Inhaler": "Inalador Adrenal", "Adrenal Plug": "Plugue Adrenal", "Anti-Hack Token": "Ficha Anti-Hack", "Anti-Toxin Cartridge": "Cartucho Antitoxina", "Black ICE Shard": "Fragmento de GELO Negro",
+        "Blackout Capsule": "Cápsula de Apagão", "Breach Gel": "Gel de Brecha", "Breach Spike": "Espeto de Brecha", "Cloak Mist": "Névoa Camuflante", "Combat Stim": "Estimulante de Combate",
+        "Cryo Pack": "Pacote Criogênico", "Decoy Transponder": "Transponder Isca", "Door Eater": "Come-Portas", "EMP Charge": "Carga PEM", "Flash Grenade": "Granada de Clarão",
+        "Foamcrete Canister": "Lata de Espumacreto", "Focus Ampoule": "Ampola de Foco", "Ghost Tag": "Etiqueta Fantasma", "Hard Reset Ampoule": "Ampola de Reinício Forçado", "Hardlight Patch": "Remendo de Luz Sólida",
+        "Kinetic Booster": "Reforço Cinético", "Major Health Patch": "Adesivo de Saúde Maior", "Med-Gel Slab": "Placa de Medgel", "Memory Wipe Tab": "Comprimido Apaga-Memória", "Minor Health Patch": "Adesivo de Saúde Menor",
+        "Minor Stamina Injector": "Injetor de Vigor Menor", "Nanowire Saw": "Serra de Nanofio", "Overclock Round": "Munição de Overclock", "Panic Button": "Botão de Pânico", "Patch Plate": "Placa de Remendo",
+        "Prototype Battery": "Bateria Protótipo", "Redline Dose": "Dose Linha Vermelha", "Shock Leash": "Coleira de Choque", "Shock Mine": "Mina de Choque", "Signal Flare": "Sinalizador",
+        "Smart Ammo": "Munição Inteligente", "Smart Grenade": "Granada Inteligente", "Smoke Canister": "Lata de Fumaça", "Sonic Spike": "Pico Sônico", "Trauma Foam": "Espuma de Trauma"
+      }
+    },
+    "vehicles": {
+      "title": "Veículos",
+      "entries": {
+        "Street Bike": "Moto de Rua", "Nomad Buggy": "Buggy Nômade", "Armored Sedan": "Sedã Blindado", "Crew Van": "Van da Equipe", "Interceptor": "Interceptador",
+        "War Rig": "Caminhão de Guerra", "Corporate AV": "Aeronave Corporativa", "Ghost Runner": "Corredor Fantasma",
+        "Road Crusher": "Esmaga-Estrada", "Mobile Kit": "Kit Móvel", "Dust Runner": "Corredor da Poeira", "Autopilot Ghost": "Piloto Automático Fantasma"
+      }
+    },
+    "adversaries": {
+      "title": "Adversários",
+      "groups": {
+        "Neon Claw Ganger": { "Neon Claw Ganger": "Gangueiro da Neon Claw", "Minion (3)": "Lacaio (3)", "Group Attack": "Ataque em Grupo", "Show of Force": "Demonstração de Força" },
+        "Chrome Maw Bruiser": { "Chrome Maw Bruiser": "Brutamontes da Chrome Maw", "Chrome Bulk": "Massa de Cromo", "Jawbreaker": "Quebra-Queixo" },
+        "Pocket Drone Handler": { "Pocket Drone Handler": "Operador de Drones de Bolso", "Spotter Swarm": "Enxame Observador", "Send the Drone": "Manda o Drone" },
+        "Rookie Edgerunner": { "Rookie Edgerunner": "Mercenário Novato", "Cover Shooter": "Atirador na Cobertura", "Panic Burst": "Rajada de Pânico" },
+        "Sitil Security Guard": { "Sitil Security Guard": "Guarda de Segurança Sitil", "Badge Discipline": "Disciplina do Distintivo", "Call It In": "Chamar Reforços" },
+        "Tiger Choir Cutter": { "Tiger Choir Cutter": "Retalhador do Tiger Choir", "Crowd Slip": "Escapada na Multidão", "Reputation Cut": "Corte de Reputação" },
+        "Black-Clinic Butcher": { "Black-Clinic Butcher": "Açougueiro de Clínica Clandestina", "Pain Map": "Mapa da Dor", "Surgical Disable": "Incapacitação Cirúrgica", "Emergency Stitching": "Sutura de Emergência" },
+        "Blood Saint Duelist": { "Blood Saint Duelist": "Duelista dos Blood Saints", "Witness Me": "Testemunhem", "Signature Cut": "Corte Característico", "Public Humiliation": "Humilhação Pública" },
+        "Contract Sniper": { "Contract Sniper": "Atirador de Elite Contratado", "Prepared Position": "Posição Preparada", "Marked Shot": "Tiro Marcado", "Relocate": "Reposicionar" },
+        "Corporate Response Team": { "Corporate Response Team": "Equipe de Resposta Corporativa", "Horde (1d6+2)": "Horda (1d6+2)", "Stack Up": "Em Formação", "Tactical Sweep": "Varredura Tática" },
+        "Korvax Neural Interrogator": { "Korvax Neural Interrogator": "Interrogador Neural Korvax", "Legal Threat": "Ameaça Jurídica", "Memory Hook": "Gancho de Memória", "Pressure File": "Dossiê de Pressão" },
+        "Signal Haunt": { "Signal Haunt": "Assombração de Sinal", "Augmented Haunting": "Assombração Aumentada", "Signal Spike": "Pico de Sinal", "Hostile Overlay": "Sobreposição Hostil" },
+        "Combat Eidolon Frame": { "Combat Eidolon Frame": "Estrutura de Eidolon de Combate", "Mecha Structure": "Estrutura Mecha", "Frame Pattern": "Padrão da Estrutura", "Battlefield Tactics": "Táticas de Campo de Batalha", "Reactor Surge": "Surto do Reator" },
+        "Data Cult Oracle": { "Data Cult Oracle": "Oráculo do Culto de Dados", "Unwanted Revelation": "Revelação Indesejada", "Convert the Weak": "Converter os Fracos", "Cult Transmission": "Transmissão do Culto", "Signal Martyr": "Mártir do Sinal" },
+        "Digital Wraith": { "Digital Wraith": "Espectro Digital", "Unstable Render": "Renderização Instável", "Possess Device": "Possuir Dispositivo", "Fear Echo": "Eco do Medo", "Digital Vanish": "Sumiço Digital" },
+        "Rival Edgerunner Crew": { "Rival Edgerunner Crew": "Equipe Rival de Mercenários", "Horde (2d6+4)": "Horda (2d6+4)", "Role Switch": "Troca de Função", "Setpiece Combo": "Combo Ensaiado", "Cover Each Other": "Cobrir Uns aos Outros" },
+        "Sitil Black-Ops Captain": { "Sitil Black-Ops Captain": "Capitão de Operações Secretas Sitil", "Operational Control": "Controle Operacional", "Kill Order": "Ordem de Abate", "No Witnesses": "Sem Testemunhas", "Asset Denial": "Negação de Recursos" },
+        "Tyfar Kill Platform": { "Tyfar Kill Platform": "Plataforma de Abate Tyfar", "Walking Arsenal": "Arsenal Ambulante", "Stabilizer Lock": "Trava do Estabilizador", "Spin Up": "Acelerar Canos", "Armor-Piercing Burst": "Rajada Perfurante" },
+        "Ares-Tyrant Eidolon": { "Ares-Tyrant Eidolon": "Eidolon Ares-Tyrant", "Mecha Structure": "Estrutura Mecha", "Ares Overdrive": "Overdrive Ares", "Thermal Talon": "Garra Térmica", "War God Awakens": "O Deus da Guerra Desperta", "No Retreat": "Sem Recuo" },
+        "Black Hand": { "Black Hand": "Mão Negra", "A Legend Like You": "Uma Lenda Como Você", "Contract Target": "Alvo do Contrato", "Black Hand Guns": "Armas da Mão Negra", "Hard Entry": "Entrada Forçada", "Eidolon Drop": "Lançamento de Eidolon" },
+        "Board Executive": { "Board Executive": "Executivo do Conselho", "Liability Shield": "Escudo de Responsabilidade", "Hostile Acquisition": "Aquisição Hostil", "Asset Freeze": "Congelamento de Bens", "Contractual Violence": "Violência Contratual", "Plausible Deniability": "Negação Plausível" },
+        "Chrome Reaper": { "Chrome Reaper": "Ceifador de Cromo", "Cyberpsycho": "Ciberpsicopata", "Weapon Switch": "Troca de Arma", "Personal Threat": "Ameaça Pessoal", "Unfair Reflexes": "Reflexos Injustos", "Chrome Supremacy": "Supremacia do Cromo" },
+        "Cyber Hunter": { "Cyber Hunter": "Ciber-Caçador", "Target Package": "Pacote de Alvo", "Piercing Shot": "Tiro Perfurante", "Remote Reposition": "Reposicionamento Remoto", "Blackout Shot": "Tiro Apagão", "Hold The Breath": "Prender a Respiração" },
+        "Hades Shard": { "Hades Shard": "Fragmento Hades", "Digital Body": "Corpo Digital", "Digital Afterlife": "Além-Vida Digital", "Identity Collapse": "Colapso de Identidade", "Ghost Birth": "Nascimento Fantasma", "Dead Network": "Rede Morta" },
+        "The Raven Eidolon": { "The Raven Eidolon": "Eidolon O Corvo", "Merciless Advance": "Avanço Impiedoso", "Killbox Execution": "Execução na Zona de Abate", "Black Hand Override": "Controle da Mão Negra" }
+      }
+    },
+    "environments": {
+      "title": "Ambientes",
+      "groups": {
+        "Low-Sec Data Office": { "Low-Sec Data Office": "Escritório de Dados de Baixa Segurança", "Badge Logic": "Lógica do Crachá", "Camera Sweep": "Varredura de Câmeras", "Reception Alarm": "Alarme da Recepção" },
+        "Megablock Stairwell": { "Megablock Stairwell": "Escadaria do Megabloco", "Bad Angles": "Ângulos Ruins", "Door Slams Open": "Porta Escancarada", "Down the Stairs": "Escada Abaixo" },
+        "Neon Night Market": { "Neon Night Market": "Mercado Noturno Neon", "Crowded Flow": "Fluxo Lotado", "Black-Market Offer": "Oferta do Mercado Negro", "Wrong Eyes": "Olhos Errados" },
+        "Street-Level Stakeout": { "Street-Level Stakeout": "Tocaia de Rua", "Eyes Everywhere": "Olhos por Toda Parte", "The Target Moves": "O Alvo se Move", "Burned Position": "Posição Queimada" },
+        "Black Clinic Under Siege": { "Black Clinic Under Siege": "Clínica Clandestina Sitiada", "Fragile Patients": "Pacientes Frágeis", "Emergency Procedure": "Procedimento de Emergência", "Power Failure": "Queda de Energia" },
+        "Corporate Heist Floor": { "Corporate Heist Floor": "Andar do Assalto Corporativo", "Objective Clock": "Relógio do Objetivo", "Lockdown Doors": "Portas de Bloqueio", "Hostage Pressure": "Pressão dos Reféns" },
+        "Haunted Subway Node": { "Haunted Subway Node": "Estação de Metrô Assombrada", "Signal Haunting": "Assombração de Sinal", "Ghost Train": "Trem Fantasma", "False Exit": "Saída Falsa", "Possessed Platform": "Plataforma Possuída" },
+        "Highway Kill Run": { "Highway Kill Run": "Corrida Mortal na Rodovia", "The Chase": "A Perseguição", "Vehicle Momentum": "Embalo dos Veículos", "Road Hazard": "Perigo na Estrada", "Pursuit Escalation": "Escalada da Perseguição" },
+        "Blacksite Extraction": { "Blacksite Extraction": "Extração no Local Secreto", "Containment Protocol": "Protocolo de Contenção", "Sterile Kill Team": "Equipe de Abate Esterilizada", "Erase Evidence": "Apagar Evidências" },
+        "Eidolon Deployment Zone": { "Eidolon Deployment Zone": "Zona de Implantação de Eidolons", "Eidolon Scale": "Escala de Eidolon", "Heavy Debris": "Escombros Pesados", "Sensor Bloom": "Saturação de Sensores" },
+        "Gang War Block": { "Gang War Block": "Quarteirão em Guerra de Gangues", "Crossfire": "Fogo Cruzado", "Claim the Block": "Tomar o Quarteirão", "Reputation Test": "Teste de Reputação" },
+        "Blackwall Storm Highway": { "Blackwall Storm Highway": "Rodovia da Tempestade da Muralha Negra", "Machine Weather": "Clima de Máquina", "Black Lightning": "Relâmpago Negro", "Route Collapse": "Colapso da Rota" },
+        "Corporate Tower Coup": { "Corporate Tower Coup": "Golpe na Torre Corporativa", "Legal Battlefield": "Campo de Batalha Jurídico", "Hostile Vote": "Votação Hostil", "Executive Evacuation": "Evacuação Executiva" },
+        "Dead Pantheon Breach": { "Dead Pantheon Breach": "Brecha do Panteão Morto", "Reality Through Machines": "Realidade Através das Máquinas", "Ghost Incursion": "Incursão Fantasma", "Root-Level Intrusion": "Intrusão em Nível Root", "The God Notices": "O Deus Percebe" },
+        "Digital Ghost Cathedral": { "Digital Ghost Cathedral": "Catedral do Fantasma Digital", "Litany of Static": "Litania de Estática", "Icon Becomes Monster": "O Ícone Vira Monstro", "Mirrored Dead": "Mortos Espelhados", "Prayer Loop": "Loop de Oração" },
+        "Elite Contract Auction": { "Elite Contract Auction": "Leilão de Contratos de Elite", "Everyone Wants It": "Todo Mundo Quer", "Raise the Price": "Aumentar o Preço", "Masks Off": "Máscaras Caídas" }
+      }
+    }
+  }
+}

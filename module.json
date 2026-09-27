@@ -13,8 +13,15 @@
   "relationships": {
     "systems": [
       { "id": "daggerheart", "type": "system", "compatibility": { "minimum": "2.10.0" } }
+    ],
+    "recommends": [
+      { "id": "babele", "type": "module", "reason": "Traduz os compêndios para português (pt-BR) / Translates the compendiums to Brazilian Portuguese." }
     ]
   },
+  "languages": [
+    { "lang": "en", "name": "English", "path": "lang/en.json" },
+    { "lang": "pt-BR", "name": "Português (Brasil)", "path": "lang/pt-BR.json" }
+  ],
   "packs": [
     { "name": "edgeheart-lifepaths", "label": "Edgeheart: Trajetórias", "path": "packs/edgeheart-lifepaths", "type": "Item", "system": "daggerheart", "ownership": { "PLAYER": "OBSERVER", "ASSISTANT": "OWNER" } },
     { "name": "edgeheart-affiliations", "label": "Edgeheart: Afiliações", "path": "packs/edgeheart-affiliations", "type": "Item", "system": "daggerheart", "ownership": { "PLAYER": "OBSERVER", "ASSISTANT": "OWNER" } },
@@ -41,7 +48,7 @@
       ]
     }
   ],
-  "esmodules": ["scripts/main.js", "scripts/edgeheart-character.js", "scripts/edgeheart-crew.js"],
+  "esmodules": ["scripts/main.js", "scripts/edgeheart-character.js", "scripts/edgeheart-crew.js", "scripts/edgeheart-babele.js"],
   "styles": ["styles/edgeheart.css"],
   "socket": true,
   "flags": {}
