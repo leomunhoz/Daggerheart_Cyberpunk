@@ -823,8 +823,8 @@ const IntegratedChrome = {
 
 Hooks.once("init", () => {
   game.settings.register(MODULE_ID, "defaultSheet", {
-    name: "Personagens novos usam a Ficha Edgeheart",
-    hint: "Ao criar um Personagem, ele já nasce com a Ficha Edgeheart (Humanidade, Carga Cibernética, Ciberpsicose). Personagens existentes podem trocar de ficha pelo ícone de configuração da ficha.",
+    name: "Atores novos usam as fichas do Edgeheart",
+    hint: "Ao criar um Personagem, ele já nasce com a Ficha Edgeheart (Humanidade, Carga Cibernética, Ciberpsicose); ao criar um Grupo, ele nasce com a Ficha da Crew (Reputação, Edge e Movimentos de Edge). Atores existentes podem trocar de ficha pelo ícone de configuração da ficha.",
     scope: "world", config: true, type: Boolean, default: true
   });
 

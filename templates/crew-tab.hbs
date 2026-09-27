@@ -1,0 +1,85 @@
+<section class="tab {{tabs.crew.cssClass}}" data-tab="crew" data-group="primary">
+    <div class="eh-crew">
+        {{#with crew}}
+
+            {{!-- EDGE --}}
+            <fieldset class="eh-card eh-edge-card">
+                <legend><i class="fa-solid fa-bolt"></i> Edge</legend>
+                <div class="eh-edge-row">
+                    <div class="eh-edge-pips">
+                        {{#each edgePips}}
+                            <a class="eh-edge-pip {{#if filled}}filled{{/if}}" {{#if @root.editable}}data-action="ehToggleEdge"{{/if}} data-value="{{value}}"
+                                data-tooltip="{{#if filled}}Gastar{{else}}Ganhar{{/if}} Edge"><i class="fa-solid fa-bolt"></i></a>
+                        {{/each}}
+                    </div>
+                    <span class="eh-edge-count">{{edge}} / 3</span>
+                </div>
+                <details class="eh-help">
+                    <summary><i class="fa-solid fa-circle-plus"></i> Uma vez por cena, a Crew ganha 1 Edge quando…</summary>
+                    <ul>{{#each gains}}<li>{{this}}</li>{{/each}}</ul>
+                </details>
+            </fieldset>
+
+            {{!-- MOVIMENTOS DE EDGE --}}
+            <fieldset class="eh-card">
+                <legend><i class="fa-solid fa-people-group"></i> Movimentos de Edge <span class="eh-count" data-tooltip="Qualquer um pode gastar Edge, mas a Crew deve concordar">Crew concorda</span></legend>
+                <ul class="eh-moves">
+                    {{#each moves}}
+                        <li class="{{#unless affordable}}unaffordable{{/unless}}">
+                            <div class="eh-move-head">
+                                <i class="fa-solid {{icon}}"></i>
+                                <strong>{{name}}</strong>
+                                <span class="eh-edge-cost">{{cost}} Edge</span>
+                                {{#if @root.editable}}
+                                    <button type="button" data-action="ehUseMove" data-move="{{id}}" {{#unless affordable}}disabled{{/unless}}>
+                                        {{#if cost}}Gastar{{else}}Anunciar{{/if}}
+                                    </button>
+                                {{/if}}
+                            </div>
+                            <p>{{{text}}}</p>
+                            {{#if options}}
+                                <ul class="eh-move-options">
+                                    {{#each options}}<li><strong>{{name}}:</strong> {{text}}</li>{{/each}}
+                                </ul>
+                            {{/if}}
+                        </li>
+                    {{/each}}
+                </ul>
+            </fieldset>
+
+            {{!-- IDENTIDADE --}}
+            <fieldset class="eh-card">
+                <legend><i class="fa-solid fa-id-card"></i> Crew <span class="eh-count" data-tooltip="Tier da Crew: o maior Tier entre os membros">Tier {{tier}}</span></legend>
+                <div class="eh-crew-fields">
+                    <label data-tooltip="Pelo que vocês são conhecidos? Vira a Experiência compartilhada de Reputação de cada membro (usar custa 1 Esperança, uma vez por cena).">
+                        <span>Reputação <em>+{{reputationValue}}</em></span>
+                        <input type="text" name="flags.edgeheart-cyberpunk.crew.reputation" value="{{reputation}}" placeholder="Never Leave Anyone Behind" {{#unless @root.editable}}disabled{{/unless}}>
+                    </label>
+                    <label data-tooltip="Que regra a Crew se recusa a quebrar?">
+                        <span>Código</span>
+                        <input type="text" name="flags.edgeheart-cyberpunk.crew.code" value="{{code}}" {{#unless @root.editable}}disabled{{/unless}}>
+                    </label>
+                    <label data-tooltip="Quem encontra contratos e conecta vocês à cidade?">
+                        <span>Fixer</span>
+                        <input type="text" name="flags.edgeheart-cyberpunk.crew.fixer" value="{{fixer}}" {{#unless @root.editable}}disabled{{/unless}}>
+                    </label>
+                    <label data-tooltip="Onde vocês se encontram, consertam, discutem e se recuperam entre um trabalho e outro?">
+                        <span>Base</span>
+                        <input type="text" name="flags.edgeheart-cyberpunk.crew.base" value="{{base}}" {{#unless @root.editable}}disabled{{/unless}}>
+                    </label>
+                </div>
+            </fieldset>
+
+            <details class="eh-help">
+                <summary><i class="fa-solid fa-circle-question"></i> Como funciona</summary>
+                <ul>
+                    <li><strong>Membros:</strong> arraste os personagens para a aba de membros do Grupo.</li>
+                    <li><strong>Reputação:</strong> começa em +2 e sobe +1 a cada Tier novo da Crew. Aparece como Experiência na ficha de cada membro.</li>
+                    <li><strong>Recursos da Crew:</strong> veículos, esconderijos, equipamento e recompensas ficam no Inventário do Grupo. Continuam com a Crew quando alguém sai.</li>
+                    <li><strong>Personagem novo:</strong> começa no nível mais baixo do Tier atual (Tier 1 → nível 1, Tier 2 → 2, Tier 3 → 5, Tier 4 → 8).</li>
+                    <li><strong>All In:</strong> abre a Rolagem em Dupla sem custo de Esperança; quando ela termina, quem rolou limpa 1 Estresse.</li>
+                </ul>
+            </details>
+        {{/with}}
+    </div>
+</section>

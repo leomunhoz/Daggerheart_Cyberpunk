@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.21.0
+- **Crew e Edge.** O Grupo do Daggerheart ganha a **Ficha da Crew**, com uma aba nova:
+  - **Edge** de 0 a 3, com a lista do que faz a Crew ganhar Edge;
+  - os **Movimentos de Edge** Teamwork, Back Me Up, Get Them Out, Plan B (com as 4 contingências) e All In, que gastam o Edge e mandam o card no chat;
+  - Reputação, Código, Fixer e Base.
+- A **Reputação** vira uma Experiência de cada membro (+2, e +1 a cada Tier novo da Crew). Usar custa 1 Esperança, como toda Experiência.
+- **All In** abre a Rolagem em Dupla do sistema sem custo de Esperança. Quando ela termina, quem rolou limpa 1 Estresse.
+- Membros, Recursos da Crew (inventário), Rolagem em Dupla e Rolagem em Grupo continuam sendo os do sistema.
+- Grupos novos já nascem com a Ficha da Crew (mesma opção da Ficha Edgeheart). Jogadores que não são donos da Crew gastam Edge pelo mestre.
+
 ## v1.20.0
 - **Automação das features de adversários e ambientes no padrão das features oficiais:**
   - "O alvo marca Estresse / perde Esperança / marca Armadura" como dano de recurso na ação (Memory Hook: 2 na falha e 1 no sucesso).
