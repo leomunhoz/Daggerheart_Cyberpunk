@@ -218,4 +218,6 @@
   font-size: var(--font-size-11, 11px); font-weight: normal; white-space: nowrap;
 }
 .eh-crew-chat h3 { display: flex; align-items: center; gap: 6px; margin: 0 0 4px; }
-.eh-crew-chat h3 .eh-edge-cost { margin-left: auto; }
+.eh-crew-chat h3 .eh-edge-cost { margin-left: auto; }.eh-crew-chat .eh-card-buttons { display: flex; flex-direction: column; gap: 4px; margin-top: 6px; }
+.eh-crew-chat .eh-card-buttons button { width: 100%; }
+.eh-crew-chat .eh-note { opacity: 0.85; font-size: var(--font-size-12, 12px); }

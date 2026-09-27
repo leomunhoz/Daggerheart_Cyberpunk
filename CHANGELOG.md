@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.22.0
+- **Automação dos Movimentos de Edge**, com botões no card do chat como nos cards de ação do sistema:
+  - **Get Them Out:** "Reduzir 1 PV marcado" e "Limpar Vulnerável/Imobilizado" no aliado alvo (ou no token selecionado).
+  - **Back Me Up:** "Rolagem de Reação" do personagem selecionado, com o atributo escolhido na hora.
+  - **Plan B, Hidden Cache:** cria 3 **Suprimentos** no Inventário da Crew; um personagem pega e usa, e cada uso gasta 1, como as poções oficiais.
+  - **Plan B, Sabotage Package:** botão do mestre "Restaurar o sistema (2 Medo)".
+- Quando uma **Rolagem em Dupla** sai com Esperança (e passa, se tiver Dificuldade), a Crew recebe um card com o botão **+1 Edge**. A mesa decide, porque o ganho é uma vez por cena.
+- Botões de uso único travam depois de usados.
 ## v1.21.0
 - **Crew e Edge.** O Grupo do Daggerheart ganha a **Ficha da Crew**, com uma aba nova:
   - **Edge** de 0 a 3, com a lista do que faz a Crew ganhar Edge;
