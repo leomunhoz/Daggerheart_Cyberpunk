@@ -2,7 +2,7 @@
   "id": "edgeheart-cyberpunk",
   "title": "Edgeheart - Cyberpunk para Daggerheart (Núcleo)",
   "description": "Campaign frame cyberpunk Edgeheart para o sistema Daggerheart, em português: 9 classes com 18 subclasses, 11 Competências com 21 cartas cada, Trajetórias, Afiliações, 60 cyberwares, armas, armaduras, loot e consumíveis com tabelas, veículos, Eidolons, a Ficha Edgeheart (Humanidade, Carga Cibernética e Ciberpsicose), a Ficha da Crew (Reputação e Edge) e diários com o PDF traduzido. Os compêndios já vêm prontos: é só ativar o módulo.",
-  "version": "1.27.0",
+  "version": "1.27.1",
   "compatibility": {
     "minimum": "14",
     "verified": "14.368"

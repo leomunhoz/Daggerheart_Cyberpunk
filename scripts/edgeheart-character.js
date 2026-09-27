@@ -20,8 +20,21 @@ const COMPETENCIES = {
 const ACCESS = { full: "Acesso Total", half: "Meio Acesso", card: "Acesso de Carta" };
 const TRAITS = { agility: "Agilidade", strength: "Força", finesse: "Acuidade", instinct: "Instinto", presence: "Presença", knowledge: "Conhecimento" };
 
-// ---------- Regras ----------
+// Acha uma ação pelo nome na língua de origem: usa o _id guardado pelo gerador (flags.actionIds), então
+// funciona mesmo com uma tradução (Babele) trocando os nomes. Itens antigos, sem a tabela, caem no nome.
+export function isAction(action, name) {
+  if (!action || !name) return false;
+  const ids = action.item?.getFlag(MODULE_ID, "actionIds");
+  const id = Array.isArray(ids) ? ids.find(([n]) => n === name)?.[1] : null;
+  return id ? (action.id ?? action._id) === id : action.name === name;
+}
 
+// Chave de um mapa { nomeDaAção: valor } (flags coverActions, rollFormula) que corresponde à ação.
+function actionKeyIn(action, map) {
+  return Object.keys(map ?? {}).find(name => isAction(action, name));
+}
+
+// ---------- Regras ----------
 export const Humanity = {
   isEdgeheart(actor) {
     if (actor?.type !== "character") return false;
@@ -736,7 +749,9 @@ const Cover = {
   },
 
   delta(action) {
-    return action.item?.getFlag(MODULE_ID, "coverActions")?.[action.name] ?? 0;
+    const map = action.item?.getFlag(MODULE_ID, "coverActions");
+    const key = actionKeyIn(action, map);
+    return key ? map[key] : 0;
   },
 
   // Confere antes da ação (e da janela de configuração) se há Cover para gastar ou espaço para ganhar.
@@ -779,13 +794,14 @@ const Cover = {
 function rollFormula(action) {
   const item = action.item;
   const actor = action.actor;
-  const custom = item?.getFlag(MODULE_ID, "rollFormula")?.[action.name];
+  const formulas = item?.getFlag(MODULE_ID, "rollFormula");
+  const custom = formulas?.[actionKeyIn(action, formulas)];
   if (custom) return Roll.replaceFormulaData(custom, actor.getRollData());
-  if (item?.getFlag(MODULE_ID, "cover") && action.name === COVER_TAKEDOWN) {
+  if (item?.getFlag(MODULE_ID, "cover") && isAction(action, COVER_TAKEDOWN)) {
     const faces = actor.items.find(i => i.getFlag(MODULE_ID, "takedownDie"))?.getFlag(MODULE_ID, "takedownDie");
     return faces ? `1${faces}` : null;
   }
-  if (item?.getFlag(MODULE_ID, "integratedChrome") && action.name === CHROME_ACTIONS.use) return `1${IntegratedChrome.faces(actor)}`;
+  if (item?.getFlag(MODULE_ID, "integratedChrome") && isAction(action, CHROME_ACTIONS.use)) return `1${IntegratedChrome.faces(actor)}`;
   return null;
 }
 
@@ -1126,12 +1142,12 @@ Hooks.on("daggerheart.preUseAction", (action, config) => {
   const item = action.item;
   if (!(item?.parent instanceof Actor) || !item.parent.isOwner) return;
   if (item.getFlag(MODULE_ID, "killChain")) {
-    const handler = { [KILL_CHAIN_ACTIONS.roll]: "roll", [KILL_CHAIN_ACTIONS.step]: "step", [KILL_CHAIN_ACTIONS.reset]: "reset" }[action.name];
+    const handler = Object.entries({ [KILL_CHAIN_ACTIONS.roll]: "roll", [KILL_CHAIN_ACTIONS.step]: "step", [KILL_CHAIN_ACTIONS.reset]: "reset" }).find(([name]) => isAction(action, name))?.[1];
     if (!handler) return;
     KillChain[handler](item);
     return false;
   }
-  if (action.name === "No Way Back") {
+  if (isAction(action, "No Way Back")) {
     const killChain = KillChain.feature(item.parent);
     if (killChain) KillChain.set(killChain, "d10");
   }
@@ -1158,7 +1174,7 @@ Hooks.on("daggerheart.postUseAction", (action) => {
 Hooks.on("daggerheart.preUseAction", (action) => {
   const item = action.item;
   if (!(item?.parent instanceof Actor) || !item.parent.isOwner) return;
-  if (item.getFlag(MODULE_ID, "pick")?.action === action.name) {
+  if (isAction(action, item.getFlag(MODULE_ID, "pick")?.action)) {
     Pick.choose(item);
     return false;
   }

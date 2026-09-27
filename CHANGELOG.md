@@ -1,5 +1,8 @@
 # Changelog
 
+## v1.27.1
+- Preparação para a versão bilíngue: as automações (Kill Chain, Cover, Takedown, Integrated Chrome, Calibrar Atributo, Public Persona, No Way Back e os estados dos veículos) agora reconhecem as ações pelo ID, não pelo nome. Renomear ou traduzir uma ação não quebra mais nada.
+- Itens antigos, já nas fichas, continuam funcionando pelo nome.
 ## v1.27.0
 - **Eidolons:** os 10 do PDF (Hermes-Arrow, Bulldog, Atlas-Breaker, Wraith-9, Apollo-Lancet, Cordon-6, Horizon-Mirage, Athena-Pallas, Ares-Tyrant e Forge-Saint) como **Cyberware Especial**, na pasta "Eidolons" do compêndio de Cyberware.
 - **Mobilizar** pela aba Chrome da Ficha Edgeheart, no mesmo padrão do Beastform do sistema: enquanto sincronizado, PV, Evasão, Limiares e Armadura são os do Eidolon; as armas embutidas entram equipadas usando a Interface do piloto; as features viram itens da ficha; e o token troca. As armas e a armadura do piloto ficam guardadas.

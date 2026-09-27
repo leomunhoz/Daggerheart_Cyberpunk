@@ -537,6 +537,13 @@ Hooks.on("createChatMessage", async (message, _options, userId) => {
 // bloqueada) e, se já estiver Damaged, Disabled (só Consertar funciona). "Consertar" volta ao normal.
 // O estado aparece no nome do item, como no inventário do sistema.
 const VEHICLE = { attack: "Ataque do Veículo", maneuver: "Manobrar", damage: "Sofrer Dano Sério", repair: "Consertar" };
+// Mesma regra do isAction da Ficha Edgeheart: _id guardado pelo gerador, com o nome como reserva.
+function isAction(action, name) {
+  if (!action || !name) return false;
+  const ids = action.item?.getFlag(MODULE_ID, "actionIds");
+  const id = Array.isArray(ids) ? ids.find(([n]) => n === name)?.[1] : null;
+  return id ? (action.id ?? action._id) === id : action.name === name;
+}
 const VEHICLE_STATES = { ok: "", damaged: " (Damaged)", disabled: " (Disabled)" };
 
 export const Vehicle = {
@@ -554,14 +561,14 @@ Hooks.on("daggerheart.preUseAction", (action, config) => {
   const v = Vehicle.data(action.item);
   if (!v) return;
   // Damaged: −2 no campo de modificador situacional do diálogo de rolagem (o jogador vê e pode ajustar).
-  if (v.state === "damaged" && [VEHICLE.attack, VEHICLE.maneuver].includes(action.name)) {
+  if (v.state === "damaged" && [VEHICLE.attack, VEHICLE.maneuver].some(name => isAction(action, name))) {
     config.extraFormula = config.extraFormula ? `${config.extraFormula} - 2` : "-2";
   }
-  if (v.state === "disabled" && action.name !== VEHICLE.repair) {
+  if (v.state === "disabled" && !isAction(action, VEHICLE.repair)) {
     ui.notifications.warn(`${v.baseName} está Disabled: não se move nem pode ser usado até ser consertado.`);
     return false;
   }
-  if (v.state === "damaged" && v.featureActions?.includes(action.name)) {
+  if (v.state === "damaged" && v.featureActions?.some(name => isAction(action, name))) {
     ui.notifications.warn(`${v.baseName} está Damaged: a Característica não pode ser usada até ser consertado.`);
     return false;
   }
@@ -571,14 +578,14 @@ Hooks.on("daggerheart.postUseAction", async (action) => {
   const item = action.item;
   const v = Vehicle.data(item);
   if (!v || !item.isOwner) return;
-  if (action.name === VEHICLE.damage) {
+  if (isAction(action, VEHICLE.damage)) {
     const next = v.state === "ok" ? "damaged" : "disabled";
     await Vehicle.setState(item, next);
     await ChatMessage.create({
       speaker: ChatMessage.getSpeaker({ actor: item.parent }),
       content: `<div class="eh-chat"><p><strong>${v.baseName}</strong> ficou <strong>${next === "damaged" ? "Damaged" : "Disabled"}</strong>. ${next === "damaged" ? "A Característica para de funcionar e as rolagens para dirigir sofrem −2." : "Não se move nem pode ser usado até ser consertado."}</p></div>`
     });
-  } else if (action.name === VEHICLE.repair && v.state !== "ok") {
+  } else if (isAction(action, VEHICLE.repair) && v.state !== "ok") {
     await Vehicle.setState(item, "ok");
   }
 });

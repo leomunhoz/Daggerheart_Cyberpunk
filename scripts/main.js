@@ -4595,24 +4595,40 @@ async function offerLegacyCleanup() {
   }
 }
 
-// Gerador dos compêndios do módulo (ferramenta de desenvolvimento). Recria todo o conteúdo a partir
-// deste código e trava os compêndios de novo no final.
+// Nome de cada ação (na língua de origem dos compêndios) → _id. As automações do módulo acham as ações
+// por essa tabela (isAction no edgeheart-character.js), então continuam funcionando mesmo quando uma
+// tradução (Babele) troca os nomes. Só é gravada aqui, no gerador, para as chaves ficarem no idioma original.
+function stampActionIds(doc) {
+  const actions = doc.system?.actions;
+  if (!actions?.size) return;
+  // Lista de pares [nome, _id], não objeto: nomes com ponto ("1. Ração") virariam chaves aninhadas.
+  const ids = [];
+  for (const action of actions) if (action.name && !ids.some(([name]) => name === action.name)) ids.push([action.name, action.id]);
+  doc.updateSource({ [`flags.${MODULE_ID}.actionIds`]: ids });
+}
+
+// Gerador dos compêndios do módulo (ferramenta de desenvolvimento). Recria todo o conteúdo a partir// deste código e trava os compêndios de novo no final.
 async function buildPacks() {
   if (!game.user.isGM) {
     ui.notifications.warn("Apenas o GM pode gerar os compêndios do Edgeheart.");
     return;
   }
   ui.notifications.info("Edgeheart: gerando os compêndios do módulo...");
-  await clearPacks();
-  const equipment = await importWeaponsAndArmor();
-  await importLootAndConsumables();
-  await importClassesAndSubclasses(equipment);
-  await importLifePathsAndAffiliations();
-  await importDomainCards();
-  await importCyberware();
-  await importAdversaries();
-  await importEnvironments();
-  await importJournals();
+  const stampHook = Hooks.on("preCreateItem", doc => stampActionIds(doc));
+  try {
+    await clearPacks();
+    const equipment = await importWeaponsAndArmor();
+    await importLootAndConsumables();
+    await importClassesAndSubclasses(equipment);
+    await importLifePathsAndAffiliations();
+    await importDomainCards();
+    await importCyberware();
+    await importAdversaries();
+    await importEnvironments();
+    await importJournals();
+  } finally {
+    Hooks.off("preCreateItem", stampHook);
+  }
   for (const key of Object.keys(PACKS)) await game.packs.get(`${PACK_SCOPE}.${PACKS[key].name}`)?.configure({ locked: true });
   ui.notifications.info("Edgeheart: compêndios gerados.");
   console.log("Edgeheart | Compêndios do módulo gerados.");
