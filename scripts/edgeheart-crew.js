@@ -531,3 +531,54 @@ Hooks.on("createChatMessage", async (message, _options, userId) => {
     flags: { [MODULE_ID]: { crewCard: { crewUuid: crew.uuid, move: "tagTeam", option: null, used: [] } } }
   });
 });
+
+// ---------- Veículos (itens de loot com flag vehicle, gerados pelo main.js) ----------
+// "Sofrer Dano Sério" deixa o veículo Damaged (−2 no Ataque do Veículo e no Manobrar, Característica
+// bloqueada) e, se já estiver Damaged, Disabled (só Consertar funciona). "Consertar" volta ao normal.
+// O estado aparece no nome do item, como no inventário do sistema.
+const VEHICLE = { attack: "Ataque do Veículo", maneuver: "Manobrar", damage: "Sofrer Dano Sério", repair: "Consertar" };
+const VEHICLE_STATES = { ok: "", damaged: " (Damaged)", disabled: " (Disabled)" };
+
+export const Vehicle = {
+  data(item) {
+    return item?.getFlag(MODULE_ID, "vehicle") ?? null;
+  },
+
+  async setState(item, state) {
+    const v = this.data(item);
+    await item.update({ name: v.baseName + VEHICLE_STATES[state], [`flags.${MODULE_ID}.vehicle.state`]: state });
+  }
+};
+
+Hooks.on("daggerheart.preUseAction", (action, config) => {
+  const v = Vehicle.data(action.item);
+  if (!v) return;
+  // Damaged: −2 no campo de modificador situacional do diálogo de rolagem (o jogador vê e pode ajustar).
+  if (v.state === "damaged" && [VEHICLE.attack, VEHICLE.maneuver].includes(action.name)) {
+    config.extraFormula = config.extraFormula ? `${config.extraFormula} - 2` : "-2";
+  }
+  if (v.state === "disabled" && action.name !== VEHICLE.repair) {
+    ui.notifications.warn(`${v.baseName} está Disabled: não se move nem pode ser usado até ser consertado.`);
+    return false;
+  }
+  if (v.state === "damaged" && v.featureActions?.includes(action.name)) {
+    ui.notifications.warn(`${v.baseName} está Damaged: a Característica não pode ser usada até ser consertado.`);
+    return false;
+  }
+});
+
+Hooks.on("daggerheart.postUseAction", async (action) => {
+  const item = action.item;
+  const v = Vehicle.data(item);
+  if (!v || !item.isOwner) return;
+  if (action.name === VEHICLE.damage) {
+    const next = v.state === "ok" ? "damaged" : "disabled";
+    await Vehicle.setState(item, next);
+    await ChatMessage.create({
+      speaker: ChatMessage.getSpeaker({ actor: item.parent }),
+      content: `<div class="eh-chat"><p><strong>${v.baseName}</strong> ficou <strong>${next === "damaged" ? "Damaged" : "Disabled"}</strong>. ${next === "damaged" ? "A Característica para de funcionar e as rolagens para dirigir sofrem −2." : "Não se move nem pode ser usado até ser consertado."}</p></div>`
+    });
+  } else if (action.name === VEHICLE.repair && v.state !== "ok") {
+    await Vehicle.setState(item, "ok");
+  }
+});

@@ -621,6 +621,67 @@ function withQuantityCost(actions, itemId, img, name) {
   return list;
 }
 
+// ---------- Veículos (PDF, cap. 3: Equipamento Especial) ----------
+// Não existe veículo no sistema. Cada veículo é um item de loot (não ocupa os espaços de arma) com
+// ações: ataque (batida ou arma montada, atributo e dano do veículo com Proficiência), Manobrar,
+// Manter Funcionando (1 Estresse), Sofrer Dano Sério e Consertar. Damaged/Disabled ficam na flag
+// vehicle.state e são aplicados pelo edgeheart-crew.js (−2 no Ataque do Veículo e no Manobrar, Característica
+// bloqueada, Disabled bloqueia tudo menos Consertar). Veículo também pode ficar no Inventário da Crew.
+const VEHICLE_ACTIONS = { attack: "Ataque do Veículo", maneuver: "Manobrar", keep: "Manter Funcionando", damage: "Sofrer Dano Sério", repair: "Consertar" };
+
+const VEHICLE_BURDENS = {
+  Swift: { text: "um veículo rápido e ágil. Enquanto estiver em alta velocidade, ganhe +1 de Evasão.", extras: () => gearToggle("Swift: alta velocidade (+1 Evasão)", "vehicles/motorbike", gearChange("system.evasion", 1)) },
+  Heavy: { text: "um veículo volumoso, reforçado ou difícil de manobrar. Enquanto o usa, sofra −1 de Evasão, mas ganhe +2 nos Limiares de Dano.", extras: () => gearToggle("Heavy: dirigindo (−1 Evasão, +2 Limiares)", "upgrades/heavy_chasis", gearChange("system.evasion", -1), gearChange("system.damageThresholds.major", 2), gearChange("system.damageThresholds.severe", 2)) },
+  Armored: { text: "um veículo de combate protegido. Uma vez por cena, quando você ou um aliado dentro dele fosse marcar PV, reduza a gravidade em 1.", extras: () => gearUses("Armored: reduzir a gravidade", "scene") },
+  "Off-Road": { text: "um veículo feito para estradas ruins. Ignore terreno difícil causado por chão quebrado, escombros ou ruas instáveis.", extras: () => ({}) },
+  Cargo: { text: "um veículo de Crew com espaço de carga, ferramentas ou suprimentos. Uma vez por descanso, revele uma peça de equipamento útil guardada dentro dele.", extras: () => gearUses("Cargo: revelar equipamento", "shortRest") },
+  Connected: { text: "um veículo em rede com piloto automático, suporte de mira ou sistemas remotos. Ele conta como um sistema conectado para hacking.", extras: () => ({}) },
+  Soaring: { text: "um veículo voador. Uma vez por cena, mova-se para qualquer lugar dentro do alcance Distante, desde que haja espaço aberto suficiente para manobrar.", extras: () => gearUses("Soaring: voar até Distante", "scene") }
+};
+
+// V(nome, ícone, atributo, dano, carga, "Característica|texto", extras da característica)
+const V = (name, img, trait, damage, burden, feature, extras = {}) => ({ name, img: CPR(img), trait, damage, burden, feature, ...gear(extras) });
+
+const VEHICLES = [
+  V("Street Bike", "vehicles/motorbike", "Agility", "d8", "Swift", "Lane Splitter|depois de uma rolagem de veículo bem-sucedida, você pode se reposicionar dentro do alcance Próximo."),
+  V("Nomad Buggy", "upgrades/combat_plow", "Instinct", "d8+3", "Off-Road", "Dust Runner|numa rolagem com Esperança enquanto dirige por terreno acidentado, um alvo dentro do alcance Próximo marca 1 Estresse.", gearStress("Dust Runner")),
+  V("Armored Sedan", "upgrades/armored_chassis", "Finesse", "d10", "Armored", "Hard Cover|quando você ou um aliado dentro ou atrás do veículo é alvo de um ataque vindo de além do alcance Corpo a Corpo, ganhe +2 de Evasão contra esse ataque.", gearToggle("Hard Cover (+2 Evasão)", "upgrades/bulletproof_glass", gearChange("system.evasion", 2))),
+  V("Crew Van", "dlc/vehicles/zonda_metrocar", "Knowledge", "d8", "Cargo", "Mobile Kit|uma vez por descanso, quando você ou um aliado usa um equipamento do veículo, ganhe +2 na rolagem.", gearUses("Mobile Kit (+2 na rolagem)", "shortRest")),
+  V("Interceptor", "vehicles/super_car", "Finesse", "d10+3", "Swift", "Pursuit Lock|numa rolagem de veículo bem-sucedida, o alvo não pode aumentar a distância de você além do alcance Próximo até o seu próximo Holofote."),
+  V("War Rig", "upgrades/heavy_chasis", "Strength", "d12+3", "Heavy", "Road Crusher|num ataque de veículo bem-sucedido, o alvo precisa se afastar de você ou marcar 1 Estresse. Se o alvo for um objeto, ele é rompido ou desativado.", gearStress("Road Crusher")),
+  V("Corporate AV", "upgrades/av_4_engine_upgrade", "Knowledge", "d6", "Soaring", "Air Superiority|numa rolagem com Esperança enquanto opera o veículo, você ou um aliado que possa ver o alvo ganha vantagem na próxima rolagem de ataque antes do seu próximo Holofote."),
+  V("Ghost Runner", "upgrades/smuggling_upgrade", "Knowledge", "d8", "Connected", "Autopilot Ghost|uma vez por cena, quando você fosse ser descoberto, rastreado, bloqueado ou pego durante uma perseguição, faça uma Rolagem de Interface (14). Em um sucesso, crie uma rota falsa, sinal falso ou movimento de despiste e fique Escondido ou escape da perseguição imediata.", gear({ actions: withActionId(buildCardAction({ difficulty: 14, targetType: "self", name: "Autopilot Ghost (14)", uses: { max: 1, recovery: "scene" } })) }, gearCondition("Autopilot Ghost: Escondido", ["hidden"], [], { type: "self", amount: null })))
+];
+
+const VEHICLE_RULES = "<p><strong>Dano em veículos:</strong> veículos não têm PV. Quando um ataque ou batida fosse danificar seriamente o veículo, o motorista pode marcar 1 Estresse para mantê-lo funcionando, ou ele fica <strong>Damaged</strong> (a Característica não pode ser usada e as rolagens para dirigi-lo ou manobrá-lo sofrem −2). Damaged de novo vira <strong>Disabled</strong>: não se move nem pode ser usado até ser consertado (durante um descanso ou por uma feature como Jury-Rig).</p>";
+
+function buildVehicleData(v) {  const [, dice, bonus] = v.damage.match(/^(d\d+)(?:\+(\d+))?$/);
+  const formula = `(@prof)${dice}${bonus ? ` + ${bonus}` : ""}`;
+  const burden = VEHICLE_BURDENS[v.burden];
+  const burdenPart = gear(burden.extras());
+  const [featureName, featureText] = v.feature.split("|");
+  const trait = TRAIT_MAP[v.trait];
+  const actions = {
+    ...withActionId(buildCardAction({ trait, name: VEHICLE_ACTIONS.attack, damageFormula: { formula, dmgType: "physical" }, img: v.img })),
+    ...withActionId(buildCardAction({ trait, name: VEHICLE_ACTIONS.maneuver, targetType: "any", img: v.img })),
+    ...featureAction({ name: VEHICLE_ACTIONS.keep, costs: [{ key: "stress", value: 1 }] }),
+    ...featureAction({ name: VEHICLE_ACTIONS.damage }),
+    ...featureAction({ name: VEHICLE_ACTIONS.repair }),
+    ...burdenPart.actions,
+    ...v.actions
+  };
+  const _id = stableId(`vehicle:${v.name}`);
+  return {
+    _id, name: v.name, type: "loot", img: v.img,
+    effects: [...burdenPart.effects, ...v.effects],
+    flags: { [MODULE_ID]: { vehicle: { baseName: v.name, state: "ok", trait: v.trait, damage: v.damage, burden: v.burden, featureActions: Object.values(v.actions).map(a => a.name) } } },
+    system: {
+      description: `<p><strong>Atributo:</strong> ${game.i18n.localize(CONFIG.DH.ACTOR.abilities[trait].label)} · <strong>Dano:</strong> ${v.damage} físico · <strong>Carga:</strong> ${v.burden}</p><p><strong>${v.burden}:</strong> ${burden.text}</p><p><strong>${featureName}:</strong> ${featureText}</p>${VEHICLE_RULES}`,
+      quantity: 1, actions: withDefaultActionImg(actions, v.img), attribution: ATTRIBUTION, gmNotes: ""
+    }
+  };
+}
+
 async function importLootAndConsumables() {
   const officialConsumables = await game.packs.get("daggerheart.consumables")?.getDocuments() ?? [];
   const consumables = CONSUMABLES.map(c => {
@@ -642,7 +703,10 @@ async function importLootAndConsumables() {
     system: { description: `<p>${l.text}</p>`, quantity: 1, actions: withDefaultActionImg(l.actions, l.img), attribution: ATTRIBUTION, gmNotes: "" }
   }));
   await Item.createDocuments(consumables, { pack: (await getOrCreatePack("consumables")).collection, keepId: true });
-  await Item.createDocuments(loot, { pack: (await getOrCreatePack("loot")).collection, keepId: true });
+  const lootPack = await getOrCreatePack("loot");
+  await Item.createDocuments(loot, { pack: lootPack.collection, keepId: true });
+  const vehicleFolder = await makeFolder(lootPack, "Veículos");
+  await Item.createDocuments(VEHICLES.map(v => ({ ...buildVehicleData(v), folder: vehicleFolder.id })), { pack: lootPack.collection, keepId: true });
 
   // Tabelas no formato das oficiais (Core Set Items / Consumables): 1d10, o mestre rola mais dados
   // conforme a raridade (Comum 1d10, Incomum 1d10–2d10, Raro 2d10–3d10, Lendário 3d10–4d10).

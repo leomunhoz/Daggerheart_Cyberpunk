@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.26.0
+- **Veículos:** os 8 do PDF (Street Bike, Nomad Buggy, Armored Sedan, Crew Van, Interceptor, War Rig, Corporate AV, Ghost Runner), na pasta **Veículos** do compêndio de Loot. São itens de inventário que não ocupam os espaços de arma, e podem ficar na ficha do motorista ou no Inventário da Crew.
+- Cada veículo tem **Ataque do Veículo** (atributo e dano do veículo, com Proficiência), **Manobrar**, **Manter Funcionando** (1 Estresse), **Sofrer Dano Sério** e **Consertar**.
+- **Damaged e Disabled:** o primeiro dano sério deixa o veículo Damaged: o nome mostra o estado, Ataque e Manobrar recebem −2 no diálogo de rolagem, e a Característica é bloqueada. O segundo deixa Disabled, com tudo bloqueado menos Consertar.
+- **Cargas:** Swift e Heavy como bônus que o jogador liga; Armored e Soaring 1x por cena; Cargo 1x por descanso; Off-Road e Connected em texto.
+- **Características:** Dust Runner e Road Crusher fazem o alvo marcar Estresse; Hard Cover é +2 de Evasão ligável; Mobile Kit 1x por descanso; Autopilot Ghost é uma Rolagem de Interface (14) que deixa Escondido.
+- O diário de Veículos ganhou links para os itens.
 ## v1.25.0
 - **Loot e Consumíveis:** três compêndios novos, nas mesmas pastas do SRD oficial: **Consumíveis** e **Loot** em Itens, **Tabelas** na raiz do Edgeheart SRD.
 - **40 consumíveis**, cada uso gastando 1 da quantidade, como as poções oficiais. Minor Health Patch, Minor Stamina Injector, Major Health Patch e Redline Dose copiam a automação da poção oficial equivalente. Os outros têm curas, "alvo marca Estresse", Vulnerável, Imobilizado, Escondido, +1d6 e custos de Estresse.
