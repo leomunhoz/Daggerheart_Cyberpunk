@@ -15,6 +15,7 @@ Os jogadores são mercenários na New Dark Age: pegam contratos sujos, instalam 
 - **60 cyberwares**, que dão acesso a outras Competências.
 - **Trajetórias e Afiliações** no lugar de Ancestralidade e Comunidade.
 - **64 armas e 25 armaduras dos Tiers 1 a 4**, com ataque e dano automáticos; as características iguais às oficiais (Reliable, Deadly, Paired, Shifting, Fortified…) usam a automação do sistema.
+- **40 consumíveis e 40 itens de loot**, com as tabelas de rolagem do PDF, no formato dos oficiais.
 - **Level Up do Edgeheart**, que pode ser ligado ou desligado nas configurações.
 - **25 adversários e 16 ambientes** dos Tiers 1 a 4, no formato dos oficiais.
 - **Diários** com o PDF inteiro traduzido, com links para os itens.

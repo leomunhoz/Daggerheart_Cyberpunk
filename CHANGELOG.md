@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.25.0
+- **Loot e Consumíveis:** três compêndios novos, nas mesmas pastas do SRD oficial: **Consumíveis** e **Loot** em Itens, **Tabelas** na raiz do Edgeheart SRD.
+- **40 consumíveis**, cada uso gastando 1 da quantidade, como as poções oficiais. Minor Health Patch, Minor Stamina Injector, Major Health Patch e Redline Dose copiam a automação da poção oficial equivalente. Os outros têm curas, "alvo marca Estresse", Vulnerável, Imobilizado, Escondido, +1d6 e custos de Estresse.
+- **40 itens de loot:** vantagens como opção no diálogo de rolagem (Climbing Filament, Clean Needle, Mag Boots…), usos de 1x por descanso ou por sessão, custos de Esperança ou Estresse e dados. O resto fica só com o texto.
+- **Tabelas de rolagem** "Loot do Edgeheart" e "Consumíveis do Edgeheart" (1d10, como as oficiais); a descrição diz quantos dados rolar por raridade.
+- Os diários de Loot e Consumíveis ganharam links para os itens.
+- Em mundos já existentes, compêndios novos do módulo vão sozinhos para a pasta do Edgeheart SRD.
 ## v1.24.1
 - Mais automação nas características situacionais, com peças do próprio sistema:
   - **Vantagem como opção no diálogo de rolagem**, como na armadura oficial Aquatic: Street Icon Fit, Hazard Suit, Gang Colors Jacket e Exo-Riot Plating.

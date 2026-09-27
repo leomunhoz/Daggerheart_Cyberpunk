@@ -19,6 +19,9 @@ const PACKS = {
   communities: { name: "edgeheart-affiliations", label: "Edgeheart: Afiliações", type: "Item" },
   domains: { name: "edgeheart-domains", label: "Edgeheart: Cartas de Competência", type: "Item" },
   cyberware: { name: "edgeheart-cyberware", label: "Edgeheart: Cyberware", type: "Item" },
+  consumables: { name: "edgeheart-consumables", label: "Edgeheart: Consumíveis", type: "Item" },
+  loot: { name: "edgeheart-loot", label: "Edgeheart: Loot", type: "Item" },
+  rolltables: { name: "edgeheart-rolltables", label: "Edgeheart: Tabelas", type: "RollTable" },
   journals: { name: "edgeheart-journals", label: "Edgeheart: Diários", type: "JournalEntry" }
 };
 
@@ -505,6 +508,156 @@ async function importWeaponsAndArmor() {
   await applyOfficialFeatures(createdWeapons, [...PRIMARY_WEAPONS, ...SECONDARY_WEAPONS], "weaponFeatures");
   await applyOfficialFeatures(createdArmor, ARMORS, "armorFeatures");
   return { weapons: createdWeapons, armor: createdArmor };
+}
+
+// ---------- Loot e Consumíveis (PDF, cap. 2) ----------
+// Mesmo formato dos compêndios oficiais daggerheart.loot / daggerheart.consumables e das tabelas de
+// daggerheart.rolltables. Consumível: toda ação gasta 1 da quantidade (padrão das poções oficiais);
+// clone = copia a automação do consumível oficial equivalente. Loot fica no inventário e usa as mesmas
+// peças das armas e armaduras (vantagem, bônus desligado, custos, usos por descanso).
+
+const gearUses = (name, recovery, costs = []) => ({ actions: featureAction({ name, costs, uses: { max: 1, recovery } }) });
+const gearDice = (name, dice, costs = []) => ({ actions: featureAction({ name, dice, costs }) });
+const gearHeal = (name, resources, target = { type: "any", amount: 1 }, costs = []) => ({ actions: resourceCardAction({ name, heal: true, resources, target, cost: costs }) });
+
+// C(nome, ícone, texto, extras, clone) / L(nome, ícone, texto, extras)
+const C = (name, img, text, extras = {}, clone = null) => ({ name, img: CPR(img), text, clone, ...gear(extras) });
+const L = (name, img, text, extras = {}) => ({ name, img: CPR(img), text, ...gear(extras) });
+const STRESS1 = [{ key: "stress", value: 1 }];
+const HOPE1 = [{ key: "hope", value: 1 }];
+
+const CONSUMABLES = [
+  C("Minor Health Patch", "status/speedheal", "Limpe 1d4 Pontos de Vida.", {}, "Minor Health Potion"),
+  C("Minor Stamina Injector", "status/stim", "Limpe 1d4 de Estresse.", {}, "Minor Stamina Potion"),
+  C("Trauma Foam", "status/quickfix", "Quando uma criatura dentro do alcance Corpo a Corpo marca PV, use isto para fazê-la limpar 1 Estresse e parar de sangrar, queimar ou vazar.", gearHeal("Trauma Foam", { stress: 1 })),
+  C("Combat Stim", "status/boost", "Some 1d6 à sua próxima Rolagem de Agilidade, Força ou Acuidade. Depois da rolagem, marque 1 Estresse.", gearDice("Combat Stim", "1d6", STRESS1)),
+  C("Focus Ampoule", "status/prime_time", "Some 1d6 à sua próxima Rolagem de Conhecimento, Instinto ou Presença. Depois da rolagem, marque 1 Estresse.", gearDice("Focus Ampoule", "1d6", STRESS1)),
+  C("Flash Grenade", "ammo/grenade_flashbang", "Todos os alvos dentro do alcance Próximo fazem uma Rolagem de Reação (14). Em uma falha, ficam temporariamente Vulneráveis.", gearCondition("Falhou na Reação (14): Vulnerável", ["vulnerable"])),
+  C("Smoke Canister", "ammo/grenade_smoke", "Encha de fumaça uma área dentro do alcance Próximo. Criaturas dentro dela podem ficar Escondidas se a ficção permitir.", gearCondition("Smoke Canister", ["hidden"], [], { type: "friendly", amount: null })),
+  C("EMP Charge", "ammo/grenade_emp", "Faça uma Rolagem de Interface contra um dispositivo, drone, veículo ou alvo ligado a cyberware dentro do alcance Próximo. Em um sucesso, ele marca 1 Estresse ou fica desativado por um instante.", gear({ actions: withActionId(buildCardAction({ range: "Close", img: CPR("ammo/grenade_emp") })) }, gearStress("Alvo Marca 1 Estresse"))),
+  C("Breach Gel", "dlc/gear/delaying_compound", "Use numa porta, parede, barricada, fechadura ou painel de veículo. Depois de alguns momentos, ele abre, enfraquece ou cria um ponto de entrada."),
+  C("Med-Gel Slab", "gear/medtech_bag", "Durante um descanso, uma criatura limpa 1 PV ou 2 de Estresse.", gear(gearHeal("Limpar 1 PV", { hitPoints: 1 }), gearHeal("Limpar 2 Estresse", { stress: 2 }))),
+  C("Overclock Round", "ammo/rifle_smart", "O próximo ataque bem-sucedido com arma de distância causa +1d8 de dano techno. Numa rolagem com Medo, marque 1 Estresse.", gearDamage("Overclock Round", "1d8", "magical")),
+  C("Shock Mine", "status/emp", "Coloque numa superfície. A próxima criatura que se mover dentro do alcance Corpo a Corpo dela marca 1 Estresse e fica temporariamente Vulnerável.", gear(gearStress("Alvo Marca 1 Estresse"), gearCondition("Shock Mine", ["vulnerable"]))),
+  C("Anti-Toxin Cartridge", "status/antibiotics", "Limpe imediatamente envenenamento, contaminação, exposição química ou condição temporária parecida."),
+  C("Hardlight Patch", "upgrades/security_upgrade", "Na próxima vez que você marcar um Espaço de Armadura antes do próximo descanso, reduza a gravidade em um limiar adicional."),
+  C("Black ICE Shard", "default/default-blackice", "Gaste antes de uma Rolagem de Interface. Em um sucesso, crie uma Breach adicional. Numa rolagem com Medo, marque 1 Estresse."),
+  C("Adrenal Plug", "status/deathtrance", "Quando você fosse marcar o seu último Ponto de Vida, use isto para continuar consciente até a cena terminar. Depois, marque 2 de Estresse.", gearCostAction("Adrenal Plug", [gearCost("stress", 2)])),
+  C("Smart Ammo", "ammo/pistolheavy_smart", "O próximo ataque bem-sucedido com arma de fogo pode acertar outro alvo dentro do alcance Muito Próximo, causando metade do dano."),
+  C("Sonic Spike", "weapons/shrieker", "Todas as criaturas dentro do alcance Muito Próximo do ponto escolhido marcam 1 Estresse, e vidros frágeis, sensores ou eletrônicos expostos quebram.", gearStress("Sonic Spike")),
+  C("Cloak Mist", "status/hidden", "Fique Escondido até se mover para um lugar visível, atacar ou o mestre gastar 1 Medo para revelar a sua posição.", gearCondition("Cloak Mist", ["hidden"], [], { type: "self", amount: null })),
+  C("Redline Dose", "status/beserker", "Some +1 de Proficiência à sua próxima rolagem de dano. Depois que o ataque se resolver, role o seu Dado de Humanidade. Se o resultado for menor que a sua Carga Cibernética, marque 1 Estresse.", {}, "Demiurge's Draught"),
+  C("Major Health Patch", "status/speedheal", "Limpe 1 Ponto de Vida. Depois, marque 1 Estresse.", {}, "Snap Powder"),
+  C("Hard Reset Ampoule", "status/rapiddetox", "Limpe uma condição física temporária de você ou de uma criatura dentro do alcance Corpo a Corpo. O alvo fica temporariamente Vulnerável até a próxima ação dele.", gearCondition("Hard Reset Ampoule", ["vulnerable"], [], { type: "any", amount: 1 })),
+  C("Breach Spike", "gear/memory_chip", "Use antes de uma Rolagem de Interface contra um sistema conectado simples. Em um sucesso, crie uma Breach adicional."),
+  C("Signal Flare", "gear/roadflare", "Revele a sua localização a todos os aliados na cena e tire a condição Escondido das criaturas dentro do alcance Próximo do sinalizador."),
+  C("Nanowire Saw", "gear/tech_tool", "Corte uma fechadura, cabo, amarra, duto, cerca ou barreira leve comum depois de alguns momentos de trabalho."),
+  C("Foamcrete Canister", "status/cover", "Crie cobertura temporária, vede uma porta, tampe uma brecha ou bloqueie uma passagem pequena dentro do alcance Próximo."),
+  C("Decoy Transponder", "gear/tracer_button", "Até o seu próximo descanso, um veículo, drone, dispositivo ou criatura carregando este transponder aparece com uma identidade falsa para scanners simples."),
+  C("Kinetic Booster", "dlc/cyberware/zero_gravity_thrusters", "Mova-se dentro do alcance Distante ignorando terreno difícil durante esse movimento. Depois, marque 1 Estresse.", gearCostAction("Kinetic Booster", STRESS1)),
+  C("Cryo Pack", "gear/cryopump", "Quando você ou um aliado dentro do alcance Corpo a Corpo fosse sofrer dano de fogo, calor, ácido ou explosão, reduza a gravidade em um limiar."),
+  C("Patch Plate", "armor/kevlar_head", "Limpe imediatamente 1 Espaço de Armadura de você, de um aliado dentro do alcance Corpo a Corpo ou de um veículo Damaged.", gearHeal("Patch Plate", { armor: 1 })),
+  C("Smart Grenade", "ammo/grenade_basic", "Escolha um ponto dentro do alcance Distante. Todos os adversários dentro do alcance Muito Próximo desse ponto fazem uma Rolagem de Reação (14). Em uma falha, marcam 1 Estresse e ficam temporariamente Vulneráveis.", gear(gearStress("Falhou na Reação (14): 1 Estresse"), gearCondition("Falhou na Reação (14): Vulnerável", ["vulnerable"]))),
+  C("Ghost Tag", "gear/agent", "Use ao entrar numa área restrita, vigiada ou guardada. Até o seu próximo Holofote, câmeras e sensores básicos te tratam como autorizado ou inofensivo."),
+  C("Blackout Capsule", "status/blinded", "Desative luzes, câmeras simples, sensores baratos e telas desprotegidas dentro do alcance Próximo até o seu próximo Holofote."),
+  C("Adrenal Inhaler", "gear/air_hypo", "Ganhe vantagem na sua próxima rolagem de ação. Depois que a rolagem se resolver, marque 1 Estresse.", gearCostAction("Adrenal Inhaler", STRESS1)),
+  C("Anti-Hack Token", "programs/shield", "Use quando um rastreio, hack, escaneamento ou sinal hostil fosse afetar você ou o seu equipamento. Role um d6. Em 4+, o efeito falha.", gearDice("Anti-Hack Token", "1d6")),
+  C("Door Eater", "dlc/gear/distilling_compound", "Aplique esta carga química numa porta, parede, barricada, painel de veículo ou fechadura. Depois de alguns momentos, ela abre uma passagem do tamanho de uma pessoa ou destrói a fechadura."),
+  C("Shock Leash", "weapons/stun_gun", "Faça um ataque contra um alvo dentro do alcance Muito Próximo. Em um sucesso, não cause dano; o alvo fica temporariamente Imobilizado.", gearCondition("Shock Leash", ["restrained"])),
+  C("Memory Wipe Tab", "gear/braindance_viewer", "Use depois de uma conversa curta com um PNJ menor. Ele esquece um pequeno detalhe da interação, a menos que isso obviamente o coloque em perigo."),
+  C("Prototype Battery", "ammo/battery", "Recarregue um item de Loot gasto que funcione por energia, sinal, drones, hardlight, scanners ou eletrônicos, permitindo usá-lo uma vez a mais antes do seu próximo descanso."),
+  C("Panic Button", "gear/disposable_cellphone", "Use quando você fosse ser capturado, encurralado ou separado. Um alarme, sinal para aliados, sinalizador de emergência ou protocolo de fuga planejado é ativado imediatamente.")
+];
+
+const LOOT = [
+  L("Burner ID", "gear/agent", "Quando você entra numa área de baixa segurança, pode gastar 1 Esperança para se passar por alguém inofensivo ou esperado.", gearCostAction("Burner ID", HOPE1)),
+  L("Comm Beads", "gear/radio_communicator", "Você e um aliado carregando contas conectadas podem se comunicar aos sussurros a até 1,5 km."),
+  L("Lockspike", "gear/lock_picking_set", "Quando você cria uma Breach contra uma fechadura, porta ou painel de segurança local, ganhe +2 na rolagem.", gearToggle("Lockspike (+2 na rolagem)", "gear/lock_picking_set", gearChange("system.bonuses.roll.bonus", 2))),
+  L("Smart Chalk", "gear/glow_paint", "Você pode marcar uma rota, porta, veículo ou criatura. Até o seu próximo descanso, sempre consegue encontrar o alvo marcado se ele estiver a até 1,5 km."),
+  L("Emergency Beacon", "gear/roadflare", "Uma vez por descanso, ative este sinalizador para os aliados saberem a sua localização e estado exatos.", gearUses("Emergency Beacon", "shortRest")),
+  L("Climbing Filament", "gear/rope", "Você ganha vantagem em rolagens para escalar, descer ou se prender em superfícies verticais.", advantageOn("Escalar, descer ou se prender em superfícies verticais")),
+  L("Forger's Sleeve", "gear/memory_chip", "Uma vez por descanso, crie um documento, crachá, permissão ou assinatura comum convincente.", gearUses("Forger's Sleeve", "shortRest")),
+  L("Pocket Drone", "dlc/gear/the-observer", "Você pode lançar este drone para explorar dentro do alcance Muito Distante. Se ele entrar em perigo, role um d6; num 1, ele é destruído.", gearDice("Drone em Perigo", "1d6")),
+  L("Trauma Tag", "gear/medscanner", "Quando um aliado dentro do alcance Próximo marca PV, você sabe imediatamente onde ele está e se está morrendo, estável ou consciente."),
+  L("Sound Sponge", "gear/auto_leveldampeningear_protectors", "Gaste 1 Esperança para silenciar uma área pequena dentro do alcance Muito Próximo até o seu próximo Holofote.", gearCostAction("Sound Sponge", HOPE1)),
+  L("Hardlight Umbrella", "dlc/gear/umbrella", "Marque 1 Estresse para criar cobertura temporária para você ou um aliado dentro do alcance Muito Próximo.", gearCostAction("Hardlight Umbrella", STRESS1)),
+  L("EMP Thread", "gear/scrambler_descrambler", "Você tem vantagem em rolagens para resistir a pequenos perigos elétricos, etiquetas de rastreamento ou scanners de curto alcance.", advantageOn("Resistir a pequenos perigos elétricos, etiquetas de rastreamento ou scanners de curto alcance")),
+  L("Microfab Key", "gear/tech_tool", "No tempo livre, você pode fabricar uma ferramenta comum, peça de reposição, carcaça, adaptador ou componente simples de arma."),
+  L("Ghost Plate", "gear/radar_detector", "Uma vez por descanso, quando você fica Escondido, também pode deixar para trás uma assinatura de calor falsa ou um loop de câmera.", gearUses("Ghost Plate", "shortRest")),
+  L("Clean Needle", "gear/air_hypo", "Você tem vantagem em rolagens para administrar drogas, estabilizar envenenamento, coletar sangue ou fazer cirurgia delicada em campo.", advantageOn("Administrar drogas, estabilizar envenenamento, coletar sangue ou cirurgia delicada em campo")),
+  L("Blackbox Recorder", "gear/audio_recorder", "Quando uma cena perigosa termina, você pode perguntar ao mestre o que um dispositivo, sinal ou câmera próximo gravou."),
+  L("Portable Shrine", "gear/glowstick", "Durante um descanso, você ou um aliado pode gastar 1 Esperança para limpar 1 Estresse confessando, rezando, relembrando ou se centrando.", gearHeal("Portable Shrine", { stress: 1 }, { type: "any", amount: 1 }, [gearCost("hope", 1)])),
+  L("Debt Chip", "gear/memory_chip", "Uma vez por sessão, gaste este chip para conseguir um pequeno favor de alguém que reconhece a dívida. O mestre diz o que ele quer depois.", gearUses("Debt Chip", "session")),
+  L("Signal Cloak", "gear/scrambler_descrambler", "Uma vez por descanso, quando um drone, câmera ou scanner fosse te detectar, role um d6. Em 4+, ele não te percebe.", { actions: featureAction({ name: "Signal Cloak", dice: "1d6", uses: { max: 1, recovery: "shortRest" } }) }),
+  L("Old World Map", "gear/computer", "Quando você entra numa ruína, zona morta, túnel ou instalação selada, pergunte ao mestre uma coisa sobre uma rota oculta, o propósito antigo do lugar ou uma fraqueza estrutural."),
+  L("Forensic Lens", "gear/chemical_analizer", "Quando você inspeciona um corpo, ferida, máquina destruída ou veículo danificado, pergunte ao mestre o que causou o dano ou que detalhe a maioria das pessoas deixaria passar."),
+  L("Dead Drop Case", "dlc/gear/hidden-compartment", "Uma vez por descanso, esconda ou recupere um item pequeno num lugar que você poderia ter preparado antes.", gearUses("Dead Drop Case", "shortRest")),
+  L("Faraday Pouch", "gear/personal_carepak", "Itens guardados dentro não podem ser rastreados, escaneados, invadidos ou ativados remotamente por sistemas simples."),
+  L("Signal Leech", "gear/radio_scanner_music_player", "Quando você tem sucesso numa Rolagem de Interface contra um sistema conectado, pode descobrir outro dispositivo ou usuário conectado a ele no momento."),
+  L("Decoy Wallet", "gear/disposable_cellphone", "Uma vez por descanso, quando alguém te revista, rouba, escaneia ou extorque, encontra esta falsificação convincente em vez de algo importante.", gearUses("Decoy Wallet", "shortRest")),
+  L("Breach Cord", "gear/rope", "Você tem vantagem em rolagens para forçar, cortar ou contornar portas, cercas, dutos, fechaduras e painéis de acesso comuns.", advantageOn("Forçar, cortar ou contornar portas, cercas, dutos, fechaduras e painéis de acesso comuns")),
+  L("Mirror Tag", "gear/tracer_button", "Uma vez por descanso, coloque esta etiqueta numa superfície ou objeto. Até o seu próximo descanso, scanners e rastreadores procurando você podem ser redirecionados para ela.", gearUses("Mirror Tag", "shortRest")),
+  L("Filter Hood", "gear/antismog_breathing_mask", "Você respira e age normalmente em fumaça, poeira, cinzas, fedor químico, gás lacrimogêneo e ar poluído, a menos que o perigo seja imediatamente letal."),
+  L("Courier Boots", "clothing/generic_footwear", "Uma vez por descanso, quando você se move por uma multidão, beco, telhado, ruína ou trânsito, ignore terreno difícil durante esse movimento.", gearUses("Courier Boots", "shortRest")),
+  L("Drone Harness", "dlc/gear/the-transporter", "Você carrega, acopla, lança ou conserta drones pequenos com mais facilidade. Sua primeira rolagem em cada descanso para consertar, esconder ou recuperar um drone tem vantagem."),
+  L("Smart Cuffs", "gear/handcuffs", "Quando você prende uma criatura voluntária, inconsciente ou derrotada, tentativas comuns de fuga dessas algemas têm desvantagem."),
+  L("Rumor Deck", "default/Defult_Card_Hand", "Uma vez por descanso, quando você entra num bar, mercado, clínica, garagem, esconderijo ou estação, pergunte ao mestre que boato todo mundo ali está evitando dizer em voz alta.", gearUses("Rumor Deck", "shortRest")),
+  L("Shock Blanket", "gear/inflatable_bed_and_sleepingbag", "Durante um descanso curto, uma criatura enrolada neste cobertor pode limpar 1 Estresse causado por medo, frio, choque, perda de sangue ou exposição.", gearHeal("Shock Blanket", { stress: 1 })),
+  L("Collapsible Barricade", "status/cover", "Uma vez por descanso, monte esta barricada para criar cobertura temporária para até duas criaturas dentro do alcance Muito Próximo.", gearUses("Collapsible Barricade", "shortRest")),
+  L("Mag Boots", "clothing/generic_footwear", "Você tem vantagem em rolagens para resistir a ser empurrado, derrubado, arrastado ou movido contra a vontade enquanto estiver sobre metal, blindagem de veículo ou piso reforçado.", advantageOn("Resistir a ser empurrado, derrubado, arrastado ou movido sobre metal ou piso reforçado")),
+  L("Signal Splitter", "gear/radio_communicator", "Você pode manter dois canais de comunicação separados ao mesmo tempo. Uma vez por descanso, quando um sinal fosse bloqueado ou cortado, você pode manter um canal aberto.", gearUses("Signal Splitter", "shortRest")),
+  L("Clinic Cooler", "gear/cryotank", "Você conserva com segurança remédios, sangue, órgãos, amostras ou bioware instável. Tem vantagem em rolagens para transportar material médico delicado.", advantageOn("Transportar material médico delicado")),
+  L("Old Net Charm", "default/default-blackice", "Uma vez por descanso, quando você rola com Medo ao interagir com dados corrompidos, resíduos da Blackwall ou sinais impossíveis, pode marcar 1 Estresse para perguntar ao mestre o que parece errado.", gearUses("Old Net Charm", "shortRest", STRESS1)),
+  L("Garage Token", "dlc/gear/master_mechanics_tool_kit", "Uma vez por sessão, quando você chega a uma garagem, acampamento de estrada, parada de comboio ou contato mecânico, pode consertar um veículo Damaged sem pagar o custo normal.", gearUses("Garage Token", "session")),
+  L("Memory Shard", "gear/memory_chip", "Durante um descanso, encaixe este fragmento num dispositivo ou porta neural e pergunte ao mestre uma coisa sobre o lugar, pessoa, facção ou evento gravado nele.")
+];
+
+// Toda ação de consumível gasta 1 da quantidade do próprio item; sem ação, ganha "Usar" (como as oficiais).
+function withQuantityCost(actions, itemId, img, name) {
+  const list = Object.keys(actions).length ? actions : featureAction({ name, img });
+  for (const action of Object.values(list)) {
+    action.cost = [...(action.cost ?? []).filter(c => c.key !== "quantity"), { scalable: false, key: "quantity", value: 1, step: null, consumeOnSuccess: false, itemId }];
+  }
+  return list;
+}
+
+async function importLootAndConsumables() {
+  const officialConsumables = await game.packs.get("daggerheart.consumables")?.getDocuments() ?? [];
+  const consumables = CONSUMABLES.map(c => {
+    const _id = stableId(`consumable:${c.name}`);
+    let { actions, effects } = c;
+    if (c.clone) {
+      const official = officialConsumables.find(o => o.name === c.clone);
+      if (official) ({ actions, effects } = cloneOfficialCard(official, c.name, c.img));
+      else console.warn(`Edgeheart | Consumível oficial "${c.clone}" não encontrado; ${c.name} fica só com texto.`);
+    }
+    return {
+      _id, name: c.name, type: "consumable", img: c.img, effects,
+      system: { description: `<p>${c.text}</p>`, quantity: 1, consumeOnUse: true, actions: withDefaultActionImg(withQuantityCost(actions, _id, c.img, c.name), c.img), attribution: ATTRIBUTION, gmNotes: "" }
+    };
+  });
+  const loot = LOOT.map(l => ({
+    _id: stableId(`loot:${l.name}`), name: l.name, type: "loot", img: l.img,
+    effects: [...gearPassiveEffect({ ...l, feature: `${l.name}|${l.text}` }), ...l.effects],
+    system: { description: `<p>${l.text}</p>`, quantity: 1, actions: withDefaultActionImg(l.actions, l.img), attribution: ATTRIBUTION, gmNotes: "" }
+  }));
+  await Item.createDocuments(consumables, { pack: (await getOrCreatePack("consumables")).collection, keepId: true });
+  await Item.createDocuments(loot, { pack: (await getOrCreatePack("loot")).collection, keepId: true });
+
+  // Tabelas no formato das oficiais (Core Set Items / Consumables): 1d10, o mestre rola mais dados
+  // conforme a raridade (Comum 1d10, Incomum 1d10–2d10, Raro 2d10–3d10, Lendário 3d10–4d10).
+  const rarity = "<p>Role conforme a raridade: <strong>Comum</strong> 1d10, <strong>Incomum</strong> 1d10 ou 2d10, <strong>Raro</strong> 2d10 ou 3d10, <strong>Lendário</strong> 3d10 ou 4d10 (mude a fórmula da tabela ou role e escolha o resultado).</p>";
+  const table = (name, img, list, packKey, prefix) => ({
+    _id: stableId(`table:${name}`), name, img, description: rarity, formula: "1d10", replacement: true, displayRoll: true,
+    results: list.map((item, i) => ({
+      type: "document", weight: 1, range: [i + 1, i + 1], name: item.name, img: item.img, description: "",
+      documentUuid: `Compendium.${PACK_SCOPE}.${PACKS[packKey].name}.Item.${stableId(`${prefix}:${item.name}`)}`
+    }))
+  });
+  await RollTable.createDocuments([
+    table("Loot do Edgeheart", CPR("dlc/gear/fire-safe"), LOOT, "loot", "loot"),
+    table("Consumíveis do Edgeheart", CPR("gear/medtech_bag"), CONSUMABLES, "consumables", "consumable")
+  ], { pack: (await getOrCreatePack("rolltables")).collection, keepId: true });
 }
 
 // ---------- Classe / Subclasses (mesma lógica da v0.2) ----------
@@ -4153,7 +4306,10 @@ async function removeLegacyContent() {
 // para outra pasta existente (ou deixou soltos) não são tocados.
 async function repairPackFolders() {
   const mod = game.modules.get(MODULE_ID);
-  const broken = game.packs.filter(p => p.metadata.packageName === MODULE_ID && p.config.folder && !game.folders.get(p.config.folder));
+  // Também entram compêndios novos de versões mais recentes (sem pasta configurada: folder undefined;
+  // um compêndio que o mestre deixou solto tem folder null e não é tocado).
+  const broken = game.packs.filter(p => p.metadata.packageName === MODULE_ID
+    && ((p.config.folder && !game.folders.get(p.config.folder)) || p.config.folder === undefined));
   if (!broken.length) return;
   const place = async (def, parent) => {
     let folder = game.folders.find(f => f.type === "Compendium" && f.name === def.name && (f.folder?.id ?? null) === (parent?.id ?? null));
@@ -4193,6 +4349,7 @@ async function buildPacks() {
   ui.notifications.info("Edgeheart: gerando os compêndios do módulo...");
   await clearPacks();
   const equipment = await importWeaponsAndArmor();
+  await importLootAndConsumables();
   await importClassesAndSubclasses(equipment);
   await importLifePathsAndAffiliations();
   await importDomainCards();
