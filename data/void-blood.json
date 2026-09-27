@@ -1,0 +1,2521 @@
+{
+ "source": "the-void-unofficial 1.3.3 (GPL-3.0, https://github.com/brunocalado/the-void-unofficial)",
+ "exported": "2026-09-27",
+ "cards": [
+  {
+   "name": "Lifeblood Talisman",
+   "img": "modules/the-void-unofficial/images/blood-hunter-logo.webp",
+   "level": 1,
+   "recallCost": 0,
+   "type": "spell",
+   "description": "<p>Mark a Hit Point to conjure a talisman infused with your life essence. When the bearer of the talisman would take Severe or greater damage, they can destroy the talisman and reduce the damage by two thresholds. The talisman otherwise disappears when you take a rest or cast this spell again.</p>",
+   "actions": {
+    "bmhXNX2ktcW1KMqz": {
+     "type": "macro",
+     "_id": "bmhXNX2ktcW1KMqz",
+     "systemPath": "actions",
+     "baseAction": false,
+     "description": "",
+     "chatDisplay": true,
+     "originItem": {
+      "type": "itemCollection"
+     },
+     "actionType": "action",
+     "triggers": [],
+     "areas": [],
+     "cost": [
+      {
+       "scalable": false,
+       "key": "hitPoints",
+       "value": 1,
+       "itemId": null,
+       "step": null,
+       "consumeOnSuccess": false
+      }
+     ],
+     "uses": {
+      "value": null,
+      "max": "",
+      "recovery": null,
+      "consumeOnSuccess": false
+     },
+     "macro": "Compendium.the-void-unofficial.macros.Macro.9j435oaGohjTVpyK",
+     "name": "Conjure Talisman",
+     "range": ""
+    }
+   },
+   "resource": null,
+   "domainTouched": null,
+   "effects": [],
+   "flags": {}
+  },
+  {
+   "name": "Weave the Flesh",
+   "img": "modules/the-void-unofficial/images/blood-hunter-logo.webp",
+   "level": 4,
+   "recallCost": 1,
+   "type": "spell",
+   "description": "<p>Once per long rest, you can mark a Hit Point to clot, suture, and fortify others with your own lifeblood. Each willing target within Very Close range clears a Hit Point and an Armor Slot.</p>",
+   "actions": {
+    "FmBQhiY18CfnXSH3": {
+     "type": "healing",
+     "_id": "FmBQhiY18CfnXSH3",
+     "systemPath": "actions",
+     "baseAction": false,
+     "description": "",
+     "chatDisplay": true,
+     "originItem": {
+      "type": "itemCollection"
+     },
+     "actionType": "action",
+     "triggers": [],
+     "areas": [
+      {
+       "name": "Weave the Flesh",
+       "type": "attached",
+       "shape": "circle",
+       "size": "veryClose",
+       "hasHole": false,
+       "effects": []
+      }
+     ],
+     "cost": [
+      {
+       "scalable": false,
+       "key": "hitPoints",
+       "value": 1,
+       "itemId": null,
+       "step": null,
+       "consumeOnSuccess": false
+      }
+     ],
+     "uses": {
+      "value": null,
+      "max": "",
+      "recovery": null,
+      "consumeOnSuccess": false
+     },
+     "damage": {
+      "main": null,
+      "resources": {
+       "hitPoints": {
+        "applyTo": "hitPoints",
+        "resultBased": false,
+        "value": {
+         "multiplier": "flat",
+         "flatMultiplier": 1,
+         "dice": "d6",
+         "bonus": null,
+         "custom": {
+          "enabled": true,
+          "formula": "1"
+         }
+        },
+        "valueAlt": {
+         "multiplier": "flat",
+         "flatMultiplier": 1,
+         "dice": "d6",
+         "bonus": null,
+         "custom": {
+          "enabled": false,
+          "formula": ""
+         }
+        },
+        "base": false,
+        "itemId": null,
+        "fullRestore": false
+       },
+       "armor": {
+        "applyTo": "armor",
+        "resultBased": false,
+        "value": {
+         "multiplier": "flat",
+         "flatMultiplier": 1,
+         "dice": "d6",
+         "bonus": null,
+         "custom": {
+          "enabled": true,
+          "formula": "1"
+         }
+        },
+        "valueAlt": {
+         "multiplier": "flat",
+         "flatMultiplier": 1,
+         "dice": "d6",
+         "bonus": null,
+         "custom": {
+          "enabled": false,
+          "formula": ""
+         }
+        },
+        "base": false,
+        "itemId": null,
+        "fullRestore": false
+       }
+      }
+     },
+     "target": {
+      "type": "any",
+      "amount": null
+     },
+     "effects": [],
+     "roll": {
+      "type": null,
+      "trait": null,
+      "difficulty": null,
+      "bonus": null,
+      "advState": "neutral",
+      "diceRolling": {
+       "multiplier": "prof",
+       "flatMultiplier": 1,
+       "dice": "d6",
+       "compare": null,
+       "treshold": null
+      },
+      "useDefault": false
+     },
+     "name": "Heal",
+     "range": ""
+    }
+   },
+   "resource": null,
+   "domainTouched": null,
+   "effects": [],
+   "flags": {}
+  },
+  {
+   "name": "Vital Ward",
+   "img": "modules/the-void-unofficial/images/blood-hunter-logo.webp",
+   "level": 8,
+   "recallCost": 1,
+   "type": "spell",
+   "description": "<p>Choose the physical or magic damage type, and make a Spellcast Roll (15). On a success, you trace a Very Close circle of blood on the ground around you that grants creatures of your choice inside it resistance against that damage type. The circle lasts until you take Major or greater damage, move outside the circle, or cast this spell again.</p>",
+   "actions": {
+    "iC6O8NST9sIYeaoI": {
+     "type": "attack",
+     "_id": "iC6O8NST9sIYeaoI",
+     "systemPath": "actions",
+     "baseAction": false,
+     "description": "",
+     "chatDisplay": true,
+     "originItem": {
+      "type": "itemCollection"
+     },
+     "actionType": "action",
+     "triggers": [],
+     "areas": [
+      {
+       "name": "Vital Ward",
+       "type": "attached",
+       "shape": "circle",
+       "size": "veryClose",
+       "hasHole": false,
+       "effects": []
+      }
+     ],
+     "cost": [],
+     "uses": {
+      "value": null,
+      "max": "",
+      "recovery": null,
+      "consumeOnSuccess": false
+     },
+     "damage": {
+      "main": null,
+      "resources": {}
+     },
+     "target": {
+      "type": "any",
+      "amount": null
+     },
+     "effects": [],
+     "roll": {
+      "type": "spellcast",
+      "trait": null,
+      "difficulty": 15,
+      "bonus": null,
+      "advState": "neutral",
+      "diceRolling": {
+       "multiplier": "prof",
+       "flatMultiplier": 1,
+       "dice": "d6",
+       "compare": null,
+       "treshold": null
+      },
+      "useDefault": false
+     },
+     "save": {
+      "trait": null,
+      "difficulty": null,
+      "damageMod": "none"
+     },
+     "name": "",
+     "range": ""
+    }
+   },
+   "resource": null,
+   "domainTouched": null,
+   "effects": [],
+   "flags": {}
+  },
+  {
+   "name": "Ichor Wave",
+   "img": "modules/the-void-unofficial/images/blood-hunter-logo.webp",
+   "level": 9,
+   "recallCost": 3,
+   "type": "spell",
+   "description": "<p>Mark a Hit Point to make a Spellcast Roll against all targets within Close range in front of you. On a success, deal d10 magic damage using the number of Hit Points you have marked instead of your Proficiency. On a failure, deal half damage.</p>",
+   "actions": {
+    "aoUZgIohOYEU2rq7": {
+     "type": "attack",
+     "_id": "aoUZgIohOYEU2rq7",
+     "systemPath": "actions",
+     "baseAction": false,
+     "description": "",
+     "chatDisplay": true,
+     "originItem": {
+      "type": "itemCollection"
+     },
+     "actionType": "action",
+     "triggers": [],
+     "areas": [
+      {
+       "name": "Ichor Wave",
+       "type": "attached",
+       "shape": "inFront",
+       "size": "close",
+       "hasHole": false,
+       "effects": []
+      }
+     ],
+     "cost": [
+      {
+       "consumeOnSuccess": false,
+       "scalable": false,
+       "key": "hitPoints",
+       "value": 1,
+       "itemId": null,
+       "step": null
+      }
+     ],
+     "uses": {
+      "value": null,
+      "max": "",
+      "recovery": null,
+      "consumeOnSuccess": false
+     },
+     "damage": {
+      "main": {
+       "applyTo": "hitPoints",
+       "resultBased": false,
+       "value": {
+        "multiplier": "flat",
+        "flatMultiplier": 1,
+        "dice": "d10",
+        "bonus": null,
+        "custom": {
+         "enabled": false,
+         "formula": ""
+        }
+       },
+       "valueAlt": {
+        "multiplier": "flat",
+        "flatMultiplier": 1,
+        "dice": "d6",
+        "bonus": null,
+        "custom": {
+         "enabled": false,
+         "formula": ""
+        }
+       },
+       "base": false,
+       "type": [
+        "magical"
+       ],
+       "includeBase": false,
+       "direct": false,
+       "itemId": null,
+       "fullRestore": false
+      },
+      "resources": {}
+     },
+     "target": {
+      "type": "any",
+      "amount": null
+     },
+     "effects": [],
+     "roll": {
+      "type": "spellcast",
+      "trait": null,
+      "difficulty": null,
+      "bonus": null,
+      "advState": "neutral",
+      "diceRolling": {
+       "multiplier": "prof",
+       "flatMultiplier": 1,
+       "dice": "d6",
+       "compare": null,
+       "treshold": null
+      },
+      "useDefault": false
+     },
+     "save": {
+      "trait": null,
+      "difficulty": null,
+      "damageMod": "none"
+     },
+     "name": "",
+     "range": "close"
+    }
+   },
+   "resource": null,
+   "domainTouched": null,
+   "effects": [],
+   "flags": {}
+  },
+  {
+   "name": "Grisly Harpoon",
+   "img": "modules/the-void-unofficial/images/blood-hunter-logo.webp",
+   "level": 3,
+   "recallCost": 1,
+   "type": "spell",
+   "description": "<p>Make a Spellcast Roll against a creature within Far range. On a success, mark a Stress to throw a conjured harpoon of magic blood at the target, dealing d10 magic damage using your Proficiency. Then you can pull yourself into Melee range with the target or pull the target into Melee range with you. Alternatively, if you target an unheld object or terrain within Far range, make a Spellcast Roll (13). On a success, you pull the object to you, or you pull yourself to the terrain.</p>",
+   "actions": {
+    "F4eTzYgI95cjB5lt": {
+     "type": "attack",
+     "_id": "F4eTzYgI95cjB5lt",
+     "systemPath": "actions",
+     "baseAction": false,
+     "description": "",
+     "chatDisplay": true,
+     "originItem": {
+      "type": "itemCollection"
+     },
+     "actionType": "action",
+     "triggers": [],
+     "areas": [],
+     "cost": [],
+     "uses": {
+      "value": null,
+      "max": "",
+      "recovery": null,
+      "consumeOnSuccess": false
+     },
+     "damage": {
+      "main": {
+       "applyTo": "hitPoints",
+       "resultBased": false,
+       "value": {
+        "multiplier": "prof",
+        "flatMultiplier": 1,
+        "dice": "d10",
+        "bonus": null,
+        "custom": {
+         "enabled": false,
+         "formula": ""
+        }
+       },
+       "valueAlt": {
+        "multiplier": "flat",
+        "flatMultiplier": 1,
+        "dice": "d6",
+        "bonus": null,
+        "custom": {
+         "enabled": false,
+         "formula": ""
+        }
+       },
+       "base": false,
+       "type": [
+        "magical"
+       ],
+       "includeBase": false,
+       "direct": false,
+       "itemId": null,
+       "fullRestore": false
+      },
+      "resources": {}
+     },
+     "target": {
+      "type": "any",
+      "amount": null
+     },
+     "effects": [],
+     "roll": {
+      "type": "spellcast",
+      "trait": null,
+      "difficulty": null,
+      "bonus": null,
+      "advState": "neutral",
+      "diceRolling": {
+       "multiplier": "prof",
+       "flatMultiplier": 1,
+       "dice": "d6",
+       "compare": null,
+       "treshold": null
+      },
+      "useDefault": false
+     },
+     "save": {
+      "trait": null,
+      "difficulty": null,
+      "damageMod": "none"
+     },
+     "name": "Harpoon",
+     "range": ""
+    },
+    "2H7ZhSAxE1BXBw2m": {
+     "type": "effect",
+     "_id": "2H7ZhSAxE1BXBw2m",
+     "systemPath": "actions",
+     "baseAction": false,
+     "description": "",
+     "chatDisplay": true,
+     "originItem": {
+      "type": "itemCollection"
+     },
+     "actionType": "action",
+     "triggers": [],
+     "areas": [],
+     "cost": [
+      {
+       "scalable": false,
+       "key": "stress",
+       "value": 1,
+       "itemId": null,
+       "step": null,
+       "consumeOnSuccess": false
+      }
+     ],
+     "uses": {
+      "value": null,
+      "max": "",
+      "recovery": null,
+      "consumeOnSuccess": false
+     },
+     "effects": [],
+     "target": {
+      "type": "any",
+      "amount": null
+     },
+     "name": "Mark Stress",
+     "range": ""
+    },
+    "OPsx10bM8PGM8RsP": {
+     "type": "attack",
+     "_id": "OPsx10bM8PGM8RsP",
+     "systemPath": "actions",
+     "baseAction": false,
+     "description": "",
+     "chatDisplay": true,
+     "originItem": {
+      "type": "itemCollection"
+     },
+     "actionType": "action",
+     "triggers": [],
+     "areas": [],
+     "cost": [],
+     "uses": {
+      "value": null,
+      "max": "",
+      "recovery": null,
+      "consumeOnSuccess": false
+     },
+     "damage": {
+      "main": null,
+      "resources": {}
+     },
+     "target": {
+      "type": "any",
+      "amount": null
+     },
+     "effects": [],
+     "roll": {
+      "type": "spellcast",
+      "trait": null,
+      "difficulty": 13,
+      "bonus": null,
+      "advState": "neutral",
+      "diceRolling": {
+       "multiplier": "prof",
+       "flatMultiplier": 1,
+       "dice": "d6",
+       "compare": null,
+       "treshold": null
+      },
+      "useDefault": false
+     },
+     "save": {
+      "trait": null,
+      "difficulty": null,
+      "damageMod": "none"
+     },
+     "name": "Spellcast Roll (13)",
+     "range": ""
+    }
+   },
+   "resource": null,
+   "domainTouched": null,
+   "effects": [],
+   "flags": {}
+  },
+  {
+   "name": "Blood-Touched",
+   "img": "modules/the-void-unofficial/images/blood-hunter-logo.webp",
+   "level": 6,
+   "recallCost": 0,
+   "type": "ability",
+   "description": "<p>While 4 or more of the domain cards in your loadout are from the Blood domain, gain the following benefits: </p><ul><li><p>You gain a Hope when you take Major or greater damage. </p></li><li><p>When you make a Spellcast Roll, you can spend a Hope to gain a bonus equal to the number of Hit Points you have marked.</p></li></ul>",
+   "actions": {
+    "IfEmeyVtk2BrMsWT": {
+     "type": "effect",
+     "_id": "IfEmeyVtk2BrMsWT",
+     "systemPath": "actions",
+     "baseAction": false,
+     "description": "",
+     "chatDisplay": true,
+     "originItem": {
+      "type": "itemCollection"
+     },
+     "actionType": "action",
+     "triggers": [],
+     "areas": [],
+     "cost": [
+      {
+       "itemId": null,
+       "key": "hope",
+       "value": 1,
+       "scalable": false,
+       "step": null,
+       "consumeOnSuccess": false
+      }
+     ],
+     "uses": {
+      "value": null,
+      "max": "",
+      "recovery": null,
+      "consumeOnSuccess": false
+     },
+     "effects": [],
+     "target": {
+      "type": "any",
+      "amount": null
+     },
+     "name": "Spend Hope",
+     "range": ""
+    }
+   },
+   "resource": null,
+   "domainTouched": null,
+   "effects": [],
+   "flags": {}
+  },
+  {
+   "name": "Brand of Castigation",
+   "img": "modules/the-void-unofficial/images/blood-hunter-logo.webp",
+   "level": 2,
+   "recallCost": 1,
+   "type": "spell",
+   "description": "<p>When you succeed on an attack roll against a target, you can mark a Stress to *Brand* them until you take a long rest or cast this spell again. You always know the direction of the *Branded* target. If the *Branded* target deals damage to you, you can remove the *Branded* condition to make them mark 2 Stress.</p>",
+   "actions": {
+    "oKauYNt4COLfisrq": {
+     "type": "effect",
+     "_id": "oKauYNt4COLfisrq",
+     "systemPath": "actions",
+     "baseAction": false,
+     "description": "",
+     "chatDisplay": true,
+     "originItem": {
+      "type": "itemCollection"
+     },
+     "actionType": "action",
+     "triggers": [],
+     "areas": [],
+     "cost": [
+      {
+       "scalable": false,
+       "key": "stress",
+       "value": 1,
+       "itemId": null,
+       "step": null,
+       "consumeOnSuccess": false
+      }
+     ],
+     "uses": {
+      "value": null,
+      "max": "",
+      "recovery": null,
+      "consumeOnSuccess": false
+     },
+     "effects": [],
+     "target": {
+      "type": "any",
+      "amount": null
+     },
+     "name": "Mark a Stress to *Brand*",
+     "range": ""
+    },
+    "BGwNGeVJWI9RFrnk": {
+     "type": "damage",
+     "_id": "BGwNGeVJWI9RFrnk",
+     "systemPath": "actions",
+     "baseAction": false,
+     "description": "",
+     "chatDisplay": true,
+     "originItem": {
+      "type": "itemCollection"
+     },
+     "actionType": "action",
+     "triggers": [],
+     "areas": [],
+     "cost": [],
+     "uses": {
+      "value": null,
+      "max": "",
+      "recovery": null,
+      "consumeOnSuccess": false
+     },
+     "damage": {
+      "main": null,
+      "resources": {
+       "stress": {
+        "applyTo": "stress",
+        "resultBased": false,
+        "value": {
+         "multiplier": "flat",
+         "flatMultiplier": 1,
+         "dice": "d6",
+         "bonus": null,
+         "custom": {
+          "enabled": true,
+          "formula": "2"
+         }
+        },
+        "valueAlt": {
+         "multiplier": "flat",
+         "flatMultiplier": 1,
+         "dice": "d6",
+         "bonus": null,
+         "custom": {
+          "enabled": false,
+          "formula": ""
+         }
+        },
+        "base": false,
+        "itemId": null,
+        "fullRestore": false
+       }
+      }
+     },
+     "target": {
+      "type": "any",
+      "amount": null
+     },
+     "effects": [],
+     "name": "Damage: 2 Stress",
+     "range": ""
+    }
+   },
+   "resource": null,
+   "domainTouched": null,
+   "effects": [],
+   "flags": {}
+  },
+  {
+   "name": "Life Link",
+   "img": "modules/the-void-unofficial/images/blood-hunter-logo.webp",
+   "level": 6,
+   "recallCost": 0,
+   "type": "spell",
+   "description": "<p>Make a Spellcast Roll (14). Once per rest on a success, you conjure a magical tether between yourself and a willing target within Close range that lasts until the end of the scene. When either tethered creature would mark a Hit Point, the other tethered creature can mark a Hit Point instead.</p>",
+   "actions": {
+    "amY9HjZABSdQeKMW": {
+     "type": "attack",
+     "_id": "amY9HjZABSdQeKMW",
+     "systemPath": "actions",
+     "baseAction": false,
+     "description": "",
+     "chatDisplay": true,
+     "originItem": {
+      "type": "itemCollection"
+     },
+     "actionType": "action",
+     "triggers": [],
+     "areas": [],
+     "cost": [],
+     "uses": {
+      "value": 0,
+      "max": "1",
+      "recovery": "shortRest",
+      "consumeOnSuccess": false
+     },
+     "damage": {
+      "main": null,
+      "resources": {}
+     },
+     "target": {
+      "type": "any",
+      "amount": null
+     },
+     "effects": [],
+     "roll": {
+      "type": "spellcast",
+      "trait": null,
+      "difficulty": 14,
+      "bonus": null,
+      "advState": "neutral",
+      "diceRolling": {
+       "multiplier": "prof",
+       "flatMultiplier": 1,
+       "dice": "d6",
+       "compare": null,
+       "treshold": null
+      },
+      "useDefault": false
+     },
+     "save": {
+      "trait": null,
+      "difficulty": null,
+      "damageMod": "none"
+     },
+     "name": "Spellcast Roll (14)",
+     "range": ""
+    }
+   },
+   "resource": null,
+   "domainTouched": null,
+   "effects": [],
+   "flags": {}
+  },
+  {
+   "name": "Glyph of Hemorrhaging",
+   "img": "modules/the-void-unofficial/images/blood-hunter-logo.webp",
+   "level": 8,
+   "recallCost": 2,
+   "type": "spell",
+   "description": "<p>Make a Spellcast Roll against a target within Close range. On a success, spend a Hope to mark the target with a magical glyph that causes them to bleed profusely. Until the glyph fades, damage the target takes is increased by one threshold. The glyph fades when you take a rest, you cast this spell again, or the target takes Severe or greater damage.</p>",
+   "actions": {
+    "JPGXrRyYLdyUGTI9": {
+     "type": "attack",
+     "_id": "JPGXrRyYLdyUGTI9",
+     "systemPath": "actions",
+     "baseAction": false,
+     "description": "",
+     "chatDisplay": true,
+     "originItem": {
+      "type": "itemCollection"
+     },
+     "actionType": "action",
+     "triggers": [],
+     "areas": [],
+     "cost": [],
+     "uses": {
+      "value": null,
+      "max": "",
+      "recovery": null,
+      "consumeOnSuccess": false
+     },
+     "damage": {
+      "main": null,
+      "resources": {}
+     },
+     "target": {
+      "type": "any",
+      "amount": null
+     },
+     "effects": [],
+     "roll": {
+      "type": "spellcast",
+      "trait": null,
+      "difficulty": null,
+      "bonus": null,
+      "advState": "neutral",
+      "diceRolling": {
+       "multiplier": "prof",
+       "flatMultiplier": 1,
+       "dice": "d6",
+       "compare": null,
+       "treshold": null
+      },
+      "useDefault": false
+     },
+     "save": {
+      "trait": null,
+      "difficulty": null,
+      "damageMod": "none"
+     },
+     "name": "Spellcast Roll",
+     "range": ""
+    },
+    "5qf039yADxqrtp8v": {
+     "type": "effect",
+     "_id": "5qf039yADxqrtp8v",
+     "systemPath": "actions",
+     "baseAction": false,
+     "description": "",
+     "chatDisplay": true,
+     "originItem": {
+      "type": "itemCollection"
+     },
+     "actionType": "action",
+     "triggers": [],
+     "areas": [],
+     "cost": [
+      {
+       "itemId": null,
+       "key": "hope",
+       "value": 1,
+       "scalable": false,
+       "step": null,
+       "consumeOnSuccess": false
+      }
+     ],
+     "uses": {
+      "value": null,
+      "max": "",
+      "recovery": null,
+      "consumeOnSuccess": false
+     },
+     "effects": [],
+     "target": {
+      "type": "any",
+      "amount": null
+     },
+     "name": "Spend Hope",
+     "range": ""
+    },
+    "kguhH2sdlL62mn9o": {
+     "type": "damage",
+     "_id": "kguhH2sdlL62mn9o",
+     "systemPath": "actions",
+     "baseAction": false,
+     "description": "",
+     "chatDisplay": true,
+     "originItem": {
+      "type": "itemCollection"
+     },
+     "actionType": "action",
+     "triggers": [],
+     "areas": [],
+     "cost": [],
+     "uses": {
+      "value": null,
+      "max": "",
+      "recovery": null,
+      "consumeOnSuccess": false
+     },
+     "damage": {
+      "main": {
+       "applyTo": "hitPoints",
+       "resultBased": false,
+       "value": {
+        "multiplier": "flat",
+        "flatMultiplier": 1,
+        "dice": "d6",
+        "bonus": null,
+        "custom": {
+         "enabled": true,
+         "formula": "1"
+        }
+       },
+       "valueAlt": {
+        "multiplier": "flat",
+        "flatMultiplier": 1,
+        "dice": "d6",
+        "bonus": null,
+        "custom": {
+         "enabled": false,
+         "formula": ""
+        }
+       },
+       "base": false,
+       "type": [
+        "physical"
+       ],
+       "includeBase": false,
+       "direct": true,
+       "itemId": null,
+       "fullRestore": false
+      },
+      "resources": {}
+     },
+     "target": {
+      "type": "any",
+      "amount": null
+     },
+     "effects": [],
+     "name": "Damage: 1 Hit Point",
+     "range": ""
+    }
+   },
+   "resource": null,
+   "domainTouched": null,
+   "effects": [],
+   "flags": {}
+  },
+  {
+   "name": "Blood Puppet",
+   "img": "modules/the-void-unofficial/images/blood-hunter-logo.webp",
+   "level": 2,
+   "recallCost": 2,
+   "type": "spell",
+   "description": "<p>Make a Spellcast Roll against an adversary within Close range. On a success, spend a Hope to do any of the following in the order you choose: </p><p>• You move the target up to Close range from their current position. To move the target into dangerous terrain, you must spend another Hope. </p><p>• The target makes a standard attack against another target of your choice within the attack's range.</p>",
+   "actions": {
+    "INI8ea0JSboC8kJ9": {
+     "type": "effect",
+     "_id": "INI8ea0JSboC8kJ9",
+     "systemPath": "actions",
+     "baseAction": false,
+     "description": "",
+     "chatDisplay": true,
+     "originItem": {
+      "type": "itemCollection"
+     },
+     "actionType": "action",
+     "triggers": [],
+     "areas": [],
+     "cost": [
+      {
+       "itemId": null,
+       "key": "hope",
+       "value": 1,
+       "scalable": false,
+       "step": null,
+       "consumeOnSuccess": false
+      }
+     ],
+     "uses": {
+      "value": null,
+      "max": "",
+      "recovery": null,
+      "consumeOnSuccess": false
+     },
+     "effects": [],
+     "target": {
+      "type": "any",
+      "amount": null
+     },
+     "name": "Spend Hope",
+     "range": ""
+    }
+   },
+   "resource": null,
+   "domainTouched": null,
+   "effects": [],
+   "flags": {}
+  },
+  {
+   "name": "Parasite of the Will",
+   "img": "modules/the-void-unofficial/images/blood-hunter-logo.webp",
+   "level": 5,
+   "recallCost": 2,
+   "type": "spell",
+   "description": "<p>Make a Spellcast Roll against an adversary within Close range. Once per rest on a success, mark a Hit Point to *Infect* the target with a tiny magical bloodworm. Presence Rolls against the *Infected* target have advantage. When the *Infected* target makes an attack roll, you can spend a Hope to give the roll disadvantage. The *Infected* condition lasts until you take a rest or you sacrifice the bloodworm to make the *Infected* target mark a Hit Point.</p>",
+   "actions": {
+    "M5Fa9evfmrKCQ92S": {
+     "type": "attack",
+     "_id": "M5Fa9evfmrKCQ92S",
+     "systemPath": "actions",
+     "baseAction": false,
+     "description": "",
+     "chatDisplay": true,
+     "originItem": {
+      "type": "itemCollection"
+     },
+     "actionType": "action",
+     "triggers": [],
+     "areas": [],
+     "cost": [],
+     "uses": {
+      "value": null,
+      "max": "",
+      "recovery": null,
+      "consumeOnSuccess": false
+     },
+     "damage": {
+      "main": null,
+      "resources": {}
+     },
+     "target": {
+      "type": "any",
+      "amount": null
+     },
+     "effects": [],
+     "roll": {
+      "type": "spellcast",
+      "trait": null,
+      "difficulty": null,
+      "bonus": null,
+      "advState": "neutral",
+      "diceRolling": {
+       "multiplier": "prof",
+       "flatMultiplier": 1,
+       "dice": "d6",
+       "compare": null,
+       "treshold": null
+      },
+      "useDefault": false
+     },
+     "save": {
+      "trait": null,
+      "difficulty": null,
+      "damageMod": "none"
+     },
+     "name": "",
+     "range": ""
+    },
+    "IKjN4qjj4hmWAqda": {
+     "type": "effect",
+     "_id": "IKjN4qjj4hmWAqda",
+     "systemPath": "actions",
+     "baseAction": false,
+     "description": "",
+     "chatDisplay": true,
+     "originItem": {
+      "type": "itemCollection"
+     },
+     "actionType": "action",
+     "triggers": [],
+     "areas": [],
+     "cost": [
+      {
+       "scalable": false,
+       "key": "hitPoints",
+       "value": 1,
+       "itemId": null,
+       "step": null,
+       "consumeOnSuccess": false
+      }
+     ],
+     "uses": {
+      "value": 0,
+      "max": "1",
+      "recovery": "shortRest",
+      "consumeOnSuccess": false
+     },
+     "effects": [],
+     "target": {
+      "type": "any",
+      "amount": null
+     },
+     "name": "Mark Hit Point",
+     "range": ""
+    },
+    "KfBemWsSYjcZN51G": {
+     "type": "effect",
+     "_id": "KfBemWsSYjcZN51G",
+     "systemPath": "actions",
+     "baseAction": false,
+     "description": "",
+     "chatDisplay": true,
+     "originItem": {
+      "type": "itemCollection"
+     },
+     "actionType": "action",
+     "triggers": [],
+     "areas": [],
+     "cost": [
+      {
+       "itemId": null,
+       "key": "hope",
+       "value": 1,
+       "scalable": false,
+       "step": null,
+       "consumeOnSuccess": false
+      }
+     ],
+     "uses": {
+      "value": null,
+      "max": "",
+      "recovery": null,
+      "consumeOnSuccess": false
+     },
+     "effects": [],
+     "target": {
+      "type": "any",
+      "amount": null
+     },
+     "name": "Spend Hope",
+     "range": ""
+    },
+    "2Q3KTKrGp6vW00tu": {
+     "type": "damage",
+     "_id": "2Q3KTKrGp6vW00tu",
+     "systemPath": "actions",
+     "baseAction": false,
+     "description": "",
+     "chatDisplay": true,
+     "originItem": {
+      "type": "itemCollection"
+     },
+     "actionType": "action",
+     "triggers": [],
+     "areas": [],
+     "cost": [],
+     "uses": {
+      "value": null,
+      "max": "",
+      "recovery": null,
+      "consumeOnSuccess": false
+     },
+     "damage": {
+      "main": {
+       "applyTo": "hitPoints",
+       "resultBased": false,
+       "value": {
+        "multiplier": "scale",
+        "flatMultiplier": 1,
+        "dice": "d6",
+        "bonus": null,
+        "custom": {
+         "enabled": true,
+         "formula": "1"
+        }
+       },
+       "valueAlt": {
+        "multiplier": "flat",
+        "flatMultiplier": 1,
+        "dice": "d6",
+        "bonus": null,
+        "custom": {
+         "enabled": false,
+         "formula": ""
+        }
+       },
+       "base": false,
+       "type": [
+        "physical"
+       ],
+       "includeBase": false,
+       "direct": false,
+       "itemId": null,
+       "fullRestore": false
+      },
+      "resources": {}
+     },
+     "target": {
+      "type": "any",
+      "amount": null
+     },
+     "effects": [],
+     "name": "Sacrifice the Bloodworm",
+     "range": ""
+    }
+   },
+   "resource": null,
+   "domainTouched": null,
+   "effects": [],
+   "flags": {}
+  },
+  {
+   "name": "Sanguine Feast",
+   "img": "modules/the-void-unofficial/images/blood-hunter-logo.webp",
+   "level": 10,
+   "recallCost": 2,
+   "type": "spell",
+   "description": "<p>Make a Spellcast Roll against an adversary within Close range. Once per rest on a success, roll a number of d6s equal to the number of Hit Points you have marked, and you can mark an additional Hit Point to reroll any number of these dice. The target marks a Hit Point for each result of 4 or higher.</p>",
+   "actions": {
+    "z5gmELwD8p5ckoRd": {
+     "type": "attack",
+     "_id": "z5gmELwD8p5ckoRd",
+     "systemPath": "actions",
+     "baseAction": false,
+     "description": "",
+     "chatDisplay": true,
+     "originItem": {
+      "type": "itemCollection"
+     },
+     "actionType": "action",
+     "triggers": [],
+     "areas": [],
+     "cost": [],
+     "uses": {
+      "value": 0,
+      "max": "1",
+      "recovery": "shortRest",
+      "consumeOnSuccess": false
+     },
+     "damage": {
+      "main": {
+       "applyTo": "hitPoints",
+       "resultBased": false,
+       "value": {
+        "multiplier": "flat",
+        "flatMultiplier": 1,
+        "dice": "d6",
+        "bonus": null,
+        "custom": {
+         "enabled": true,
+         "formula": "1d6"
+        }
+       },
+       "valueAlt": {
+        "multiplier": "flat",
+        "flatMultiplier": 1,
+        "dice": "d6",
+        "bonus": null,
+        "custom": {
+         "enabled": false,
+         "formula": ""
+        }
+       },
+       "base": false,
+       "type": [
+        "physical"
+       ],
+       "includeBase": false,
+       "direct": false,
+       "itemId": null,
+       "fullRestore": false
+      },
+      "resources": {}
+     },
+     "target": {
+      "type": "any",
+      "amount": null
+     },
+     "effects": [],
+     "roll": {
+      "type": "spellcast",
+      "trait": null,
+      "difficulty": null,
+      "bonus": null,
+      "advState": "neutral",
+      "diceRolling": {
+       "multiplier": "prof",
+       "flatMultiplier": 1,
+       "dice": "d6",
+       "compare": null,
+       "treshold": null
+      },
+      "useDefault": false
+     },
+     "save": {
+      "trait": null,
+      "difficulty": null,
+      "damageMod": "none"
+     },
+     "name": "",
+     "range": ""
+    },
+    "qnurmWPNb4rBEgj4": {
+     "type": "effect",
+     "_id": "qnurmWPNb4rBEgj4",
+     "systemPath": "actions",
+     "baseAction": false,
+     "description": "",
+     "chatDisplay": true,
+     "originItem": {
+      "type": "itemCollection"
+     },
+     "actionType": "action",
+     "triggers": [],
+     "areas": [],
+     "cost": [
+      {
+       "scalable": false,
+       "key": "hitPoints",
+       "value": 1,
+       "itemId": null,
+       "step": null,
+       "consumeOnSuccess": false
+      }
+     ],
+     "uses": {
+      "value": null,
+      "max": "",
+      "recovery": null,
+      "consumeOnSuccess": false
+     },
+     "effects": [],
+     "target": {
+      "type": "any",
+      "amount": null
+     },
+     "name": "Mark Hit Point",
+     "range": ""
+    }
+   },
+   "resource": null,
+   "domainTouched": null,
+   "effects": [],
+   "flags": {}
+  },
+  {
+   "name": "Power Through Pain",
+   "img": "modules/the-void-unofficial/images/blood-hunter-logo.webp",
+   "level": 1,
+   "recallCost": 1,
+   "type": "ability",
+   "description": "<p>When you mark a Hit Point, place a token on this card. On a successful attack, you can spend any number of tokens from this card to gain a [[/r 1d6]] damage bonus on the attack for each token spent. </p><p>This card can hold a maximum number of tokens equal to your Spellcast trait. Clear all tokens from this card when you take a long rest.</p>",
+   "actions": {
+    "lM3138p3FH8d5aEB": {
+     "type": "damage",
+     "_id": "lM3138p3FH8d5aEB",
+     "systemPath": "actions",
+     "baseAction": false,
+     "description": "",
+     "chatDisplay": true,
+     "originItem": {
+      "type": "itemCollection"
+     },
+     "actionType": "action",
+     "triggers": [],
+     "areas": [],
+     "cost": [
+      {
+       "scalable": false,
+       "key": "resource",
+       "value": 1,
+       "itemId": "nzz41ObX6ZxHIyZp",
+       "step": null,
+       "consumeOnSuccess": false
+      }
+     ],
+     "uses": {
+      "value": null,
+      "max": "",
+      "recovery": null,
+      "consumeOnSuccess": false
+     },
+     "damage": {
+      "main": {
+       "applyTo": "hitPoints",
+       "resultBased": false,
+       "value": {
+        "multiplier": "flat",
+        "flatMultiplier": 1,
+        "dice": "d6",
+        "bonus": null,
+        "custom": {
+         "enabled": false,
+         "formula": ""
+        }
+       },
+       "valueAlt": {
+        "multiplier": "flat",
+        "flatMultiplier": 1,
+        "dice": "d6",
+        "bonus": null,
+        "custom": {
+         "enabled": false,
+         "formula": ""
+        }
+       },
+       "base": false,
+       "type": [
+        "magical"
+       ],
+       "includeBase": false,
+       "direct": false,
+       "itemId": null,
+       "fullRestore": false
+      },
+      "resources": {}
+     },
+     "target": {
+      "type": "any",
+      "amount": null
+     },
+     "effects": [],
+     "name": "Use Token",
+     "range": ""
+    }
+   },
+   "resource": {
+    "type": "simple",
+    "value": 0,
+    "max": "2",
+    "recovery": null,
+    "progression": "increasing",
+    "dieFaces": "d4",
+    "icon": "",
+    "diceStates": {}
+   },
+   "domainTouched": null,
+   "effects": [],
+   "flags": {}
+  },
+  {
+   "name": "Blood Spike",
+   "img": "modules/the-void-unofficial/images/blood-hunter-logo.webp",
+   "level": 1,
+   "recallCost": 1,
+   "type": "spell",
+   "description": "<p>Make a Spellcast Roll against a target within Close range. On a success, spend a Hope to deal d8+2 magic damage to the target using your Proficiency, and the target marks a Stress. </p><p>If you have at least 3 Hit Points marked, the damage die is a d10 instead.</p>",
+   "actions": {
+    "MkY7QVWtxDD1I42P": {
+     "type": "attack",
+     "_id": "MkY7QVWtxDD1I42P",
+     "systemPath": "actions",
+     "baseAction": false,
+     "description": "",
+     "chatDisplay": true,
+     "originItem": {
+      "type": "itemCollection"
+     },
+     "actionType": "action",
+     "triggers": [],
+     "areas": [],
+     "cost": [],
+     "uses": {
+      "value": null,
+      "max": "",
+      "recovery": null,
+      "consumeOnSuccess": false
+     },
+     "damage": {
+      "main": {
+       "applyTo": "hitPoints",
+       "resultBased": false,
+       "value": {
+        "multiplier": "prof",
+        "flatMultiplier": 1,
+        "dice": "d8",
+        "bonus": 2,
+        "custom": {
+         "enabled": false,
+         "formula": ""
+        }
+       },
+       "valueAlt": {
+        "multiplier": "flat",
+        "flatMultiplier": 1,
+        "dice": "d6",
+        "bonus": null,
+        "custom": {
+         "enabled": false,
+         "formula": ""
+        }
+       },
+       "base": false,
+       "type": [
+        "magical"
+       ],
+       "includeBase": false,
+       "direct": false,
+       "itemId": null,
+       "fullRestore": false
+      },
+      "resources": {
+       "stress": {
+        "applyTo": "stress",
+        "resultBased": false,
+        "value": {
+         "multiplier": "flat",
+         "flatMultiplier": 1,
+         "dice": "d6",
+         "bonus": null,
+         "custom": {
+          "enabled": true,
+          "formula": "1"
+         }
+        },
+        "valueAlt": {
+         "multiplier": "flat",
+         "flatMultiplier": 1,
+         "dice": "d6",
+         "bonus": null,
+         "custom": {
+          "enabled": false,
+          "formula": ""
+         }
+        },
+        "base": false,
+        "itemId": null,
+        "fullRestore": false
+       }
+      }
+     },
+     "target": {
+      "type": "any",
+      "amount": null
+     },
+     "effects": [],
+     "roll": {
+      "type": "spellcast",
+      "trait": null,
+      "difficulty": null,
+      "bonus": null,
+      "advState": "neutral",
+      "diceRolling": {
+       "multiplier": "prof",
+       "flatMultiplier": 1,
+       "dice": "d6",
+       "compare": null,
+       "treshold": null
+      },
+      "useDefault": false
+     },
+     "save": {
+      "trait": null,
+      "difficulty": null,
+      "damageMod": "none"
+     },
+     "name": "Blood Spike d8",
+     "range": ""
+    },
+    "fUuvJhr38hVt54Gv": {
+     "type": "attack",
+     "_id": "fUuvJhr38hVt54Gv",
+     "systemPath": "actions",
+     "baseAction": false,
+     "description": "",
+     "chatDisplay": true,
+     "originItem": {
+      "type": "itemCollection"
+     },
+     "actionType": "action",
+     "triggers": [],
+     "areas": [],
+     "cost": [],
+     "uses": {
+      "value": null,
+      "max": "",
+      "recovery": null,
+      "consumeOnSuccess": false
+     },
+     "damage": {
+      "main": {
+       "applyTo": "hitPoints",
+       "resultBased": false,
+       "value": {
+        "multiplier": "prof",
+        "flatMultiplier": 1,
+        "dice": "d10",
+        "bonus": 2,
+        "custom": {
+         "enabled": false,
+         "formula": ""
+        }
+       },
+       "valueAlt": {
+        "multiplier": "flat",
+        "flatMultiplier": 1,
+        "dice": "d6",
+        "bonus": null,
+        "custom": {
+         "enabled": false,
+         "formula": ""
+        }
+       },
+       "base": false,
+       "type": [
+        "magical"
+       ],
+       "includeBase": false,
+       "direct": false,
+       "itemId": null,
+       "fullRestore": false
+      },
+      "resources": {
+       "stress": {
+        "applyTo": "stress",
+        "resultBased": false,
+        "value": {
+         "multiplier": "flat",
+         "flatMultiplier": 1,
+         "dice": "d6",
+         "bonus": null,
+         "custom": {
+          "enabled": true,
+          "formula": "1"
+         }
+        },
+        "valueAlt": {
+         "multiplier": "flat",
+         "flatMultiplier": 1,
+         "dice": "d6",
+         "bonus": null,
+         "custom": {
+          "enabled": false,
+          "formula": ""
+         }
+        },
+        "base": false,
+        "itemId": null,
+        "fullRestore": false
+       }
+      }
+     },
+     "target": {
+      "type": "any",
+      "amount": null
+     },
+     "effects": [],
+     "roll": {
+      "type": "spellcast",
+      "trait": null,
+      "difficulty": null,
+      "bonus": null,
+      "advState": "neutral",
+      "diceRolling": {
+       "multiplier": "prof",
+       "flatMultiplier": 1,
+       "dice": "d6",
+       "compare": null,
+       "treshold": null
+      },
+      "useDefault": false
+     },
+     "save": {
+      "trait": null,
+      "difficulty": null,
+      "damageMod": "none"
+     },
+     "name": "Blood Spike d10",
+     "range": ""
+    },
+    "AHWonr6ZMDeNkbsE": {
+     "type": "effect",
+     "_id": "AHWonr6ZMDeNkbsE",
+     "systemPath": "actions",
+     "baseAction": false,
+     "description": "",
+     "chatDisplay": true,
+     "originItem": {
+      "type": "itemCollection"
+     },
+     "actionType": "action",
+     "triggers": [],
+     "areas": [],
+     "cost": [
+      {
+       "itemId": null,
+       "key": "hope",
+       "value": 1,
+       "scalable": false,
+       "step": null,
+       "consumeOnSuccess": false
+      }
+     ],
+     "uses": {
+      "value": null,
+      "max": "",
+      "recovery": null,
+      "consumeOnSuccess": false
+     },
+     "effects": [],
+     "target": {
+      "type": "any",
+      "amount": null
+     },
+     "name": "Spend Hope",
+     "range": ""
+    }
+   },
+   "resource": null,
+   "domainTouched": null,
+   "effects": [],
+   "flags": {}
+  },
+  {
+   "name": "Viscous Form",
+   "img": "modules/the-void-unofficial/images/blood-hunter-logo.webp",
+   "level": 5,
+   "recallCost": 1,
+   "type": "spell",
+   "description": "<p>Mark a Stress to place a number of tokens equal to your Spellcast trait onto this card and transform into a pool of blood. Remove a token each time you make an action roll or take damage. You drop out of this form when you remove the last token on this card. While in blood form, you gain resistance to physical damage and can slither through any space a liquid can traverse.</p>",
+   "actions": {
+    "opSuhMUEgKebvxSa": {
+     "type": "effect",
+     "_id": "opSuhMUEgKebvxSa",
+     "systemPath": "actions",
+     "baseAction": false,
+     "description": "",
+     "chatDisplay": true,
+     "originItem": {
+      "type": "itemCollection"
+     },
+     "actionType": "action",
+     "triggers": [],
+     "areas": [],
+     "cost": [
+      {
+       "scalable": false,
+       "key": "stress",
+       "value": 1,
+       "itemId": null,
+       "step": null,
+       "consumeOnSuccess": false
+      }
+     ],
+     "uses": {
+      "value": null,
+      "max": "",
+      "recovery": null,
+      "consumeOnSuccess": false
+     },
+     "effects": [],
+     "target": {
+      "type": "any",
+      "amount": null
+     },
+     "name": "Mark Stress",
+     "range": ""
+    },
+    "z0fnjJ77hS6QRLKD": {
+     "type": "effect",
+     "_id": "z0fnjJ77hS6QRLKD",
+     "systemPath": "actions",
+     "baseAction": false,
+     "description": "",
+     "chatDisplay": true,
+     "originItem": {
+      "type": "itemCollection"
+     },
+     "actionType": "action",
+     "triggers": [],
+     "areas": [],
+     "cost": [
+      {
+       "scalable": false,
+       "key": "resource",
+       "value": 1,
+       "itemId": "rn3GjVDfghQUEJOK",
+       "step": null,
+       "consumeOnSuccess": false
+      }
+     ],
+     "uses": {
+      "value": null,
+      "max": "",
+      "recovery": null,
+      "consumeOnSuccess": false
+     },
+     "effects": [],
+     "target": {
+      "type": "any",
+      "amount": null
+     },
+     "name": "Spend Token",
+     "range": ""
+    }
+   },
+   "resource": {
+    "type": "simple",
+    "value": 0,
+    "max": "2",
+    "recovery": null,
+    "progression": "increasing",
+    "dieFaces": "d4",
+    "icon": "",
+    "diceStates": {}
+   },
+   "domainTouched": null,
+   "effects": [],
+   "flags": {}
+  },
+  {
+   "name": "Bleeding Tree",
+   "img": "modules/the-void-unofficial/images/blood-hunter-logo.webp",
+   "level": 7,
+   "recallCost": 2,
+   "type": "spell",
+   "description": "<p>Once per long rest, when an adversary within Close range is defeated, you can cause their body to erupt with a twisting, veiny tree that oozes life force. Place a number of tokens on this card equal to your Spellcast trait. A PC within Melee range of the tree can spend a token from this card to siphon life force from the tree and clear a Hit Point.</p>",
+   "actions": {
+    "GyCUWjaa1F6AHXQr": {
+     "type": "healing",
+     "_id": "GyCUWjaa1F6AHXQr",
+     "systemPath": "actions",
+     "baseAction": false,
+     "description": "",
+     "chatDisplay": true,
+     "originItem": {
+      "type": "itemCollection"
+     },
+     "actionType": "action",
+     "triggers": [],
+     "areas": [],
+     "cost": [
+      {
+       "scalable": false,
+       "key": "resource",
+       "value": 1,
+       "itemId": "u3njTc4TYB7sN9X4",
+       "step": null,
+       "consumeOnSuccess": false
+      }
+     ],
+     "uses": {
+      "value": null,
+      "max": "",
+      "recovery": null,
+      "consumeOnSuccess": false
+     },
+     "damage": {
+      "main": null,
+      "resources": {
+       "hitPoints": {
+        "applyTo": "hitPoints",
+        "resultBased": false,
+        "value": {
+         "multiplier": "flat",
+         "flatMultiplier": 1,
+         "dice": "d6",
+         "bonus": null,
+         "custom": {
+          "enabled": true,
+          "formula": "1"
+         }
+        },
+        "valueAlt": {
+         "multiplier": "flat",
+         "flatMultiplier": 1,
+         "dice": "d6",
+         "bonus": null,
+         "custom": {
+          "enabled": false,
+          "formula": ""
+         }
+        },
+        "base": false,
+        "itemId": null,
+        "fullRestore": false
+       }
+      }
+     },
+     "target": {
+      "type": "any",
+      "amount": null
+     },
+     "effects": [],
+     "roll": {
+      "type": null,
+      "trait": null,
+      "difficulty": null,
+      "bonus": null,
+      "advState": "neutral",
+      "diceRolling": {
+       "multiplier": "prof",
+       "flatMultiplier": 1,
+       "dice": "d6",
+       "compare": null,
+       "treshold": null
+      },
+      "useDefault": false
+     },
+     "name": "Healing",
+     "range": ""
+    },
+    "bGp37tyRrJKnkhiF": {
+     "type": "effect",
+     "_id": "bGp37tyRrJKnkhiF",
+     "systemPath": "actions",
+     "baseAction": false,
+     "description": "",
+     "chatDisplay": true,
+     "originItem": {
+      "type": "itemCollection"
+     },
+     "actionType": "action",
+     "triggers": [],
+     "areas": [],
+     "cost": [],
+     "uses": {
+      "value": 0,
+      "max": "1",
+      "recovery": "longRest",
+      "consumeOnSuccess": false
+     },
+     "effects": [],
+     "target": {
+      "type": "any",
+      "amount": null
+     },
+     "name": "Bleeding Tree",
+     "range": ""
+    }
+   },
+   "resource": {
+    "type": "simple",
+    "value": 0,
+    "max": "2",
+    "recovery": null,
+    "progression": "increasing",
+    "dieFaces": "d4",
+    "icon": "",
+    "diceStates": {}
+   },
+   "domainTouched": null,
+   "effects": [],
+   "flags": {}
+  },
+  {
+   "name": "Vampiric Strike",
+   "img": "modules/the-void-unofficial/images/blood-hunter-logo.webp",
+   "level": 7,
+   "recallCost": 2,
+   "type": "ability",
+   "description": "<p>When you deal Major or greater damage to an adversary within Close range, you can mark a Stress to clear a Hit Point.</p>",
+   "actions": {
+    "bCjyvTfqKoEDyUSV": {
+     "type": "healing",
+     "_id": "bCjyvTfqKoEDyUSV",
+     "systemPath": "actions",
+     "baseAction": false,
+     "description": "",
+     "chatDisplay": true,
+     "originItem": {
+      "type": "itemCollection"
+     },
+     "actionType": "action",
+     "triggers": [],
+     "areas": [],
+     "cost": [
+      {
+       "scalable": false,
+       "key": "stress",
+       "value": 1,
+       "itemId": null,
+       "step": null,
+       "consumeOnSuccess": false
+      }
+     ],
+     "uses": {
+      "value": null,
+      "max": "",
+      "recovery": null,
+      "consumeOnSuccess": false
+     },
+     "damage": {
+      "main": null,
+      "resources": {
+       "hitPoints": {
+        "applyTo": "hitPoints",
+        "resultBased": false,
+        "value": {
+         "multiplier": "flat",
+         "flatMultiplier": 1,
+         "dice": "d6",
+         "bonus": null,
+         "custom": {
+          "enabled": true,
+          "formula": "1"
+         }
+        },
+        "valueAlt": {
+         "multiplier": "flat",
+         "flatMultiplier": 1,
+         "dice": "d6",
+         "bonus": null,
+         "custom": {
+          "enabled": false,
+          "formula": ""
+         }
+        },
+        "base": false,
+        "itemId": null,
+        "fullRestore": false
+       }
+      }
+     },
+     "target": {
+      "type": "any",
+      "amount": null
+     },
+     "effects": [],
+     "roll": {
+      "type": null,
+      "trait": null,
+      "difficulty": null,
+      "bonus": null,
+      "advState": "neutral",
+      "diceRolling": {
+       "multiplier": "prof",
+       "flatMultiplier": 1,
+       "dice": "d6",
+       "compare": null,
+       "treshold": null
+      },
+      "useDefault": false
+     },
+     "name": "",
+     "range": ""
+    }
+   },
+   "resource": null,
+   "domainTouched": null,
+   "effects": [],
+   "flags": {}
+  },
+  {
+   "name": "Blood Bind",
+   "img": "modules/the-void-unofficial/images/blood-hunter-logo.webp",
+   "level": 6,
+   "recallCost": 1,
+   "type": "spell",
+   "description": "<p>Make a Spellcast Roll against an adversary within Close range. On a success, mark a Stress as you slow the target's vitality. The target is temporarily *Restrained* and *Vulnerable*. Each time the target is spotlighted while either of these conditions persists on them, the target marks a Stress.</p>",
+   "actions": {
+    "NtpoV0BGJ47mupxh": {
+     "type": "attack",
+     "_id": "NtpoV0BGJ47mupxh",
+     "systemPath": "actions",
+     "baseAction": false,
+     "description": "",
+     "chatDisplay": true,
+     "originItem": {
+      "type": "itemCollection"
+     },
+     "actionType": "action",
+     "triggers": [],
+     "areas": [],
+     "cost": [],
+     "uses": {
+      "value": null,
+      "max": "",
+      "recovery": null,
+      "consumeOnSuccess": false
+     },
+     "damage": {
+      "main": null,
+      "resources": {}
+     },
+     "target": {
+      "type": "any",
+      "amount": null
+     },
+     "effects": [
+      {
+       "_id": "hmkGm6vyoxa3hWwX",
+       "onSave": false
+      }
+     ],
+     "roll": {
+      "type": "spellcast",
+      "trait": null,
+      "difficulty": null,
+      "bonus": null,
+      "advState": "neutral",
+      "diceRolling": {
+       "multiplier": "prof",
+       "flatMultiplier": 1,
+       "dice": "d6",
+       "compare": null,
+       "treshold": null
+      },
+      "useDefault": false
+     },
+     "save": {
+      "trait": null,
+      "difficulty": null,
+      "damageMod": "none"
+     },
+     "name": "",
+     "range": ""
+    },
+    "viqrhMi8Ucd1yJhb": {
+     "type": "effect",
+     "_id": "viqrhMi8Ucd1yJhb",
+     "systemPath": "actions",
+     "baseAction": false,
+     "description": "",
+     "chatDisplay": true,
+     "originItem": {
+      "type": "itemCollection"
+     },
+     "actionType": "action",
+     "triggers": [],
+     "areas": [],
+     "cost": [
+      {
+       "scalable": false,
+       "key": "stress",
+       "value": 1,
+       "itemId": null,
+       "step": null,
+       "consumeOnSuccess": false
+      }
+     ],
+     "uses": {
+      "value": null,
+      "max": "",
+      "recovery": null,
+      "consumeOnSuccess": false
+     },
+     "effects": [],
+     "target": {
+      "type": "any",
+      "amount": null
+     },
+     "name": "Mark Stress",
+     "range": ""
+    },
+    "33MQoWyBvRuBPp33": {
+     "type": "damage",
+     "_id": "33MQoWyBvRuBPp33",
+     "systemPath": "actions",
+     "baseAction": false,
+     "description": "",
+     "chatDisplay": true,
+     "originItem": {
+      "type": "itemCollection"
+     },
+     "actionType": "action",
+     "triggers": [],
+     "areas": [],
+     "cost": [],
+     "uses": {
+      "value": null,
+      "max": "",
+      "recovery": null,
+      "consumeOnSuccess": false
+     },
+     "damage": {
+      "main": null,
+      "resources": {
+       "stress": {
+        "applyTo": "stress",
+        "resultBased": false,
+        "value": {
+         "multiplier": "flat",
+         "flatMultiplier": 1,
+         "dice": "d6",
+         "bonus": null,
+         "custom": {
+          "enabled": true,
+          "formula": "1"
+         }
+        },
+        "valueAlt": {
+         "multiplier": "flat",
+         "flatMultiplier": 1,
+         "dice": "d6",
+         "bonus": null,
+         "custom": {
+          "enabled": false,
+          "formula": ""
+         }
+        },
+        "base": false,
+        "itemId": null,
+        "fullRestore": false
+       }
+      }
+     },
+     "target": {
+      "type": "any",
+      "amount": null
+     },
+     "effects": [],
+     "name": "Damage: Stress",
+     "range": ""
+    }
+   },
+   "resource": null,
+   "domainTouched": null,
+   "effects": [
+    {
+     "name": "Blood Bind",
+     "disabled": false,
+     "img": "icons/magic/life/heart-cross-blue.webp",
+     "description": "<p>Blood Bind</p>",
+     "transfer": true,
+     "statuses": [
+      "restrain",
+      "vulnerable"
+     ],
+     "system": {
+      "changes": [],
+      "duration": {
+       "description": "",
+       "type": ""
+      },
+      "rangeDependence": null,
+      "stacking": null,
+      "targetDispositions": [],
+      "conditionals": []
+     },
+     "_id": "hmkGm6vyoxa3hWwX",
+     "type": "base",
+     "start": {
+      "time": 0,
+      "combat": null,
+      "combatant": null,
+      "initiative": null,
+      "round": null,
+      "turn": null
+     },
+     "duration": {
+      "value": null,
+      "units": "seconds",
+      "expiry": null,
+      "expired": false
+     },
+     "origin": null,
+     "tint": "#ffffff",
+     "showIcon": 1,
+     "folder": null,
+     "sort": 0,
+     "flags": {}
+    }
+   ],
+   "flags": {}
+  },
+  {
+   "name": "Burning Gore",
+   "img": "modules/the-void-unofficial/images/blood-hunter-logo.webp",
+   "level": 3,
+   "recallCost": 3,
+   "type": "spell",
+   "description": "<p>Make a Spellcast Roll (13). On a success, mark a Hit Point to inflame a group's lifeblood within Far range, making each target mark a Hit Point. If you have at least 3 Hit Points marked, each target marks 2 Hit Points instead.</p>",
+   "actions": {
+    "EHDYa35eLRAep8sj": {
+     "type": "attack",
+     "_id": "EHDYa35eLRAep8sj",
+     "systemPath": "actions",
+     "baseAction": false,
+     "description": "",
+     "chatDisplay": true,
+     "originItem": {
+      "type": "itemCollection"
+     },
+     "actionType": "action",
+     "triggers": [],
+     "areas": [],
+     "cost": [],
+     "uses": {
+      "value": null,
+      "max": "",
+      "recovery": null,
+      "consumeOnSuccess": false
+     },
+     "damage": {
+      "main": null,
+      "resources": {}
+     },
+     "target": {
+      "type": "any",
+      "amount": null
+     },
+     "effects": [],
+     "roll": {
+      "type": "spellcast",
+      "trait": null,
+      "difficulty": 13,
+      "bonus": null,
+      "advState": "neutral",
+      "diceRolling": {
+       "multiplier": "prof",
+       "flatMultiplier": 1,
+       "dice": "d6",
+       "compare": null,
+       "treshold": null
+      },
+      "useDefault": false
+     },
+     "save": {
+      "trait": null,
+      "difficulty": null,
+      "damageMod": "none"
+     },
+     "name": "Burning Gore",
+     "range": ""
+    }
+   },
+   "resource": null,
+   "domainTouched": null,
+   "effects": [],
+   "flags": {}
+  },
+  {
+   "name": "Palpitations",
+   "img": "modules/the-void-unofficial/images/blood-hunter-logo.webp",
+   "level": 2,
+   "recallCost": 2,
+   "type": "spell",
+   "description": "<p>When you or an ally makes an action roll to frighten or intimidate a creature within Close range, you can spend a Hope to give the roll advantage. On a success, the target marks a Stress. Additionally, once per long rest, you can spend a Hope to calm yourself or a willing creature within Close range, letting the target clear 2 Stress.</p>",
+   "actions": {
+    "uMQtojcQIYTjtA20": {
+     "type": "effect",
+     "_id": "uMQtojcQIYTjtA20",
+     "systemPath": "actions",
+     "baseAction": false,
+     "description": "",
+     "chatDisplay": true,
+     "originItem": {
+      "type": "itemCollection"
+     },
+     "actionType": "action",
+     "triggers": [],
+     "areas": [],
+     "cost": [
+      {
+       "itemId": null,
+       "key": "hope",
+       "value": 1,
+       "scalable": false,
+       "step": null,
+       "consumeOnSuccess": false
+      }
+     ],
+     "uses": {
+      "value": null,
+      "max": "",
+      "recovery": null,
+      "consumeOnSuccess": false
+     },
+     "effects": [],
+     "target": {
+      "type": "any",
+      "amount": null
+     },
+     "name": "Spend Hope",
+     "range": ""
+    },
+    "VJCrkMYvo4e7F7OT": {
+     "type": "damage",
+     "_id": "VJCrkMYvo4e7F7OT",
+     "systemPath": "actions",
+     "baseAction": false,
+     "description": "",
+     "chatDisplay": true,
+     "originItem": {
+      "type": "itemCollection"
+     },
+     "actionType": "action",
+     "triggers": [],
+     "areas": [],
+     "cost": [],
+     "uses": {
+      "value": null,
+      "max": "",
+      "recovery": null,
+      "consumeOnSuccess": false
+     },
+     "damage": {
+      "main": null,
+      "resources": {
+       "stress": {
+        "applyTo": "stress",
+        "resultBased": false,
+        "value": {
+         "multiplier": "flat",
+         "flatMultiplier": 1,
+         "dice": "d6",
+         "bonus": null,
+         "custom": {
+          "enabled": true,
+          "formula": "1"
+         }
+        },
+        "valueAlt": {
+         "multiplier": "flat",
+         "flatMultiplier": 1,
+         "dice": "d6",
+         "bonus": null,
+         "custom": {
+          "enabled": false,
+          "formula": ""
+         }
+        },
+        "base": false,
+        "itemId": null,
+        "fullRestore": false
+       }
+      }
+     },
+     "target": {
+      "type": "any",
+      "amount": null
+     },
+     "effects": [],
+     "name": "Damage: 1 Stress",
+     "range": ""
+    },
+    "6zTYdfMjobLPsqkx": {
+     "type": "healing",
+     "_id": "6zTYdfMjobLPsqkx",
+     "systemPath": "actions",
+     "baseAction": false,
+     "description": "",
+     "chatDisplay": true,
+     "originItem": {
+      "type": "itemCollection"
+     },
+     "actionType": "action",
+     "triggers": [],
+     "areas": [],
+     "cost": [],
+     "uses": {
+      "value": 0,
+      "max": "1",
+      "recovery": "longRest",
+      "consumeOnSuccess": false
+     },
+     "damage": {
+      "main": null,
+      "resources": {
+       "stress": {
+        "applyTo": "stress",
+        "resultBased": false,
+        "value": {
+         "multiplier": "flat",
+         "flatMultiplier": 1,
+         "dice": "d6",
+         "bonus": null,
+         "custom": {
+          "enabled": true,
+          "formula": "2"
+         }
+        },
+        "valueAlt": {
+         "multiplier": "flat",
+         "flatMultiplier": 1,
+         "dice": "d6",
+         "bonus": null,
+         "custom": {
+          "enabled": false,
+          "formula": ""
+         }
+        },
+        "base": false,
+        "itemId": null,
+        "fullRestore": false
+       }
+      }
+     },
+     "target": {
+      "type": "any",
+      "amount": null
+     },
+     "effects": [],
+     "roll": {
+      "type": null,
+      "trait": null,
+      "difficulty": null,
+      "bonus": null,
+      "advState": "neutral",
+      "diceRolling": {
+       "multiplier": "prof",
+       "flatMultiplier": 1,
+       "dice": "d6",
+       "compare": null,
+       "treshold": null
+      },
+      "useDefault": false
+     },
+     "name": "Clear 2 Stress",
+     "range": ""
+    }
+   },
+   "resource": null,
+   "domainTouched": null,
+   "effects": [],
+   "flags": {}
+  },
+  {
+   "name": "Scabrous Adamance",
+   "img": "modules/the-void-unofficial/images/blood-hunter-logo.webp",
+   "level": 10,
+   "recallCost": 1,
+   "type": "ability",
+   "description": "<p>Your wounds seal into armored scabs. When you mark 2 or more Hit Points from an attack, clear an Armor Slot.</p>",
+   "actions": {},
+   "resource": null,
+   "domainTouched": null,
+   "effects": [],
+   "flags": {}
+  }
+ ]
+}

@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.23.0
+- **Competências Redline e Blackwall**, com 21 cartas cada. Não pertencem a nenhuma classe: o acesso vem do cyberware (Motor de Overclock Vermelho, Kernel Berserker, Córtex Black ICE, Coprocessador Blackwall).
+- **Blackwall** copia a automação do **Dread** oficial, carta a carta, com os números do PDF: Drain Signal com d8 que limpa 2 PV, Blackwall Shroud com marcadores de Esperança, Corrupted Shell com +1 a cada 2 Estresse, Total System Crash com d20 pela Interface, e assim por diante. System Decay, Ghost Fog e Relic Edge ganham ações próprias.
+- **Redline** copia a automação do domínio **Blood** do The Void (Blood Spike, Grisly Harpoon, Blood Bind, Parasite of the Will…), ajustada ao PDF. As cartas sem equivalente usam ações no padrão oficial: Pain Conversion (+2 de dano por PV marcado), Redline-Synced (+1 de Evasão a cada 3 PV), Kill-Switch Overdrive (marca 1 a 3 PV e o alvo marca o dobro) e outras.
+- As cartas do Blood ficam salvas em `data/void-blood.json`, então o The Void não precisa estar instalado.
 ## v1.22.0
 - **Automação dos Movimentos de Edge**, com botões no card do chat como nos cards de ação do sistema:
   - **Get Them Out:** "Reduzir 1 PV marcado" e "Limpar Vulnerável/Imobilizado" no aliado alvo (ou no token selecionado).

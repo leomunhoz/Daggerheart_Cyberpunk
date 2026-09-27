@@ -1934,7 +1934,7 @@ function cloneOfficialCard(official, cardName, img, { actionNames = {}, effectNa
   const actions = foundry.utils.deepClone(src.system.actions ?? {});
   const multiple = Object.keys(actions).length > 1;
   for (const action of Object.values(actions)) {
-    action.name = actionNames[action.name] ?? (multiple ? OFFICIAL_ACTION_NAMES[action.name] ?? action.name : cardName);
+    action.name = actionNames[action.name] ?? (multiple ? OFFICIAL_ACTION_NAMES[action.name] ?? (action.name || cardName) : cardName);
     action.description = "";
     if (img) action.img = img;
   }
@@ -2089,6 +2089,359 @@ function setDamageType(actions, type) {
   }
 }
 
+// ---------- Redline e Blackwall (Competências sem classe; o acesso vem do cyberware) ----------
+// Blackwall é a releitura do Dread oficial, carta a carta (clone do compêndio do sistema, como o Network).
+// Redline vem do domínio Blood do The Void (conteúdo de playtest da Darrington Press), copiado do módulo
+// the-void-unofficial (GPL-3.0, github.com/brunocalado/the-void-unofficial) para data/void-blood.json:
+// a geração dos compêndios lê o arquivo, então o The Void não precisa estar instalado.
+// patch ajusta a cópia aos números do PDF; as ações já estão com os nomes finais (actionNames).
+const RB_TEXT = {
+  "Neurospike": { level: 1, recallCost: 1, type: "spell", description: "<p>Faça uma Rolagem de Interface contra um alvo dentro do alcance Distante. Em um sucesso, marque 1 Estresse para disparar no alvo um neurospike hostil, pulso de sobrecarga, sinal de rageware, exploit de editor de dor ou firmware de combate ilegal, causando d10 de dano techno usando a sua Proficiência. Num sucesso com Esperança, o alvo também marca 1 Estresse. Numa rolagem com Medo, você também precisa marcar 1 Estresse.</p>" },
+  "Last-Resort Chip": { level: 1, recallCost: 0, type: "spell", description: "<p>Marque 1 Ponto de Vida para criar um chip de último recurso, patch de override de emergência, chave de adrenalina, gatilho de sobrevivência ou ficha de biofeedback ilegal alimentada pelos seus próprios sistemas instáveis. Quem carregar ganha o seguinte benefício:</p><ul><li><p>Sempre que fosse marcar 2 ou mais PV, pode gastar 1 Esperança para reduzir em 1 os PV marcados.</p></li></ul><p>O chip queima se você não tiver PV marcados ou usar este protocolo de novo.</p>" },
+  "Pain Conversion": { level: 1, recallCost: 1, type: "ability", description: "<p>Se você tem pelo menos 1 PV marcado, ganha um bônus nas rolagens de dano igual ao dobro da quantidade de PV marcados. O seu editor de dor, motor adrenal, processador de ameaças ou software de agressão converte dano físico em rendimento de combate.</p>" },
+  "Aggression Feedback": { level: 2, recallCost: 1, type: "spell", description: "<p>Quando você causa dano a uma criatura, marque 1 Estresse para gravar o perfil de ameaça dela no seu sistema Redline. Até este feedback terminar, seus implantes de combate, processadores adrenais, editor de dor e software de agressão ficam fixados no alvo. Você sempre sabe a direção dele em relação a você. Além disso, cada vez que essa criatura causar dano a você ou a um aliado dentro do alcance Muito Próximo, o seu sistema Redline dispara um pico de feedback hostil de volta pelo link, forçando-a a marcar 1 Estresse. O feedback termina quando você usa este protocolo de novo.</p>" },
+  "Neurochemical Override": { level: 2, recallCost: 0, type: "spell", description: "<p>Faça uma Rolagem de Interface contra um alvo dentro do alcance Muito Próximo. Se usar este protocolo num aliado, role com vantagem. Em um sucesso, marque 1 Estresse e escolha um efeito:</p><ol><li><p>O alvo se acalma, estabilizado por sedativos ou regulação neural, e limpa 1 Estresse. Num sucesso com Esperança, limpa 2.</p></li><li><p>O alvo fica mais ansioso, sobrecarregado por adrenalina, químicos de pânico ou feedback hostil, e marca 1 Estresse. Num sucesso com Esperança, marca 2.</p></li></ol>" },
+  "Redline Detonation": { level: 3, recallCost: 2, type: "spell", description: "<p>Faça uma Rolagem de Interface (12). Em um sucesso, marque 1 PV enquanto força os seus sistemas Redline além dos limites seguros, despejando calor excedente, sobrecarga neural, feedback de agressão ou saída instável de cyberware num ponto dentro do alcance Distante. Um pulso violento de distorção térmica, choque de pressão, grito de sensor ou resíduo de overclock enche a área dentro do alcance Muito Próximo desse ponto. Cada alvo na área marca 1 PV. Num sucesso com Esperança, cada alvo marca 2 PV.</p>" },
+  "System Hijack": { level: 3, recallCost: 2, type: "spell", description: "<p>Faça uma Rolagem de Interface contra uma criatura dentro do alcance Distante. Em um sucesso, gaste 1 Esperança para sequestrar os músculos, cyberware, sistema nervoso ou resposta de dor do alvo numa breve explosão violenta. Você pode fazer o alvo se mover, atacar ou os dois; se fizer os dois, escolhe a ordem. Se fizer a criatura se mover, ela vai para um lugar que você escolher dentro do alcance Próximo dela. Se fizer a criatura atacar, faça uma Rolagem de Interface contra um alvo dentro do alcance Corpo a Corpo dela. Em um sucesso, cause d10 de dano físico usando a sua Proficiência.</p>" },
+  "Killhook": { level: 4, recallCost: 1, type: "spell", description: "<p>Você lança um killhook, espigão magnético, cabo de tendão, arpão de monofilamento, âncora de recuo ou gancho de combate num lugar ou criatura dentro do alcance Distante. Se o alvo for um lugar, faça uma Rolagem de Interface (13). Em um sucesso, marque 1 Estresse para se puxar até uma posição dentro do alcance Corpo a Corpo dele. Se o alvo for uma criatura, faça uma Rolagem de Interface contra ela. Em um sucesso, marque 1 Estresse para causar 3d8 de dano físico ao alvo. Depois, você puxa o alvo direto até você ou se puxa direto até ele, terminando dentro do alcance Corpo a Corpo.</p>" },
+  "Emergency Stim Share": { level: 4, recallCost: 1, type: "spell", description: "<p>Uma vez por descanso, marque 1 PV para inundar cada aliado dentro do alcance Próximo com drogas de combate, estabilizadores de trauma, estimulantes de emergência ou supressores de dor. Cada aliado afetado limpa 1 PV ou 1 Estresse. Você pode marcar 1 Estresse para esses aliados limparem um de cada.</p>" },
+  "Feedback Retaliation": { level: 5, recallCost: 1, type: "spell", description: "<p>Quando um ataque de uma criatura te faz marcar um ou mais PV, você pode fazer uma Rolagem de Reação usando o seu atributo de Interface contra a criatura. Em um sucesso, o seu sistema Redline converte o impacto num contragolpe hostil pelo firmware de combate, relés de choque, rageware ou implantes de feedback neural, forçando a criatura a marcar a mesma quantidade de PV que você marcou. Você não pode usar este protocolo de novo até terminar um descanso.</p>" },
+  "Cortical Splinter": { level: 5, recallCost: 1, type: "spell", description: "<p>Faça uma Rolagem de Interface contra uma criatura dentro do alcance Muito Distante. Em um sucesso, marque 1 PV para implantar um estilhaço cortical, spyware neural, pacote de biochip ou sinal de loop de dor que se enterra no sistema do alvo. Num sucesso com Esperança, o alvo não percebe o estilhaço. Você tem vantagem em Rolagens de Presença contra o alvo e, sempre que ele fizer uma rolagem, pode gastar 1 Esperança para dar desvantagem a ela. Você pode destruir o estilhaço para fazer o alvo marcar 1 PV.</p>" },
+  "Redline Ward": { level: 6, recallCost: 1, type: "spell", description: "<p>Marque 1 PV para criar uma Redline Ward ao seu redor no alcance Muito Próximo. Pode parecer uma névoa de vapor refrigerante, luzes de alerta, distorção de pressão, névoa de droga de combate, estática de sensor hostil ou saída instável de cyberware vazando no ar ao seu redor. Dentro da ala, você tem resistência a dano físico ou techno, à sua escolha ao ativar este protocolo. Os aliados dentro da ala também ganham esse benefício. A ala desaparece se você sair dela, marcar 2 ou mais PV ou usar este protocolo de novo.</p>" },
+  "Neuromuscular Lock": { level: 6, recallCost: 2, type: "spell", description: "<p>Faça uma Rolagem de Interface contra um alvo dentro do alcance Distante. Em um sucesso, marque 1 Estresse enquanto ataca os músculos, cyberware, nervos, pressão sanguínea ou controle motor do alvo. Ele fica temporariamente Imobilizado e temporariamente Vulnerável. Cada vez que o alvo receber o Holofote enquanto qualquer uma dessas condições persistir, ele sofre d10 de dano techno usando a sua Proficiência. O protocolo termina antes no alvo se você usá-lo de novo.</p>" },
+  "Redline-Synced": { level: 7, recallCost: 1, type: "ability", description: "<p>Quando 4 ou mais cartas de domínio do seu loadout forem da Competência Redline, ganhe o seguinte:</p><ul><li><p>Quando você sofre dano suficiente para marcar 2 ou mais Pontos de Vida, ganhe 1 Esperança.</p></li><li><p>Para cada 3 Pontos de Vida marcados, ganhe +1 de Evasão.</p></li></ul>" },
+  "Siphon Strike": { level: 7, recallCost: 2, type: "spell", description: "<p>Quando você acerta uma rolagem de ataque contra um adversário e o faz marcar 2 ou mais PV, pode gastar 1 Esperança para limpar 1 PV ou 1 Estresse. Isso pode ser o seu sistema adrenal disparando, o editor de dor estabilizando, o firmware de combate recompensando a violência, o seu corpo confundindo o impacto com recuperação por um instante ou se forçando a estabilizar na base da adrenalina.</p>" },
+  "Shared Overload": { level: 8, recallCost: 2, type: "spell", description: "<p>Gaste 1 Esperança para permitir que você e um aliado voluntário dentro do alcance Distante redistribuam os PV marcados entre os dois. Isso pode ser bombas de trauma ligadas, editores de dor compartilhados, troca de sangue de emergência, suporte de vida sincronizado, estresse de cyberware espelhado ou uma ponte neural perigosa que espalha o dano por dois sistemas instáveis. Você não pode ter esse aliado como alvo de Shared Overload de novo até terminar um descanso.</p>" },
+  "Adrenaline Stack": { level: 8, recallCost: 1, type: "ability", description: "<p>Os seus sistemas Redline se infiltraram na sua corrente sanguínea, aprimorando o corpo em momentos de urgência. Quando você rola com vantagem, usa um d8 em vez de um d6 como dado de vantagem, se tiver 1 ou mais PV marcados. Depois de fazer uma Rolagem de Força, Agilidade ou Acuidade, pode marcar 1 PV para rolar 1d8 e somar ao resultado.</p>" },
+  "Psycho Surge": { level: 9, recallCost: 2, type: "spell", description: "<p>Uma vez por descanso, gaste 1 Esperança para liberar ao seu redor uma onda violenta de adrenalina, ruído neural, instabilidade de rageware, implantes superaquecidos, falha do editor de dor e agressão à beira da ciberpsicose. Faça uma única Rolagem de Interface contra cada adversário dentro do alcance Próximo. Em um sucesso, o alvo marca 1 PV e 1 Estresse. Em uma falha, marca 1 Estresse. Cada aliado dentro do alcance Próximo marca 1 Estresse, mas limpa 1 PV.</p>" },
+  "System Rupture": { level: 9, recallCost: 1, type: "spell", description: "<p>Faça uma Rolagem de Interface contra uma criatura dentro do alcance Distante. Em um sucesso, marque 1 PV para marcar o alvo com um amplificador de trauma, exploit de ferida, feedback de instabilidade neural, pico de pressão ou marca de nanitos hostis. A marca dura até o mestre gastar 2 Medo para removê-la ou você sofrer dano Severo. Sempre que o alvo marcar PV enquanto a marca durar, você pode marcar 1 Estresse para fazê-lo marcar 1 PV adicional.</p>" },
+  "Refuse Shutdown": { level: 10, recallCost: 1, type: "ability", description: "<p>Quando você fosse marcar o seu último PV, gaste 1 Esperança para marcar 1 Estresse em vez disso. O seu coração reserva, estimulante de emergência, editor de dor, descarga adrenal ou implante de sobrevivência se recusa a deixar o seu corpo desligar.</p>" },
+  "Kill-Switch Overdrive": { level: 10, recallCost: 2, type: "spell", description: "<p>Faça uma Rolagem de Interface contra um adversário dentro do alcance Próximo. Em um sucesso, gaste 2 Esperança para marcar de 1 a 3 PV. O alvo marca o dobro dos Pontos de Vida que você marcou. Se isso fizer o alvo marcar o último PV dele, você pode limpar os PV que marcou para ativar este protocolo. Isso pode ser um golpe de overclock letal, execução de rageware, kill-switch neural, queima de cyberware, detonação adrenal ou uma pane de sistema à queima-roupa que converte o colapso do alvo na sua sobrevivência.</p>" },
+  "Corruption Spike": { level: 1, recallCost: 1, type: "spell", description: "<p>Faça uma Rolagem de Interface contra um alvo dentro do alcance Distante. Em um sucesso, o alvo sofre d6 de dano techno usando a sua Proficiência, enquanto um sinal corrompido, pacote de Black ICE ou daemon hostil rasga o sistema dele. Na próxima vez que o alvo causar dano, esse dano é reduzido em 1d6. Num sucesso com Medo, o alvo sofre d10 de dano techno usando a sua Proficiência em vez disso.</p>" },
+  "Dead Channel": { level: 1, recallCost: 0, type: "spell", description: "<p>Você deixa uma IA corrompida falar por um canal morto, alto-falante quebrado ou implante sequestrado para atormentar um alvo. Faça uma Rolagem de Interface contra uma criatura que você pode ver. Em um sucesso, ela marca 1 Estresse e fica temporariamente Vulnerável.</p>" },
+  "Blackwall Shroud": { level: 1, recallCost: 1, type: "spell", description: "<p>Faça uma Rolagem de Interface (10). Em um sucesso, gaste qualquer quantidade de Esperança e coloque a mesma quantidade de marcadores nesta carta, envolvendo-se em ruído de sensor, sombra digital, sobreposições corrompidas, IA assombrada ou distorção de sinal. Depois que uma rolagem de ataque é feita contra você, pode gastar qualquer quantidade de marcadores para ganhar +1 de Evasão por marcador contra esse ataque.</p>" },
+  "Backlash Daemon": { level: 2, recallCost: 2, type: "spell", description: "<p>Quando um aliado dentro do alcance Próximo sofre dano de um alvo que você pode ver, você pode fazer uma Rolagem de Reação contra esse alvo usando o seu atributo de Interface. Em um sucesso, marque 1 Estresse para liberar um daemon retaliatório, grito de sistema ou contragolpe invasivo de Black ICE, causando d6 de dano techno usando a sua Proficiência.</p>" },
+  "Drain Signal": { level: 2, recallCost: 1, type: "spell", description: "<p>Faça uma Rolagem de Interface contra um alvo dentro do alcance Distante. Em um sucesso, uma vez por descanso curto, o alvo sofre d8 de dano techno usando a sua Proficiência e você limpa 2 PV. Num sucesso com Medo, você limpa 3 PV. Isso pode ser drenar energia, roubar biofeedback, sugar carga de processador, se alimentar do pânico neural ou deixar um daemon extrair algo útil do alvo.</p>" },
+  "Panic Script": { level: 3, recallCost: 1, type: "spell", description: "<p>Faça uma Rolagem de Interface contra um alvo dentro do alcance Distante. Em um sucesso, o alvo marca 1d4 de Estresse enquanto você inunda o HUD, os sentidos, os implantes ou os sistemas dele com sinais corrompidos. Você pode fazer o alvo fugir um alcance para longe de você. Também pode gastar 1 Esperança para deixar o alvo temporariamente Vulnerável.</p>" },
+  "Neural Burden Sync": { level: 3, recallCost: 1, type: "spell", description: "<p>Uma vez por descanso, você pode redistribuir qualquer quantidade de PV marcados entre dois alvos voluntários que você pode tocar. Isso pode ser sincronizar dados proibidos da Blackwall, redistribuir a carga do sistema, descarregar um colapso neurológico ou dividir a dor entre dois corpos por biomonitores ligados.</p>" },
+  "System Decay": { level: 4, recallCost: 2, type: "spell", description: "<p>Faça uma Rolagem de Interface contra um alvo dentro do alcance Distante. Em um sucesso, gaste 1 Esperança para infectá-lo com firmware corrompido ou código obsoleto que o sistema dele não sabe mais processar. O alvo fica temporariamente <strong>Degraded</strong>. Enquanto Degraded, usa um d12 em vez de um d20 nas rolagens de ataque. Você só pode manter este protocolo em uma criatura por vez.</p>" },
+  "Daemon Proxy": { level: 4, recallCost: 2, type: "spell", description: "<p>Faça uma Rolagem de Interface contra um alvo dentro do alcance Distante. Em um sucesso, gaste 1 Esperança para invocar um daemon procurador, construto hostil, estilhaço de IA ou horror digital que ataca o alvo e causa d10 de dano techno usando a sua Proficiência. O alvo também faz uma Rolagem de Reação (12) para resistir à intrusão. Em uma falha, marca 1d4 de Estresse. Depois do ataque, o procurador se dissipa.</p>" },
+  "Ghost Fog": { level: 5, recallCost: 0, type: "spell", description: "<p>Faça uma Rolagem de Interface (13). Em um sucesso, gaste 1 Esperança para inundar a área ao seu redor com névoa fantasma: estática de sensor, névoa de chaff, luz corrompida, imagens residuais digitais ou projeções invasivas de mapeamento de rota. Você e quaisquer alvos dentro do alcance Próximo ficam momentaneamente incorpóreos para sistemas de segurança e barreiras automatizadas, podendo atravessar uma passagem selada que tenha um desvio físico ou digital plausível. O protocolo dura até vocês atravessarem a barreira.</p>" },
+  "Relic Edge": { level: 5, recallCost: 1, type: "spell", description: "<p>Gaste 1 Esperança para carregar a sua arma com uma rotina de combate da Blackwall até o seu próximo descanso. Quando atacar com essa arma, use o seu atributo de Interface em vez do atributo que ela normalmente pede. Em um sucesso, role uma quantidade de d8 igual ao Medo atual do mestre, até o seu nível, e cause esse dano techno enquanto o cyberware, o sistema nervoso ou a interface de armadura do alvo é aberto por código corrompido. Se tiver sucesso com Medo, o alvo também marca 1 Estresse.</p>" },
+  "Corrupted Protocol": { level: 6, recallCost: 2, type: "spell", description: "<p>Faça uma Rolagem de Interface contra todos os adversários dentro do alcance Próximo. Você pode gastar 1 Esperança por alvo contra o qual teve sucesso para forçá-lo a fazer uma Rolagem de Reação (14). Em uma falha, ele sofre 8d6+6 de dano techno, corrompido pelo protocolo de uma IA autodestrutiva. Em um sucesso, sofre metade do dano.</p>" },
+  "Tracewalk": { level: 6, recallCost: 0, type: "spell", description: "<p>Sempre que você causa dano techno a um alvo, pode marcar 1 Estresse para seguir o rastro imediatamente e se mover até o alcance Corpo a Corpo dessa criatura. Esse movimento ignora terreno difícil e interferência ambiental, mas precisa seguir uma rota física, digital ou tática plausível pela cena.</p>" },
+  "Blackwall-Synced": { level: 7, recallCost: 2, type: "ability", description: "<p>Quando 4 ou mais cartas de domínio do seu loadout forem da Competência Blackwall, ganhe o seguinte:</p><ul><li><p>Quando você tem sucesso com Medo, pode marcar 2 de Estresse para impedir o mestre de ganhar 1 Medo.</p></li><li><p>Uma vez por descanso curto, ao fazer uma rolagem de ação, você pode somar +1 à rolagem para cada Medo que o mestre tem.</p></li></ul>" },
+  "Blackwall Manifestation": { level: 7, recallCost: 2, type: "spell", description: "<p>Faça uma Rolagem de Interface (13). Em um sucesso, você força um fragmento da Blackwall a se manifestar entre dois pontos dentro do alcance Distante, como um muro digital corrompido transbordando para o espaço físico. Ele não aparece como um muro sólido, e sim como uma fratura violenta de estática, código hostil e corrupção de IA expressa pelo ambiente ao redor. Dura até você marcar o seu próximo PV. Qualquer criatura dentro do muro quando ele aparece, ou que passa por ele, marca 2 de Estresse e precisa ter sucesso numa Rolagem de Reação (16) ou fica Imobilizada.</p>" },
+  "Daemon Army": { level: 8, recallCost: 2, type: "spell", description: "<p>Faça uma Rolagem de Interface (14). Uma vez por descanso, em um sucesso, marque 1 Estresse para liberar oito fragmentos de IA daemon dentro do alcance Próximo, que se movem com você. Coloque um d8 nesta carta com o 8 para cima, representando o tamanho do seu exército de daemons. Sempre que causar dano a um alvo dentro do alcance Próximo, você pode diminuir esse valor em 1 para causar 1d8 de dano techno adicional. Quando sofrer dano, pode diminuir o valor em 1 para reduzir o dano em 1d8. Cada vez que o dado diminui, um daemon age por você e depois desaparece. Quando o valor do dado cairia abaixo de 1, devolva esta carta ao cofre.</p>" },
+  "Corrupted Shell": { level: 8, recallCost: 1, type: "spell", description: "<p>Você deixa a Blackwall reescrever parcialmente o seu corpo, armadura, implantes e sistema nervoso. Enquanto esta carta estiver ativa no seu loadout:</p><ul><li><p>Para cada 2 de Estresse marcados, aumente os seus limiares em +1.</p></li><li><p>Sempre que tiver sucesso com Medo numa rolagem de ação, pode gastar 1 Esperança para limpar um Espaço de Armadura.</p></li></ul>" },
+  "Total System Crash": { level: 9, recallCost: 2, type: "spell", description: "<p>Faça uma Rolagem de Interface contra um alvo dentro do alcance Distante. Em um sucesso, marque 3 de Estresse e role uma quantidade de d20 igual ao seu atributo de Interface, causando esse total de dano techno. Se o dano for suficiente para derrotar, desativar ou destruir o alvo, todos os adversários dentro do alcance Distante dele marcam 1 Estresse. Isso pode ser uma pane catastrófica de cyberware, alucinação em massa, cascata de comandos corrompidos, queimadura terminal de Black ICE ou rotina de execução de IA desgovernada.</p>" },
+  "Feed on Panic": { level: 9, recallCost: 0, type: "spell", description: "<p>Sempre que uma criatura dentro do alcance Próximo marca qualquer quantidade de Estresse ou sofre dano Severo, você pode gastar 1 Esperança para limpar 1 Estresse ou limpar 1 Medo que o mestre tem. Isso pode ser o seu sistema colhendo dados de pânico, convertendo sofrimento em poder de processamento, ou deixando algo além do muro se alimentar pela sua interface.</p>" },
+  "Invoke Shutdown": { level: 10, recallCost: 2, type: "spell", description: "<p>Quando você causa dano a uma criatura que tem todo o Estresse marcado, dobre o dano. Se isso a derrotar, desativar ou destruir, você limpa 1 Estresse. Se não, ela fica permanentemente Vulnerável. Isso pode ser um comando de morte, colapso de identidade, travamento total do sistema nervoso ou um sinal de desligamento que deixa o alvo comprometido para sempre.</p>" },
+  "Blackwall Host": { level: 10, recallCost: 1, type: "spell", description: "<p>Você pode marcar 1 Estresse para se tornar um <strong>Blackwall Host</strong>, deixando uma IA desgovernada, daemon corrompido, sistema militar perdido ou fragmento proibido da Blackwall pilotar parcialmente o seu corpo. Nessa forma, ganhe o seguinte:</p><ul><li><p>Todos os adversários dentro do alcance Próximo precisam gastar 1 Medo adicional ao usar uma feature de Medo.</p></li><li><p>Quando você derrota, desativa ou destrói uma criatura dentro do alcance Próximo, absorve a saída final dela e limpa 1 Ponto de Vida.</p></li><li><p>Você pode marcar 1 Estresse para se mover para qualquer lugar dentro do alcance Muito Distante, ignorando terreno difícil, segurança automatizada e obstáculos ambientais. Esse movimento não pode atravessar barreiras seladas ou espaços sem rota plausível.</p></li></ul><p>Toda vez que fizer uma rolagem de ação nessa forma, precisa gastar 1 Esperança. Se não puder, a brecha desmorona e você sai dessa forma.</p>" }
+};
+// (fxChange é declarado mais abaixo com const; aqui a lista é montada antes, então usa uma cópia.)
+const rbChange = (key, value, type = "add") => ({ key, type, value, priority: null, phase: "initial" });
+const rb = (name, extra = {}) => ({ name, ...RB_TEXT[name], ...extra });
+
+const cardAction = (c, name) => Object.values(c.actions).find(a => a.name === name);
+function dropCardActions(c, ...names) {
+  for (const [id, a] of Object.entries(c.actions)) if (names.includes(a.name)) delete c.actions[id];
+}
+const addCardActions = (c, ...actions) => Object.assign(c.actions, ...actions);
+const oneCost = (key, value, extra = {}) => ({ scalable: false, key, value, step: null, consumeOnSuccess: false, itemId: null, ...extra });
+const NO_USES = { value: null, max: null, recovery: null, consumeOnSuccess: false };
+// Dado de dano da parte principal. multiplier "prof" = "usando a sua Proficiência"; formula = fórmula livre.
+function setCardDamage(action, { count = 1, dice = "d6", bonus = null, multiplier = "flat", formula = null, type = null }) {
+  const part = action.damage.main;
+  part.value = { ...part.value, dice, bonus, multiplier, flatMultiplier: count, custom: formula ? { enabled: true, formula } : { enabled: false, formula: "" } };
+  if (type) part.type = [type];
+}
+// "O alvo marca N" / "limpa N" como dano/cura de recurso (padrão Enervating Blast / Savor the Anguish).
+function resourceCardAction({ name, resources, heal = false, cost = [], uses = null, target = null }) {
+  const [[id, base]] = Object.entries(featureAction({ name, uses }));
+  base.type = heal ? "healing" : "damage";
+  base.cost = cost;
+  base.target = target ?? { type: heal ? "self" : "any", amount: null };
+  base.damage = { main: null, resources: Object.fromEntries(Object.entries(resources).map(([k, f]) => [k, resourcePart(k, f)])) };
+  return { [id]: base };
+}
+// Dano sem rolagem de ataque (ex: dano extra de um efeito), com fórmula livre.
+function damageCardAction({ name, formula, type = "magical", cost = [] }) {
+  const [[id, base]] = Object.entries(featureAction({ name }));
+  const value = custom => ({ multiplier: "flat", flatMultiplier: 1, dice: "d6", bonus: null, custom });
+  base.type = "damage";
+  base.cost = cost;
+  base.target = { type: "any", amount: null };
+  base.damage = {
+    main: { applyTo: "hitPoints", resultBased: false, base: false, includeBase: false, direct: false, itemId: null, fullRestore: false, type: [type],
+      value: value({ enabled: true, formula }), valueAlt: value({ enabled: false, formula: "" }) },
+    resources: {}
+  };
+  return { [id]: base };
+}
+const HOPE = n => oneCost("hope", n);
+const STRESS = n => oneCost("stress", n);
+const HP = n => oneCost("hitPoints", n);
+
+const RB_FX = {
+  degraded: targetEffect({ name: "Degraded", img: CPR("status/black_lace"), description: "<p>Usa um d12 em vez de um d20 nas rolagens de ataque.</p>" }),
+  ghostFog: targetEffect({ name: "Ghost Fog", img: CPR("status/hidden"), description: "<p>Incorpóreo para sistemas de segurança e barreiras automatizadas até atravessar a barreira.</p>" }),
+  relicEdge: targetEffect({ name: "Relic Edge", img: CPR("weapons/Sword"), duration: "shortRest", description: "<p>Ataques com a arma carregada usam Interface e causam d8 de dano techno por Medo do mestre (até o seu nível).</p>" }),
+  manifestation: targetEffect({ name: "Imobilizado pela Blackwall", img: CPR("status/black_lace"), statuses: ["restrained"] }),
+  shutdown: targetEffect({ name: "Invoke Shutdown", img: CPR("status/emp"), statuses: ["vulnerable"], description: "<p>Vulnerável permanentemente.</p>" }),
+  wardPhysical: targetEffect({ name: "Redline Ward (físico)", img: CPR("upgrades/security_upgrade"), changes: [rbChange("system.resistance.physical.resistance", 1, "override")], description: "<p>Resistência a dano físico dentro da ala.</p>" }),
+  wardTechno: targetEffect({ name: "Redline Ward (techno)", img: CPR("upgrades/security_upgrade"), changes: [rbChange("system.resistance.magical.resistance", 1, "override")], description: "<p>Resistência a dano techno dentro da ala.</p>" }),
+  rupture: targetEffect({ name: "System Rupture", img: CPR("critical_injuries/body_critical_injury"), description: "<p>Sempre que marcar PV, quem aplicou pode marcar 1 Estresse para fazê-lo marcar 1 PV adicional. Dura até o mestre gastar 2 Medo ou quem aplicou sofrer dano Severo.</p>" })
+};
+
+const BLACKWALL_CARDS = [
+  rb("Corruption Spike", { img: CPR("programs/hellbolt"), clone: "Blighting Strike",
+    actionNames: { "Spellcast Roll": "Rolagem de Interface", "With Hope": "Dano (Esperança)", "With Fear": "Dano (Medo)" },
+    effectNames: { "Blightning Strike": "Corrompido" },
+    // PDF: d6/d10 sem +1; o próximo dano do alvo cai 1d6 (o Dread corta pela metade), então o efeito vira marcador.
+    patch: c => {
+      for (const n of ["Dano (Esperança)", "Dano (Medo)"]) cardAction(c, n).damage.main.value.bonus = null;
+      c.effects.forEach(e => { e.system.changes = []; e.description = "<p>O próximo dano que este alvo causar é reduzido em 1d6.</p>"; });
+    } }),
+  rb("Dead Channel", { img: CPR("gear/radio_communicator"), clone: "Voice of Dread", effectNames: { "Dreading": "Dead Channel" },
+    patch: c => c.effects.forEach(e => { e.statuses = ["vulnerable"]; }) }),
+  rb("Blackwall Shroud", { img: CPR("status/black_lace"), clone: "Umbral Veil",
+    actionNames: { "Mark Stress": "Gastar Esperança", "Spend Tokens": "Gastar Marcadores (+1 Evasão cada)" },
+    // PDF: Rolagem de Interface (10) e marcadores iguais à Esperança gasta (o Dread usa Estresse e o Medo do mestre).
+    patch: c => {
+      const a = cardAction(c, "Gastar Esperança");
+      a.cost = [oneCost("hope", 1, { scalable: true, step: 1 })];
+      a.uses = { ...NO_USES };
+      Object.values(a.damage.resources).forEach(p => { p.value.custom = { enabled: true, formula: "@scale" }; });
+      addCardActions(c, withActionId(buildCardAction({ difficulty: 10, targetType: "self", name: "Rolagem de Interface (10)" })));
+    } }),
+  rb("Backlash Daemon", { img: CPR("default/default-demon"), clone: "Hideous Retribution" }),
+  rb("Drain Signal", { img: CPR("programs/vampire"), clone: "Siphon Essence",
+    actionNames: { "Spellcast Roll": "Rolagem de Interface", "With Fear": "_drop" },
+    patch: c => {
+      const a = cardAction(c, "Rolagem de Interface");
+      setCardDamage(a, { multiplier: "prof", dice: "d8" });
+      a.range = "far";
+      a.uses.recovery = "shortRest";
+      dropCardActions(c, "_drop");
+      addCardActions(c,
+        resourceCardAction({ name: "Limpar 2 PV", heal: true, resources: { hitPoints: 2 } }),
+        resourceCardAction({ name: "Limpar 3 PV (Medo)", heal: true, resources: { hitPoints: 3 } }));
+    } }),
+  rb("Panic Script", { img: CPR("status/black_lace"), clone: "Terrify", effectNames: { "Terrified": "Panic Script" },
+    // PDF: o Vulnerável custa 1 Esperança (no Dread vem com o sucesso com Medo).
+    patch: c => {
+      const a = Object.values(c.actions)[0];
+      a.range = "far";
+      a.effects = [];
+      addCardActions(c, featureAction({ name: "Vulnerável (1 Esperança)", costs: [{ key: "hope", value: 1 }], effects: c.effects }));
+    } }),
+  rb("Neural Burden Sync", { img: CPR("netrunning/Control_Node.png"), clone: "Shared Trauma" }),
+  rb("System Decay", { img: CPR("programs/worm"), effects: [RB_FX.degraded],
+    actions: withActionId(buildCardAction({ range: "Far", cost: [HOPE(1)], effects: [RB_FX.degraded], img: CPR("programs/worm") })) }),
+  rb("Daemon Proxy", { img: CPR("netrunning/Imp.png"), clone: "Summon Horror",
+    patch: c => {
+      const a = Object.values(c.actions)[0];
+      a.cost = [HOPE(1)];
+      a.uses = { ...NO_USES };
+      setCardDamage(a, { multiplier: "prof", dice: "d10" });
+      addCardActions(c, resourceCardAction({ name: "Falhou na Reação: 1d4 Estresse", resources: { stress: "1d4" } }));
+    } }),
+  rb("Ghost Fog", { img: CPR("status/hidden"), effects: [RB_FX.ghostFog],
+    actions: withActionId(buildCardAction({ difficulty: 13, targetType: "friendly", cost: [HOPE(1)], effects: [RB_FX.ghostFog], name: "Rolagem de Interface (13)", img: CPR("status/hidden") })) }),
+  rb("Relic Edge", { img: CPR("weapons/Sword"), effects: [RB_FX.relicEdge],
+    actions: {
+      ...featureAction({ name: "Carregar a Arma", costs: [{ key: "hope", value: 1 }], effects: [RB_FX.relicEdge], target: { type: "self", amount: null } }),
+      ...damageCardAction({ name: "Dano da Rotina", formula: "(min(@fear, @levelData.level.current))d8" })
+    } }),
+  rb("Corrupted Protocol", { img: CPR("programs/nervescrub"), clone: "Darkfire",
+    // PDF: 8d6+6, Reação (14), sem limite por cena; a Rolagem de Interface vem antes.
+    patch: c => {
+      const a = Object.values(c.actions)[0];
+      setCardDamage(a, { count: 8, dice: "d6", bonus: 6 });
+      a.save.difficulty = 14;
+      a.uses = { ...NO_USES };
+      addCardActions(c, withActionId(buildCardAction({ range: "Close", name: "Rolagem de Interface" })));
+    } }),
+  rb("Tracewalk", { img: CPR("status/netrunning"), clone: "Jump Scare",
+    patch: c => { Object.values(c.actions).forEach(a => { a.effects = []; }); c.effects = []; } }),
+  rb("Blackwall-Synced", { img: CPR("default/default-blackice"), clone: "Dread-Touched", actionNames: { "Mark Stress": "Impedir 1 Medo (2 Estresse)", "Gain Bonus": "Bônus pelo Medo" } }),
+  rb("Blackwall Manifestation", { img: CPR("upgrades/dna_lock"), clone: "Wall of Hunger", effects: [],
+    actionNames: { "Spellcast Roll": "Rolagem de Interface (13)", "Wall Damage": "Atravessar o Muro" },
+    patch: c => {
+      const a = cardAction(c, "Rolagem de Interface (13)");
+      a.roll.difficulty = 13;
+      a.cost = [];
+      c.effects.push(RB_FX.manifestation);
+      addCardActions(c, featureAction({ name: "Falhou na Reação (16): Imobilizado", effects: [RB_FX.manifestation] }));
+    } }),
+  rb("Daemon Army", { img: CPR("netrunning/Imp.png"), clone: "Dark Army", damageType: "magical",
+    actionNames: { "Spellcast Roll": "Rolagem de Interface (14)", "Deal Damage": "Daemon Ataca (+1d8)" },
+    patch: c => {
+      cardAction(c, "Rolagem de Interface (14)").uses.recovery = "shortRest";
+      addCardActions(c, featureAction({ name: "Daemon Defende (−1d8 de dano)", costs: [{ key: "resource", value: 1 }] }));
+    } }),
+  rb("Corrupted Shell", { img: CPR("dlc/cyberware/dragoon-plating-metalgear"), clone: "Eldritch Flesh", effectNames: { "Eldritch Flesh": "Corrupted Shell" },
+    // PDF: +1 a cada 2 Estresse; limpar Armadura custa 1 Esperança no sucesso com Medo.
+    patch: c => {
+      c.effects.forEach(e => e.system.changes.forEach(ch => { ch.value = "floor(@system.resources.stress.value / 2)"; }));
+      Object.values(c.actions).forEach(a => { a.cost = [HOPE(1)]; a.name = "Limpar Armadura (Sucesso com Medo)"; });
+    } }),
+  rb("Total System Crash", { img: CPR("status/emp"), clone: "Damnation",
+    actionNames: { "Spellcast Roll": "Rolagem de Interface", "Stress Damage": "Adversários Marcam 1 Estresse" },
+    patch: c => {
+      const a = cardAction(c, "Rolagem de Interface");
+      a.cost = [STRESS(3)];
+      setCardDamage(a, { formula: "(@cast)d20" });
+    } }),
+  rb("Feed on Panic", { img: CPR("status/deathtrance"), clone: "Savor the Anguish",
+    patch: c => {
+      Object.values(c.actions).forEach(a => { a.cost = [HOPE(1)]; a.name = "Limpar 1 Estresse"; });
+      addCardActions(c, featureAction({ name: "Tirar 1 Medo do Mestre", costs: [{ key: "hope", value: 1 }] }));
+    } }),
+  rb("Invoke Shutdown", { img: CPR("status/emp"), clone: "Invoke Torment", effectNames: { "Invoke Torment": "Invoke Shutdown (dano dobrado)" },
+    patch: c => {
+      dropCardActions(c, "Invoke Shutdown");
+      c.effects.push(RB_FX.shutdown);
+      addCardActions(c,
+        resourceCardAction({ name: "Limpar 1 Estresse", heal: true, resources: { stress: 1 } }),
+        featureAction({ name: "Vulnerável Permanente", effects: [RB_FX.shutdown] }));
+    } }),
+  rb("Blackwall Host", { img: CPR("blackice/src/liche"), clone: "Avatar of Terror", effectNames: { "Avatar Of Terror": "Blackwall Host" },
+    // PDF: sem bônus de dano pelo Medo; ganha cura ao derrotar e deslocamento.
+    patch: c => {
+      c.effects.forEach(e => { e.system.changes = []; e.description = "<p>Adversários dentro do alcance Próximo gastam 1 Medo a mais nas features de Medo. Antes de cada rolagem de ação, gaste 1 Esperança ou saia da forma.</p>"; });
+      addCardActions(c,
+        resourceCardAction({ name: "Absorver: Limpar 1 PV", heal: true, resources: { hitPoints: 1 } }),
+        featureAction({ name: "Mover (1 Estresse)", costs: [{ key: "stress", value: 1 }] }));
+    } })
+];
+
+const REDLINE_CARDS = [
+  rb("Neurospike", { img: CPR("programs/hellbolt"), clone: "Blood Spike", source: "void",
+    actionNames: { "Blood Spike d8": "_drop", "Blood Spike d10": "Neurospike", "Spend Hope": "_drop" },
+    patch: c => {
+      dropCardActions(c, "_drop");
+      const a = cardAction(c, "Neurospike");
+      a.range = "far";
+      a.cost = [STRESS(1)];
+      setCardDamage(a, { multiplier: "prof", dice: "d10" });
+      addCardActions(c,
+        resourceCardAction({ name: "Alvo Marca 1 Estresse (Esperança)", resources: { stress: 1 } }),
+        featureAction({ name: "Rolou com Medo (1 Estresse)", costs: [{ key: "stress", value: 1 }] }));
+    } }),
+  rb("Last-Resort Chip", { img: CPR("gear/memory_chip"),
+    actions: {
+      ...featureAction({ name: "Criar o Chip (1 PV)", costs: [{ key: "hitPoints", value: 1 }] }),
+      ...featureAction({ name: "Reduzir 1 PV Marcado (1 Esperança)", costs: [{ key: "hope", value: 1 }] })
+    } }),
+  rb("Pain Conversion", { img: CPR("status/beserker"),
+    effects: [passiveEffect({ name: "Pain Conversion", img: CPR("status/beserker"), changes: [rbChange("system.bonuses.damage.bonus", "2 * @system.resources.hitPoints.value")] })] }),
+  rb("Aggression Feedback", { img: CPR("dlc/cyberware/kill_display"), clone: "Brand of Castigation", source: "void",
+    actionNames: { "Mark a Stress to *Brand*": "Gravar Perfil (1 Estresse)", "Damage: 2 Stress": "Feedback: Alvo Marca 1 Estresse" },
+    patch: c => { cardAction(c, "Feedback: Alvo Marca 1 Estresse").damage.resources.stress.value.custom.formula = "1"; } }),
+  rb("Neurochemical Override", { img: CPR("gear/air_hypo"),
+    actions: {
+      ...withActionId(buildCardAction({ range: "Very Close", targetType: "any", cost: [STRESS(1)], img: CPR("gear/air_hypo") })),
+      ...resourceCardAction({ name: "Acalmar: Limpa 1 Estresse", heal: true, resources: { stress: 1 }, target: { type: "any", amount: 1 } }),
+      ...resourceCardAction({ name: "Acalmar (Esperança): Limpa 2 Estresse", heal: true, resources: { stress: 2 }, target: { type: "any", amount: 1 } }),
+      ...resourceCardAction({ name: "Agitar: Marca 1 Estresse", resources: { stress: 1 } }),
+      ...resourceCardAction({ name: "Agitar (Esperança): Marca 2 Estresse", resources: { stress: 2 } })
+    } }),
+  rb("Redline Detonation", { img: CPR("status/on_fire_strong"), clone: "Burning Gore", source: "void",
+    patch: c => {
+      const a = Object.values(c.actions)[0];
+      a.name = "Rolagem de Interface (12)";
+      a.roll.difficulty = 12;
+      a.cost = [HP(1)];
+      addCardActions(c,
+        resourceCardAction({ name: "Cada Alvo Marca 1 PV", resources: { hitPoints: 1 } }),
+        resourceCardAction({ name: "Cada Alvo Marca 2 PV (Esperança)", resources: { hitPoints: 2 } }));
+    } }),
+  rb("System Hijack", { img: CPR("programs/nervescrub"), clone: "Blood Puppet", source: "void",
+    patch: c => {
+      Object.values(c.actions).forEach(a => { a.name = "Sequestrar (1 Esperança)"; });
+      addCardActions(c,
+        withActionId(buildCardAction({ range: "Far", name: "Rolagem de Interface" })),
+        withActionId(buildCardAction({ range: "Melee", name: "Ataque do Alvo (Interface)", damageFormula: { formula: "(@prof)d10", dmgType: "physical" } })));
+    } }),
+  rb("Killhook", { img: CPR("gear/grapple_gun"), clone: "Grisly Harpoon", source: "void",
+    actionNames: { "Harpoon": "Killhook", "Mark Stress": "Marcar Estresse", "Spellcast Roll (13)": "Rolagem de Interface (13)" },
+    patch: c => {
+      const a = cardAction(c, "Killhook");
+      a.range = "far";
+      setCardDamage(a, { count: 3, dice: "d8", type: "physical" });
+    } }),
+  rb("Emergency Stim Share", { img: CPR("gear/air_hypo"), clone: "Weave the Flesh", source: "void",
+    patch: c => {
+      const a = Object.values(c.actions)[0];
+      a.name = "Aliados Limpam 1 PV";
+      a.uses = { value: null, max: "1", recovery: "shortRest", consumeOnSuccess: false };
+      delete a.damage.resources.armor;
+      addCardActions(c,
+        resourceCardAction({ name: "Aliados Limpam 1 Estresse", heal: true, resources: { stress: 1 }, target: { type: "friendly", amount: null } }),
+        resourceCardAction({ name: "Limpar os Dois (1 Estresse)", heal: true, resources: { hitPoints: 1, stress: 1 }, cost: [STRESS(1)], target: { type: "friendly", amount: null } }));
+    } }),
+  rb("Feedback Retaliation", { img: CPR("cyberware/hardend_shielding"),
+    actions: withActionId(buildCardAction({ actionType: "reaction", name: "Rolagem de Reação (Interface)", uses: { max: 1, recovery: "shortRest" }, img: CPR("cyberware/hardend_shielding") })) }),
+  rb("Cortical Splinter", { img: CPR("gear/memory_chip"), clone: "Parasite of the Will", source: "void",
+    actionNames: { "": "Rolagem de Interface", "Mark Hit Point": "Implantar (1 PV)", "Spend Hope": "Desvantagem na Rolagem (1 Esperança)", "Sacrifice the Bloodworm": "Destruir o Estilhaço" },
+    patch: c => {
+      cardAction(c, "Rolagem de Interface").range = "veryFar";
+      cardAction(c, "Implantar (1 PV)").uses = { ...NO_USES };
+      cardAction(c, "Destruir o Estilhaço").damage = { main: null, resources: { hitPoints: resourcePart("hitPoints", 1) } };
+    } }),
+  rb("Redline Ward", { img: CPR("upgrades/security_upgrade"), effects: [RB_FX.wardPhysical, RB_FX.wardTechno],
+    actions: {
+      ...featureAction({ name: "Ala Física (1 PV)", costs: [{ key: "hitPoints", value: 1 }], effects: [RB_FX.wardPhysical], target: { type: "friendly", amount: null } }),
+      ...featureAction({ name: "Ala Techno (1 PV)", costs: [{ key: "hitPoints", value: 1 }], effects: [RB_FX.wardTechno], target: { type: "friendly", amount: null } })
+    } }),
+  rb("Neuromuscular Lock", { img: CPR("status/grappled"), clone: "Blood Bind", source: "void",
+    actionNames: { "": "Rolagem de Interface", "Mark Stress": "Marcar Estresse", "Damage: Stress": "_drop" }, effectNames: { "Blood Bind": "Neuromuscular Lock" },
+    // O efeito do The Void usa "restrain" (o id do sistema é "restrained") e transfer; aqui vai no alvo.
+    patch: c => {
+      c.effects.forEach(e => { e.statuses = ["restrained", "vulnerable"]; e.transfer = false; e.system.duration = { description: "", type: "temporary" }; });
+      cardAction(c, "Rolagem de Interface").range = "far";
+      dropCardActions(c, "_drop");
+      addCardActions(c, damageCardAction({ name: "Dano no Holofote", formula: "(@prof)d10" }));
+    } }),
+  rb("Redline-Synced", { img: CPR("status/surge"), domainTouched: 4,
+    effects: [passiveEffect({ name: "Redline-Synced", img: CPR("status/surge"), changes: [rbChange("system.evasion", "floor(@system.resources.hitPoints.value / 3)")] })],
+    actions: resourceCardAction({ name: "Ganhar 1 Esperança", heal: true, resources: { hope: 1 } }) }),
+  rb("Siphon Strike", { img: CPR("programs/vampire"), clone: "Vampiric Strike", source: "void",
+    patch: c => {
+      Object.values(c.actions).forEach(a => { a.name = "Limpar 1 PV"; a.cost = [HOPE(1)]; });
+      addCardActions(c, resourceCardAction({ name: "Limpar 1 Estresse", heal: true, resources: { stress: 1 }, cost: [HOPE(1)] }));
+    } }),
+  rb("Shared Overload", { img: CPR("netrunning/Control_Node.png"), clone: "Shared Trauma",
+    patch: c => Object.values(c.actions).forEach(a => { a.cost = [HOPE(1)]; a.range = "far"; }) }),
+  rb("Adrenaline Stack", { img: CPR("status/surge"),
+    // Dado de vantagem d8 com PV marcado: efeito desligado que o jogador liga (padrão Opportunist).
+    effects: [passiveEffect({ name: "Adrenaline Stack (d8 de vantagem)", img: CPR("status/surge"), disabled: true, changes: [rbChange("system.rules.roll.defaultAdvantageDice", 8, "override")] })],
+    actions: featureAction({ name: "+1d8 (1 PV)", costs: [{ key: "hitPoints", value: 1 }], dice: "1d8" }) }),
+  rb("Psycho Surge", { img: CPR("status/beserker_addiction"),
+    actions: {
+      ...withActionId(buildCardAction({ range: "Close", cost: [HOPE(1)], uses: { max: 1, recovery: "shortRest" }, img: CPR("status/beserker_addiction") })),
+      ...resourceCardAction({ name: "Sucesso: 1 PV e 1 Estresse", resources: { hitPoints: 1, stress: 1 } }),
+      ...resourceCardAction({ name: "Falha: 1 Estresse", resources: { stress: 1 } }),
+      ...resourceCardAction({ name: "Aliados Marcam 1 Estresse", resources: { stress: 1 }, target: { type: "friendly", amount: null } }),
+      ...resourceCardAction({ name: "Aliados Limpam 1 PV", heal: true, resources: { hitPoints: 1 }, target: { type: "friendly", amount: null } })
+    } }),
+  rb("System Rupture", { img: CPR("critical_injuries/body_critical_injury"), effects: [RB_FX.rupture],
+    actions: {
+      ...withActionId(buildCardAction({ range: "Far", cost: [HP(1)], effects: [RB_FX.rupture], img: CPR("critical_injuries/body_critical_injury") })),
+      ...resourceCardAction({ name: "+1 PV no Alvo (1 Estresse)", resources: { hitPoints: 1 }, cost: [STRESS(1)] })
+    } }),
+  rb("Refuse Shutdown", { img: CPR("status/deathtrance"),
+    actions: featureAction({ name: "Marcar Estresse em vez do Último PV", costs: [{ key: "hope", value: 1 }, { key: "stress", value: 1 }] }) }),
+  rb("Kill-Switch Overdrive", { img: CPR("status/beserker"),
+    actions: {
+      ...withActionId(buildCardAction({ range: "Close", cost: [HOPE(2)], img: CPR("status/beserker") })),
+      // Marca de 1 a 3 PV (custo escalável) e o alvo marca o dobro.
+      ...resourceCardAction({ name: "Marcar PV: Alvo Marca o Dobro", resources: { hitPoints: "2 * @scale" }, cost: [oneCost("hitPoints", 1, { scalable: true, step: 1 })] })
+    } })
+];
+
 // Competências (domínios homebrew). Para adicionar uma, registre aqui com as cartas dela;
 // importDomainCards registra o domínio no Homebrew do sistema e cria as cartas.
 const COMPETENCIES = [
@@ -2100,7 +2453,9 @@ const COMPETENCIES = [
   { id: "systems", label: "Systems", src: ICON("competency-systems"), cardImg: "systems/daggerheart/assets/icons/domains/domain-card/codex.png", cards: SYSTEMS_CARDS },
   { id: "influence", label: "Influence", src: ICON("competency-influence"), cardImg: "systems/daggerheart/assets/icons/domains/domain-card/grace.png", cards: INFLUENCE_CARDS },
   { id: "frontier", label: "Frontier", src: ICON("competency-frontier"), cardImg: "systems/daggerheart/assets/icons/domains/domain-card/sage.png", cards: FRONTIER_CARDS },
-  { id: "medtech", label: "Medtech", src: ICON("competency-medtech"), cardImg: "systems/daggerheart/assets/icons/domains/domain-card/splendor.png", cards: MEDTECH_CARDS }
+  { id: "medtech", label: "Medtech", src: ICON("competency-medtech"), cardImg: "systems/daggerheart/assets/icons/domains/domain-card/splendor.png", cards: MEDTECH_CARDS },
+  { id: "redline", label: "Redline", src: ICON("competency-redline"), cardImg: "systems/daggerheart/assets/icons/domains/domain-card/blade.png", cards: REDLINE_CARDS },
+  { id: "blackwall", label: "Blackwall", src: ICON("competency-blackwall"), cardImg: "systems/daggerheart/assets/icons/domains/domain-card/dread.png", cards: BLACKWALL_CARDS }
 ];
 
 // A chave em system.actions precisa ser igual ao _id da ação: o sistema grava usos e outros
@@ -2130,6 +2485,9 @@ async function importDomainCards() {
   await ensureHomebrewDomains();
   const pack = await getOrCreatePack("domains");
   const officialCards = await game.packs.get("daggerheart.domains")?.getDocuments() ?? [];
+  // Cartas do domínio Blood do The Void, salvas em data/void-blood.json (ver REDLINE_CARDS).
+  const voidCards = (await fetch(`modules/${MODULE_ID}/data/void-blood.json`).then(r => r.json()).catch(() => ({ cards: [] }))).cards
+    .map(v => ({ name: v.name, _source: { system: { actions: v.actions, resource: v.resource, domainTouched: v.domainTouched }, effects: v.effects } }));
   for (const competency of COMPETENCIES) {
     const top = await makeFolder(pack, competency.label);
     const levelFolders = {};
@@ -2139,7 +2497,7 @@ async function importDomainCards() {
     const data = competency.cards.map(card => {
       let c = card;
       if (card.clone) {
-        const official = officialCards.find(o => o.name === card.clone);
+        const official = (card.source === "void" ? voidCards : officialCards).find(o => o.name === card.clone);
         if (official) c = { ...card, ...cloneOfficialCard(official, card.name, card.img, card) };
         else console.warn(`Edgeheart | Carta oficial "${card.clone}" não encontrada; ${card.name} fica só com texto.`);
         if (card.damageType) setDamageType(c.actions, card.damageType);

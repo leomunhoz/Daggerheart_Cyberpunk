@@ -9,8 +9,9 @@ Os jogadores são mercenários na New Dark Age: pegam contratos sujos, instalam 
 ## O que tem
 
 - **9 classes e 18 subclasses:** Runner, Infiltrator, Solo, Augmented, Tech, Broker, Reclaimer, Trauma Doc e Warden.
-- **9 Competências (domínios), com 21 cartas cada:** Network, Ghost, Assault, Chrome, Systems, Influence, Frontier, Medtech e Aegis. As cartas copiam a automação das cartas oficiais equivalentes.
+- **11 Competências (domínios), com 21 cartas cada:** Network, Ghost, Assault, Chrome, Systems, Influence, Frontier, Medtech e Aegis, das classes, e Redline e Blackwall, acessadas pelo cyberware. As cartas copiam a automação das cartas oficiais equivalentes (o Redline copia o domínio Blood do The Void).
 - **Ficha Edgeheart:** Dado de Humanidade, Carga Cibernética, Ciberpsicose e a aba de Cyberware.
+- **Ficha da Crew:** Reputação, Edge e os Movimentos de Edge, no Grupo do próprio sistema.
 - **60 cyberwares**, que dão acesso a outras Competências.
 - **Trajetórias e Afiliações** no lugar de Ancestralidade e Comunidade.
 - **Armas e armaduras de Tier 1**, com ataque e dano automáticos.
@@ -39,8 +40,6 @@ Mundos que usavam a versão antiga (com a macro "Importar Edgeheart") recebem um
 
 ## Próximos passos
 
-- Competências Redline e Blackwall
-- Crew e Edge
 - Equipamento dos Tiers 2 a 4
 - Veículos e Eidolons
 - Versão bilíngue (PT/EN)
@@ -49,4 +48,4 @@ O histórico de versões está no [CHANGELOG](CHANGELOG.md).
 
 ## Créditos
 
-Conteúdo original do Edgeheart: **AllenDGray14**. Daggerheart é marca da Darrington Press. Projeto de fã, sem fins comerciais.
+Conteúdo original do Edgeheart: **AllenDGray14**. Daggerheart é marca da Darrington Press. As cartas de Redline copiam a automação do domínio Blood do módulo [The Void (unofficial)](https://github.com/brunocalado/the-void-unofficial), de Bruno Calado, sob licença GPL-3.0; o The Void é material de playtest da Darrington Press. Projeto de fã, sem fins comerciais.
