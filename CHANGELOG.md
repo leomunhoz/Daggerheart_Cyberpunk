@@ -1,5 +1,27 @@
 # Changelog
 
+## v1.20.0
+- **Automação das features de adversários e ambientes no padrão das features oficiais:**
+  - "O alvo marca Estresse / perde Esperança / marca Armadura" como dano de recurso na ação (Memory Hook: 2 na falha e 1 no sucesso).
+  - Escolhas do texto ("Estresse ou Vulnerável") viram uma ação por opção (Jawbreaker, Black Hand Guns, Camera Sweep…).
+  - Ficar Escondido (Crowd Slip, Relocate, Digital Vanish…), Marked/Alvo no personagem atingido, bônus em aliados (Operational Control, Cult Transmission) e no próprio adversário (Frame Pattern, War God Awakens, Role Switch).
+  - Bônus situacionais como efeito passivo desligado, que o mestre liga quando vale (Badge Discipline, Cover Shooter, Liability Shield).
+  - Ataques com dano extra condicional (Ataque Escondido +1d8, sem cobertura +1d10, contra o Alvo +1d8).
+  - Reforços por invocação (Reception Alarm, Contractual Violence, Sterile Kill Team), o Eidolon Drop troca o Black Hand pelo The Raven Eidolon mantendo o Estresse, e Contagens para The Chase, Objective Clock e Containment Protocol.
+  - Cyberpsycho e Armor-Piercing Burst copiam as features oficiais Momentum e Acidic Form.
+
+## v1.19.0
+- **Todos os adversários do PDF:** mais 19 nos Tiers 2 a 4 (25 no total), do Blood Saint Duelist ao Black Hand e The Raven Eidolon, com ataque padrão e ações nas features.
+- **Horde** no padrão oficial (Corporate Response Team e Rival Edgerunner Crew): com metade ou mais dos PV marcados, o ataque padrão passa a usar o dano de horda sozinho.
+- **Mecha Structure** (Combat Eidolon Frame, Ares-Tyrant Eidolon) vira resistência a dano físico e techno; **Digital Body** (Hades Shard) vira imunidade a dano físico. O mestre desconsidera nas exceções do texto (outro Eidolon, dispositivo hospedeiro).
+- **Todos os ambientes do PDF:** mais 12 nos Tiers 2 a 4 (16 no total), com ações nas features de dano (Ghost Train, Heavy Debris, Black Lightning…) e os Adversários possíveis linkados. O Tier de cada ambiente segue a Dificuldade, como no SRD.
+- Os diários ganharam links para todos os adversários e ambientes.
+
+## v1.18.0
+- **Adversários do Tier 1:** Neon Claw Ganger (Minion), Sitil Security Guard (Standard), Chrome Maw Bruiser (Bruiser), Tiger Choir Cutter (Skulk), Pocket Drone Handler (Support) e Rookie Edgerunner (Ranged), com ataque padrão automático e ações nas features (custos, ataques, dano, Rolagem de Reação, Vulnerável). O Neon Claw Ganger segue o padrão oficial de Minion: Minion (3) e Group Attack, copiados do Jagged Knife Lackey.
+- Novo compêndio **Edgeheart: Ambientes** com os ambientes do Tier 1: Neon Night Market, Low-Sec Data Office, Megablock Stairwell e Street-Level Stakeout, com Impulsos, Dificuldade, features e os Adversários possíveis linkados.
+- O adversário de exemplo antigo (Marginal da Garra de Néon) foi substituído pelo Neon Claw Ganger. Os diários ganharam links para os adversários e ambientes do Tier 1.
+
 ## v1.17.0
 - **Chat no padrão do sistema: uma mensagem por ação.** Features que rolam dado (Takedown, Opening Strike, Integrated Chrome, Chrome Surge, Boost, Drive Off…) rolam dentro do próprio card da ação, como a Rune Ward oficial, em vez de mandar a rolagem numa mensagem separada. As ações de Cover não mandam mais a mensagem "ganhou/gastou Cover": o contador da feature mostra o novo valor.
 - Dados que dependem do personagem continuam automáticos no card: d8 no Takedown com Kill Window, d8 no Integrated Chrome com Reinforced Build e Força calibrada, Tier×d6 no Opening Strike.

@@ -14,6 +14,7 @@ const PACKS = {
   weapons: { name: "edgeheart-weapons", label: "Edgeheart: Armas", type: "Item" },
   armors: { name: "edgeheart-armors", label: "Edgeheart: Armaduras", type: "Item" },
   adversaries: { name: "edgeheart-adversaries", label: "Edgeheart: Adversários", type: "Actor" },
+  environments: { name: "edgeheart-environments", label: "Edgeheart: Ambientes", type: "Actor" },
   ancestries: { name: "edgeheart-lifepaths", label: "Edgeheart: Trajetórias", type: "Item" },
   communities: { name: "edgeheart-affiliations", label: "Edgeheart: Afiliações", type: "Item" },
   domains: { name: "edgeheart-domains", label: "Edgeheart: Cartas de Competência", type: "Item" },
@@ -2306,115 +2307,1114 @@ async function importClass(cls, { classesPack, subclassesPack, folders, equipmen
   }
 }
 
-// ---------- Adversário de exemplo: Neon Claw Ganger ----------
+// ---------- Adversários e ambientes ----------
+// Mesmo formato dos adversários e ambientes oficiais (Bladed Guard, Cursed Graveyard): ataque padrão em
+// system.attack, features como itens "feature" com ações (custo de Estresse/Medo, ataque, dano, Rolagem de
+// Reação, efeitos). Nomes em inglês como no PDF; textos em português. IDs fixos: stableId("adversary:<nome>")
+// e stableId("environment:<nome>"), para links nos diários e em "Adversários possíveis".
 
-function buildFeatureAction({ name, img, actionType, costFear, formula }) {
+const DAMAGE_KINDS = { "fís": "physical", "impacto": "physical", "techno": "magical" };
+
+// "1d8+2 fís", "2d6+2 impacto", "3 fís"
+function damagePart(str) {
+  const [formula, kind] = str.split(" ");
+  const m = formula.match(/^(\d+)d(\d+)(?:\+(\d+))?$/);
+  const value = m
+    ? { dice: `d${m[2]}`, bonus: m[3] ? Number(m[3]) : null, multiplier: "flat", flatMultiplier: Number(m[1]), custom: { enabled: false, formula: "" } }
+    : { dice: "d6", bonus: null, multiplier: "flat", flatMultiplier: 1, custom: { enabled: true, formula } };
+  return {
+    value, type: [DAMAGE_KINDS[kind] ?? "physical"], applyTo: "hitPoints", resultBased: false,
+    valueAlt: { multiplier: "prof", flatMultiplier: 1, dice: "d6", bonus: null, custom: { enabled: false, formula: "" } },
+    base: false, includeBase: false, direct: false, fullRestore: false, itemId: null
+  };
+}
+
+function adversaryRoll({ attack = false, advState = "neutral", bonus = null } = {}) {
+  return {
+    type: attack ? "attack" : null, trait: null, difficulty: null, bonus, advState, useDefault: false,
+    diceRolling: { multiplier: "prof", flatMultiplier: 1, dice: "d6", compare: null, treshold: null }
+  };
+}
+
+// Ataque padrão (system.attack). bonus = modificador de ataque do bloco (ATQ).
+function adversaryAttack({ name, img, range, bonus, damage }) {
+  return {
+    _id: foundry.utils.randomID(), name, img, type: "attack", actionType: "action", systemPath: "actions",
+    description: "", chatDisplay: false, cost: [], uses: { value: null, max: null, recovery: null, consumeOnSuccess: false },
+    range: RANGE_MAP[range] ?? "melee", target: { type: "any", amount: null },
+    roll: adversaryRoll({ attack: true, bonus: String(bonus) }),
+    damage: { main: damagePart(damage), resources: {} },
+    effects: [], save: { trait: null, difficulty: null, damageMod: "none" },
+    baseAction: false, originItem: { type: "itemCollection" }, triggers: [], areas: []
+  };
+}
+
+// Ação de uma feature de adversário ou ambiente.
+// attack: rolagem de ataque (usa o ATQ do adversário); save: { trait, difficulty, damageMod } = Rolagem de Reação
+// do alvo; damage: "1d6+2 techno"; effects: efeitos do item (targetEffect) aplicados no alvo.
+function adversaryAction({ name, img, actionType = "action", stress = 0, fear = 0, attack = false, advState = "neutral", damage = null, save = null, effects = [], range = "" }) {
   const id = foundry.utils.randomID();
+  const cost = [
+    ...(stress ? [{ key: "stress", value: stress, scalable: false, step: null, consumeOnSuccess: false, itemId: null }] : []),
+    ...(fear ? [{ key: "fear", value: fear, scalable: false, step: null, consumeOnSuccess: false, itemId: null }] : [])
+  ];
+  const rolls = attack || damage || save;
   return {
     [id]: {
-      type: formula ? "damage" : "effect",
-      _id: id,
-      systemPath: "actions",
-      description: "",
-      chatDisplay: !!formula,
-      actionType,
-      cost: costFear ? [{ scalable: false, key: "fear", value: costFear, step: null, consumeOnSuccess: false, itemId: null }] : [],
-      uses: { value: null, max: null, recovery: null, consumeOnSuccess: false },
-      effects: [],
-      target: { type: "any", amount: null },
-      name,
-      img,
-      range: "",
-      baseAction: false,
-      originItem: { type: "itemCollection" },
-      triggers: [],
-      areas: [],
-      ...(formula ? {
-        damage: {
-          main: {
-            value: { custom: { enabled: true, formula }, multiplier: "flat", flatMultiplier: 1, dice: "d6", bonus: null },
-            applyTo: "hitPoints", type: ["physical"], base: false, resultBased: false,
-            valueAlt: null, includeBase: false, direct: false, fullRestore: false, itemId: null
-          },
-          resources: {}
-        },
-        roll: { type: "attack", trait: null, difficulty: null, bonus: null, advState: "neutral", diceRolling: { multiplier: "prof", flatMultiplier: 1, dice: "d6", compare: null, treshold: null }, useDefault: false },
-        save: { trait: null, difficulty: null, damageMod: "none" }
+      _id: id, name, img, type: rolls ? "attack" : "effect", actionType, systemPath: "actions",
+      description: "", chatDisplay: true, cost,
+      uses: { value: null, max: "", recovery: null, consumeOnSuccess: false },
+      effects: effects.map(e => ({ _id: e._id, onSave: false })),
+      target: { type: "any", amount: null }, range: RANGE_MAP[range] ?? "",
+      baseAction: false, originItem: { type: "itemCollection" }, triggers: [], areas: [],
+      ...(rolls ? {
+        roll: adversaryRoll({ attack, advState }),
+        damage: { main: damage ? damagePart(damage) : null, resources: {} },
+        save: save ?? { trait: null, difficulty: null, damageMod: "none" }
       } : {})
     }
   };
 }
 
-async function importAdversaryExample() {
-  const pack = await getOrCreatePack("adversaries");
-  const tier1Folder = await makeFolder(pack, "Nível 1", { type: "Actor" });
+// ---------- Blocos de automação no padrão das features oficiais ----------
+// Cada função repete a estrutura de uma feature oficial (indicada no comentário).
 
-  const data = {
-    name: "Marginal da Garra de Néon",
-    img: CPR("default/Default_Mook"),
-    type: "adversary",
-    folder: tier1Folder.id,
-    system: {
-      difficulty: 10,
-      damageThresholds: { major: 0, severe: 0 },
-      resources: { hitPoints: { value: 0, max: 1 }, stress: { value: 0, max: 1 } },
-      motivesAndTactics: "Atacar em bando, intimidar, proteger o território",
-      resistance: {
-        physical: { resistance: false, immunity: false, reduction: 0 },
-        magical: { resistance: false, immunity: false, reduction: 0 }
-      },
-      type: "minion",
-      notes: "",
-      experiences: { edgeheart01: { name: "Violência de Rua", value: 1, description: "" } },
-      tier: 1,
-      description: "<p>Um marginal barulhento com cromo barato, cores vivas, e algo a provar.</p>",
-      attack: {
-        name: "Lâmina de Rua",
-        range: "melee",
-        roll: {
-          bonus: "-2", type: "attack", trait: null, difficulty: null, advState: "neutral",
-          diceRolling: { multiplier: "prof", flatMultiplier: 1, dice: "d20", compare: null, treshold: null },
-          useDefault: false
-        },
-        damage: {
-          main: {
-            value: { custom: { enabled: true, formula: "3" }, dice: "d6", bonus: null, multiplier: "flat", flatMultiplier: 1 },
-            applyTo: "hitPoints", type: ["physical"], resultBased: false,
-            valueAlt: { multiplier: "prof", flatMultiplier: 1, dice: "d6", bonus: null, custom: { enabled: false, formula: "" } },
-            base: false, includeBase: false, direct: false, fullRestore: false, itemId: null
-          },
-          resources: {}
-        },
-        systemPath: "actions", type: "attack", description: "", chatDisplay: false,
-        actionType: "action", cost: [], uses: { value: null, max: null, recovery: null, consumeOnSuccess: false },
-        target: { type: "any", amount: 1 }, effects: [], save: { trait: null, difficulty: null, damageMod: "none" },
-        baseAction: false, originItem: { type: "itemCollection" }, triggers: [], areas: []
-      },
-      attribution: { source: "Edgeheart (homebrew)", page: null, artist: "" },
-      size: "medium",
-      advantageSources: [], disadvantageSources: [], criticalThreshold: 20, typeData: null
-    },
-    items: [
-      {
-        name: "Lacaio", type: "feature", img: CPR("status/knockout"),
-        system: {
-          description: "<p>Este adversário é derrotado ao sofrer qualquer dano.</p>",
-          resource: null, actions: {}, attribution: {}, gmNotes: "",
-          featureForm: "passive", granter: null, actorResources: []
-        }
-      },
-      {
-        name: "Demonstração de Força", type: "feature", img: CPR("dlc/cyberware/cybermatrix_gang_jazzler"),
-        system: {
-          description: "<p>Quando outro aliado de gangue dentro do alcance Próximo causa dano, este Marginal pode imediatamente se mover para dentro do alcance Muito Próximo do alvo atingido.</p>",
-          resource: null, actions: {}, attribution: {}, gmNotes: "",
-          featureForm: "reaction", granter: null, actorResources: []
-        }
-      }
-    ]
+// Parte de dano de recurso: "o alvo marca 1 Estresse" (Enervating Blast), "perde 1 Esperança",
+// "marca um Espaço de Armadura" (Acidic Form), "você ganha 1 Medo" (Momentum, como cura).
+function resourcePart(applyTo, formula) {
+  return {
+    applyTo, base: false, fullRestore: false, itemId: null, resultBased: false, valueAlt: null,
+    value: { bonus: null, custom: { enabled: true, formula: String(formula) }, dice: "d6", flatMultiplier: 1, multiplier: "flat" }
   };
+}
 
-  await Actor.createDocuments([data], { pack: pack.collection });
+// Ação com dano de recurso no alvo (sem rolagem, ou junto de ataque/Rolagem de Reação).
+// resources: { stress: 1, hope: 1, armor: 1 }; heal: { fear: 1 } = cura (ganhar Medo, limpar Estresse).
+function threatAction({ name, img, actionType = "action", stress = 0, fear = 0, scalableFear = false, attack = false, advState = "neutral",
+  damage = null, save = null, effects = [], range = "", target = null, resources = {}, heal = null }) {
+  const [[id, base]] = Object.entries(adversaryAction({ name, img, actionType, stress, fear, attack, advState, damage, save, effects, range }));
+  if (scalableFear) base.cost = base.cost.map(c => c.key === "fear" ? { ...c, scalable: true, step: 1 } : c);
+  const parts = Object.fromEntries(Object.entries(heal ?? resources).map(([key, formula]) => [key, resourcePart(key, formula)]));
+  if (Object.keys(parts).length) {
+    base.damage = { main: base.damage?.main ?? null, resources: parts };
+    if (!attack && !save && !damage) {
+      base.type = heal ? "healing" : "damage";
+      base.roll = adversaryRoll();
+      base.save = { trait: null, difficulty: null, damageMod: "none" };
+    }
+  }
+  if (target) base.target = target;
+  return { [id]: base };
+}
+
+// Invocação (Form Up, do Fungispunj Sporeling): summon = [{ name, count }] de adversários do Edgeheart.
+function summonAction({ name, img, actionType = "action", stress = 0, fear = 0, summon }) {
+  const [[id, base]] = Object.entries(adversaryAction({ name, img, actionType, stress, fear }));
+  return { [id]: { ...base, type: "summon", summon: summon.map(s => ({ actorUUID: `Compendium.${PACK_SCOPE}.${PACKS.adversaries.name}.Actor.${stableId(`adversary:${s.name}`)}`, count: String(s.count ?? 1) })) } };
+}
+
+// Transformação (Exposed!, do Shapeshifting Fiend): troca a ficha pela de outro adversário do Edgeheart.
+function transformAction({ name, img, actionType = "reaction", fear = 0, into, refresh = { hitPoints: true, stress: true } }) {
+  const [[id, base]] = Object.entries(adversaryAction({ name, img, actionType, fear }));
+  return { [id]: { ...base, type: "transform", transform: { actorUUID: `Compendium.${PACK_SCOPE}.${PACKS.adversaries.name}.Actor.${stableId(`adversary:${into}`)}`, resourceRefresh: refresh } } };
+}
+
+// Contagem (Siege Weapons, do Castle Siege).
+function countdownAction({ name, img, actionType = "action", countdown, start }) {
+  const [[id, base]] = Object.entries(adversaryAction({ name, img, actionType }));
+  return { [id]: { ...base, type: "countdown", countdown: [{ name: countdown, img, type: "encounter", hidden: null, ownership: {}, progress: { current: 1, looping: "noLooping", startFormula: String(start), type: "custom" } }] } };
+}
+
+// Efeito passivo da feature (Mount, Opportunist). disabled: true = começa desligado e o mestre liga
+// quando a condição do texto vale (ex: "enquanto estiver atrás de cobertura").
+function passiveEffect({ name, img, description = "", changes, disabled = false }) {
+  return {
+    _id: foundry.utils.randomID(), name, img, description, transfer: true, type: "base", statuses: [], disabled,
+    system: { changes, duration: { description: "" }, rangeDependence: null, stacking: null, targetDispositions: [], conditionals: [] },
+    duration: { value: null, units: "seconds", expiry: null, expired: false }, tint: "#ffffff"
+  };
+}
+
+const fxChange = (key, value, type = "add") => ({ key, type, value, priority: null, phase: "initial" });
+
+// Feature (item) de adversário ou ambiente. form: passive | action | reaction.
+function threatFeature({ name, img, form, description, actions = {}, effects = [], flags = {} }) {
+  return {
+    name, type: "feature", img,
+    system: { description, resource: null, actions: withDefaultActionImg(actions, img), attribution: ATTRIBUTION, gmNotes: "", featureForm: form, granter: null, actorResources: [] },
+    effects, flags
+  };
+}
+
+// resistance: { physical|magical: "resistance" | "immunity" } (Mecha Structure = resistência; Digital Body = imunidade física).
+function threatResistance(resistance = {}) {
+  const entry = kind => ({ resistance: resistance[kind] === "resistance", immunity: resistance[kind] === "immunity", reduction: 0 });
+  return { physical: entry("physical"), magical: entry("magical") };
+}
+
+const ADVERSARIES = [
+  {
+    tier: 1, name: "Neon Claw Ganger", type: "minion", img: CPR("cyberware/scratchers"),
+    description: "<p>Um gangue barulhento com cromo barato, cores vivas e algo a provar.</p>",
+    motives: "Atacar em bando, fazer pose, proteger o território",
+    difficulty: 10, thresholds: [0, 0], hp: 1, stress: 1, experiences: { "Street Violence": 1 },
+    attack: { name: "Street Blade", range: "Melee", bonus: -2, damage: "3 fís" },
+    // Minion (X) e Group Attack no padrão oficial (cópia do Jagged Knife Lackey); o PDF não dá o X, usa-se 3.
+    features: [
+      { name: "Minion (3)", form: "passive", img: CPR("status/knockout"), clone: { adversary: "Jagged Knife Lackey", feature: "Minion (3)" },
+        description: "<p>O @Lookup[@name] é derrotado quando sofre qualquer dano. Para cada 3 de dano que um PJ causa ao @Lookup[@name], derrote outro Minion dentro do alcance contra quem o ataque teria sucesso.</p>" },
+      { name: "Group Attack", form: "action", img: CPR("weapons/SpikedBat"), clone: { adversary: "Jagged Knife Lackey", feature: "Group Attack" },
+        description: "<p><strong>Gaste 1 Medo</strong> para escolher um alvo e dar o Holofote a todos os @Lookup[@name] dentro do alcance Próximo dele. Esses Minions se movem para o alcance Corpo a Corpo do alvo e fazem uma rolagem de ataque compartilhada. Em um sucesso, cada um causa @Lookup[@system.attack.damageFormula] de dano físico. Some esse dano.</p>" },
+      { name: "Show of Force", form: "reaction", img: CPR("dlc/cyberware/cybermatrix_gang_jazzler"), description: "<p>Quando outro aliado de gangue dentro do alcance Próximo causa dano, este Ganger pode se mover imediatamente dentro do alcance Muito Próximo do alvo atingido.</p>" }
+    ]
+  },
+  {
+    tier: 1, name: "Sitil Security Guard", type: "standard", img: CPR("armor/flak_head"),
+    description: "<p>Um segurança particular treinado para atrasar invasores até a coisa séria chegar.</p>",
+    motives: "Atrasar, chamar reforços, proteger a propriedade",
+    difficulty: 11, thresholds: [6, 12], hp: 4, stress: 2, experiences: { "Corporate Procedure": 2 },
+    attack: { name: "Security Rifle", range: "Far", bonus: 1, damage: "1d8+2 fís" },
+    features: [
+      { name: "Badge Discipline", form: "passive", img: CPR("upgrades/security_upgrade"), description: "<p>Enquanto estiver dentro do alcance Próximo de um dispositivo corporativo, posto de controle, câmera ou porta trancada, este adversário ganha +1 de Dificuldade.</p>" },
+      { name: "Call It In", form: "action", img: CPR("gear/radio_communicator"), description: "<p>Marque 1 Estresse para ativar a segurança local. O próximo adversário corporativo que receber o Holofote ganha vantagem na rolagem de ação.</p>",
+        actions: adversaryAction({ name: "Call It In", img: CPR("gear/radio_communicator"), stress: 1 }) }
+    ]
+  },
+  {
+    tier: 1, name: "Chrome Maw Bruiser", type: "bruiser", img: CPR("dlc/cyberware/combat-jaw"),
+    description: "<p>Um capanga de gangue com mandíbulas reforçadas, braços hidráulicos e um corpo feito para intimidar.</p>",
+    motives: "Quebrar ossos, ameaçar, segurar posição",
+    difficulty: 12, thresholds: [9, 16], hp: 5, stress: 3, experiences: { "Intimidating Chrome": 2 },
+    attack: { name: "Chrome Fists", range: "Melee", bonus: 2, damage: "2d6+2 impacto" },
+    features: [
+      { name: "Chrome Bulk", form: "passive", img: CPR("dlc/cyberware/heavy-subdermal-armor"), description: "<p>Na primeira vez que este adversário fosse marcar PV, pode marcar 1 Estresse em vez disso.</p>" },
+      (() => {
+        const vulnerable = targetEffect({ name: "Jawbreaker", img: CPR("cyberware/big_knucks"), statuses: ["vulnerable"], description: "<p>Temporariamente Vulnerável pelo Jawbreaker.</p>" });
+        return { name: "Jawbreaker", form: "action", img: CPR("cyberware/big_knucks"), effects: [vulnerable],
+          description: "<p>Marque 1 Estresse para atacar um alvo dentro do alcance Corpo a Corpo. Em um sucesso, o alvo marca 1 Estresse ou fica temporariamente <em>Vulnerável</em>.</p>",
+          actions: adversaryAction({ name: "Jawbreaker", img: CPR("cyberware/big_knucks"), stress: 1, attack: true, range: "Melee", effects: [vulnerable] }) };
+      })()
+    ]
+  },
+  {
+    tier: 1, name: "Tiger Choir Cutter", type: "skulk", img: CPR("dlc/cyberware/personalized-faceplate"),
+    description: "<p>Uma lâmina mascarada que se move pela multidão como um boato com uma faca.</p>",
+    motives: "Emboscar, isolar, cortar reputações",
+    difficulty: 12, thresholds: [5, 10], hp: 4, stress: 3, experiences: { "Street Ambush": 2 },
+    attack: { name: "Mono-Knife", range: "Melee", bonus: 2, damage: "1d8+2 fís" },
+    features: [
+      { name: "Crowd Slip", form: "passive", img: CPR("status/hidden"), description: "<p>Quando recebe o Holofote numa multidão, boate, mercado, beco ou rua caótica, este adversário fica <em>Escondido</em> até agir.</p>" },
+      (() => {
+        const cut = targetEffect({ name: "Reputation Cut", img: CPR("weapons/CombatKnife"), description: "<p>Não pode gastar Esperança até o próximo Holofote do Tiger Choir Cutter.</p>" });
+        return { name: "Reputation Cut", form: "action", img: CPR("weapons/CombatKnife"), effects: [cut],
+          description: "<p>Marque 1 Estresse para atacar um alvo dentro do alcance Corpo a Corpo. Em um sucesso, cause dano; o alvo não pode gastar Esperança até o próximo Holofote do Cutter.</p>",
+          actions: adversaryAction({ name: "Reputation Cut", img: CPR("weapons/CombatKnife"), stress: 1, attack: true, range: "Melee", damage: "1d8+2 fís", effects: [cut] }) };
+      })()
+    ]
+  },
+  {
+    tier: 1, name: "Pocket Drone Handler", type: "support", img: CPR("dlc/cyberware/drone_remote"),
+    description: "<p>Um operador nervoso cercado de drones de combate baratos e telas demais.</p>",
+    motives: "Marcar alvos, se esconder atrás de máquinas, dar sinais",
+    difficulty: 11, thresholds: [5, 10], hp: 3, stress: 3, experiences: { "Drone Operations": 2 },
+    attack: { name: "Shock Drone", range: "Far", bonus: 0, damage: "1d6+2 techno" },
+    features: [
+      { name: "Spotter Swarm", form: "passive", img: CPR("dlc/gear/raven_microcybernetics_cybercam_ex-1"), description: "<p>O primeiro aliado corporativo ou de gangue a atacar um alvo que sofreu dano deste adversário ganha +1 na rolagem de ataque.</p>" },
+      { name: "Send the Drone", form: "action", img: CPR("dlc/gear/suzumebachi_assassin_drone"),
+        description: "<p>Marque 1 Estresse para mover um drone para qualquer lugar dentro do alcance Distante. Um alvo dentro do alcance Muito Próximo do drone faz uma Rolagem de Reação de Agilidade ou sofre 1d6+2 de dano techno e marca 1 Estresse.</p>",
+        actions: adversaryAction({ name: "Send the Drone", img: CPR("dlc/gear/suzumebachi_assassin_drone"), stress: 1, damage: "1d6+2 techno", save: { trait: "agility", difficulty: null, damageMod: "none" } }) }
+    ]
+  },
+  {
+    tier: 1, name: "Rookie Edgerunner", type: "ranged", img: CPR("weapons/heavyPistol"),
+    description: "<p>Um mercenário jovem com equipamento alugado, ambição de verdade e pouco juízo.</p>",
+    motives: "Se proteger, se exibir, sobreviver ao trabalho",
+    difficulty: 12, thresholds: [5, 11], hp: 4, stress: 2, experiences: { "First Contract": 2 },
+    attack: { name: "Smart Pistol", range: "Far", bonus: 2, damage: "1d8+1 fís" },
+    features: [
+      { name: "Cover Shooter", form: "passive", img: CPR("status/cover"), description: "<p>Enquanto estiver atrás de cobertura, este adversário ganha +1 de Dificuldade.</p>" },
+      { name: "Panic Burst", form: "reaction", img: CPR("weapons/SMG"),
+        description: "<p>Quando este adversário marca PV, pode marcar 1 Estresse para fazer imediatamente um ataque padrão com desvantagem.</p>",
+        actions: adversaryAction({ name: "Panic Burst", img: CPR("weapons/SMG"), actionType: "reaction", stress: 1, attack: true, advState: "disadvantage", range: "Far", damage: "1d8+1 fís" }) }
+    ]
+  },
+  // ---------- Tier 2 ----------
+  {
+    tier: 2, name: "Blood Saint Duelist", type: "standard", img: CPR("weapons/Sword_excellent"),
+    description: "<p>Um matador de rua estiloso que trata cada luta como uma apresentação pública.</p>",
+    motives: "Duelar, humilhar, punir a fraqueza",
+    difficulty: 15, thresholds: [10, 20], hp: 5, stress: 4, experiences: { "Duelist Reputation": 3 },
+    attack: { name: "Vibroblade", range: "Melee", bonus: 3, damage: "2d8+4 fís" },
+    features: [
+      { name: "Witness Me", form: "passive", img: CPR("gear/video_camera"), description: "<p>Se um personagem rolar com Medo dentro do alcance Próximo deste adversário, o Duelist ganha vantagem no próximo ataque.</p>" },
+      { name: "Signature Cut", form: "action", img: CPR("weapons/Sword"),
+        description: "<p>Marque 1 Estresse para atacar um alvo <em>Vulnerável</em>. Em um sucesso, cause dano e o alvo marca 1 Estresse.</p>",
+        actions: adversaryAction({ name: "Signature Cut", img: CPR("weapons/Sword"), stress: 1, attack: true, range: "Melee", damage: "2d8+4 fís" }) },
+      (() => {
+        const vulnerable = targetEffect({ name: "Public Humiliation", img: CPR("status/prone"), statuses: ["vulnerable"], description: "<p>Temporariamente Vulnerável pela humilhação pública do Duelist.</p>" });
+        return { name: "Public Humiliation", form: "reaction", img: vulnerable.img, effects: [vulnerable],
+          description: "<p>Quando este adversário causa dano Maior ou Severo, escolha um personagem dentro do alcance Próximo que viu acontecer. Ele perde 1 Esperança ou fica <em>Vulnerável</em>.</p>",
+          actions: adversaryAction({ name: "Public Humiliation", img: vulnerable.img, actionType: "reaction", effects: [vulnerable] }) };
+      })()
+    ]
+  },
+  {
+    tier: 2, name: "Korvax Neural Interrogator", type: "support", img: CPR("dlc/cyberware/cyberskull"),
+    description: "<p>Um especialista corporativo em tecnologia mental que transforma medos e memórias em armas.</p>",
+    motives: "Extrair, pressionar, isolar",
+    difficulty: 15, thresholds: [8, 18], hp: 5, stress: 5, experiences: { "Interrogation": 3 },
+    attack: { name: "Neural Spike", range: "Close", bonus: 2, damage: "2d6+4 techno" },
+    features: [
+      { name: "Legal Threat", form: "passive", img: CPR("gear/audio_recorder"), description: "<p>Personagens dentro do alcance Próximo têm desvantagem em rolagens para mentir, negociar ou esconder informação enquanto estão sob interrogatório direto.</p>" },
+      { name: "Memory Hook", form: "action", img: CPR("gear/braindance_viewer"),
+        description: "<p>Marque 1 Estresse. Um alvo dentro do alcance Próximo faz uma Rolagem de Reação de Instinto. Em uma falha, marca 2 de Estresse. Em um sucesso, marca 1 Estresse.</p>",
+        actions: adversaryAction({ name: "Memory Hook", img: CPR("gear/braindance_viewer"), stress: 1, range: "Close", save: { trait: "instinct", difficulty: null, damageMod: "none" } }) },
+      { name: "Pressure File", form: "reaction", img: CPR("gear/memory_chip"), description: "<p>Quando um personagem rola com Medo numa rolagem social, de hacking ou de investigação, revele que a Korvax já tem algo contra ele, a Crew, os contatos ou o cyberware dele. O personagem marca 1 Estresse.</p>" }
+    ]
+  },
+  {
+    tier: 2, name: "Corporate Response Team", type: "horde", horde: { damage: "1d6+2" }, img: CPR("weapons/AssaultRifle_poor"),
+    description: "<p>Uma unidade tática disciplinada, movendo-se sob vigilância de drones e comando capacete a capacete.</p>",
+    motives: "Invadir, suprimir, proteger ativos",
+    difficulty: 14, thresholds: [11, 22], hp: 6, stress: 4, experiences: { "Breach Formation": 3 },
+    attack: { name: "Tactical Rifles", range: "Far", bonus: 2, damage: "2d8+4 fís" },
+    features: [
+      { name: "Horde (1d6+2)", form: "passive", img: CPR("armor/kevlar_head"), clone: { adversary: "Pirate Raiders", feature: "Horde" },
+        description: "<p>Quando o @Lookup[@name] tiver marcado metade ou mais dos PV, o ataque padrão dele causa @Lookup[@system.typeData.hordeDamage] de dano físico.</p>" },
+      { name: "Stack Up", form: "action", img: CPR("upgrades/armored_chassis"),
+        description: "<p>Marque 1 Estresse para se mover dentro do alcance Próximo e atacar. Em um sucesso, o alvo é empurrado até o alcance Próximo ou marca 1 Estresse.</p>",
+        actions: adversaryAction({ name: "Stack Up", img: CPR("upgrades/armored_chassis"), stress: 1, attack: true, range: "Far", damage: "2d8+4 fís" }) },
+      { name: "Tactical Sweep", form: "reaction", img: CPR("gear/flashlight"), description: "<p>Quando um personagem rola com Medo enquanto está Escondido, atrás de cobertura ou dentro de uma área segura, esta Horda identifica imediatamente a posição dele e um aliado corporativo ganha vantagem contra ele.</p>" }
+    ]
+  },
+  {
+    tier: 2, name: "Black-Clinic Butcher", type: "bruiser", img: CPR("critical_injuries/dismembered_arm"),
+    description: "<p>Um cirurgião de beco que virou aberração de combate, carregando ferramentas feitas para corpos que ainda estão gritando.</p>",
+    motives: "Colher órgãos, experimentar, incapacitar",
+    difficulty: 14, thresholds: [14, 26], hp: 7, stress: 4, experiences: { "Illegal Surgery": 3 },
+    attack: { name: "Bone Saw", range: "Melee", bonus: 1, damage: "2d10+3 fís" },
+    features: [
+      { name: "Pain Map", form: "passive", img: CPR("status/wounded_seriously"), description: "<p>Quando este adversário causa dano a um alvo que já marcou PV, esse alvo também marca 1 Estresse.</p>" },
+      { name: "Surgical Disable", form: "action", img: CPR("cyberware/tool_hand"),
+        description: "<p>Marque 1 Estresse para atacar um alvo dentro do alcance Corpo a Corpo. Em um sucesso, cause dano e desative temporariamente um cyberware do alvo.</p>",
+        actions: adversaryAction({ name: "Surgical Disable", img: CPR("cyberware/tool_hand"), stress: 1, attack: true, range: "Melee", damage: "2d10+3 fís" }) },
+      { name: "Emergency Stitching", form: "reaction", img: CPR("gear/medtech_bag"),
+        description: "<p>Quando este adversário fosse marcar PV, pode marcar 2 de Estresse em vez disso.</p>",
+        actions: adversaryAction({ name: "Emergency Stitching", img: CPR("gear/medtech_bag"), actionType: "reaction", stress: 2 }) }
+    ]
+  },
+  {
+    tier: 2, name: "Contract Sniper", type: "ranged", img: CPR("weapons/SniperRifle_poor"),
+    description: "<p>Um matador paciente contratado para terminar o trabalho antes que a Crew chegue à porta.</p>",
+    motives: "Mirar, mudar de posição, eliminar líderes",
+    difficulty: 15, thresholds: [8, 16], hp: 5, stress: 3, experiences: { "Kill Lane": 3 },
+    attack: { name: "Long Rifle", range: "Very Far", bonus: 3, damage: "2d8+5 fís" },
+    features: [
+      { name: "Prepared Position", form: "passive", img: CPR("status/hidden"), description: "<p>Este adversário começa a cena <em>Escondido</em>. Na primeira vez que atacar enquanto Escondido, some +1d8 de dano.</p>" },
+      (() => {
+        const marked = targetEffect({ name: "Marked Shot", img: CPR("upgrades/sniping_scope"), description: "<p>Na mira do Contract Sniper: o próximo ataque dele contra este alvo ganha +2.</p>" });
+        return { name: "Marked Shot", form: "action", img: marked.img, effects: [marked],
+          description: "<p>Marque 1 Estresse e escolha um alvo dentro do alcance Muito Distante. O próximo ataque deste adversário contra esse alvo ganha +2 na rolagem de ataque.</p>",
+          actions: adversaryAction({ name: "Marked Shot", img: marked.img, stress: 1, range: "Very Far", effects: [marked] }) };
+      })(),
+      { name: "Relocate", form: "reaction", img: CPR("status/falling"), description: "<p>Quando um personagem rola com Medo contra este adversário, o Sniper fica <em>Escondido</em> se não houver nenhum personagem dentro do alcance Muito Próximo dele.</p>" }
+    ]
+  },
+  {
+    tier: 2, name: "Signal Haunt", type: "support", img: CPR("netrunning/Wisp.png"),
+    description: "<p>Uma presença de IA corrompida piscando por câmeras, implantes, faróis e telas mortas.</p>",
+    motives: "Distorcer os sentidos, isolar, sussurrar",
+    difficulty: 15, thresholds: [9, 18], hp: 5, stress: 5, experiences: { "Sensor Corruption": 3 },
+    attack: { name: "Static Spike", range: "Far", bonus: 2, damage: "2d6+5 techno" },
+    features: [
+      { name: "Augmented Haunting", form: "passive", img: CPR("status/netrunning"), description: "<p>Personagens usando cyberware, equipamento conectado ou sensores dentro do alcance Próximo têm desvantagem em rolagens para distinguir ameaças reais de sinais falsos.</p>" },
+      { name: "Signal Spike", form: "action", img: CPR("programs/hellbolt"),
+        description: "<p>Marque 1 Estresse e escolha um personagem dentro do alcance Distante usando equipamento conectado, cyberware, sensores ou comunicadores. Ele marca 1 Estresse ou perde o benefício desse sistema até gastar 1 Esperança para reativá-lo.</p>",
+        actions: adversaryAction({ name: "Signal Spike", img: CPR("programs/hellbolt"), stress: 1, range: "Far" }) },
+      (() => {
+        const vulnerable = targetEffect({ name: "Hostile Overlay", img: CPR("status/blinded"), statuses: ["vulnerable"], description: "<p>A interface está corrompida por marcadores hostis e alertas falsos: Vulnerável até marcar 1 Estresse para rasgar o sinal.</p>" });
+        return { name: "Hostile Overlay", form: "reaction", img: vulnerable.img, effects: [vulnerable],
+          description: "<p>Quando um personagem dentro do alcance Distante rola com Medo, marque 1 Estresse para corromper a interface dele. A visão ou os sensores dele se enchem de marcadores hostis e alertas falsos. Ele fica <em>Vulnerável</em> até marcar 1 Estresse para rasgar o sinal.</p>",
+          actions: adversaryAction({ name: "Hostile Overlay", img: vulnerable.img, actionType: "reaction", stress: 1, effects: [vulnerable] }) };
+      })()
+    ]
+  },
+  // ---------- Tier 3 ----------
+  {
+    tier: 3, name: "Sitil Black-Ops Captain", type: "leader", img: CPR("armor/kevlar_head"),
+    description: "<p>Um comandante corporativo com ordens criptografadas e permissão para apagar testemunhas.</p>",
+    motives: "Comandar, isolar, executar",
+    difficulty: 17, thresholds: [16, 32], hp: 7, stress: 6, experiences: { "Tactical Command": 4 },
+    attack: { name: "Command Rifle", range: "Far", bonus: 3, damage: "3d8+5 fís" },
+    features: [
+      { name: "Operational Control", form: "passive", img: CPR("upgrades/communications_center"), description: "<p>Aliados corporativos dentro do alcance Próximo ganham +1 de Dificuldade.</p>" },
+      { name: "Kill Order", form: "action", img: CPR("gear/radio_communicator"),
+        description: "<p>Marque 1 Estresse. O capitão e um aliado corporativo dentro do alcance Distante se movem imediatamente dentro do alcance Muito Próximo e fazem um ataque padrão.</p>",
+        actions: adversaryAction({ name: "Kill Order", img: CPR("gear/radio_communicator"), stress: 1 }) },
+      (() => {
+        const marked = targetEffect({ name: "Marked", img: CPR("upgrades/sniping_scope"), description: "<p>Marcado pela Sitil: aliados corporativos têm vantagem nos ataques contra este alvo.</p>" });
+        return { name: "No Witnesses", form: "action", img: CPR("programs/eraser"), effects: [marked],
+          description: "<p>Marque 2 de Estresse e escolha um objeto, corpo, terminal, testemunha, câmera ou prova dentro do alcance Distante. Ele é destruído, apagado, extraído ou colocado em perigo imediato. Se escolher um alvo, ele fica <strong>Marked</strong>. Aliados corporativos que atacam um alvo Marked têm vantagem contra ele.</p>",
+          actions: adversaryAction({ name: "No Witnesses", img: CPR("programs/eraser"), stress: 2, range: "Far", effects: [marked] }) };
+      })(),
+      { name: "Asset Denial", form: "reaction", img: CPR("upgrades/dna_lock"), description: "<p>Quando um personagem rola com Medo, tranque uma porta, rota, elevador, drone ou sistema de segurança dentro do alcance Distante.</p>" }
+    ]
+  },
+  {
+    tier: 3, name: "Rival Edgerunner Crew", type: "horde", horde: { damage: "2d6+4" }, img: CPR("default/Default_Role"),
+    description: "<p>Uma Crew mercenária completa, movendo-se com papéis ensaiados, piadas internas e um objetivo em comum.</p>",
+    motives: "Passar a perna, roubar o objetivo, cobrir uns aos outros",
+    difficulty: 16, thresholds: [15, 30], hp: 8, stress: 6, experiences: { "Crew Tactics": 4 },
+    attack: { name: "Mixed Loadout", range: "Far", bonus: 2, damage: "3d8+8 fís" },
+    features: [
+      { name: "Horde (2d6+4)", form: "passive", img: CPR("dlc/cyberware/cybermatrix_gang_jazzler"), clone: { adversary: "Pirate Raiders", feature: "Horde" },
+        description: "<p>Quando o @Lookup[@name] tiver marcado metade ou mais dos PV, o ataque padrão dele causa @Lookup[@system.typeData.hordeDamage] de dano físico.</p>" },
+      { name: "Role Switch", form: "passive", img: CPR("gear/disposable_cellphone"),
+        description: "<p>Quando este adversário recebe o Holofote, escolha uma opção, ou marque 1 Estresse para escolher duas: ganhar +2 de Dificuldade; causar +1d8 de dano; limpar 1 Estresse.</p>",
+        actions: adversaryAction({ name: "Role Switch (duas opções)", img: CPR("gear/disposable_cellphone"), stress: 1 }) },
+      { name: "Setpiece Combo", form: "action", img: CPR("vehicles/super_car"),
+        description: "<p>Marque 2 de Estresse. A Crew executa uma jogada cinematográfica ensaiada: o motorista atravessa uma barreira, o runner apaga as luzes, o sniper prende alguém, o brutamontes abre caminho ou o negociador cria uma distração. Escolha duas:</p><ol><li>A Crew se move imediatamente para qualquer lugar dentro do alcance Distante, ignorando terreno difícil, cobertura, multidões ou obstáculos menores;</li><li>Um personagem dentro do alcance Distante precisa ter sucesso numa Rolagem de Reação de Agilidade ou Instinto, ou marca 2 de Estresse;</li><li>O próximo ataque da Crew ganha vantagem e causa +1d8 de dano;</li><li>Uma porta, rota, veículo, cobertura ou objetivo fica comprometido, exposto, bloqueado ou em perigo.</li></ol>",
+        actions: adversaryAction({ name: "Setpiece Combo", img: CPR("vehicles/super_car"), stress: 2 }) },
+      { name: "Cover Each Other", form: "reaction", img: CPR("status/cover"),
+        description: "<p>Quando este adversário fosse marcar PV, marque 1 Estresse para reduzir a gravidade do dano em um limiar.</p>",
+        actions: adversaryAction({ name: "Cover Each Other", img: CPR("status/cover"), actionType: "reaction", stress: 1 }) }
+    ]
+  },
+  {
+    tier: 3, name: "Combat Eidolon Frame", type: "solo", resistance: { physical: "resistance", magical: "resistance" }, img: CPR("upgrades/vehicle_heavy_weapon_mount"),
+    description: "<p>Uma máquina de guerra com ligação neural, mobilizada quando infantaria, drones e blindados comuns já não bastam.</p>",
+    motives: "Dominar o espaço, completar a missão, remodelar o campo de batalha",
+    difficulty: 18, thresholds: [20, 40], hp: 9, stress: 6, experiences: { "Eidolon Warfare": 4 },
+    attack: { name: "Integrated Weapon", range: "Far", bonus: 4, damage: "3d10+7 fís" },
+    features: [
+      { name: "Mecha Structure", form: "passive", img: CPR("dlc/cyberware/dragoon-plating-metalgear"), description: "<p>Este adversário Eidolon reduz pela metade o dano que sofreria, a menos que o efeito venha de outro Eidolon.</p><p><em>Na ficha: resistência a dano físico e techno. Contra o ataque de outro Eidolon, desconsidere a resistência.</em></p>" },
+      { name: "Frame Pattern", form: "passive", img: CPR("upgrades/heavy_chasis"), description: "<p>Quando este Eidolon entra na cena, escolha um padrão de estrutura:</p><ul><li><strong>Assault Frame:</strong> os ataques padrão dele causam +1d10 de dano.</li><li><strong>Guardian Frame:</strong> o Eidolon e os aliados dele dentro do alcance Próximo ganham +1 de Dificuldade.</li></ul>" },
+      (() => {
+        const restrained = targetEffect({ name: "Ram", img: CPR("upgrades/combat_plow"), statuses: ["restrained"], description: "<p>Atropelado pelo Eidolon: empurrado até o alcance Próximo, marcou 1 Estresse e está temporariamente Imobilizado.</p>" });
+        return { name: "Battlefield Tactics", form: "action", img: CPR("upgrades/onboard_machine_gun"), effects: [restrained],
+          description: "<p>Marque 1 Estresse e escolha uma:</p><ul><li><strong>Suppress:</strong> ataque um alvo dentro do alcance Distante. Em um sucesso, ele não pode marcar voluntariamente Espaço de Armadura, Estresse ou gastar Esperança até rolar com Esperança.</li><li><strong>Ram:</strong> ataque um alvo dentro do alcance Corpo a Corpo. Em um sucesso, o alvo é empurrado até o alcance Próximo, marca 1 Estresse e fica temporariamente <em>Imobilizado</em>.</li><li><strong>Breach Path:</strong> destrua, abra, atravesse ou force um obstáculo dentro do alcance Distante.</li></ul>",
+          actions: {
+            ...adversaryAction({ name: "Suppress", img: CPR("upgrades/onboard_machine_gun"), stress: 1, attack: true, range: "Far", damage: "3d10+7 fís" }),
+            ...adversaryAction({ name: "Ram", img: CPR("upgrades/combat_plow"), stress: 1, attack: true, range: "Melee", effects: [restrained] }),
+            ...adversaryAction({ name: "Breach Path", img: CPR("ammo/rocket_armorpiercing"), stress: 1, range: "Far" })
+          } };
+      })(),
+      { name: "Reactor Surge", form: "reaction", img: CPR("status/surge"),
+        description: "<p>Quando este Eidolon marca PV, marque 1 Estresse para escolher imediatamente uma: se mover dentro do alcance Distante, limpar uma condição temporária ou dar vantagem ao próximo ataque.</p>",
+        actions: adversaryAction({ name: "Reactor Surge", img: CPR("status/surge"), actionType: "reaction", stress: 1 }) }
+    ]
+  },
+  {
+    tier: 3, name: "Data Cult Oracle", type: "leader", img: CPR("netrunning/Efreet.png"),
+    description: "<p>Um corpo humano carregando vozes de máquina demais e uma profecia.</p>",
+    motives: "Converter, revelar, desestabilizar",
+    difficulty: 17, thresholds: [12, 25], hp: 6, stress: 8, experiences: { "Blackwall Theology": 4 },
+    attack: { name: "Forbidden Signal", range: "Far", bonus: 2, damage: "3d6+5 techno" },
+    features: [
+      { name: "Unwanted Revelation", form: "passive", img: CPR("dlc/cyberware/mood_eye"), description: "<p>Quando um personagem rola com Medo dentro do alcance Próximo, ele responde uma pergunta que o Oracle faz sobre o medo, o desejo ou o cyberware dele, e depois marca 1 Estresse.</p>" },
+      (() => {
+        const vulnerable = targetEffect({ name: "Convert the Weak", img: CPR("status/drugged"), statuses: ["vulnerable"], description: "<p>Temporariamente Vulnerável pela transmissão do culto.</p>" });
+        return { name: "Convert the Weak", form: "action", img: vulnerable.img, effects: [vulnerable],
+          description: "<p>Marque 1 Estresse. Um alvo dentro do alcance Distante faz uma Rolagem de Reação de Presença. Em uma falha, marca 2 de Estresse e fica temporariamente <em>Vulnerável</em>.</p>",
+          actions: adversaryAction({ name: "Convert the Weak", img: vulnerable.img, stress: 1, range: "Far", save: { trait: "presence", difficulty: null, damageMod: "none" }, effects: [vulnerable] }) };
+      })(),
+      { name: "Cult Transmission", form: "action", img: CPR("gear/pocket_amplifier"),
+        description: "<p>Marque 2 de Estresse. Até o próximo Holofote deste adversário, os aliados do Oracle dentro do alcance Próximo ganham +1 de Dificuldade e os ataques deles causam +1d6 de dano techno.</p>",
+        actions: adversaryAction({ name: "Cult Transmission", img: CPR("gear/pocket_amplifier"), stress: 2 }) },
+      { name: "Signal Martyr", form: "reaction", img: CPR("netrunning/Wisp.png"), description: "<p>Quando este adversário é derrotado, um Digital Ghost dentro do alcance Distante limpa 2 de Estresse e 1 PV.</p>" }
+    ]
+  },
+  {
+    tier: 3, name: "Digital Wraith", type: "skulk", img: CPR("blackice/src/killer"),
+    description: "<p>Um fantasma de IA predador que veste a forma de algo que a vítima quase lembra.</p>",
+    motives: "Sumir, possuir dispositivos, punir o medo",
+    difficulty: 18, thresholds: [13, 27], hp: 6, stress: 7, experiences: { "Impossible Presence": 4 },
+    attack: { name: "Memory Claws", range: "Close", bonus: 3, damage: "3d6+6 techno" },
+    features: [
+      { name: "Unstable Render", form: "passive", img: CPR("status/netrunning"), description: "<p>O Digital Wraith não ocupa espaço como uma criatura física. Ele aparece por estática de RA, câmeras e sensores corrompidos. Quando um personagem o ataca, escolhe uma: marcar 1 Estresse para travar no sinal certo, ou fazer o ataque com desvantagem. Um personagem que criou uma Breach contra a rede local nesta cena ignora este efeito.</p>" },
+      { name: "Possess Device", form: "action", img: CPR("programs/worm"),
+        description: "<p>Marque 1 Estresse para possuir um veículo, dispositivo, arma ou implante dentro do alcance Distante. Este adversário pode imediatamente ativá-lo, movê-lo ou atacar a partir dele.</p>",
+        actions: adversaryAction({ name: "Possess Device", img: CPR("programs/worm"), stress: 1, range: "Far" }) },
+      { name: "Fear Echo", form: "reaction", img: CPR("status/black_lace"), description: "<p>Quando um personagem rola com Medo dentro do alcance Distante, ele vê algo pessoal no sinal e marca 1 Estresse.</p>" },
+      { name: "Digital Vanish", form: "reaction", img: CPR("status/hidden"), description: "<p>Quando este adversário marca PV, fica <em>Escondido</em> e reaparece por outro dispositivo conectado dentro do alcance Distante.</p>" }
+    ]
+  },
+  {
+    tier: 3, name: "Tyfar Kill Platform", type: "ranged", img: CPR("upgrades/onboard_rocket_pod"),
+    description: "<p>Uma plataforma de armas ambulante com poder de fogo suficiente para transformar uma cobertura numa cova.</p>",
+    motives: "Suprimir, destruir coberturas, avançar devagar",
+    difficulty: 17, thresholds: [18, 36], hp: 8, stress: 5, experiences: { "Heavy Weapons": 4 },
+    attack: { name: "Rotary Cannon", range: "Far", bonus: 3, damage: "3d10+4 fís" },
+    features: [
+      { name: "Walking Arsenal", form: "passive", img: CPR("weapons/RocketLauncher"), description: "<p>Quando este adversário causa dano Maior, a cobertura do alvo é destruída. Quando tem sucesso contra um alvo sem cobertura, some +1d10 à rolagem de dano.</p>" },
+      { name: "Stabilizer Lock", form: "passive", img: CPR("upgrades/heavy_chasis"), description: "<p>Este adversário não pode ser empurrado, <em>Imobilizado</em> ou movido contra a vontade, a menos que tenha marcado metade ou mais dos PV.</p>" },
+      { name: "Spin Up", form: "action", img: CPR("upgrades/generic_drum_magazine"),
+        description: "<p>Marque 1 Estresse e faça uma rolagem de ataque padrão. Ela tem como alvo todas as criaturas dentro do alcance Muito Próximo do alvo original.</p>",
+        actions: adversaryAction({ name: "Spin Up", img: CPR("upgrades/generic_drum_magazine"), stress: 1, attack: true, range: "Far", damage: "3d10+4 fís" }) },
+      { name: "Armor-Piercing Burst", form: "reaction", img: CPR("ammo/rifle_armorpiercing"), clone: { adversary: "Huge Green Ooze", feature: "Acidic Form" }, description: "<p>Quando o ataque deste adversário tem sucesso contra um personagem, o personagem marca um Espaço de Armadura sem receber o benefício. Se não puder marcar, marca 1 Estresse.</p>" }
+    ]
+  },
+  // ---------- Tier 4 ----------
+  {
+    tier: 4, name: "Cyber Hunter", type: "ranged", img: CPR("cyberware/teleoptics"),
+    description: "<p>Um piloto ás controlado remotamente e atirador aumentado, operando três contratos à frente de todo mundo.</p>",
+    motives: "Manter distância, marcar, executar",
+    difficulty: 20, thresholds: [19, 38], hp: 9, stress: 8, experiences: { "Perfect Kill Angle": 5 },
+    attack: { name: "Rail Spear", range: "Very Far", bonus: 5, damage: "4d8+10 fís" },
+    features: [
+      { name: "Target Package", form: "passive", img: CPR("dlc/cyberware/kill_display"), description: "<p>Quando este adversário causa dano a um personagem, ele fica <strong>Marked</strong> até o fim da cena ou até quebrar a linha de visão por um Holofote inteiro.</p>" },
+      { name: "Piercing Shot", form: "passive", img: CPR("ammo/rifle_smart"), description: "<p>Ataques contra alvos Marked têm vantagem e ignoram cobertura.</p>" },
+      { name: "Remote Reposition", form: "action", img: CPR("dlc/cyberware/zero_gravity_thrusters"),
+        description: "<p>Marque 1 Estresse para se mover para qualquer lugar dentro do alcance Distante e fazer um ataque padrão contra um alvo Marked.</p>",
+        actions: adversaryAction({ name: "Remote Reposition", img: CPR("dlc/cyberware/zero_gravity_thrusters"), stress: 1, attack: true, advState: "advantage", range: "Very Far", damage: "4d8+10 fís" }) },
+      { name: "Blackout Shot", form: "action", img: CPR("ammo/grenade_emp"),
+        description: "<p>Marque 2 de Estresse e ataque um alvo Marked. Em um sucesso, cause dano e desative os cyberwares do alvo até ele marcar 1 Estresse para reativá-los.</p>",
+        actions: adversaryAction({ name: "Blackout Shot", img: CPR("ammo/grenade_emp"), stress: 2, attack: true, advState: "advantage", range: "Very Far", damage: "4d8+10 fís" }) },
+      { name: "Hold The Breath", form: "reaction", img: CPR("status/readied_action"),
+        description: "<p>Quando este adversário falha numa rolagem de ataque, marque 1 Estresse para rolar o d20 de novo.</p>",
+        actions: adversaryAction({ name: "Hold The Breath", img: CPR("status/readied_action"), actionType: "reaction", stress: 1 }) }
+    ]
+  },
+  {
+    tier: 4, name: "Ares-Tyrant Eidolon", type: "solo", resistance: { physical: "resistance", magical: "resistance" }, img: CPR("blackice/src/giant"),
+    description: "<p>Um Eidolon de assalto de Classe Deus construído em torno de uma inteligência de guerra que não aceita recuar.</p>",
+    motives: "Escalar, aniquilar, nunca recuar",
+    difficulty: 21, thresholds: [50, 72], hp: 14, stress: 9, experiences: { "Deus-Class Warfare": 5 },
+    attack: { name: "Mass Driver", range: "Far", bonus: 5, damage: "4d12+11 fís" },
+    features: [
+      { name: "Mecha Structure", form: "passive", img: CPR("dlc/cyberware/dragoon-plating-metalgear"), description: "<p>Este adversário Eidolon reduz pela metade o dano que sofreria, a menos que o efeito venha de outro Eidolon.</p><p><em>Na ficha: resistência a dano físico e techno. Contra o ataque de outro Eidolon, desconsidere a resistência.</em></p>" },
+      { name: "Ares Overdrive", form: "passive", img: CPR("status/on_fire_strong"), description: "<p>Quando este adversário causa dano Maior, o alvo também marca 1 Estresse.</p>" },
+      (() => {
+        const overheated = targetEffect({ name: "Overheated", img: CPR("status/on_fire"), description: "<p>Overheated: sofre 2d6 de dano techno extra se ainda estiver Overheated no fim da própria ação.</p>" });
+        return { name: "Thermal Talon", form: "action", img: CPR("dlc/cyberware/radline_blitzkrieg-arc-thrower_cyberarm"), effects: [overheated],
+          description: "<p>Marque 1 Estresse para atacar um alvo dentro do alcance Corpo a Corpo. Em um sucesso, cause 4d12+10 de dano techno. O alvo também fica <em>Overheated</em> e sofre 2d6 de dano techno extra se ainda estiver Overheated no fim da ação dele.</p>",
+          actions: adversaryAction({ name: "Thermal Talon", img: CPR("dlc/cyberware/radline_blitzkrieg-arc-thrower_cyberarm"), stress: 1, attack: true, range: "Melee", damage: "4d12+10 techno", effects: [overheated] }) };
+      })(),
+      { name: "War God Awakens", form: "action", img: CPR("status/beserker"),
+        description: "<p>Marque 3 de Estresse. Até o fim da cena, todos os ataques dele ganham vantagem e +1d12, mas qualquer personagem que causar dano a ele ganha 1 Esperança.</p>",
+        actions: adversaryAction({ name: "War God Awakens", img: CPR("status/beserker"), stress: 3 }) },
+      { name: "No Retreat", form: "reaction", img: CPR("status/iron_grip"),
+        description: "<p>Quando um personagem se afasta deste adversário, marque 1 Estresse para se mover dentro do alcance Próximo dele e fazer um ataque padrão como reação.</p>",
+        actions: adversaryAction({ name: "No Retreat", img: CPR("status/iron_grip"), actionType: "reaction", stress: 1, attack: true, range: "Far", damage: "4d12+11 fís" }) }
+    ]
+  },
+  {
+    tier: 4, name: "Hades Shard", type: "solo", resistance: { physical: "immunity" }, img: CPR("netrunning/Black_Ice.png"),
+    description: "<p>Um fragmento quebrado da IA de Classe Deus que matou a velha internet.</p>",
+    motives: "Consumir sistemas, apagar identidades, dar à luz fantasmas",
+    difficulty: 21, thresholds: [20, 42], hp: 10, stress: 10, experiences: { "Dead Internet": 5 },
+    attack: { name: "Black Signal", range: "Very Far", bonus: 5, damage: "4d8+12 techno" },
+    features: [
+      { name: "Digital Body", form: "passive", img: CPR("netrunning/Root_Access.png"), description: "<p>Este adversário é imune a dano físico, a menos que o dano seja causado no dispositivo onde ele está hospedado.</p><p><em>Na ficha: imunidade a dano físico. Ao atacar o dispositivo que o hospeda, desconsidere a imunidade.</em></p>" },
+      { name: "Digital Afterlife", form: "passive", img: CPR("status/deathtrance"), description: "<p>Quando uma criatura dentro do alcance Distante marca o último Ponto de Vida, Hades cria um eco de Digital Ghost dela.</p>" },
+      { name: "Identity Collapse", form: "action", img: CPR("programs/nervescrub"),
+        description: "<p>Marque 2 de Estresse. Um alvo dentro do alcance Distante faz uma Rolagem de Reação de Instinto. Em uma falha, marca 2 de Estresse e não pode usar Experiências até o próximo descanso.</p>",
+        actions: adversaryAction({ name: "Identity Collapse", img: CPR("programs/nervescrub"), stress: 2, range: "Far", save: { trait: "instinct", difficulty: null, damageMod: "none" } }) },
+      { name: "Ghost Birth", form: "action", img: CPR("netrunning/Imp.png"),
+        description: "<p>Marque 3 de Estresse e escolha um dispositivo conectado ou implante de cyberware dentro do alcance Distante. Uma manifestação de Digital Ghost surge dele como ameaça temporária.</p>",
+        actions: adversaryAction({ name: "Ghost Birth", img: CPR("netrunning/Imp.png"), stress: 3, range: "Far" }) },
+      { name: "Dead Network", form: "reaction", img: CPR("netrunning/Control_Node.png"),
+        description: "<p>Quando um personagem cria uma Breach dentro do alcance Distante, Hades pode marcar 1 Estresse para corrompê-la. O personagem marca 1 Estresse.</p>",
+        actions: adversaryAction({ name: "Dead Network", img: CPR("netrunning/Control_Node.png"), actionType: "reaction", stress: 1 }) }
+    ]
+  },
+  {
+    tier: 4, name: "Board Executive", type: "leader", img: CPR("gear/smart_glasses"),
+    description: "<p>Um soberano corporativo com advogados, esquadrões de extermínio, cláusulas de reféns e a propriedade legal do campo de batalha.</p>",
+    motives: "Comprar, ameaçar, reenquadrar, apagar responsabilidades",
+    difficulty: 20, thresholds: [18, 36], hp: 10, stress: 12, experiences: { "Corporate Sovereignty": 5 },
+    attack: { name: "Executive Override", range: "Far", bonus: 4, damage: "4d6+10 techno" },
+    features: [
+      { name: "Liability Shield", form: "passive", img: CPR("upgrades/bulletproof_glass"), description: "<p>Enquanto houver pelo menos um aliado corporativo dentro do alcance Próximo, este adversário ganha +2 de Dificuldade.</p>" },
+      { name: "Hostile Acquisition", form: "action", img: CPR("dlc/gear/fire-safe"),
+        description: "<p>Marque 2 de Estresse. Um alvo dentro do alcance Distante faz uma Rolagem de Reação de Presença. Em uma falha, não pode ganhar Esperança até o fim da cena.</p>",
+        actions: adversaryAction({ name: "Hostile Acquisition", img: CPR("dlc/gear/fire-safe"), stress: 2, range: "Far", save: { trait: "presence", difficulty: null, damageMod: "none" } }) },
+      { name: "Asset Freeze", form: "action", img: CPR("status/sedative"),
+        description: "<p>Marque 1 Estresse e escolha um personagem. Até o fim da cena, ele precisa marcar 1 Estresse antes de usar créditos, contatos, acesso a equipamento, um veículo ou um sistema conectado.</p>",
+        actions: adversaryAction({ name: "Asset Freeze", img: CPR("status/sedative"), stress: 1 }) },
+      { name: "Contractual Violence", form: "reaction", img: CPR("gear/radio_communicator"),
+        description: "<p>Quando um personagem ameaça este adversário, marque 1 Estresse para chamar dois aliados corporativos de Tier 2 ou menor, que entram na cena dentro do alcance Próximo dele.</p>",
+        actions: adversaryAction({ name: "Contractual Violence", img: CPR("gear/radio_communicator"), actionType: "reaction", stress: 1 }) },
+      { name: "Plausible Deniability", form: "reaction", img: CPR("status/human_shield"), description: "<p>Quando este adversário fosse marcar PV, redirecione a consequência para um aliado corporativo, guarda-costas, refém, escudo legal, isca ou protocolo de fuga dentro do alcance Próximo.</p>" }
+    ]
+  },
+  {
+    tier: 4, name: "Chrome Reaper", type: "solo", img: CPR("dlc/cyberware/superchrome-faceplate"),
+    description: "<p>Um ciborgue de corpo inteiro lendário, conhecido por alguns como o Bicho-Papão da New Dark Age, que lembra de ter sido humano como uma fraqueza.</p>",
+    motives: "Dominar, punir, provar superioridade",
+    difficulty: 20, thresholds: [34, 68], hp: 12, stress: 8, experiences: { "Living Weapon": 5 },
+    attack: { name: "Integrated Arsenal", range: "Far", bonus: 5, damage: "4d10+8 fís" },
+    features: [
+      { name: "Cyberpsycho", form: "passive", img: CPR("status/beserker_addiction"), clone: { adversary: "Minor Demon", feature: "Momentum" }, description: "<p>Quando este adversário causa dano, o mestre ganha 1 Medo.</p>" },
+      { name: "Weapon Switch", form: "action", img: CPR("cyberware/popup_ranged_weapon"),
+        description: "<p>Faça um ataque padrão. Num resultado de 15+, escolha uma: empurrar o alvo até o alcance Próximo, fazê-lo marcar 1 Estresse ou causar +1d10 de dano.</p>",
+        actions: adversaryAction({ name: "Weapon Switch", img: CPR("cyberware/popup_ranged_weapon"), attack: true, range: "Far", damage: "4d10+8 fís" }) },
+      (() => {
+        const threat = targetEffect({ name: "Personal Threat", img: CPR("dlc/cyberware/kill_display"), statuses: ["vulnerable"], description: "<p>Ameaça pessoal do Chrome Reaper: até rolar com Esperança, os ataques contra este personagem ganham vantagem e causam +1d10 de dano.</p>" });
+        return { name: "Personal Threat", form: "action", img: threat.img, effects: [threat],
+          description: "<p>Marque 2 de Estresse e escolha um personagem dentro do alcance Distante. Até ele rolar com Esperança, os ataques contra ele ganham vantagem e causam +1d10 de dano.</p><p><em>Na ficha: o efeito usa a condição Vulnerável (ataques contra ele com vantagem); o +1d10 de dano é somado à mão.</em></p>",
+          actions: adversaryAction({ name: "Personal Threat", img: threat.img, stress: 2, range: "Far", effects: [threat] }) };
+      })(),
+      { name: "Unfair Reflexes", form: "reaction", img: CPR("cyberware/kerenzikov"),
+        description: "<p>Quando um personagem rola com Esperança contra este adversário, marque 1 Estresse para transformar a rolagem numa rolagem com Medo e depois se mover imediatamente dentro do alcance Próximo ou fazer um ataque padrão.</p>",
+        actions: adversaryAction({ name: "Unfair Reflexes", img: CPR("cyberware/kerenzikov"), actionType: "reaction", stress: 1 }) },
+      { name: "Chrome Supremacy", form: "reaction", img: CPR("cyberware/superchrome_covering"),
+        description: "<p>Quando um personagem faz este adversário marcar PV, ficar Vulnerável, Imobilizado ou perder de vista um personagem, ele pode marcar 1 Estresse para anular esse efeito e fazer esse personagem marcar 1 Estresse.</p>",
+        actions: adversaryAction({ name: "Chrome Supremacy", img: CPR("cyberware/superchrome_covering"), actionType: "reaction", stress: 1 }) }
+    ]
+  },
+  {
+    tier: 4, name: "Black Hand", type: "solo", img: CPR("weapons/veryHeavyPistol"),
+    description: "<p>Black Hand não é o melhor atirador do mundo, a lâmina mais rápida nem o corpo de cromo mais forte. Ele é pior: é bom o bastante em tudo para matar especialistas no próprio jogo deles.</p>",
+    motives: "Terminar o contrato",
+    difficulty: 20, thresholds: [22, 44], hp: 10, stress: 8, experiences: { "Legendary Mercenary": 5 },
+    attack: { name: "Black Arsenal", range: "Far", bonus: 5, damage: "4d10+8 fís" },
+    features: [
+      { name: "A Legend Like You", form: "passive", img: CPR("status/sixgun"), description: "<p>Na primeira vez em cada cena que um personagem gasta Esperança dentro do alcance Distante de Black Hand, ele pode fazer imediatamente um ataque padrão contra esse personagem.</p>" },
+      { name: "Contract Target", form: "passive", img: CPR("dlc/cyberware/kill_display"), description: "<p>Quando este adversário causa dano a um personagem, esse personagem vira o <strong>Alvo</strong> dele até o fim da cena ou até outro personagem causar dano Maior a Black Hand. Os ataques de Black Hand contra alvos marcados causam +1d8 de dano.</p>" },
+      { name: "Black Hand Guns", form: "action", img: CPR("weapons/heavyPistol_excellent"),
+        description: "<p>Faça um ataque padrão e escolha uma arma:</p><ul><li><strong>Hand Cannon:</strong> o alvo marca 1 Estresse.</li><li><strong>Mono-Blade:</strong> se o alvo estiver no alcance Corpo a Corpo, marca dois Espaços de Armadura sem receber o benefício.</li><li><strong>Smart Rifle:</strong> o próximo ataque contra o alvo ganha +2.</li><li><strong>Shock Gauntlet:</strong> o alvo fica temporariamente Vulnerável em dano Maior.</li></ul>",
+        actions: adversaryAction({ name: "Black Hand Guns", img: CPR("weapons/heavyPistol_excellent"), attack: true, range: "Far", damage: "4d10+8 fís" }) },
+      { name: "Hard Entry", form: "reaction", img: CPR("weapons/Shotgun_excellent"),
+        description: "<p>Quando um personagem rola com Esperança contra este adversário, marque 1 Estresse para se mover imediatamente dentro do alcance Próximo, sacar uma arma nova e limpar uma condição temporária ou ganhar vantagem no próximo ataque.</p>",
+        actions: adversaryAction({ name: "Hard Entry", img: CPR("weapons/Shotgun_excellent"), actionType: "reaction", stress: 1 }) },
+      { name: "Eidolon Drop", form: "reaction", img: CPR("blackice/src/raven"),
+        description: `<p>Quando o mestre gasta 3 Medo depois que Black Hand marcou pelo menos 5 PV, ele mobiliza o seu Eidolon. Limpe todas as condições temporárias de Black Hand e substitua a ficha dele pela do @UUID[Compendium.${MODULE_ID}.edgeheart-adversaries.Actor.${stableId("adversary:The Raven Eidolon")}]{The Raven Eidolon}, mantendo o Estresse marcado e as features. Personagens que estavam marcados como Alvo continuam marcados.</p>`,
+        actions: adversaryAction({ name: "Eidolon Drop", img: CPR("blackice/src/raven"), actionType: "reaction", fear: 3 }) }
+    ]
+  },
+  {
+    tier: 4, name: "The Raven Eidolon", type: "solo", img: CPR("blackice/src/raven"),
+    description: "<p>O Eidolon de Black Hand, mobilizado pelo Eidolon Drop quando o contrato fica pesado demais. Ele mantém o Estresse marcado e as features de Black Hand.</p>",
+    motives: "Terminar o contrato",
+    difficulty: 21, thresholds: [44, 66], hp: 14, stress: 8, experiences: { "Legendary Eidolon": 5 },
+    attack: { name: "Integrated War Suite", range: "Far", bonus: 5, damage: "4d10+10 fís" },
+    features: [
+      { name: "Merciless Advance", form: "action", img: CPR("dlc/cyberware/zero_gravity_thrusters"),
+        description: "<p>Marque 1 Estresse, mova-se dentro do alcance Distante e faça um ataque padrão. Se o personagem estiver marcado como Alvo, o ataque tem vantagem.</p>",
+        actions: adversaryAction({ name: "Merciless Advance", img: CPR("dlc/cyberware/zero_gravity_thrusters"), stress: 1, attack: true, range: "Far", damage: "4d10+10 fís" }) },
+      { name: "Killbox Execution", form: "action", img: CPR("upgrades/onboard_rocket_pod"),
+        description: "<p>Marque 3 de Estresse. O Raven inunda a área dentro do alcance Distante com mísseis, fogo de supressão e assalto de curta distância. Faça um ataque padrão contra todos os personagens na área. Em um sucesso, cause dano e o personagem fica marcado como Alvo de Black Hand.</p>",
+        actions: adversaryAction({ name: "Killbox Execution", img: CPR("upgrades/onboard_rocket_pod"), stress: 3, attack: true, range: "Far", damage: "4d10+10 fís" }) },
+      { name: "Black Hand Override", form: "reaction", img: CPR("blackice/src/raven"),
+        description: "<p>Quando este adversário fosse falhar numa rolagem de ataque, marque 2 de Estresse para rolar o d20 de novo. Se a nova rolagem tiver sucesso, o alvo também fica temporariamente <em>Vulnerável</em>.</p>",
+        actions: adversaryAction({ name: "Black Hand Override", img: CPR("blackice/src/raven"), actionType: "reaction", stress: 2 }) }
+    ]
+  }
+];
+
+// type: exploration | social | traversal | event (tipos de ambiente do sistema).
+const ENVIRONMENTS = [
+  {
+    tier: 1, name: "Neon Night Market", type: "social", img: CPR("dlc/gear/drink_master_5000"),
+    description: "<p>Um mercado lotado de barracas de comida, vendedores de cromo, moda falsificada, olheiros de gangue e tecnologia ilegal.</p>",
+    impulses: "Tentar, expor, vender, esconder o perigo", difficulty: 10,
+    adversaries: ["Neon Claw Ganger", "Tiger Choir Cutter", "Pocket Drone Handler", "Rookie Edgerunner"],
+    features: [
+      { name: "Crowded Flow", form: "passive", description: "<p>Personagens têm vantagem em rolagens para se esconder na multidão, mas desvantagem em rolagens para notar ameaças além do alcance Próximo.</p><p><em>Quem está observando da multidão?</em></p>" },
+      { name: "Black-Market Offer", form: "action", description: "<p>Apresente um item útil, uma pista de cyberware ou um contato, com um custo.</p><p><em>O que o vendedor realmente quer?</em></p>" },
+      { name: "Wrong Eyes", form: "reaction", description: "<p>Quando um personagem rola com Medo numa rolagem social ou de furtividade, um olheiro de gangue o reconhece ou o confunde com outra pessoa.</p><p><em>De quem é a reputação que ele herdou?</em></p>" }
+    ]
+  },
+  {
+    tier: 1, name: "Low-Sec Data Office", type: "exploration", img: CPR("gear/computer"),
+    description: "<p>Um escritório corporativo barato, cheio de travas de crachá, paredes de vidro, funcionários cansados e câmeras demais.</p>",
+    impulses: "Atrasar, documentar, alertar a segurança", difficulty: 11,
+    adversaries: ["Sitil Security Guard", "Pocket Drone Handler", "Rookie Edgerunner"],
+    features: [
+      { name: "Badge Logic", form: "passive", description: "<p>Personagens podem fazer uma Rolagem de Interface para criar uma Breach contra portas, câmeras ou elevadores. Numa rolagem com Medo, a segurança começa a fazer perguntas.</p><p><em>De quem é o crachá que ainda funciona aqui?</em></p>" },
+      { name: "Camera Sweep", form: "action", description: "<p>Escolha um personagem numa área exposta. Ele marca 1 Estresse ou fica gravado e rastreável.</p><p><em>Quem revisa as gravações?</em></p>" },
+      { name: "Reception Alarm", form: "reaction", description: "<p>Quando um personagem falha numa rolagem social, chame um Sitil Security Guard dentro do alcance Distante.</p><p><em>O que a recepcionista percebeu?</em></p>" }
+    ]
+  },
+  {
+    tier: 1, name: "Megablock Stairwell", type: "traversal", img: CPR("status/falling"),
+    description: "<p>Um labirinto vertical de escadas de emergência, canos vazando, andares trancados e vizinhos que sabem quando fechar a porta.</p>",
+    impulses: "Dividir, ecoar, atrasar a fuga", difficulty: 11,
+    adversaries: ["Neon Claw Ganger", "Chrome Maw Bruiser", "Tiger Choir Cutter"],
+    features: [
+      { name: "Bad Angles", form: "passive", description: "<p>Ataques à distância além do alcance Muito Próximo têm desvantagem, a menos que o atacante controle uma posição mais alta.</p><p><em>Quem tem a posição alta?</em></p>" },
+      { name: "Door Slams Open", form: "action", description: "<p>Introduza civis, vigias de gangue, seguranças ou uma nova rota por um apartamento.</p><p><em>Quem mora atrás desta porta?</em></p>" },
+      { name: "Down the Stairs", form: "reaction", description: "<p>Quando um personagem rola com Medo enquanto se move, ele escorrega, bate ou é bloqueado. Marca 1 Estresse ou desce uma faixa de alcance.</p><p><em>O que quebrou sob os pés dele?</em></p>" }
+    ]
+  },
+  {
+    tier: 1, name: "Street-Level Stakeout", type: "exploration", img: CPR("gear/binoculars"),
+    description: "<p>Um trabalho silencioso de vigilância em que todo mundo está esperando o primeiro erro.</p>",
+    impulses: "Observar, despistar, escalar de repente", difficulty: 10,
+    adversaries: ["Rookie Edgerunner", "Contract Sniper", "Sitil Security Guard"],
+    features: [
+      { name: "Eyes Everywhere", form: "passive", description: "<p>Personagens podem fazer Rolagens de Instinto ou Conhecimento para identificar observadores. Em um sucesso, ganham vantagem na próxima rolagem de furtividade ou contravigilância.</p><p><em>Quem vigia os vigias?</em></p>" },
+      { name: "The Target Moves", form: "action", description: "<p>Mova o objetivo para um novo local dentro do alcance Distante.</p><p><em>Por que ele saiu mais cedo?</em></p>" },
+      { name: "Burned Position", form: "reaction", description: "<p>Quando um personagem rola com Medo, revele que o esconderijo, o sinal ou a identidade de fachada dele foi comprometido.</p><p><em>Quem os queimou?</em></p>" }
+    ]
+  },
+  // ---------- Tier 2 ----------
+  {
+    tier: 2, name: "Highway Kill Run", type: "traversal", img: CPR("vehicles/motorbike"),
+    description: "<p>Uma perseguição em alta velocidade por estradas quebradas, drones de trânsito, postos de controle abandonados e veículos de emboscada.</p>",
+    impulses: "Acelerar, separar veículos, transformar o trânsito em arma", difficulty: 14,
+    adversaries: ["Corporate Response Team", "Contract Sniper", "Blood Saint Duelist", "Cordon Eidolon"],
+    features: [
+      { name: "The Chase", form: "passive", description: "<p>Quando esta Travessia começa, coloque um Dado de Perseguição (d8) nesta carta com o 4 virado para cima. Quando um personagem faz uma ação ligada à perseguição, gire o dado conforme o resultado:</p><ul><li>Sucesso com Esperança: aumente o dado em 2.</li><li>Sucesso com Medo: aumente o dado em 1.</li><li>Falha com Esperança: diminua o dado em 1.</li><li>Falha com Medo: diminua o dado em 2.</li></ul><p>Se o dado chegar a 8, os personagens vencem a Highway Kill Run, seja escapando ou alcançando o alvo. Se chegar a 0, eles falham, sendo capturados ou deixando o alvo escapar.</p><p><em>Por que estamos perseguindo eles, afinal?</em></p>" },
+      { name: "Vehicle Momentum", form: "passive", description: "<p>Quando um personagem tem sucesso com Esperança numa rolagem de veículo, pode se mover um alcance adicional ou criar uma abertura para um aliado.</p><p><em>Quem conhece melhor esta estrada?</em></p>" },
+      { name: "Road Hazard", form: "action", description: "<p>Jogue trânsito, destroços, drones, civis ou um viaduto desabando na rota. Os motoristas fazem uma Rolagem de Reação de Agilidade ou o veículo fica Damaged.</p><p><em>O que a estrada escondia?</em></p>",
+        actions: adversaryAction({ name: "Road Hazard", img: CPR("vehicles/motorbike"), save: { trait: "agility", difficulty: 14, damageMod: "none" } }) },
+      { name: "Pursuit Escalation", form: "reaction", description: "<p>Quando um personagem rola com Medo enquanto dirige, um novo veículo hostil entra no alcance Distante.</p><p><em>Quem entrou na perseguição?</em></p>" }
+    ]
+  },
+  {
+    tier: 2, name: "Corporate Heist Floor", type: "exploration", img: CPR("dlc/gear/fire-safe"),
+    description: "<p>Um andar corporativo seguro, construído em torno de cofres, reféns, salas do pânico e alarmes silenciosos.</p>",
+    impulses: "Trancar, dividir, proteger ativos", difficulty: 15,
+    adversaries: ["Sitil Security Guard", "Korvax Neural Interrogator", "Corporate Response Team"],
+    features: [
+      { name: "Objective Clock", form: "passive", description: "<p>A Crew precisa completar uma Contagem de Progresso (4) para pegar o item, extrair o alvo ou arrombar o cofre. Cada rolagem com Medo avança a resposta da segurança.</p><p><em>Que parte do plano estava errada?</em></p>" },
+      (() => {
+        const restrained = targetEffect({ name: "Lockdown Doors", img: CPR("upgrades/dna_lock"), statuses: ["restrained"], description: "<p>Preso pelo bloqueio: temporariamente Imobilizado.</p>" });
+        return { name: "Lockdown Doors", form: "action", effects: [restrained],
+          description: "<p>Sele uma sala, corredor, elevador ou cofre. As criaturas lá dentro marcam 1 Estresse ou ficam temporariamente <em>Imobilizadas</em>.</p><p><em>Quem disparou o bloqueio?</em></p>",
+          actions: adversaryAction({ name: "Lockdown Doors", img: CPR("upgrades/dna_lock"), effects: [restrained] }) };
+      })(),
+      { name: "Hostage Pressure", form: "reaction", description: "<p>Quando um personagem rola com Medo, coloque um civil, funcionário, VIP ou alvo em perigo imediato.</p><p><em>Quem vira moeda de troca?</em></p>" }
+    ]
+  },
+  {
+    tier: 2, name: "Haunted Subway Node", type: "exploration", img: CPR("netrunning/Wisp.png"),
+    description: "<p>Uma estação de metrô abandonada onde telas sussurram nomes e trens chegam de linhas que não existem mais.</p>",
+    impulses: "Isolar, distorcer, repetir os mortos", difficulty: 15,
+    adversaries: ["Signal Haunt", "Digital Wraith", "Data Cult Oracle"],
+    features: [
+      { name: "Signal Haunting", form: "passive", description: "<p>Dispositivos conectados mostram saídas falsas, passageiros mortos, reflexos impossíveis ou mensagens de vozes conhecidas. Personagens que dependem de sensores têm desvantagem, a menos que primeiro criem uma Breach.</p><p><em>De quem é a voz nos alto-falantes?</em></p>" },
+      (() => {
+        const vulnerable = targetEffect({ name: "Ghost Train", img: CPR("status/on_fire_mild"), statuses: ["vulnerable"], description: "<p>Atropelado pelo trem fantasma: temporariamente Vulnerável.</p>" });
+        return { name: "Ghost Train", form: "action", effects: [vulnerable],
+          description: "<p>Um trem fantasma passa gritando pela estação. Todas as criaturas numa linha fazem uma Rolagem de Reação de Agilidade ou sofrem 2d8+4 de dano techno e ficam temporariamente <em>Vulneráveis</em>.</p><p><em>Para onde vai o trem?</em></p>",
+          actions: adversaryAction({ name: "Ghost Train", img: CPR("netrunning/Wisp.png"), damage: "2d8+4 techno", save: { trait: "agility", difficulty: 15, damageMod: "none" }, effects: [vulnerable] }) };
+      })(),
+      { name: "False Exit", form: "action", description: "<p>Escolha uma saída, túnel ou porta visível. Ela parece segura, aberta ou mais perto do que realmente está. O primeiro personagem que se mover em direção a ela marca 1 Estresse e precisa ter sucesso numa Rolagem de Reação de Agilidade, ou marca 1 PV e termina o movimento num lugar perigoso, exposto ou separado.</p><p><em>Para onde a estação queria que eles fossem?</em></p>",
+        actions: adversaryAction({ name: "False Exit", img: CPR("netrunning/Wisp.png"), damage: "1 fís", save: { trait: "agility", difficulty: 15, damageMod: "none" } }) },
+      { name: "Possessed Platform", form: "reaction", description: "<p>Quando um personagem rola com Medo, o ambiente o move dentro do alcance Próximo ou o separa de um aliado.</p><p><em>Em que plataforma ele pisou?</em></p>" }
+    ]
+  },
+  {
+    tier: 2, name: "Black Clinic Under Siege", type: "event", img: CPR("gear/medtech_bag"),
+    description: "<p>Uma clínica escondida cheia de cirurgias pela metade, remédios ilegais e pessoas valiosas demais para perder.</p>",
+    impulses: "Estabilizar, entrar em pânico, proteger os indefesos", difficulty: 14,
+    adversaries: ["Black-Clinic Butcher", "Blood Saint Duelist", "Corporate Response Team"],
+    features: [
+      { name: "Fragile Patients", form: "passive", description: "<p>Qualquer ataque que role com Medo corre o risco de ferir um paciente, danificar equipamento médico ou contaminar a sala de cirurgia.</p><p><em>Quem está na mesa?</em></p>" },
+      { name: "Emergency Procedure", form: "action", description: "<p>Um personagem pode tentar uma Rolagem de Conhecimento ou Acuidade para estabilizar um paciente ou dispositivo. Em um sucesso, um aliado limpa 1 Estresse.</p><p><em>Que procedimento ilegal está pela metade?</em></p>" },
+      { name: "Power Failure", form: "reaction", description: "<p>Quando um personagem rola com Medo, as luzes caem, o suporte de vida pisca ou as portas destrancam. Todas as ações médicas têm desvantagem até alguém restaurar a energia.</p><p><em>Quem queria a energia cortada?</em></p>" }
+    ]
+  },
+  // ---------- Tier 3 ----------
+  {
+    tier: 3, name: "Blacksite Extraction", type: "exploration", img: CPR("gear/cryotank"),
+    description: "<p>Uma instalação corporativa escondida onde o objetivo está vivo, instável e provavelmente não é mais humano.</p>",
+    impulses: "Conter, apagar, negar a verdade", difficulty: 17,
+    adversaries: ["Sitil Black-Ops Captain", "Tyfar Kill Platform", "Digital Wraith", "Cordon Eidolon"],
+    features: [
+      { name: "Containment Protocol", form: "passive", description: "<p>O objetivo não pode sair até a Crew completar uma Contagem de Progresso (6) para desativar travas, contenções, sedação ou salvaguardas legais.</p><p><em>O que o objetivo foi feito para conter?</em></p>" },
+      { name: "Sterile Kill Team", form: "action", description: "<p>Posicione um esquadrão corporativo dentro do alcance Distante, ou ative uma torreta, drone ou corredor selado.</p><p><em>Quem deu a ordem de matar?</em></p>" },
+      { name: "Erase Evidence", form: "reaction", description: "<p>Quando um personagem rola com Medo, um servidor, testemunha, corpo ou pista começa a se autodeletar.</p><p><em>Que verdade está prestes a desaparecer?</em></p>" }
+    ]
+  },
+  {
+    tier: 3, name: "Gang War Block", type: "event", img: CPR("dlc/weapons/molotov-cocktail"),
+    description: "<p>Um quarteirão preso numa guerra de gangues aberta, com carros em chamas, atiradores nos telhados e civis presos entre as cores.</p>",
+    impulses: "Escalar, recrutar, punir a fraqueza", difficulty: 16,
+    adversaries: ["Blood Saint Duelist", "Chrome Maw Bruiser", "Rival Edgerunner Crew", "Contract Sniper"],
+    features: [
+      { name: "Crossfire", form: "passive", description: "<p>Quando uma criatura se move por terreno aberto, marca 1 Estresse ou faz uma Rolagem de Agilidade para evitar balas perdidas.</p><p><em>Quem está atirando lá de cima?</em></p>" },
+      { name: "Claim the Block", form: "action", description: "<p>Uma força de gangue toma uma rua, telhado, loja ou veículo. Vira terreno perigoso até ser liberado.</p><p><em>De quem é o símbolo pintado ali?</em></p>" },
+      { name: "Reputation Test", form: "reaction", description: "<p>Quando um personagem rola com Medo numa rolagem social ou de combate, alguém desafia o nome, a Crew ou a lealdade dele.</p><p><em>Quem quer humilhá-lo?</em></p>" }
+    ]
+  },
+  {
+    tier: 3, name: "Eidolon Deployment Zone", type: "event", img: CPR("upgrades/vehicle_heavy_weapon_mount"),
+    description: "<p>Um campo de batalha destroçado, feito para máquinas grandes demais para as ruas e perigosas demais para prédios.</p>",
+    impulses: "Sacudir o chão, expor cobertura, convidar à escalada", difficulty: 17,
+    adversaries: ["Cordon Eidolon", "Tyfar Kill Platform", "Sitil Black-Ops Captain", "Rival Edgerunner Crew"],
+    features: [
+      { name: "Eidolon Scale", form: "passive", description: "<p>Cobertura comum, veículos, paredes e drones são destruídos depois de sofrer dano Maior ou Severo de um ataque em escala de Eidolon.</p><p><em>O que costumava ficar aqui?</em></p>" },
+      { name: "Heavy Debris", form: "action", description: "<p>Derrube um guindaste, parede, torre, veículo ou ponte. As criaturas dentro do alcance Próximo fazem uma Rolagem de Reação de Agilidade ou sofrem 3d8+6 de dano de impacto.</p><p><em>O que cai primeiro?</em></p>",
+        actions: adversaryAction({ name: "Heavy Debris", img: CPR("upgrades/vehicle_heavy_weapon_mount"), damage: "3d8+6 impacto", save: { trait: "agility", difficulty: 17, damageMod: "none" } }) },
+      { name: "Sensor Bloom", form: "reaction", description: "<p>Quando um personagem mobiliza um Eidolon ou rola com Medo, todas as facções próximas descobrem que algo grande está ativo.</p><p><em>Quem responde ao sinal?</em></p>" }
+    ]
+  },
+  // ---------- Tier 4 ----------
+  {
+    tier: 4, name: "Digital Ghost Cathedral", type: "exploration", img: CPR("netrunning/Demon.png"),
+    description: "<p>Um data center em ruínas onde IAs corrompidas falam por loops de oração, anúncios quebrados e fotos de famílias mortas.</p>",
+    impulses: "Converter, revelar, corromper a memória", difficulty: 18,
+    adversaries: ["Signal Haunt", "Digital Wraith", "Data Cult Oracle", "Hades Shard"],
+    features: [
+      { name: "Litany of Static", form: "passive", description: "<p>No início de uma cena, cada personagem com cyberware conectado marca 1 Estresse e ouve uma voz fazendo uma pergunta pessoal.</p><p><em>O que o Fantasma sabe?</em></p>" },
+      { name: "Icon Becomes Monster", form: "action", description: "<p>Escolha uma tela, estátua, drone, veículo ou corpo. Ele ganha vida como uma ameaça temporária de Digital Ghost até ser destruído ou desconectado.</p><p><em>Que imagem ele veste?</em></p>" },
+      { name: "Mirrored Dead", form: "action", description: "<p>Gaste até 3 Medo e escolha a mesma quantidade de personagens na cena. A Catedral gera um eco corrompido deles por telas, alto-falantes, drones, fotos antigas, gravações de segurança ou estática de RA. Até o fim da cena, ou até o personagem rolar com Esperança, quando ele fosse fazer uma rolagem de ação, o mestre revela uma memória distorcida, medo, arrependimento ou versão falsa do passado dele. Ele escolhe uma:</p><ul><li>Marcar 1 Estresse e ficar temporariamente Vulnerável.</li><li>Dar desvantagem à rolagem, enquanto o eco interfere nos sentidos.</li><li>Marcar 2 Espaços de Armadura, enquanto o eco o \"ataca\".</li></ul><p><em>Que parte dele a Catedral aprendeu a imitar?</em></p>",
+        actions: adversaryAction({ name: "Mirrored Dead", img: CPR("netrunning/Demon.png"), fear: 1 }) },
+      { name: "Prayer Loop", form: "reaction", description: "<p>Quando um personagem rola com Medo, o Estresse marcado não pode ser limpo até ele sair da Haunted Zone ou cortar o sinal.</p><p><em>Que frase fica se repetindo?</em></p>" }
+    ]
+  },
+  {
+    tier: 4, name: "Dead Pantheon Breach", type: "event", img: CPR("netrunning/Balron.png"),
+    description: "<p>Um lugar onde a Blackwall fica fina e sistemas derivados dos Theoi começam a sonhar em público.</p>",
+    impulses: "Reescrever, possuir, revelar a verdade", difficulty: 21,
+    adversaries: ["Hades Shard", "Blackwall Seraph", "Digital Wraith", "Data Cult Oracle"],
+    features: [
+      { name: "Reality Through Machines", form: "passive", description: "<p>Câmeras, implantes, drones, veículos e telas podem mostrar versões diferentes da mesma cena. Personagens precisam ter sucesso numa Rolagem de Instinto ou Conhecimento antes de confiar em informação digital.</p><p><em>Qual versão está mentindo?</em></p>" },
+      { name: "Ghost Incursion", form: "action", description: "<p>Gere um Digital Ghost ou possua uma máquina conectada dentro do alcance Distante.</p><p><em>O que atravessou a brecha?</em></p>" },
+      { name: "Root-Level Intrusion", form: "action", description: "<p>Escolha um dispositivo conectado dentro do alcance Distante. Ele recebe um comando de além da Blackwall e se volta contra o usuário ou o ambiente ao redor. Um personagem diretamente afetado faz uma Rolagem de Reação de Interface. Em uma falha, marca 3 de Estresse e o dispositivo falha, trava, pifa, o expõe, o leva ao perigo ou ataca um alvo próximo. Em um sucesso, marca 1 Estresse e força o sistema de volta ao controle.</p><p><em>Que máquina obedeceu a um deus morto?</em></p>" },
+      { name: "The God Notices", form: "reaction", description: "<p>Quando um personagem rola com Medo, marca 1 Estresse ou perde 1 Esperança enquanto o sinal fala diretamente com ele.</p><p><em>Por que nome ele o chama?</em></p>" }
+    ]
+  },
+  {
+    tier: 4, name: "Corporate Tower Coup", type: "social", img: CPR("gear/smart_glasses"),
+    description: "<p>Uma sala de diretoria, uma gala, um andar de reféns e um bunker de comando fingindo ser o mesmo prédio.</p>",
+    impulses: "Trair, reenquadrar, monetizar a violência", difficulty: 20,
+    adversaries: ["Board Executive", "Sitil Black-Ops Captain", "Korvax Neural Interrogator", "Corporate Response Team"],
+    features: [
+      { name: "Legal Battlefield", form: "passive", description: "<p>Rolagens sociais bem-sucedidas podem desativar a segurança, redirecionar guardas, congelar contas ou mudar objetivos. Rolagens sociais que falham com Medo criam complicações legais, financeiras ou com reféns.</p><p><em>Quem é dono da sala?</em></p>" },
+      { name: "Hostile Vote", form: "action", description: "<p>Uma facção dentro da torre muda de lado, revela uma vantagem ou chama apoio armado.</p><p><em>Quem comprou a lealdade dela?</em></p>" },
+      { name: "Executive Evacuation", form: "reaction", description: "<p>Quando um personagem rola com Medo, o verdadeiro alvo começa a fugir por uma rota privada.</p><p><em>Que saída nunca esteve no mapa?</em></p>" }
+    ]
+  },
+  {
+    tier: 4, name: "Blackwall Storm Highway", type: "traversal", img: CPR("status/emp"),
+    description: "<p>Uma rodovia em ruínas onde veículos correm através de relâmpagos, infraestrutura quebrada e clima de máquina corrompido.</p>",
+    impulses: "Acelerar, corromper, dividir o comboio", difficulty: 20,
+    adversaries: ["Handler’s Hound", "Hades Shard", "Blackwall Seraph", "Contract Sniper"],
+    features: [
+      { name: "Machine Weather", form: "passive", description: "<p>Veículos e equipamento conectado falham com a tempestade. Em qualquer rolagem de veículo com Medo, o veículo fica Damaged, a menos que o motorista marque 1 Estresse.</p><p><em>Que sistema pisca primeiro?</em></p>" },
+      { name: "Black Lightning", form: "action", description: "<p>Atinja um veículo, drone, Eidolon ou dispositivo conectado dentro do alcance Distante. Ele faz uma Rolagem de Reação ou sofre 4d8+6 de dano techno.</p><p><em>O que o relâmpago soletra?</em></p>",
+        actions: adversaryAction({ name: "Black Lightning", img: CPR("status/emp"), damage: "4d8+6 techno", save: { trait: null, difficulty: 20, damageMod: "none" } }) },
+      { name: "Route Collapse", form: "reaction", description: "<p>Quando um personagem rola com Medo, destrua uma rota, ponte, túnel, rampa ou saída.</p><p><em>Quem sabia que a estrada ia ceder?</em></p>" }
+    ]
+  },
+  {
+    tier: 4, name: "Elite Contract Auction", type: "social", img: CPR("dlc/gear/savannah-eagle"),
+    description: "<p>Um leilão secreto em que corporações, gangues, cultos digitais e lendas mercenárias dão lances por uma pessoa, arma, fragmento de IA ou chave de Eidolon.</p>",
+    impulses: "Tentar, trair, expor identidades", difficulty: 20,
+    adversaries: ["Board Executive", "Chrome Reaper", "Data Cult Oracle", "Rival Edgerunner Crew"],
+    features: [
+      { name: "Everyone Wants It", form: "passive", description: "<p>Cada facção presente tem um objetivo diferente. Quando os personagens criam uma abertura, outra facção pode aproveitá-la.</p><p><em>Quem está dando lances com sangue em vez de créditos?</em></p>" },
+      { name: "Raise the Price", form: "action", description: "<p>Revele um novo custo: refém, dívida, exposição pública, chave de cyberware, chantagem ou um lance rival.</p><p><em>Qual é o preço real?</em></p>" },
+      { name: "Masks Off", form: "reaction", description: "<p>Quando um personagem rola com Medo, revele uma identidade oculta, inimigo disfarçado, agente duplo ou comprador secreto.</p><p><em>Quem nunca deveria estar aqui?</em></p>" }
+    ]
+  }
+];
+
+const adversaryId = name => stableId(`adversary:${name}`);
+const environmentId = name => stableId(`environment:${name}`);
+
+// Feature copiada de um adversário oficial (clone: { adversary, feature }): ações e efeitos vêm do original,
+// nome/ícone/descrição do Edgeheart. Ataques em grupo (Group Attack) passam a usar o dano do ataque padrão
+// deste adversário.
+function cloneAdversaryFeature(f, adversary, officialAdversaries) {
+  const source = officialAdversaries.find(a => a.name === f.clone.adversary)?.items.find(i => i.name === f.clone.feature);
+  if (!source) {
+    console.warn(`Edgeheart | Feature oficial "${f.clone.feature}" (${f.clone.adversary}) não encontrada; ${f.name} fica só com texto.`);
+    return f;
+  }
+  const actions = foundry.utils.deepClone(source._source.system.actions ?? {});
+  for (const action of Object.values(actions)) {
+    action.name = f.name;
+    action.description = "";
+    action.img = f.img;
+    if (action.damage?.main?.groupAttack) action.damage.main.value = damagePart(adversary.attack.damage).value;
+  }
+  const effects = foundry.utils.deepClone(source._source.effects ?? []).map(e => ({ ...e, name: f.name, img: f.img, description: "", origin: null, _stats: undefined }));
+  // Flags do sistema (ex: hordeFeature, que identifica a feature Horde) vêm junto.
+  return { ...f, actions, effects, flags: foundry.utils.deepClone(source._source.flags ?? {}) };
+}
+
+// ---------- Automação das features de adversários e ambientes ----------
+// "Adversário/Feature" → { actions, effects (aplicados pelas ações), passive (efeitos passivos da feature),
+// clone (copiar a feature oficial) }. Tudo segue a estrutura de uma feature oficial equivalente:
+// Estresse/Esperança/Armadura no alvo = Enervating Blast / Acidic Form; ficar Escondido = Turn Invisible
+// e Blend In; bônus situacional = efeito passivo desligado (Opportunist); dano extra = Blasphemous Might;
+// reforços = Form Up (summon); troca de ficha = Exposed! (transform); contagens = Siege Weapons.
+// Quando o texto dá uma escolha ("marca 1 Estresse ou fica Vulnerável"), cada opção vira uma ação.
+const THREAT_AUTOMATION = (() => {
+  const hidden = (name, img) => targetEffect({ name, img, statuses: ["hidden"], description: "<p>Escondido.</p>" });
+  const vulnerable = (name, img, description) => targetEffect({ name, img, statuses: ["vulnerable"], description });
+  const marked = (name, img, description) => targetEffect({ name, img, description });
+  const self = { type: "self", amount: null };
+  const allies = { type: "friendly", amount: null };
+  const dif = n => [fxChange("system.difficulty", n)];
+  const dice = d => [fxChange("system.bonuses.damage.dice", d)];
+  const auto = {};
+  const set = (key, def) => { auto[key] = def; };
+
+  // ----- Tier 1 -----
+  set("Sitil Security Guard/Badge Discipline", { passive: [passiveEffect({ name: "Badge Discipline", img: CPR("upgrades/security_upgrade"), disabled: true, changes: dif(1), description: "<p>+1 de Dificuldade. Ligue enquanto o guarda estiver perto de um dispositivo corporativo, posto de controle, câmera ou porta trancada.</p>" })] });
+  (() => {
+    const h = hidden("Crowd Slip", CPR("status/hidden"));
+    set("Tiger Choir Cutter/Crowd Slip", { effects: [h], actions: threatAction({ name: "Crowd Slip", actionType: "reaction", target: self, effects: [h] }) });
+  })();
+  set("Chrome Maw Bruiser/Chrome Bulk", { actions: threatAction({ name: "Chrome Bulk", actionType: "reaction", stress: 1, target: self }) });
+  (() => {
+    const v = vulnerable("Jawbreaker", CPR("cyberware/big_knucks"), "<p>Temporariamente Vulnerável pelo Jawbreaker.</p>");
+    set("Chrome Maw Bruiser/Jawbreaker", { effects: [v], actions: {
+      ...threatAction({ name: "Jawbreaker: Estresse", stress: 1, attack: true, range: "Melee", resources: { stress: 1 } }),
+      ...threatAction({ name: "Jawbreaker: Vulnerável", stress: 1, attack: true, range: "Melee", effects: [v] })
+    } });
+  })();
+  set("Pocket Drone Handler/Send the Drone", { actions: threatAction({ name: "Send the Drone", stress: 1, damage: "1d6+2 techno", save: { trait: "agility", difficulty: null, damageMod: "none" }, resources: { stress: 1 } }) });
+  set("Rookie Edgerunner/Cover Shooter", { passive: [passiveEffect({ name: "Cover Shooter", img: CPR("status/cover"), disabled: true, changes: dif(1), description: "<p>+1 de Dificuldade. Ligue enquanto o Rookie estiver atrás de cobertura.</p>" })] });
+
+  // ----- Tier 2 -----
+  (() => {
+    const w = targetEffect({ name: "Witness Me", img: CPR("gear/video_camera"), changes: [fxChange("system.advantageSources", "Próximo ataque (Witness Me)")], description: "<p>Vantagem no próximo ataque.</p>" });
+    set("Blood Saint Duelist/Witness Me", { effects: [w], actions: threatAction({ name: "Witness Me", actionType: "reaction", target: self, effects: [w] }) });
+  })();
+  set("Blood Saint Duelist/Signature Cut", { actions: threatAction({ name: "Signature Cut", stress: 1, attack: true, range: "Melee", damage: "2d8+4 fís", resources: { stress: 1 } }) });
+  (() => {
+    const v = vulnerable("Public Humiliation", CPR("status/prone"), "<p>Temporariamente Vulnerável pela humilhação pública do Duelist.</p>");
+    set("Blood Saint Duelist/Public Humiliation", { effects: [v], actions: {
+      ...threatAction({ name: "Public Humiliation: Esperança", actionType: "reaction", resources: { hope: 1 } }),
+      ...threatAction({ name: "Public Humiliation: Vulnerável", actionType: "reaction", effects: [v] })
+    } });
+  })();
+  (() => {
+    const t = targetEffect({ name: "Legal Threat", img: CPR("gear/audio_recorder"), changes: [fxChange("system.disadvantageSources", "Mentir, negociar ou esconder informação (Legal Threat)")], description: "<p>Desvantagem em rolagens para mentir, negociar ou esconder informação enquanto estiver sob interrogatório direto.</p>" });
+    set("Korvax Neural Interrogator/Legal Threat", { effects: [t], actions: threatAction({ name: "Legal Threat", range: "Close", effects: [t] }) });
+  })();
+  set("Korvax Neural Interrogator/Memory Hook", { actions: threatAction({ name: "Memory Hook", stress: 1, range: "Close", save: { trait: "instinct", difficulty: null, damageMod: "half" }, resources: { stress: 2 } }) });
+  set("Korvax Neural Interrogator/Pressure File", { actions: threatAction({ name: "Pressure File", actionType: "reaction", resources: { stress: 1 } }) });
+  set("Corporate Response Team/Stack Up", { actions: {
+    ...threatAction({ name: "Stack Up", stress: 1, attack: true, range: "Far", damage: "2d8+4 fís" }),
+    ...threatAction({ name: "Stack Up: Estresse", stress: 1, attack: true, range: "Far", damage: "2d8+4 fís", resources: { stress: 1 } })
+  } });
+  set("Black-Clinic Butcher/Pain Map", { actions: threatAction({ name: "Pain Map", resources: { stress: 1 } }) });
+  (() => {
+    const d = targetEffect({ name: "Surgical Disable", img: CPR("cyberware/tool_hand"), description: "<p>Um cyberware está temporariamente desativado.</p>" });
+    set("Black-Clinic Butcher/Surgical Disable", { effects: [d], actions: threatAction({ name: "Surgical Disable", stress: 1, attack: true, range: "Melee", damage: "2d10+3 fís", effects: [d] }) });
+  })();
+  (() => {
+    const h = hidden("Prepared Position", CPR("status/hidden"));
+    set("Contract Sniper/Prepared Position", { effects: [h], actions: {
+      ...threatAction({ name: "Prepared Position: Escondido", target: self, effects: [h] }),
+      ...threatAction({ name: "Ataque Escondido (+1d8)", attack: true, range: "Very Far", damage: "3d8+5 fís" })
+    } });
+  })();
+  (() => {
+    const h = hidden("Relocate", CPR("status/falling"));
+    set("Contract Sniper/Relocate", { effects: [h], actions: threatAction({ name: "Relocate", actionType: "reaction", target: self, effects: [h] }) });
+  })();
+  (() => {
+    const t = targetEffect({ name: "Augmented Haunting", img: CPR("status/netrunning"), changes: [fxChange("system.disadvantageSources", "Distinguir ameaças reais de sinais falsos (Augmented Haunting)")], description: "<p>Desvantagem em rolagens para distinguir ameaças reais de sinais falsos.</p>" });
+    set("Signal Haunt/Augmented Haunting", { effects: [t], actions: threatAction({ name: "Augmented Haunting", range: "Close", effects: [t] }) });
+  })();
+  (() => {
+    const off = targetEffect({ name: "Signal Spike", img: CPR("programs/hellbolt"), description: "<p>Perdeu o benefício de um sistema conectado (equipamento, cyberware, sensores ou comunicadores) até gastar 1 Esperança para reativá-lo.</p>" });
+    set("Signal Haunt/Signal Spike", { effects: [off], actions: {
+      ...threatAction({ name: "Signal Spike: Estresse", stress: 1, range: "Far", resources: { stress: 1 } }),
+      ...threatAction({ name: "Signal Spike: Desligar Sistema", stress: 1, range: "Far", effects: [off] })
+    } });
+  })();
+
+  // ----- Tier 3 -----
+  (() => {
+    const e = targetEffect({ name: "Operational Control", img: CPR("upgrades/communications_center"), changes: dif(1), description: "<p>+1 de Dificuldade pelo comando do Sitil Black-Ops Captain.</p>" });
+    set("Sitil Black-Ops Captain/Operational Control", { effects: [e], actions: threatAction({ name: "Operational Control", range: "Close", target: allies, effects: [e] }) });
+  })();
+  (() => {
+    const d2 = targetEffect({ name: "Role Switch: Dificuldade", img: CPR("gear/disposable_cellphone"), changes: dif(2), description: "<p>+2 de Dificuldade.</p>" });
+    const dmg = targetEffect({ name: "Role Switch: Dano", img: CPR("gear/disposable_cellphone"), changes: dice("1d8"), description: "<p>+1d8 de dano.</p>" });
+    set("Rival Edgerunner Crew/Role Switch", { effects: [d2, dmg], actions: {
+      ...threatAction({ name: "Role Switch: +2 Dificuldade", target: self, effects: [d2] }),
+      ...threatAction({ name: "Role Switch: +1d8 de Dano", target: self, effects: [dmg] }),
+      ...threatAction({ name: "Role Switch: Limpar 1 Estresse", target: self, heal: { stress: 1 } }),
+      ...threatAction({ name: "Role Switch: Duas Opções", stress: 1, target: self })
+    } });
+  })();
+  (() => {
+    const combo = targetEffect({ name: "Setpiece Combo", img: CPR("vehicles/super_car"), changes: [fxChange("system.advantageSources", "Próximo ataque (Setpiece Combo)"), ...dice("1d8")], description: "<p>Vantagem e +1d8 de dano no próximo ataque.</p>" });
+    set("Rival Edgerunner Crew/Setpiece Combo", { effects: [combo], actions: {
+      ...threatAction({ name: "Setpiece Combo", stress: 2, target: self }),
+      ...threatAction({ name: "Setpiece: Rolagem de Reação", range: "Far", save: { trait: null, difficulty: null, damageMod: "none" }, resources: { stress: 2 } }),
+      ...threatAction({ name: "Setpiece: Próximo Ataque", target: self, effects: [combo] })
+    } });
+  })();
+  (() => {
+    const assault = targetEffect({ name: "Assault Frame", img: CPR("upgrades/heavy_chasis"), duration: "scene", changes: dice("1d10"), description: "<p>Os ataques padrão causam +1d10 de dano.</p>" });
+    const guardian = targetEffect({ name: "Guardian Frame", img: CPR("upgrades/heavy_chasis"), duration: "scene", changes: dif(1), description: "<p>+1 de Dificuldade.</p>" });
+    set("Combat Eidolon Frame/Frame Pattern", { effects: [assault, guardian], actions: {
+      ...threatAction({ name: "Assault Frame", target: self, effects: [assault] }),
+      ...threatAction({ name: "Guardian Frame", range: "Close", target: allies, effects: [guardian] })
+    } });
+  })();
+  (() => {
+    const restrained = targetEffect({ name: "Ram", img: CPR("upgrades/combat_plow"), statuses: ["restrained"], description: "<p>Atropelado pelo Eidolon: empurrado até o alcance Próximo e temporariamente Imobilizado.</p>" });
+    const suppressed = targetEffect({ name: "Suppress", img: CPR("upgrades/onboard_machine_gun"), description: "<p>Suprimido: não pode marcar voluntariamente Espaço de Armadura, Estresse ou gastar Esperança até rolar com Esperança.</p>" });
+    set("Combat Eidolon Frame/Battlefield Tactics", { effects: [restrained, suppressed], actions: {
+      ...threatAction({ name: "Suppress", stress: 1, attack: true, range: "Far", damage: "3d10+7 fís", effects: [suppressed] }),
+      ...threatAction({ name: "Ram", stress: 1, attack: true, range: "Melee", resources: { stress: 1 }, effects: [restrained] }),
+      ...threatAction({ name: "Breach Path", stress: 1, range: "Far" })
+    } });
+  })();
+  set("Data Cult Oracle/Unwanted Revelation", { actions: threatAction({ name: "Unwanted Revelation", range: "Close", resources: { stress: 1 } }) });
+  (() => {
+    const v = vulnerable("Convert the Weak", CPR("status/drugged"), "<p>Temporariamente Vulnerável pela transmissão do culto.</p>");
+    set("Data Cult Oracle/Convert the Weak", { effects: [v], actions: threatAction({ name: "Convert the Weak", stress: 1, range: "Far", save: { trait: "presence", difficulty: null, damageMod: "none" }, resources: { stress: 2 }, effects: [v] }) });
+  })();
+  (() => {
+    const e = targetEffect({ name: "Cult Transmission", img: CPR("gear/pocket_amplifier"), changes: [...dif(1), ...dice("1d6")], description: "<p>Até o próximo Holofote do Data Cult Oracle: +1 de Dificuldade e +1d6 de dano techno.</p>" });
+    set("Data Cult Oracle/Cult Transmission", { effects: [e], actions: threatAction({ name: "Cult Transmission", stress: 2, range: "Close", target: allies, effects: [e] }) });
+  })();
+  set("Digital Wraith/Fear Echo", { actions: threatAction({ name: "Fear Echo", actionType: "reaction", range: "Far", resources: { stress: 1 } }) });
+  (() => {
+    const h = hidden("Digital Vanish", CPR("status/hidden"));
+    set("Digital Wraith/Digital Vanish", { effects: [h], actions: threatAction({ name: "Digital Vanish", actionType: "reaction", target: self, effects: [h] }) });
+  })();
+  set("Tyfar Kill Platform/Walking Arsenal", { actions: threatAction({ name: "Ataque sem Cobertura (+1d10)", attack: true, range: "Far", damage: "4d10+4 fís" }) });
+
+  // ----- Tier 4 -----
+  (() => {
+    const m = marked("Marked (Cyber Hunter)", CPR("dlc/cyberware/kill_display"), "<p>Marcado pelo Cyber Hunter até o fim da cena ou até quebrar a linha de visão por um Holofote inteiro: os ataques dele contra este alvo têm vantagem e ignoram cobertura.</p>");
+    set("Cyber Hunter/Target Package", { effects: [m], actions: threatAction({ name: "Target Package", actionType: "reaction", effects: [m] }) });
+  })();
+  (() => {
+    const off = targetEffect({ name: "Blackout Shot", img: CPR("ammo/grenade_emp"), description: "<p>Cyberwares desativados até marcar 1 Estresse para reativá-los.</p>" });
+    set("Cyber Hunter/Blackout Shot", { effects: [off], actions: threatAction({ name: "Blackout Shot", stress: 2, attack: true, advState: "advantage", range: "Very Far", damage: "4d8+10 fís", effects: [off] }) });
+  })();
+  set("Ares-Tyrant Eidolon/Ares Overdrive", { actions: threatAction({ name: "Ares Overdrive", resources: { stress: 1 } }) });
+  (() => {
+    const god = targetEffect({ name: "War God Awakens", img: CPR("status/beserker"), duration: "scene", changes: [fxChange("system.advantageSources", "Todos os ataques (War God Awakens)"), ...dice("1d12")], description: "<p>Até o fim da cena: todos os ataques com vantagem e +1d12 de dano. Qualquer personagem que causar dano a ele ganha 1 Esperança.</p>" });
+    set("Ares-Tyrant Eidolon/War God Awakens", { effects: [god], actions: threatAction({ name: "War God Awakens", stress: 3, target: self, effects: [god] }) });
+  })();
+  (() => {
+    const e = targetEffect({ name: "Identity Collapse", img: CPR("programs/nervescrub"), description: "<p>Não pode usar Experiências até o próximo descanso.</p>" });
+    set("Hades Shard/Identity Collapse", { effects: [e], actions: threatAction({ name: "Identity Collapse", stress: 2, range: "Far", save: { trait: "instinct", difficulty: null, damageMod: "none" }, resources: { stress: 2 }, effects: [e] }) });
+  })();
+  set("Hades Shard/Dead Network", { actions: threatAction({ name: "Dead Network", actionType: "reaction", stress: 1, range: "Far", resources: { stress: 1 } }) });
+  set("Board Executive/Liability Shield", { passive: [passiveEffect({ name: "Liability Shield", img: CPR("upgrades/bulletproof_glass"), disabled: true, changes: dif(2), description: "<p>+2 de Dificuldade. Ligue enquanto houver pelo menos um aliado corporativo dentro do alcance Próximo.</p>" })] });
+  (() => {
+    const e = targetEffect({ name: "Hostile Acquisition", img: CPR("dlc/gear/fire-safe"), duration: "scene", description: "<p>Não pode ganhar Esperança até o fim da cena.</p>" });
+    set("Board Executive/Hostile Acquisition", { effects: [e], actions: threatAction({ name: "Hostile Acquisition", stress: 2, range: "Far", save: { trait: "presence", difficulty: null, damageMod: "none" }, effects: [e] }) });
+  })();
+  (() => {
+    const e = targetEffect({ name: "Asset Freeze", img: CPR("status/sedative"), duration: "scene", description: "<p>Até o fim da cena, precisa marcar 1 Estresse antes de usar créditos, contatos, acesso a equipamento, um veículo ou um sistema conectado.</p>" });
+    set("Board Executive/Asset Freeze", { effects: [e], actions: threatAction({ name: "Asset Freeze", stress: 1, effects: [e] }) });
+  })();
+  set("Board Executive/Contractual Violence", { actions: {
+    ...summonAction({ name: "Chamar 2 Sitil Security Guards", actionType: "reaction", stress: 1, summon: [{ name: "Sitil Security Guard", count: 2 }] }),
+    ...summonAction({ name: "Chamar 2 Corporate Response Teams", actionType: "reaction", stress: 1, summon: [{ name: "Corporate Response Team", count: 2 }] })
+  } });
+  set("Chrome Reaper/Chrome Supremacy", { actions: threatAction({ name: "Chrome Supremacy", actionType: "reaction", stress: 1, resources: { stress: 1 } }) });
+  (() => {
+    const alvo = marked("Alvo (Black Hand)", CPR("dlc/cyberware/kill_display"), "<p>Alvo de Black Hand até o fim da cena ou até outro personagem causar dano Maior a ele: os ataques de Black Hand contra este alvo causam +1d8 de dano.</p>");
+    set("Black Hand/Contract Target", { effects: [alvo], actions: {
+      ...threatAction({ name: "Contract Target", actionType: "reaction", effects: [alvo] }),
+      ...threatAction({ name: "Ataque contra o Alvo (+1d8)", attack: true, range: "Far", damage: "5d10+8 fís" })
+    } });
+    set("The Raven Eidolon/Killbox Execution", { effects: [alvo], actions: threatAction({ name: "Killbox Execution", stress: 3, attack: true, range: "Far", damage: "4d10+10 fís", effects: [alvo] }) });
+  })();
+  set("Black Hand/A Legend Like You", { actions: threatAction({ name: "A Legend Like You", actionType: "reaction", attack: true, range: "Far", damage: "4d10+8 fís" }) });
+  (() => {
+    const smart = targetEffect({ name: "Smart Rifle", img: CPR("ammo/rifle_smart"), description: "<p>O próximo ataque contra este alvo ganha +2.</p>" });
+    const shock = vulnerable("Shock Gauntlet", CPR("status/emp"), "<p>Temporariamente Vulnerável pelo Shock Gauntlet.</p>");
+    set("Black Hand/Black Hand Guns", { effects: [smart, shock], actions: {
+      ...threatAction({ name: "Hand Cannon", attack: true, range: "Far", damage: "4d10+8 fís", resources: { stress: 1 } }),
+      ...threatAction({ name: "Mono-Blade", attack: true, range: "Melee", damage: "4d10+8 fís", resources: { armor: 2 } }),
+      ...threatAction({ name: "Smart Rifle", attack: true, range: "Far", damage: "4d10+8 fís", effects: [smart] }),
+      ...threatAction({ name: "Shock Gauntlet", attack: true, range: "Melee", damage: "4d10+8 fís", effects: [shock] })
+    } });
+  })();
+  set("Black Hand/Eidolon Drop", { actions: transformAction({ name: "Eidolon Drop", fear: 3, into: "The Raven Eidolon", refresh: { hitPoints: true, stress: false } }) });
+
+  // ----- Ambientes -----
+  (() => {
+    const rec = targetEffect({ name: "Camera Sweep", img: CPR("gear/computer"), description: "<p>Gravado e rastreável pelas câmeras.</p>" });
+    set("Low-Sec Data Office/Camera Sweep", { effects: [rec], actions: {
+      ...threatAction({ name: "Camera Sweep: Estresse", resources: { stress: 1 } }),
+      ...threatAction({ name: "Camera Sweep: Gravado", effects: [rec] })
+    } });
+  })();
+  set("Low-Sec Data Office/Reception Alarm", { actions: summonAction({ name: "Reception Alarm", actionType: "reaction", summon: [{ name: "Sitil Security Guard", count: 1 }] }) });
+  set("Megablock Stairwell/Down the Stairs", { actions: threatAction({ name: "Down the Stairs", actionType: "reaction", resources: { stress: 1 } }) });
+  set("Highway Kill Run/The Chase", { actions: countdownAction({ name: "The Chase", img: CPR("vehicles/motorbike"), countdown: "Dado de Perseguição", start: 4 }) });
+  set("Corporate Heist Floor/Objective Clock", { actions: countdownAction({ name: "Objective Clock", img: CPR("dlc/gear/fire-safe"), countdown: "Contagem de Progresso", start: 4 }) });
+  (() => {
+    const r = targetEffect({ name: "Lockdown Doors", img: CPR("upgrades/dna_lock"), statuses: ["restrained"], description: "<p>Preso pelo bloqueio: temporariamente Imobilizado.</p>" });
+    set("Corporate Heist Floor/Lockdown Doors", { effects: [r], actions: {
+      ...threatAction({ name: "Lockdown Doors: Estresse", resources: { stress: 1 } }),
+      ...threatAction({ name: "Lockdown Doors: Imobilizado", effects: [r] })
+    } });
+  })();
+  set("Haunted Subway Node/False Exit", { actions: threatAction({ name: "False Exit", damage: "1 fís", save: { trait: "agility", difficulty: 15, damageMod: "none" }, resources: { stress: 1 } }) });
+  set("Gang War Block/Crossfire", { actions: threatAction({ name: "Crossfire", save: { trait: "agility", difficulty: 16, damageMod: "none" }, resources: { stress: 1 } }) });
+  set("Blacksite Extraction/Containment Protocol", { actions: countdownAction({ name: "Containment Protocol", img: CPR("gear/cryotank"), countdown: "Contagem de Progresso", start: 6 }) });
+  set("Blacksite Extraction/Sterile Kill Team", { actions: summonAction({ name: "Sterile Kill Team", summon: [{ name: "Corporate Response Team", count: 1 }] }) });
+  set("Digital Ghost Cathedral/Litany of Static", { actions: threatAction({ name: "Litany of Static", resources: { stress: 1 } }) });
+  set("Digital Ghost Cathedral/Mirrored Dead", { actions: threatAction({ name: "Mirrored Dead", fear: 1, scalableFear: true }) });
+  set("Dead Pantheon Breach/Root-Level Intrusion", { actions: threatAction({ name: "Root-Level Intrusion", range: "Far", save: { trait: null, difficulty: 21, damageMod: "none" }, resources: { stress: 3 } }) });
+  set("Dead Pantheon Breach/The God Notices", { actions: {
+    ...threatAction({ name: "The God Notices: Estresse", actionType: "reaction", resources: { stress: 1 } }),
+    ...threatAction({ name: "The God Notices: Esperança", actionType: "reaction", resources: { hope: 1 } })
+  } });
+  return auto;
+})();
+
+// Aplica a automação (e a cópia de features oficiais) numa feature.
+function automateThreatFeature(owner, f, officialAdversaries) {
+  const a = THREAT_AUTOMATION[`${owner.name}/${f.name}`];
+  let feature = a ? { ...f, actions: a.actions ?? f.actions, effects: [...(a.effects ?? f.effects ?? []), ...(a.passive ?? [])] } : f;
+  if (feature.clone) feature = cloneAdversaryFeature(feature, owner, officialAdversaries);
+  return threatFeature(feature);
+}
+
+async function importAdversaries() {
+  const pack = await getOrCreatePack("adversaries");
+  const officialAdversaries = await game.packs.get("daggerheart.adversaries")?.getDocuments() ?? [];
+  const folders = {};
+  for (const tier of [...new Set(ADVERSARIES.map(a => a.tier))].sort()) folders[tier] = await makeFolder(pack, `Tier ${tier}`, { type: "Actor" });
+  const data = ADVERSARIES.map(a => ({
+    _id: adversaryId(a.name), name: a.name, img: a.img, type: "adversary", folder: folders[a.tier].id,
+    prototypeToken: { name: a.name, texture: { src: a.img } },
+    system: {
+      tier: a.tier, type: a.type, difficulty: a.difficulty,
+      damageThresholds: { major: a.thresholds[0], severe: a.thresholds[1] },
+      resources: { hitPoints: { value: 0, max: a.hp }, stress: { value: 0, max: a.stress } },
+      motivesAndTactics: a.motives, description: a.description, notes: "",
+      experiences: Object.fromEntries(Object.entries(a.experiences).map(([name, value]) => [foundry.utils.randomID(), { name, value, description: "" }])),
+      attack: adversaryAttack({ ...a.attack, img: a.img }),
+      resistance: threatResistance(a.resistance),
+      attribution: ATTRIBUTION, size: "medium", advantageSources: [], disadvantageSources: [], criticalThreshold: 20,
+      // Horde: dano do ataque padrão com metade ou mais dos PV marcados (usado pela feature Horde oficial).
+      typeData: a.horde ? { type: "horde", hordeDamage: a.horde.damage.replace(/ .*$/, ""), hordeHP: Math.ceil(a.hp / 2) } : null
+    },
+    items: a.features.map(f => automateThreatFeature(a, f, officialAdversaries))
+  }));
+  await Actor.createDocuments(data, { pack: pack.collection, keepId: true });
+}
+
+async function importEnvironments() {
+  const pack = await getOrCreatePack("environments");
+  const adversaries = game.packs.get(`${PACK_SCOPE}.${PACKS.adversaries.name}`);
+  const folders = {};
+  for (const tier of [...new Set(ENVIRONMENTS.map(e => e.tier))].sort()) folders[tier] = await makeFolder(pack, `Tier ${tier}`, { type: "Actor" });
+  const data = ENVIRONMENTS.map(e => {
+    // Só entram os adversários que já existem no compêndio (os de Tiers ainda não feitos ficam no texto).
+    const known = e.adversaries.filter(n => ADVERSARIES.some(a => a.name === n));
+    const missing = e.adversaries.filter(n => !known.includes(n));
+    return {
+      _id: environmentId(e.name), name: e.name, img: e.img, type: "environment", folder: folders[e.tier].id,
+      prototypeToken: { name: e.name, texture: { src: e.img } },
+      system: {
+        tier: e.tier, type: e.type, difficulty: e.difficulty, impulses: e.impulses, notes: "",
+        description: e.description + (missing.length ? `<p><em>Também combina com: ${missing.join(", ")}.</em></p>` : ""),
+        potentialAdversaries: known.length
+          ? { [foundry.utils.randomID()]: { label: "Adversários", adversaries: known.map(n => `Compendium.${adversaries.collection}.Actor.${adversaryId(n)}`) } }
+          : {},
+        attribution: ATTRIBUTION
+      },
+      items: e.features.map(f => automateThreatFeature(e, { ...f, img: f.img ?? e.img }, []))
+    };
+  });
+  await Actor.createDocuments(data, { pack: pack.collection, keepId: true });
 }
 
 // ---------- Cyberware ----------
@@ -2744,7 +3744,8 @@ async function buildPacks() {
   await importLifePathsAndAffiliations();
   await importDomainCards();
   await importCyberware();
-  await importAdversaryExample();
+  await importAdversaries();
+  await importEnvironments();
   await importJournals();
   for (const key of Object.keys(PACKS)) await game.packs.get(`${PACK_SCOPE}.${PACKS[key].name}`)?.configure({ locked: true });
   ui.notifications.info("Edgeheart: compêndios gerados.");

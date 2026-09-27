@@ -2,7 +2,7 @@
   "id": "edgeheart-cyberpunk",
   "title": "Edgeheart - Cyberpunk para Daggerheart (Núcleo)",
   "description": "Campaign frame cyberpunk Edgeheart para o sistema Daggerheart, em português: 9 classes com 18 subclasses, 9 Competências com 21 cartas cada, Trajetórias, Afiliações, 60 cyberwares, armas e armaduras, a Ficha Edgeheart (Humanidade, Carga Cibernética e Ciberpsicose) e diários com o PDF traduzido. Os compêndios já vêm prontos: é só ativar o módulo.",
-  "version": "1.17.0",
+  "version": "1.20.0",
   "compatibility": {
     "minimum": "14",
     "verified": "14.368"
@@ -25,12 +25,13 @@
     { "name": "edgeheart-weapons", "label": "Edgeheart: Armas", "path": "packs/edgeheart-weapons", "type": "Item", "system": "daggerheart", "ownership": { "PLAYER": "OBSERVER", "ASSISTANT": "OWNER" } },
     { "name": "edgeheart-cyberware", "label": "Edgeheart: Cyberware", "path": "packs/edgeheart-cyberware", "type": "Item", "system": "daggerheart", "ownership": { "PLAYER": "OBSERVER", "ASSISTANT": "OWNER" } },
     { "name": "edgeheart-adversaries", "label": "Edgeheart: Adversários", "path": "packs/edgeheart-adversaries", "type": "Actor", "system": "daggerheart", "ownership": { "PLAYER": "OBSERVER", "ASSISTANT": "OWNER" } },
+    { "name": "edgeheart-environments", "label": "Edgeheart: Ambientes", "path": "packs/edgeheart-environments", "type": "Actor", "system": "daggerheart", "ownership": { "PLAYER": "OBSERVER", "ASSISTANT": "OWNER" } },
     { "name": "edgeheart-journals", "label": "Edgeheart: Diários", "path": "packs/edgeheart-journals", "type": "JournalEntry", "ownership": { "PLAYER": "OBSERVER", "ASSISTANT": "OWNER" } }
   ],
   "packFolders": [
     {
       "name": "Edgeheart SRD", "sorting": "m", "color": "#00e5ff",
-      "packs": ["edgeheart-adversaries", "edgeheart-journals"],
+      "packs": ["edgeheart-adversaries", "edgeheart-environments", "edgeheart-journals"],
       "folders": [
         { "name": "Opções de Personagem", "sorting": "m", "color": "#000000", "packs": ["edgeheart-lifepaths", "edgeheart-affiliations", "edgeheart-classes", "edgeheart-subclasses", "edgeheart-domains"] },
         { "name": "Itens", "sorting": "m", "color": "#000000", "packs": ["edgeheart-armors", "edgeheart-weapons", "edgeheart-cyberware"] }

@@ -15,6 +15,7 @@ Os jogadores são mercenários na New Dark Age: pegam contratos sujos, instalam 
 - **Trajetórias e Afiliações** no lugar de Ancestralidade e Comunidade.
 - **Armas e armaduras de Tier 1**, com ataque e dano automáticos.
 - **Level Up do Edgeheart**, que pode ser ligado ou desligado nas configurações.
+- **25 adversários e 16 ambientes** dos Tiers 1 a 4, no formato dos oficiais.
 - **Diários** com o PDF inteiro traduzido, com links para os itens.
 
 Os nomes de classes, habilidades, cartas e Competências seguem o PDF em inglês; as descrições estão em português.
@@ -42,7 +43,6 @@ Mundos que usavam a versão antiga (com a macro "Importar Edgeheart") recebem um
 - Crew e Edge
 - Equipamento dos Tiers 2 a 4
 - Veículos e Eidolons
-- Adversários e ambientes
 - Versão bilíngue (PT/EN)
 
 O histórico de versões está no [CHANGELOG](CHANGELOG.md).
