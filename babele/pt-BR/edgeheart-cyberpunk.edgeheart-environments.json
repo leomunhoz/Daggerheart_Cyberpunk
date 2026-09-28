@@ -191,10 +191,10 @@
           "name": "Portas de Bloqueio",
           "description": "<p>Sele uma sala, corredor, elevador ou cofre. As criaturas lá dentro marcam 1 Estresse ou ficam temporariamente <em>Imobilizadas</em>.</p><p><em>Quem disparou o bloqueio?</em></p>",
           "actions": {
-            "Lockdown Doors: Estresse": {
+            "Lockdown Doors: Stress": {
               "name": "Portas de Bloqueio: Estresse"
             },
-            "Lockdown Doors: Imobilizado": {
+            "Lockdown Doors: Restrained": {
               "name": "Portas de Bloqueio: Imobilizado"
             }
           },
@@ -213,7 +213,7 @@
     },
     "Highway Kill Run": {
       "name": "Corrida Mortal na Rodovia",
-      "description": "<p>Uma perseguição em alta velocidade por estradas quebradas, drones de trânsito, postos de controle abandonados e veículos de emboscada.</p><p><em>Também combina com: Cordon Eidolon.</em></p>",
+      "description": "<p>Uma perseguição em alta velocidade por estradas quebradas, drones de trânsito, postos de controle abandonados e veículos de emboscada.</p><p><em>Também combina com: Eidolon Cordon.</em></p>",
       "impulses": "Acelerar, separar veículos, transformar o trânsito em arma",
       "potentialAdversaries": {
         "Adversaries": {
@@ -251,7 +251,7 @@
     },
     "Dead Pantheon Breach": {
       "name": "Brecha do Panteão Morto",
-      "description": "<p>Um lugar onde a Muralha Negra fica fina e sistemas derivados dos Theoi começam a sonhar em público.</p><p><em>Também combina com: Muralha Negra Seraph.</em></p>",
+      "description": "<p>Um lugar onde a Muralha Negra fica fina e sistemas derivados dos Theoi começam a sonhar em público.</p><p><em>Também combina com: Serafim da Muralha Negra.</em></p>",
       "impulses": "Reescrever, possuir, revelar a verdade",
       "potentialAdversaries": {
         "Adversaries": {
@@ -265,7 +265,7 @@
         },
         "Ghost Incursion": {
           "name": "Incursão Fantasma",
-          "description": "<p>Gere um Digital Fantasma ou possua uma máquina conectada dentro do alcance Distante.</p><p><em>O que atravessou a brecha?</em></p>"
+          "description": "<p>Gere um Fantasma Digital ou possua uma máquina conectada dentro do alcance Distante.</p><p><em>O que atravessou a brecha?</em></p>"
         },
         "Root-Level Intrusion": {
           "name": "Intrusão em Nível Root",
@@ -280,10 +280,10 @@
           "name": "O Deus Percebe",
           "description": "<p>Quando um personagem rola com Medo, marca 1 Estresse ou perde 1 Esperança enquanto o sinal fala diretamente com ele.</p><p><em>Por que nome ele o chama?</em></p>",
           "actions": {
-            "The God Notices: Estresse": {
+            "The God Notices: Stress": {
               "name": "O Deus Percebe: Estresse"
             },
-            "The God Notices: Esperança": {
+            "The God Notices: Hope": {
               "name": "O Deus Percebe: Esperança"
             }
           }
@@ -340,7 +340,7 @@
     },
     "Blackwall Storm Highway": {
       "name": "Rodovia da Tempestade da Muralha Negra",
-      "description": "<p>Uma rodovia em ruínas onde veículos correm através de relâmpagos, infraestrutura quebrada e clima de máquina corrompido.</p><p><em>Também combina com: Handler’s Hound, Muralha Negra Seraph.</em></p>",
+      "description": "<p>Uma rodovia em ruínas onde veículos correm através de relâmpagos, infraestrutura quebrada e clima de máquina corrompido.</p><p><em>Também combina com: Cão do Operador, Serafim da Muralha Negra.</em></p>",
       "impulses": "Acelerar, corromper, dividir o comboio",
       "potentialAdversaries": {
         "Adversaries": {
@@ -385,10 +385,10 @@
           "name": "Varredura de Câmeras",
           "description": "<p>Escolha um personagem numa área exposta. Ele marca 1 Estresse ou fica gravado e rastreável.</p><p><em>Quem revisa as gravações?</em></p>",
           "actions": {
-            "Camera Sweep: Estresse": {
+            "Camera Sweep: Stress": {
               "name": "Varredura de Câmeras: Estresse"
             },
-            "Camera Sweep: Gravado": {
+            "Camera Sweep: Recorded": {
               "name": "Varredura de Câmeras: Gravado"
             }
           },
@@ -441,7 +441,7 @@
     },
     "Eidolon Deployment Zone": {
       "name": "Zona de Implantação de Eidolons",
-      "description": "<p>Um campo de batalha destroçado, feito para máquinas grandes demais para as ruas e perigosas demais para prédios.</p><p><em>Também combina com: Cordon Eidolon.</em></p>",
+      "description": "<p>Um campo de batalha destroçado, feito para máquinas grandes demais para as ruas e perigosas demais para prédios.</p><p><em>Também combina com: Eidolon Cordon.</em></p>",
       "impulses": "Sacudir o chão, expor cobertura, convidar à escalada",
       "potentialAdversaries": {
         "Adversaries": {
@@ -523,7 +523,7 @@
     },
     "Blacksite Extraction": {
       "name": "Extração no Local Secreto",
-      "description": "<p>Uma instalação corporativa escondida onde o objetivo está vivo, instável e provavelmente não é mais humano.</p><p><em>Também combina com: Cordon Eidolon.</em></p>",
+      "description": "<p>Uma instalação corporativa escondida onde o objetivo está vivo, instável e provavelmente não é mais humano.</p><p><em>Também combina com: Eidolon Cordon.</em></p>",
       "impulses": "Conter, apagar, negar a verdade",
       "potentialAdversaries": {
         "Adversaries": {
@@ -576,7 +576,7 @@
         },
         "Icon Becomes Monster": {
           "name": "O Ícone Vira Monstro",
-          "description": "<p>Escolha uma tela, estátua, drone, veículo ou corpo. Ele ganha vida como uma ameaça temporária de Digital Fantasma até ser destruído ou desconectado.</p><p><em>Que imagem ele veste?</em></p>"
+          "description": "<p>Escolha uma tela, estátua, drone, veículo ou corpo. Ele ganha vida como uma ameaça temporária de Fantasma Digital até ser destruído ou desconectado.</p><p><em>Que imagem ele veste?</em></p>"
         },
         "Mirrored Dead": {
           "name": "Mortos Espelhados",
@@ -589,7 +589,7 @@
         },
         "Prayer Loop": {
           "name": "Loop de Oração",
-          "description": "<p>Quando um personagem rola com Medo, o Estresse marcado não pode ser limpo até ele sair da Haunted Zone ou cortar o sinal.</p><p><em>Que frase fica se repetindo?</em></p>"
+          "description": "<p>Quando um personagem rola com Medo, o Estresse marcado não pode ser limpo até ele sair da Zona Assombrada ou cortar o sinal.</p><p><em>Que frase fica se repetindo?</em></p>"
         }
       }
     },

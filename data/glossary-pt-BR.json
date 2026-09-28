@@ -9,11 +9,12 @@
     "Gangues (Neon Claw, Tiger Choir, Blood Saints, Chrome Maw)": "mantém o nome",
     "Codinomes": "traduzidos (Black Hand → Mão Negra, The Raven → O Corvo)"
   },
-  "keep": ["Norai Hermes-Arrow", "Tyfar Bulldog", "Vagras Atlas-Breaker", "Ronin Wraith-9", "AVA Apollo-Lancet", "Sitil Cordon-6", "Exota Horizon-Mirage", "Korvax Athena-Pallas", "Ronin Ares-Tyrant", "Hephaestus Forge-Saint"],
+  "keep": ["Norai Hermes-Arrow", "Tyfar Bulldog", "Vagras Atlas-Breaker", "Ronin Wraith-9", "AVA Apollo-Lancet", "Sitil Cordon-6", "Exota Horizon-Mirage", "Korvax Athena-Pallas", "Ronin Ares-Tyrant", "Hephaestus Forge-Saint", "Deep Cover", "Signal Ghost"],
   "legacyPt": {
     "Córtex Black ICE": "Black ICE Cortex",
     "Coprocessador Blackwall": "Blackwall Co-Processor",
-    "Rede de Fixers": "Fixer Network"
+    "Rede de Fixers": "Fixer Network",
+    "Nova Idade das Trevas": "New Dark Age"
   },
   "sections": {
     "competencies": {
@@ -75,6 +76,14 @@
         "System Bite": "Mordida no Sistema", "Target Assist": "Assistência de Mira", "Target Splitter": "Divisor de Alvos", "Techno Immunity": "Imunidade Tecno", "Tether Clamp": "Grampo de Amarra",
         "Time Dilation Field": "Campo de Dilatação Temporal", "Tool": "Ferramenta", "Touch Arc": "Arco de Toque", "Utility Arm": "Braço Utilitário", "Vector Fan Grid": "Grade de Propulsores Vetoriais",
         "Very Heavy": "Muito Pesado", "Walking Barricade": "Barricada Ambulante", "Wild Flame": "Chama Selvagem",
+        "Vibrating Edge": "Fio Vibratório", "Ghost Edge": "Fio Fantasma",
+        "Adaptive Plating": "Blindagem Adaptativa", "Reactive Thrusters": "Propulsores Reativos", "Overcharged Systems": "Sistemas Sobrecarregados",
+        "Combat Reflexes": "Reflexos de Combate", "Regeneration Module": "Módulo de Regeneração", "Explosive Death": "Morte Explosiva",
+        "Phase Shift": "Deslocamento de Fase", "Suppressive Fire": "Fogo de Supressão", "Null Field": "Campo Nulo",
+        "Command Uplink": "Uplink de Comando", "Assault Firmware": "Firmware de Assalto", "Redline Push": "Impulso Linha Vermelha", "Threat Marking": "Marcação de Ameaça",
+        "Overclock Trait": "Traço de Overclock", "Overclock Traits": "Traços de Overclock", "Overclock Protocol": "Protocolo de Overclock", "Overclock Protocols": "Protocolos de Overclock",
+        "Overguard": "Sobreguarda", "Digital Ghosts": "Fantasmas Digitais", "Haunted Zones": "Zonas Assombradas", "Black Wall": "Muralha Negra",
+        "Crash": "Colapso", "Campaign Thread": "Arco de Campanha", "Campaign Threads": "Arcos de Campanha", "Crew Assets": "Recursos da Equipe",
         "Beloved": "Adorado", "Famous": "Famoso", "Feared": "Temido"
       }
     },
@@ -92,7 +101,10 @@
         "Tactical Command": "Comando Tático", "Crew Tactics": "Táticas de Equipe", "Eidolon Warfare": "Guerra de Eidolons", "Blackwall Theology": "Teologia da Muralha Negra",
         "Impossible Presence": "Presença Impossível", "Heavy Weapons": "Armas Pesadas", "Perfect Kill Angle": "Ângulo de Abate Perfeito", "Deus-Class Warfare": "Guerra Classe-Deus",
         "Dead Internet": "Internet Morta", "Corporate Sovereignty": "Soberania Corporativa", "Living Weapon": "Arma Viva", "Legendary Mercenary": "Mercenário Lendário",
-        "Legendary Eidolon": "Eidolon Lendário", "Adversaries": "Adversários"
+        "Legendary Eidolon": "Eidolon Lendário", "Adversaries": "Adversários",
+        "Digital Ghost": "Fantasma Digital", "Raven": "Corvo", "Duelist": "Duelista", "Sniper": "Atirador", "Cutter": "Retalhador",
+        "Rookie": "Novato", "Oracle": "Oráculo", "Ganger": "Gangueiro", "Minions": "Lacaios", "Haunted Zone": "Zona Assombrada",
+        "Blackwall Seraph": "Serafim da Muralha Negra", "Cordon Eidolon": "Eidolon Cordon", "Handler’s Hound": "Cão do Operador"
       }
     },
     "classFeatures": {

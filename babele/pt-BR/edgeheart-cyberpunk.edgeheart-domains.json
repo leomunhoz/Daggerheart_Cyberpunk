@@ -121,6 +121,11 @@
     "Solar Flare Array": {
       "name": "Matriz de Erupção Solar",
       "description": "<p>Faça uma Rolagem de Interface para disparar uma rajada de cartuchos de sinalização incandescentes contra todos os adversários dentro do alcance Distante. Em um sucesso, gaste qualquer quantidade de Esperança e force essa quantidade de alvos contra os quais teve sucesso a fazer uma Rolagem de Reação (14).</p><p>Quem tiver sucesso sofre 3d20+3 de dano tecno. Quem falhar sofre 4d20+5 de dano tecno e fica temporariamente <strong>Blinded</strong>. Enquanto Blinded, tem desvantagem em rolagens de ataque e não pode ter como alvo nada além do alcance Próximo, a menos que perceba por outro sentido.</p>",
+      "actions": {
+        "Interface Roll": {
+          "name": "Rolagem de Interface"
+        }
+      },
       "effects": {
         "Solar Flare Array": {
           "name": "Matriz de Erupção Solar"
@@ -254,7 +259,15 @@
     },
     "Viral Cascade": {
       "name": "Cascata Viral",
-      "description": "<p>Marque 2 Estresse para fazer uma Rolagem de Interface, desencadeando um ataque autorreplicante em todos os alvos dentro do alcance Próximo. Alvos contra os quais você tem sucesso devem fazer uma Rolagem de Reação com Dificuldade igual ao resultado da sua Rolagem de Interface. Alvos que falharem sofrem 2d8+4 de dano tecno.</p><p>Adversários adicionais ainda não alvejados pela Cascata Viral e dentro do alcance Próximo de alvos anteriores que sofreram dano também devem fazer a Rolagem de Reação. Alvos que falharem sofrem 2d8+4 de dano tecno. Essa corrente continua até não haver mais adversários dentro do alcance.</p>"
+      "description": "<p>Marque 2 Estresse para fazer uma Rolagem de Interface, desencadeando um ataque autorreplicante em todos os alvos dentro do alcance Próximo. Alvos contra os quais você tem sucesso devem fazer uma Rolagem de Reação com Dificuldade igual ao resultado da sua Rolagem de Interface. Alvos que falharem sofrem 2d8+4 de dano tecno.</p><p>Adversários adicionais ainda não alvejados pela Cascata Viral e dentro do alcance Próximo de alvos anteriores que sofreram dano também devem fazer a Rolagem de Reação. Alvos que falharem sofrem 2d8+4 de dano tecno. Essa corrente continua até não haver mais adversários dentro do alcance.</p>",
+      "actions": {
+        "Interface Roll": {
+          "name": "Rolagem de Interface"
+        },
+        "Chain Damage": {
+          "name": "Dano em Cadeia"
+        }
+      }
     },
     "Impact Reducer": {
       "name": "Redutor de Impacto",
@@ -291,6 +304,14 @@
     "Ghost-Synced": {
       "name": "Sincronizado ao Fantasma",
       "description": "<p>Quando 4 ou mais cartas de domínio do seu loadout forem da Competência Fantasma, ganhe o seguinte:</p><ul><li>Uma vez por descanso, quando você tem 0 de Esperança e o mestre fosse ganhar 1 Medo, você pode ganhar 1 Esperança em vez disso.</li><li>Quando você acerta um ataque, pode marcar 1 Estresse para somar o resultado do seu Dado de Medo à rolagem de dano.</li></ul>",
+      "actions": {
+        "Gain Hope": {
+          "name": "Ganhar Esperança"
+        },
+        "Mark Stress": {
+          "name": "Marcar Estresse"
+        }
+      },
       "effects": {
         "Ghost-Synced": {
           "name": "Sincronizado ao Fantasma"
@@ -318,7 +339,15 @@
     },
     "Crisis Counseling": {
       "name": "Aconselhamento de Crise",
-      "description": "<p>Durante um descanso curto, quando você dedica tempo para confortar, estabilizar, orientar ou apoiar emocionalmente outro personagem enquanto usa nele o movimento de tempo livre Cuidar dos Ferimentos, ele limpa 1 Ponto de Vida adicional.</p><p>Quando fizer isso, você também limpa 2 Pontos de Vida.</p>"
+      "description": "<p>Durante um descanso curto, quando você dedica tempo para confortar, estabilizar, orientar ou apoiar emocionalmente outro personagem enquanto usa nele o movimento de tempo livre Cuidar dos Ferimentos, ele limpa 1 Ponto de Vida adicional.</p><p>Quando fizer isso, você também limpa 2 Pontos de Vida.</p>",
+      "actions": {
+        "Heal Ally": {
+          "name": "Tratar Aliado"
+        },
+        "Heal Self": {
+          "name": "Tratar a Si Mesmo"
+        }
+      }
     },
     "Aegis-Synced": {
       "name": "Sincronizado à Égide",
@@ -336,7 +365,18 @@
     },
     "Ace’s Edge": {
       "name": "Trunfo do Ás",
-      "description": "<p>Quando você tem um sucesso crítico num ataque, pode gastar até 3 Esperança e escolher uma das opções abaixo para cada Esperança gasta:</p><ul><li>Você limpa 1 Ponto de Vida.</li><li>Você limpa 1 Espaço de Armadura.</li><li>O alvo marca 1 Ponto de Vida adicional.</li></ul><p>Você não pode escolher a mesma opção mais de uma vez.</p>"
+      "description": "<p>Quando você tem um sucesso crítico num ataque, pode gastar até 3 Esperança e escolher uma das opções abaixo para cada Esperança gasta:</p><ul><li>Você limpa 1 Ponto de Vida.</li><li>Você limpa 1 Espaço de Armadura.</li><li>O alvo marca 1 Ponto de Vida adicional.</li></ul><p>Você não pode escolher a mesma opção mais de uma vez.</p>",
+      "actions": {
+        "Clear 1 HP": {
+          "name": "Limpar 1 PV"
+        },
+        "Clear 1 Armor Slot": {
+          "name": "Limpar 1 Espaço de Armadura"
+        },
+        "Target marks 1 HP": {
+          "name": "Alvo marca 1 PV"
+        }
+      }
     },
     "Reflex Redirect": {
       "name": "Redirecionamento Reflexo",
@@ -394,7 +434,7 @@
         "Firebomb": {
           "name": "Bomba Incendiária"
         },
-        "Firebomb: Explosão": {
+        "Firebomb: Blast": {
           "name": "Bomba Incendiária: Explosão"
         }
       },
@@ -437,6 +477,9 @@
       "actions": {
         "Panic Script": {
           "name": "Script de Pânico"
+        },
+        "Vulnerable (1 Hope)": {
+          "name": "Vulnerável (1 Esperança)"
         }
       },
       "effects": {
@@ -464,7 +507,20 @@
     },
     "Lockdown Hold": {
       "name": "Chave de Contenção",
-      "description": "<p>Quando você se posiciona atrás de uma criatura mais ou menos do seu tamanho, você pode marcar 1 Estresse para prendê-la numa imobilização usando um mata-leão, chave de articulação ou cabo de contenção. O alvo fica temporariamente Vulnerável.</p><p>Quando uma criatura ataca um alvo Vulnerável dessa forma, ela causa 2d6 de dano extra.</p>"
+      "description": "<p>Quando você se posiciona atrás de uma criatura mais ou menos do seu tamanho, você pode marcar 1 Estresse para prendê-la numa imobilização usando um mata-leão, chave de articulação ou cabo de contenção. O alvo fica temporariamente Vulnerável.</p><p>Quando uma criatura ataca um alvo Vulnerável dessa forma, ela causa 2d6 de dano extra.</p>",
+      "actions": {
+        "Restrain": {
+          "name": "Imobilizar"
+        },
+        "Extra Damage": {
+          "name": "Dano Extra"
+        }
+      },
+      "effects": {
+        "Restrained": {
+          "name": "Imobilizado"
+        }
+      }
     },
     "Impact Frame": {
       "name": "Estrutura de Impacto",
@@ -500,7 +556,18 @@
     },
     "Cortical Splinter": {
       "name": "Estilhaço Cortical",
-      "description": "<p>Faça uma Rolagem de Interface contra uma criatura dentro do alcance Muito Distante. Em um sucesso, marque 1 PV para implantar um estilhaço cortical, spyware neural, pacote de biochip ou sinal de loop de dor que se enterra no sistema do alvo. Num sucesso com Esperança, o alvo não percebe o estilhaço. Você tem vantagem em Rolagens de Presença contra o alvo e, sempre que ele fizer uma rolagem, pode gastar 1 Esperança para dar desvantagem a ela. Você pode destruir o estilhaço para fazer o alvo marcar 1 PV.</p>"
+      "description": "<p>Faça uma Rolagem de Interface contra uma criatura dentro do alcance Muito Distante. Em um sucesso, marque 1 PV para implantar um estilhaço cortical, spyware neural, pacote de biochip ou sinal de loop de dor que se enterra no sistema do alvo. Num sucesso com Esperança, o alvo não percebe o estilhaço. Você tem vantagem em Rolagens de Presença contra o alvo e, sempre que ele fizer uma rolagem, pode gastar 1 Esperança para dar desvantagem a ela. Você pode destruir o estilhaço para fazer o alvo marcar 1 PV.</p>",
+      "actions": {
+        "Interface Roll": {
+          "name": "Rolagem de Interface"
+        },
+        "Disadvantage on the Roll (1 Hope)": {
+          "name": "Desvantagem na Rolagem (1 Esperança)"
+        },
+        "Destroy the Splinter": {
+          "name": "Destruir o Estilhaço"
+        }
+      }
     },
     "Gripware Override": {
       "name": "Pegada Sobrecarregada",
@@ -528,6 +595,14 @@
     "System Rupture": {
       "name": "Ruptura de Sistema",
       "description": "<p>Faça uma Rolagem de Interface contra uma criatura dentro do alcance Distante. Em um sucesso, marque 1 PV para marcar o alvo com um amplificador de trauma, exploit de ferida, feedback de instabilidade neural, pico de pressão ou marca de nanitos hostis. A marca dura até o mestre gastar 2 Medo para removê-la ou você sofrer dano Severo. Sempre que o alvo marcar PV enquanto a marca durar, você pode marcar 1 Estresse para fazê-lo marcar 1 PV adicional.</p>",
+      "actions": {
+        "Interface Roll": {
+          "name": "Rolagem de Interface"
+        },
+        "+1 HP on the Target (1 Stress)": {
+          "name": "+1 PV no Alvo (1 Estresse)"
+        }
+      },
       "effects": {
         "System Rupture": {
           "name": "Ruptura de Sistema",
@@ -537,7 +612,15 @@
     },
     "Signal Burst": {
       "name": "Rajada de Sinal",
-      "description": "<p>No início de uma sessão, coloque marcadores iguais ao seu atributo de Interface nesta carta.</p><p>Faça uma Rolagem de Interface contra um alvo dentro do alcance Distante e gaste qualquer número de marcadores para liberar uma explosão concentrada de código instável, ruído de sinal, ou feedback armado contra ele. Em um sucesso, role um número de d10 igual aos marcadores gastos e cause essa quantidade de dano tecno ao alvo.</p><p>Marque 1 Estresse para reabastecer esta carta com marcadores, até o seu atributo de Interface. No fim de cada sessão, limpe todos os marcadores não usados.</p>"
+      "description": "<p>No início de uma sessão, coloque marcadores iguais ao seu atributo de Interface nesta carta.</p><p>Faça uma Rolagem de Interface contra um alvo dentro do alcance Distante e gaste qualquer número de marcadores para liberar uma explosão concentrada de código instável, ruído de sinal, ou feedback armado contra ele. Em um sucesso, role um número de d10 igual aos marcadores gastos e cause essa quantidade de dano tecno ao alvo.</p><p>Marque 1 Estresse para reabastecer esta carta com marcadores, até o seu atributo de Interface. No fim de cada sessão, limpe todos os marcadores não usados.</p>",
+      "actions": {
+        "Interface Roll": {
+          "name": "Rolagem de Interface"
+        },
+        "Replenish Tokens": {
+          "name": "Reabastecer Marcadores"
+        }
+      }
     },
     "Botnet Cataclysm": {
       "name": "Cataclismo de Botnet",
@@ -610,7 +693,15 @@
     },
     "Trauma Field": {
       "name": "Campo de Trauma",
-      "description": "<p>Uma vez por descanso longo, você pode criar um campo de trauma ao seu redor usando drones médicos, névoa de nanitos, autoinjetores ou sinalizadores de triagem de emergência. Você e todos os aliados dentro do alcance Próximo limpam 1 PV.</p><p>Gaste 2 Esperança para que você e todos os aliados dentro do alcance Próximo limpem 2 PV em vez disso.</p>"
+      "description": "<p>Uma vez por descanso longo, você pode criar um campo de trauma ao seu redor usando drones médicos, névoa de nanitos, autoinjetores ou sinalizadores de triagem de emergência. Você e todos os aliados dentro do alcance Próximo limpam 1 PV.</p><p>Gaste 2 Esperança para que você e todos os aliados dentro do alcance Próximo limpem 2 PV em vez disso.</p>",
+      "actions": {
+        "Clear 1 HP": {
+          "name": "Limpar 1 PV"
+        },
+        "Clear 2 HP (2 Hope)": {
+          "name": "Limpar 2 PV (2 Esperança)"
+        }
+      }
     },
     "Shared Overload": {
       "name": "Sobrecarga Compartilhada",
@@ -656,6 +747,20 @@
     "Scavenger": {
       "name": "Catador",
       "description": "<p>Como um movimento de tempo livre adicional, role um d6 para ver o que você recolhe. Descreva com o mestre e adicione ao inventário como consumível. O grupo pode carregar até cinco consumíveis recolhidos por vez.</p><ol><li>Uma ração única, estimulante ou item de conforto (limpa 2 de Estresse).</li><li>Uma relíquia bonita, bugiganga valiosa ou achado do mercado negro (ganha 2 de Esperança).</li><li>Um chip de acesso antigo, marcador de rota ou módulo de campo (+2 numa Rolagem de Interface).</li><li>Um frasco médico, curativo de trauma ou estabilizador de emergência (limpa 2 PV).</li><li>Um amuleto da sorte, dado viciado ou ficha do velho mundo (rola de novo qualquer dado).</li><li>Escolha uma das opções acima.</li></ol>",
+      "actions": {
+        "1. Ration (Stress)": {
+          "name": "1. Ração (Estresse)"
+        },
+        "2. Relic (Hope)": {
+          "name": "2. Relíquia (Esperança)"
+        },
+        "3. Access Chip (Interface)": {
+          "name": "3. Chip de Acesso (Interface)"
+        },
+        "4. Medical Vial (HP)": {
+          "name": "4. Frasco Médico (PV)"
+        }
+      },
       "effects": {
         "Scavenger": {
           "name": "Catador"
@@ -692,7 +797,15 @@
     },
     "Emergency Stim Share": {
       "name": "Estimulante Compartilhado de Emergência",
-      "description": "<p>Uma vez por descanso, marque 1 PV para inundar cada aliado dentro do alcance Próximo com drogas de combate, estabilizadores de trauma, estimulantes de emergência ou supressores de dor. Cada aliado afetado limpa 1 PV ou 1 Estresse. Você pode marcar 1 Estresse para esses aliados limparem um de cada.</p>"
+      "description": "<p>Uma vez por descanso, marque 1 PV para inundar cada aliado dentro do alcance Próximo com drogas de combate, estabilizadores de trauma, estimulantes de emergência ou supressores de dor. Cada aliado afetado limpa 1 PV ou 1 Estresse. Você pode marcar 1 Estresse para esses aliados limparem um de cada.</p>",
+      "actions": {
+        "Allies Clear 1 Stress": {
+          "name": "Aliados Limpam 1 Estresse"
+        },
+        "Clear Both (1 Stress)": {
+          "name": "Limpar os Dois (1 Estresse)"
+        }
+      }
     },
     "Hard Shutdown": {
       "name": "Desligamento Forçado",
@@ -715,6 +828,14 @@
     "Captive Audience": {
       "name": "Plateia Cativa",
       "description": "<p>Faça uma Rolagem de Interface contra um alvo dentro do alcance Próximo. Em um sucesso, ele fica temporariamente <strong>Captivated</strong>. Enquanto Captivated, a atenção do alvo fica presa em você, estreitando o campo de visão dele e abafando qualquer som que não seja a sua voz, transmissão, performance ou projeção.</p><p>Uma vez por descanso, em um sucesso, você pode marcar 1 Estresse para forçar o alvo Captivated a marcar 1 Estresse também.</p>",
+      "actions": {
+        "Enrapture": {
+          "name": "Cativar"
+        },
+        "Mark Stress": {
+          "name": "Marcar Estresse"
+        }
+      },
       "effects": {
         "Captive Audience": {
           "name": "Plateia Cativa"
@@ -723,7 +844,15 @@
     },
     "Lazarus Procedure": {
       "name": "Procedimento Lázaro",
-      "description": "<p>Faça uma Rolagem de Interface (20) sobre o corpo de uma criatura que morreu na cena atual. O corpo precisa estar em grande parte recuperável, ou deve haver um cérebro, núcleo neural, backup cibernético ou implante vital intacto com que você possa trabalhar. Em um sucesso, traga a criatura de volta à vida usando cirurgia de emergência, órgãos sintéticos, reinício neural, tecido clonado ou substituição cibernética.</p><p>A criatura restaurada limpa todos os PV marcados e depois marca 3 de Estresse. Ela volta viva, consciente e estável, mas abalada física e psicologicamente. Até o próximo descanso longo dela, fica temporariamente Vulnerável e não pode se beneficiar de Procedimento Lázaro de novo. Depois, role um d6. Num resultado de 5 ou menos, coloque esta carta no seu cofre permanentemente.</p>"
+      "description": "<p>Faça uma Rolagem de Interface (20) sobre o corpo de uma criatura que morreu na cena atual. O corpo precisa estar em grande parte recuperável, ou deve haver um cérebro, núcleo neural, backup cibernético ou implante vital intacto com que você possa trabalhar. Em um sucesso, traga a criatura de volta à vida usando cirurgia de emergência, órgãos sintéticos, reinício neural, tecido clonado ou substituição cibernética.</p><p>A criatura restaurada limpa todos os PV marcados e depois marca 3 de Estresse. Ela volta viva, consciente e estável, mas abalada física e psicologicamente. Até o próximo descanso longo dela, fica temporariamente Vulnerável e não pode se beneficiar de Procedimento Lázaro de novo. Depois, role um d6. Num resultado de 5 ou menos, coloque esta carta no seu cofre permanentemente.</p>",
+      "actions": {
+        "Interface Roll": {
+          "name": "Rolagem de Interface"
+        },
+        "Keep Card": {
+          "name": "Manter a Carta"
+        }
+      }
     },
     "Rise Up": {
       "name": "Levante-se",
@@ -751,6 +880,14 @@
     "Hold the Line": {
       "name": "Segurar a Linha",
       "description": "<p>Descreva a postura defensiva que você assume e gaste 1 Esperança. Se um adversário se mover para dentro do alcance Muito Próximo, ele é puxado para o alcance Corpo a Corpo e fica Imobilizado.</p><p>Essa condição dura até você se mover, falhar numa rolagem com Medo, ou o mestre gastar 2 Medo no turno dele para limpá-la.</p>",
+      "actions": {
+        "Spend Hope": {
+          "name": "Gastar Esperança"
+        },
+        "Restrain": {
+          "name": "Imobilizar"
+        }
+      },
       "effects": {
         "Hold the Line": {
           "name": "Segurar a Linha"
@@ -791,13 +928,30 @@
     },
     "Siphon Strike": {
       "name": "Golpe Sifão",
-      "description": "<p>Quando você acerta uma rolagem de ataque contra um adversário e o faz marcar 2 ou mais PV, pode gastar 1 Esperança para limpar 1 PV ou 1 Estresse. Isso pode ser o seu sistema adrenal disparando, o editor de dor estabilizando, o firmware de combate recompensando a violência, o seu corpo confundindo o impacto com recuperação por um instante ou se forçando a estabilizar na base da adrenalina.</p>"
+      "description": "<p>Quando você acerta uma rolagem de ataque contra um adversário e o faz marcar 2 ou mais PV, pode gastar 1 Esperança para limpar 1 PV ou 1 Estresse. Isso pode ser o seu sistema adrenal disparando, o editor de dor estabilizando, o firmware de combate recompensando a violência, o seu corpo confundindo o impacto com recuperação por um instante ou se forçando a estabilizar na base da adrenalina.</p>",
+      "actions": {
+        "Clear 1 HP": {
+          "name": "Limpar 1 PV"
+        },
+        "Clear 1 Stress": {
+          "name": "Limpar 1 Estresse"
+        }
+      }
     },
     "Corruption Spike": {
       "name": "Pico de Corrupção",
       "description": "<p>Faça uma Rolagem de Interface contra um alvo dentro do alcance Distante. Em um sucesso, o alvo sofre d6 de dano tecno usando a sua Proficiência, enquanto um sinal corrompido, pacote de GELO Negro ou daemon hostil rasga o sistema dele. Na próxima vez que o alvo causar dano, esse dano é reduzido em 1d6. Num sucesso com Medo, o alvo sofre d10 de dano tecno usando a sua Proficiência em vez disso.</p>",
+      "actions": {
+        "Interface Roll": {
+          "name": "Rolagem de Interface"
+        },
+        "Damage (Hope)": {
+          "name": "Dano (Esperança)"
+        }
+      },
       "effects": {
-        "Corrompido": {
+        "Corrupted": {
+          "name": "Corrompido",
           "description": "<p>O próximo dano que este alvo causar é reduzido em 1d6.</p>"
         }
       }
@@ -853,18 +1007,35 @@
     },
     "Field Patch": {
       "name": "Remendo de Campo",
-      "description": "<p>Quando você pode tirar alguns minutos para se concentrar numa criatura que está ajudando, gaste 2 Esperança para usar espuma de trauma, suturas, gel de nanitos, bloqueadores de dor, software de terapia ou estabilizadores de emergência e limpar 1 PV ou 1 Estresse.</p><p>Uma vez por descanso longo, quando você usa esse tempo para aprender algo novo sobre a criatura ou revelar algo sobre você, pode limpar 2 PV ou 2 de Estresse dela em vez disso.</p>"
+      "description": "<p>Quando você pode tirar alguns minutos para se concentrar numa criatura que está ajudando, gaste 2 Esperança para usar espuma de trauma, suturas, gel de nanitos, bloqueadores de dor, software de terapia ou estabilizadores de emergência e limpar 1 PV ou 1 Estresse.</p><p>Uma vez por descanso longo, quando você usa esse tempo para aprender algo novo sobre a criatura ou revelar algo sobre você, pode limpar 2 PV ou 2 de Estresse dela em vez disso.</p>",
+      "actions": {
+        "Clear 1 HP": {
+          "name": "Limpar 1 PV"
+        },
+        "Clear 1 Stress": {
+          "name": "Limpar 1 Estresse"
+        },
+        "Clear 2 HP": {
+          "name": "Limpar 2 PV"
+        },
+        "Clear 2 Stress": {
+          "name": "Limpar 2 Estresse"
+        }
+      }
     },
     "Redline Ward": {
       "name": "Proteção Linha Vermelha",
       "description": "<p>Marque 1 PV para criar uma Proteção Linha Vermelha ao seu redor no alcance Muito Próximo. Pode parecer uma névoa de vapor refrigerante, luzes de alerta, distorção de pressão, névoa de droga de combate, estática de sensor hostil ou saída instável de cyberware vazando no ar ao seu redor. Dentro da ala, você tem resistência a dano físico ou tecno, à sua escolha ao ativar este protocolo. Os aliados dentro da ala também ganham esse benefício. A ala desaparece se você sair dela, marcar 2 ou mais PV ou usar este protocolo de novo.</p>",
       "actions": {
-        "Ala Techno (1 PV)": {
+        "Physical Ward (1 HP)": {
+          "name": "Ala Física (1 PV)"
+        },
+        "Techno Ward (1 HP)": {
           "name": "Ala Tecno (1 PV)"
         }
       },
       "effects": {
-        "Redline Ward (físico)": {
+        "Redline Ward (physical)": {
           "name": "Proteção Linha Vermelha (físico)",
           "description": "<p>Resistência a dano físico dentro da ala.</p>"
         },
@@ -896,7 +1067,15 @@
     },
     "Mirror Stack": {
       "name": "Pilha de Espelhos",
-      "description": "<p>Faça uma Rolagem de Interface (14). Uma vez por descanso longo, em um sucesso, você cria uma pilha de perfis de mira falsos, fantasmas de RA, ecos de sinal, loops de movimento ou dados de mira falsos sobre seu corpo, que tornam difícil dizer exatamente onde você está.</p><p>Marque qualquer quantidade de Estresse para criar essa mesma quantidade de camadas adicionais.</p><p>Quando um adversário faz um ataque contra você, role um número de d6 igual ao número de camadas ativas. Se algum resultado for 5 ou mais, uma camada do loop de iscas é destruída e o ataque falha. Se todos os resultados forem 4 ou menos, você sofre o dano e este protocolo termina.</p>"
+      "description": "<p>Faça uma Rolagem de Interface (14). Uma vez por descanso longo, em um sucesso, você cria uma pilha de perfis de mira falsos, fantasmas de RA, ecos de sinal, loops de movimento ou dados de mira falsos sobre seu corpo, que tornam difícil dizer exatamente onde você está.</p><p>Marque qualquer quantidade de Estresse para criar essa mesma quantidade de camadas adicionais.</p><p>Quando um adversário faz um ataque contra você, role um número de d6 igual ao número de camadas ativas. Se algum resultado for 5 ou mais, uma camada do loop de iscas é destruída e o ataque falha. Se todos os resultados forem 4 ou menos, você sofre o dano e este protocolo termina.</p>",
+      "actions": {
+        "Create First Layer": {
+          "name": "Criar Primeira Camada"
+        },
+        "Create Extra Layers": {
+          "name": "Criar Camadas Extras"
+        }
+      }
     },
     "Assault-Synced": {
       "name": "Sincronizado ao Assalto",
@@ -951,7 +1130,18 @@
     },
     "Rally Broadcast": {
       "name": "Transmissão de Convocação",
-      "description": "<p>Depois de um descanso longo, coloque nesta carta marcadores iguais à sua Presença. Quando você fala com um aliado ou o incentiva diretamente, pode gastar um marcador desta carta para dar a ele um benefício entre estes:</p><ol><li>O aliado limpa 1 Estresse.</li><li>O aliado limpa 1 Ponto de Vida.</li><li>O aliado ganha 1 Esperança.</li></ol><p>Quando você faz um descanso longo, limpe todos os marcadores não usados.</p>"
+      "description": "<p>Depois de um descanso longo, coloque nesta carta marcadores iguais à sua Presença. Quando você fala com um aliado ou o incentiva diretamente, pode gastar um marcador desta carta para dar a ele um benefício entre estes:</p><ol><li>O aliado limpa 1 Estresse.</li><li>O aliado limpa 1 Ponto de Vida.</li><li>O aliado ganha 1 Esperança.</li></ol><p>Quando você faz um descanso longo, limpe todos os marcadores não usados.</p>",
+      "actions": {
+        "Clear Stress": {
+          "name": "Limpar Estresse"
+        },
+        "Clear 1 HP": {
+          "name": "Limpar 1 PV"
+        },
+        "Give Hope": {
+          "name": "Dar Esperança"
+        }
+      }
     },
     "Survival Overclock": {
       "name": "Overclock de Sobrevivência",
@@ -965,6 +1155,14 @@
     "Frontier-Synced": {
       "name": "Sincronizado à Fronteira",
       "description": "<p>Quando 4 ou mais cartas de domínio do seu loadout forem da Competência Fronteira, ganhe o seguinte:</p><ul><li>Enquanto estiver num ambiente urbano, em ruínas ou hostil, ganhe +2 nas Rolagens de Interface.</li><li>Uma vez por descanso, você pode dobrar a sua Agilidade ou Instinto numa rolagem que usa esse atributo. Escolha isso antes de rolar.</li></ul>",
+      "actions": {
+        "Double Agility": {
+          "name": "Dobrar Agilidade"
+        },
+        "Double Instinct": {
+          "name": "Dobrar Instinto"
+        }
+      },
       "effects": {
         "Frontier-Synced": {
           "name": "Sincronizado à Fronteira"
@@ -986,6 +1184,12 @@
       "actions": {
         "Blackwall Host": {
           "name": "Hospedeiro da Muralha Negra"
+        },
+        "Absorb: Clear 1 HP": {
+          "name": "Absorver: Limpar 1 PV"
+        },
+        "Move (1 Stress)": {
+          "name": "Mover (1 Estresse)"
         }
       },
       "effects": {
@@ -1055,11 +1259,27 @@
     },
     "Second Wind": {
       "name": "Segundo Fôlego",
-      "description": "<p>Uma vez por descanso, quando você acerta um ataque contra um adversário, pode acionar adrenalina, picos de endorfina, bloqueadores de dor, drogas de combate ou reflexos de sobrevivência para limpar 3 de Estresse ou 1 PV.</p><p>Num sucesso com Esperança, você também aciona isso num aliado dentro do alcance Próximo, que limpa 3 de Estresse ou 1 PV.</p>"
+      "description": "<p>Uma vez por descanso, quando você acerta um ataque contra um adversário, pode acionar adrenalina, picos de endorfina, bloqueadores de dor, drogas de combate ou reflexos de sobrevivência para limpar 3 de Estresse ou 1 PV.</p><p>Num sucesso com Esperança, você também aciona isso num aliado dentro do alcance Próximo, que limpa 3 de Estresse ou 1 PV.</p>",
+      "actions": {
+        "Clear 3 Stress": {
+          "name": "Limpar 3 Estresse"
+        },
+        "Clear 1 HP": {
+          "name": "Limpar 1 PV"
+        }
+      }
     },
     "System Hijack": {
       "name": "Sequestro de Sistema",
-      "description": "<p>Faça uma Rolagem de Interface contra uma criatura dentro do alcance Distante. Em um sucesso, gaste 1 Esperança para sequestrar os músculos, cyberware, sistema nervoso ou resposta de dor do alvo numa breve explosão violenta. Você pode fazer o alvo se mover, atacar ou os dois; se fizer os dois, escolhe a ordem. Se fizer a criatura se mover, ela vai para um lugar que você escolher dentro do alcance Próximo dela. Se fizer a criatura atacar, faça uma Rolagem de Interface contra um alvo dentro do alcance Corpo a Corpo dela. Em um sucesso, cause d10 de dano físico usando a sua Proficiência.</p>"
+      "description": "<p>Faça uma Rolagem de Interface contra uma criatura dentro do alcance Distante. Em um sucesso, gaste 1 Esperança para sequestrar os músculos, cyberware, sistema nervoso ou resposta de dor do alvo numa breve explosão violenta. Você pode fazer o alvo se mover, atacar ou os dois; se fizer os dois, escolhe a ordem. Se fizer a criatura se mover, ela vai para um lugar que você escolher dentro do alcance Próximo dela. Se fizer a criatura atacar, faça uma Rolagem de Interface contra um alvo dentro do alcance Corpo a Corpo dela. Em um sucesso, cause d10 de dano físico usando a sua Proficiência.</p>",
+      "actions": {
+        "Hijack (1 Hope)": {
+          "name": "Sequestrar (1 Esperança)"
+        },
+        "Interface Roll": {
+          "name": "Rolagem de Interface"
+        }
+      }
     },
     "Support Tank": {
       "name": "Tanque de Apoio",
@@ -1073,6 +1293,14 @@
     "Razor Mesh": {
       "name": "Malha Navalha",
       "description": "<p>Uma vez por descanso, gaste 1 Esperança para se cobrir de malha de lâminas, espinhos reativos ou nanofibras defensivas e coloque nesta carta marcadores iguais ao seu atributo de Interface.</p><p>Quando sofrer dano, pode gastar qualquer quantidade de marcadores para rolar essa quantidade de d6. Some os resultados e reduza o dano recebido nesse valor. Se estiver dentro do alcance Corpo a Corpo do atacante, cause esse mesmo dano de volta a ele. Quando descansar, limpe os marcadores não usados.</p>",
+      "actions": {
+        "Gain Tokens": {
+          "name": "Ganhar Marcadores"
+        },
+        "Use Tokens": {
+          "name": "Usar Marcadores"
+        }
+      },
       "effects": {
         "Razor Mesh": {
           "name": "Malha Navalha"
@@ -1144,6 +1372,14 @@
     "Corrosive Round": {
       "name": "Munição Corrosiva",
       "description": "<p>Faça uma Rolagem de Interface contra um alvo dentro do alcance Distante. Em um sucesso, cause d6+4 de dano tecno usando a sua Proficiência.</p><p>Além disso, marque 2 ou mais de Estresse para deixá-lo permanentemente <strong>Corroded</strong>. Enquanto Corroded, o alvo sofre −1 na Dificuldade para cada 2 de Estresse que você gastou. Esta condição é cumulativa.</p>",
+      "actions": {
+        "Interface Roll": {
+          "name": "Rolagem de Interface"
+        },
+        "Corrode": {
+          "name": "Corroer"
+        }
+      },
       "effects": {
         "Corrosive Round": {
           "name": "Munição Corrosiva"
@@ -1153,8 +1389,13 @@
     "Blackwall Manifestation": {
       "name": "Manifestação da Muralha Negra",
       "description": "<p>Faça uma Rolagem de Interface (13). Em um sucesso, você força um fragmento da Muralha Negra a se manifestar entre dois pontos dentro do alcance Distante, como um muro digital corrompido transbordando para o espaço físico. Ele não aparece como um muro sólido, e sim como uma fratura violenta de estática, código hostil e corrupção de IA expressa pelo ambiente ao redor. Dura até você marcar o seu próximo PV. Qualquer criatura dentro do muro quando ele aparece, ou que passa por ele, marca 2 de Estresse e precisa ter sucesso numa Rolagem de Reação (16) ou fica Imobilizada.</p>",
+      "actions": {
+        "Failed Reaction (16): Restrained": {
+          "name": "Falhou na Reação (16): Imobilizado"
+        }
+      },
       "effects": {
-        "Imobilizado pela Blackwall": {
+        "Restrained by the Blackwall": {
           "name": "Imobilizado pela Muralha Negra"
         }
       }
@@ -1162,6 +1403,11 @@
     "Ruinbreaker Rig": {
       "name": "Equipamento Quebra-Ruínas",
       "description": "<p>Marque 1 Estresse para ativar um exo-equipamento pesado de sobrevivência. Enquanto ativo, suportes hidráulicos travam no lugar, ferramentas de corte se abrem, placas de armadura se reposicionam, filtros de perigo entram em overclock e o seu equipamento entra em modo de rompimento total. Você ganha:</p><ul><li>Quando tem sucesso num ataque ou Rolagem de Interface, some +10 ao dano.</li><li>Quando causa dano suficiente para derrotar uma criatura dentro do alcance Próximo, você arranca blindagem utilizável, drena uma célula de energia ou aciona espuma de reparo de emergência e limpa um Espaço de Armadura.</li><li>Você não pode ficar Imobilizado.</li></ul><p>Antes de fazer uma rolagem de ação, você precisa gastar 1 Esperança. Se não puder, o equipamento superaquece, trava ou queima a carga de emergência, e você volta ao estado normal.</p>",
+      "actions": {
+        "Spend Hope to Act": {
+          "name": "Gastar Esperança para Agir"
+        }
+      },
       "effects": {
         "Ruinbreaker Rig": {
           "name": "Equipamento Quebra-Ruínas"
@@ -1171,6 +1417,17 @@
     "Scout Companion": {
       "name": "Companheiro Batedor",
       "description": "<p>Gaste 1 Esperança para chamar uma ciberfera ou drone batedor para o seu lado até o seu próximo descanso, até rodar Companheiro Batedor de novo ou até o companheiro ser alvo de um ataque. Se gastar 1 Esperança extra, pode chamar um companheiro que voa.</p><p>Você pode se comunicar com ele, fazer uma Rolagem de Interface para comandá-lo a realizar tarefas simples e marcar 1 Estresse para ver pelos olhos dele. Quando você causa dano a um adversário dentro do alcance Corpo a Corpo do companheiro, soma um d6 à rolagem de dano.</p>",
+      "actions": {
+        "Summon Companion": {
+          "name": "Chamar Companheiro"
+        },
+        "Perform Task": {
+          "name": "Executar Tarefa"
+        },
+        "See Through Eyes": {
+          "name": "Ver pelos Olhos"
+        }
+      },
       "effects": {
         "Scout Companion": {
           "name": "Companheiro Batedor"
@@ -1230,13 +1487,13 @@
         }
       },
       "effects": {
-        "Combat Conditioning (PV)": {
+        "Combat Conditioning (HP)": {
           "name": "Condicionamento de Combate (PV)"
         },
-        "Combat Conditioning (Estresse)": {
+        "Combat Conditioning (Stress)": {
           "name": "Condicionamento de Combate (Estresse)"
         },
-        "Combat Conditioning (Limiares)": {
+        "Combat Conditioning (Thresholds)": {
           "name": "Condicionamento de Combate (Limiares)"
         }
       }
@@ -1254,7 +1511,7 @@
         "Spike Printer": {
           "name": "Impressora de Espetos"
         },
-        "Spike Printer (Ataque)": {
+        "Spike Printer (Attack)": {
           "name": "Impressora de Espetos (Ataque)"
         }
       },
@@ -1275,7 +1532,18 @@
     },
     "Restoration Suite": {
       "name": "Suíte de Restauração",
-      "description": "<p>Depois de um descanso, coloque nesta carta marcadores iguais ao seu atributo de Interface. Toque uma criatura e gaste qualquer quantidade de marcadores para limpar 1 PV ou 1 Estresse por marcador.</p><p>Você também pode gastar 2 marcadores ao tocar uma criatura para limpar uma condição ou tratar um problema físico, cibernético ou psicológico. O mestre pode exigir mais marcadores dependendo da gravidade. Depois de um descanso, limpe todos os marcadores.</p>"
+      "description": "<p>Depois de um descanso, coloque nesta carta marcadores iguais ao seu atributo de Interface. Toque uma criatura e gaste qualquer quantidade de marcadores para limpar 1 PV ou 1 Estresse por marcador.</p><p>Você também pode gastar 2 marcadores ao tocar uma criatura para limpar uma condição ou tratar um problema físico, cibernético ou psicológico. O mestre pode exigir mais marcadores dependendo da gravidade. Depois de um descanso, limpe todos os marcadores.</p>",
+      "actions": {
+        "Clear HP": {
+          "name": "Limpar PV"
+        },
+        "Clear Stress": {
+          "name": "Limpar Estresse"
+        },
+        "Remove Condition": {
+          "name": "Remover Condição"
+        }
+      }
     },
     "Sweep Fire": {
       "name": "Fogo de Varredura",
@@ -1289,6 +1557,14 @@
     "Neuromuscular Lock": {
       "name": "Trava Neuromuscular",
       "description": "<p>Faça uma Rolagem de Interface contra um alvo dentro do alcance Distante. Em um sucesso, marque 1 Estresse enquanto ataca os músculos, cyberware, nervos, pressão sanguínea ou controle motor do alvo. Ele fica temporariamente Imobilizado e temporariamente Vulnerável. Cada vez que o alvo receber o Holofote enquanto qualquer uma dessas condições persistir, ele sofre d10 de dano tecno usando a sua Proficiência. O protocolo termina antes no alvo se você usá-lo de novo.</p>",
+      "actions": {
+        "Interface Roll": {
+          "name": "Rolagem de Interface"
+        },
+        "Mark Stress": {
+          "name": "Marcar Estresse"
+        }
+      },
       "effects": {
         "Neuromuscular Lock": {
           "name": "Trava Neuromuscular"
@@ -1301,7 +1577,12 @@
     },
     "Repulsion Pulse": {
       "name": "Pulso de Repulsão",
-      "description": "<p>Faça uma Rolagem de Interface contra todos os alvos dentro do alcance Corpo a Corpo. Os alvos contra os quais você tiver sucesso são empurrados até o alcance Distante e sofrem d8+3 de dano de impacto ou tecno usando seu atributo de Interface.</p><p>Isso pode ser uma descarga de escudo, placa repulsora, onda de pressão ou explosão defensiva do seu equipamento de armadura.</p>"
+      "description": "<p>Faça uma Rolagem de Interface contra todos os alvos dentro do alcance Corpo a Corpo. Os alvos contra os quais você tiver sucesso são empurrados até o alcance Distante e sofrem d8+3 de dano de impacto ou tecno usando seu atributo de Interface.</p><p>Isso pode ser uma descarga de escudo, placa repulsora, onda de pressão ou explosão defensiva do seu equipamento de armadura.</p>",
+      "actions": {
+        "Interface Roll": {
+          "name": "Rolagem de Interface"
+        }
+      }
     },
     "Personal Firewall": {
       "name": "Firewall Pessoal",
@@ -1328,7 +1609,12 @@
     },
     "Last-Resort Chip": {
       "name": "Chip de Último Recurso",
-      "description": "<p>Marque 1 Ponto de Vida para criar um chip de último recurso, patch de override de emergência, chave de adrenalina, gatilho de sobrevivência ou ficha de biofeedback ilegal alimentada pelos seus próprios sistemas instáveis. Quem carregar ganha o seguinte benefício:</p><ul><li><p>Sempre que fosse marcar 2 ou mais PV, pode gastar 1 Esperança para reduzir em 1 os PV marcados.</p></li></ul><p>O chip queima se você não tiver PV marcados ou usar este protocolo de novo.</p>"
+      "description": "<p>Marque 1 Ponto de Vida para criar um chip de último recurso, patch de override de emergência, chave de adrenalina, gatilho de sobrevivência ou ficha de biofeedback ilegal alimentada pelos seus próprios sistemas instáveis. Quem carregar ganha o seguinte benefício:</p><ul><li><p>Sempre que fosse marcar 2 ou mais PV, pode gastar 1 Esperança para reduzir em 1 os PV marcados.</p></li></ul><p>O chip queima se você não tiver PV marcados ou usar este protocolo de novo.</p>",
+      "actions": {
+        "Reduce 1 Marked HP (1 Hope)": {
+          "name": "Reduzir 1 PV Marcado (1 Esperança)"
+        }
+      }
     },
     "Public Provocation": {
       "name": "Provocação Pública",
@@ -1378,11 +1664,27 @@
     },
     "Combat Scan": {
       "name": "Varredura de Combate",
-      "description": "<p>Ao observar uma criatura, você pode fazer uma Rolagem de Instinto contra ela. Em um sucesso, gaste 1 Esperança e peça ao mestre um conjunto de informações sobre o alvo, entre estas opções:</p><ul><li>Os Pontos de Vida e Estresse não marcados dele.</li><li>A Dificuldade e os limiares de dano dele.</li><li>As táticas e os dados de dano do ataque padrão dele.</li><li>As features e Experiências dele.</li></ul><p>Além disso, em um sucesso, você pode marcar 1 Estresse para remover 1 Medo da reserva de Medo do mestre.</p>"
+      "description": "<p>Ao observar uma criatura, você pode fazer uma Rolagem de Instinto contra ela. Em um sucesso, gaste 1 Esperança e peça ao mestre um conjunto de informações sobre o alvo, entre estas opções:</p><ul><li>Os Pontos de Vida e Estresse não marcados dele.</li><li>A Dificuldade e os limiares de dano dele.</li><li>As táticas e os dados de dano do ataque padrão dele.</li><li>As features e Experiências dele.</li></ul><p>Além disso, em um sucesso, você pode marcar 1 Estresse para remover 1 Medo da reserva de Medo do mestre.</p>",
+      "actions": {
+        "Instinct Roll": {
+          "name": "Rolagem de Instinto"
+        },
+        "Mark Stress": {
+          "name": "Marcar Estresse"
+        }
+      }
     },
     "Digital Face": {
       "name": "Rosto Digital",
       "description": "<p>Quando você tem alguns minutos para se preparar, pode marcar 1 Estresse para aplicar uma máscara sintética ou camada de pele inteligente igual a qualquer humanoide que já viu. Enquanto disfarçado, tem vantagem em Rolagens de Presença para evitar ser examinado.</p><p>Coloque nesta carta marcadores iguais ao seu atributo de Interface. Quando você faz uma ação disfarçado, gaste um marcador. Depois que a ação que gasta o último marcador se resolve, o disfarce cai.</p>",
+      "actions": {
+        "Don Disguise": {
+          "name": "Aplicar Disfarce"
+        },
+        "Spend Token": {
+          "name": "Gastar Marcador"
+        }
+      },
       "effects": {
         "Digital Face": {
           "name": "Rosto Digital"
@@ -1425,6 +1727,9 @@
       "actions": {
         "Killhook": {
           "name": "Gancho Mortal"
+        },
+        "Mark Stress": {
+          "name": "Marcar Estresse"
         }
       }
     },
@@ -1469,7 +1774,7 @@
       "name": "Pilha de Adrenalina",
       "description": "<p>Os seus sistemas Linha Vermelha se infiltraram na sua corrente sanguínea, aprimorando o corpo em momentos de urgência. Quando você rola com vantagem, usa um d8 em vez de um d6 como dado de vantagem, se tiver 1 ou mais PV marcados. Depois de fazer uma Rolagem de Força, Agilidade ou Acuidade, pode marcar 1 PV para rolar 1d8 e somar ao resultado.</p>",
       "effects": {
-        "Adrenaline Stack (d8 de vantagem)": {
+        "Adrenaline Stack (d8 advantage)": {
           "name": "Pilha de Adrenalina (d8 de vantagem)"
         }
       }
@@ -1494,7 +1799,12 @@
     },
     "Daemon Army": {
       "name": "Exército de Daemons",
-      "description": "<p>Faça uma Rolagem de Interface (14). Uma vez por descanso, em um sucesso, marque 1 Estresse para liberar oito fragmentos de IA daemon dentro do alcance Próximo, que se movem com você. Coloque um d8 nesta carta com o 8 para cima, representando o tamanho do seu exército de daemons. Sempre que causar dano a um alvo dentro do alcance Próximo, você pode diminuir esse valor em 1 para causar 1d8 de dano tecno adicional. Quando sofrer dano, pode diminuir o valor em 1 para reduzir o dano em 1d8. Cada vez que o dado diminui, um daemon age por você e depois desaparece. Quando o valor do dado cairia abaixo de 1, devolva esta carta ao cofre.</p>"
+      "description": "<p>Faça uma Rolagem de Interface (14). Uma vez por descanso, em um sucesso, marque 1 Estresse para liberar oito fragmentos de IA daemon dentro do alcance Próximo, que se movem com você. Coloque um d8 nesta carta com o 8 para cima, representando o tamanho do seu exército de daemons. Sempre que causar dano a um alvo dentro do alcance Próximo, você pode diminuir esse valor em 1 para causar 1d8 de dano tecno adicional. Quando sofrer dano, pode diminuir o valor em 1 para reduzir o dano em 1d8. Cada vez que o dado diminui, um daemon age por você e depois desaparece. Quando o valor do dado cairia abaixo de 1, devolva esta carta ao cofre.</p>",
+      "actions": {
+        "Daemon Defends (−1d8 damage)": {
+          "name": "Daemon Defende (−1d8 de dano)"
+        }
+      }
     },
     "Shock Charge": {
       "name": "Carga de Choque",
@@ -1521,7 +1831,24 @@
     },
     "Neurochemical Override": {
       "name": "Sobreposição Neuroquímica",
-      "description": "<p>Faça uma Rolagem de Interface contra um alvo dentro do alcance Muito Próximo. Se usar este protocolo num aliado, role com vantagem. Em um sucesso, marque 1 Estresse e escolha um efeito:</p><ol><li><p>O alvo se acalma, estabilizado por sedativos ou regulação neural, e limpa 1 Estresse. Num sucesso com Esperança, limpa 2.</p></li><li><p>O alvo fica mais ansioso, sobrecarregado por adrenalina, químicos de pânico ou feedback hostil, e marca 1 Estresse. Num sucesso com Esperança, marca 2.</p></li></ol>"
+      "description": "<p>Faça uma Rolagem de Interface contra um alvo dentro do alcance Muito Próximo. Se usar este protocolo num aliado, role com vantagem. Em um sucesso, marque 1 Estresse e escolha um efeito:</p><ol><li><p>O alvo se acalma, estabilizado por sedativos ou regulação neural, e limpa 1 Estresse. Num sucesso com Esperança, limpa 2.</p></li><li><p>O alvo fica mais ansioso, sobrecarregado por adrenalina, químicos de pânico ou feedback hostil, e marca 1 Estresse. Num sucesso com Esperança, marca 2.</p></li></ol>",
+      "actions": {
+        "Interface Roll": {
+          "name": "Rolagem de Interface"
+        },
+        "Calm: Clear 1 Stress": {
+          "name": "Acalmar: Limpa 1 Estresse"
+        },
+        "Calm (Hope): Clear 2 Stress": {
+          "name": "Acalmar (Esperança): Limpa 2 Estresse"
+        },
+        "Agitate: Mark 1 Stress": {
+          "name": "Agitar: Marca 1 Estresse"
+        },
+        "Agitate (Hope): Mark 2 Stress": {
+          "name": "Agitar (Esperança): Marca 2 Estresse"
+        }
+      }
     },
     "Ghost Skin": {
       "name": "Pele Fantasma",
@@ -1539,7 +1866,15 @@
     },
     "Blood and Chrome": {
       "name": "Sangue e Cromo",
-      "description": "<p>Quando você tem um sucesso crítico num ataque com arma, ganhe 1 Esperança adicional ou limpe 1 Estresse adicional.</p><p>Além disso, quando você causa dano suficiente para derrotar um inimigo, ganhe 1 Esperança ou limpe 1 Estresse.</p>"
+      "description": "<p>Quando você tem um sucesso crítico num ataque com arma, ganhe 1 Esperança adicional ou limpe 1 Estresse adicional.</p><p>Além disso, quando você causa dano suficiente para derrotar um inimigo, ganhe 1 Esperança ou limpe 1 Estresse.</p>",
+      "actions": {
+        "Clear Stress": {
+          "name": "Limpar Estresse"
+        },
+        "Gain Hope": {
+          "name": "Ganhar Esperança"
+        }
+      }
     },
     "War Buddy": {
       "name": "Parceiro de Guerra",
@@ -1552,7 +1887,12 @@
     },
     "Deployable Ascender": {
       "name": "Ascensor Portátil",
-      "description": "<p>Uma vez por descanso, você pode instalar uma torre de ancoragem, linha de escalada ou equipamento de subida rápida dentro do alcance Próximo, fácil de escalar. A altura dele pode chegar até o alcance Distante.</p><p>Marque 1 Estresse para usar este protocolo como ataque: faça uma Rolagem de Interface contra um adversário ou grupo de adversários dentro do alcance Próximo. O equipamento que surge ergue no ar os alvos contra os quais teve sucesso e os derruba, causando d8 de dano físico usando a sua Proficiência.</p>"
+      "description": "<p>Uma vez por descanso, você pode instalar uma torre de ancoragem, linha de escalada ou equipamento de subida rápida dentro do alcance Próximo, fácil de escalar. A altura dele pode chegar até o alcance Distante.</p><p>Marque 1 Estresse para usar este protocolo como ataque: faça uma Rolagem de Interface contra um adversário ou grupo de adversários dentro do alcance Próximo. O equipamento que surge ergue no ar os alvos contra os quais teve sucesso e os derruba, causando d8 de dano físico usando a sua Proficiência.</p>",
+      "actions": {
+        "Use as Attack": {
+          "name": "Usar como Ataque"
+        }
+      }
     },
     "Ronin Alteration Suite": {
       "name": "Suíte de Alteração Ronin",
@@ -1573,7 +1913,15 @@
     },
     "Swift Step": {
       "name": "Passo Veloz",
-      "description": "<p>Quando um ataque feito contra você falha, limpe 1 Estresse. Se não puder limpar Estresse, ganhe 1 Esperança.</p>"
+      "description": "<p>Quando um ataque feito contra você falha, limpe 1 Estresse. Se não puder limpar Estresse, ganhe 1 Esperança.</p>",
+      "actions": {
+        "Clear Stress": {
+          "name": "Limpar Estresse"
+        },
+        "Gain Hope": {
+          "name": "Ganhar Esperança"
+        }
+      }
     },
     "Master of the Craft": {
       "name": "Mestre do Ofício",
@@ -1581,7 +1929,12 @@
     },
     "Blackwall-Synced": {
       "name": "Sincronizado à Muralha Negra",
-      "description": "<p>Quando 4 ou mais cartas de domínio do seu loadout forem da Competência Muralha Negra, ganhe o seguinte:</p><ul><li><p>Quando você tem sucesso com Medo, pode marcar 2 de Estresse para impedir o mestre de ganhar 1 Medo.</p></li><li><p>Uma vez por descanso curto, ao fazer uma rolagem de ação, você pode somar +1 à rolagem para cada Medo que o mestre tem.</p></li></ul>"
+      "description": "<p>Quando 4 ou mais cartas de domínio do seu loadout forem da Competência Muralha Negra, ganhe o seguinte:</p><ul><li><p>Quando você tem sucesso com Medo, pode marcar 2 de Estresse para impedir o mestre de ganhar 1 Medo.</p></li><li><p>Uma vez por descanso curto, ao fazer uma rolagem de ação, você pode somar +1 à rolagem para cada Medo que o mestre tem.</p></li></ul>",
+      "actions": {
+        "Prevent 1 Fear (2 Stress)": {
+          "name": "Impedir 1 Medo (2 Estresse)"
+        }
+      }
     },
     "Trauma Ward": {
       "name": "Ala de Trauma",
@@ -1594,11 +1947,27 @@
     },
     "Shadow Asset": {
       "name": "Recurso das Sombras",
-      "description": "<p>Gaste 1 Esperança para posicionar um recurso silencioso de infiltração, como um microdrone, isca óptica ou marcador de assassinato. Até o seu próximo descanso, o Recurso das Sombras pode seguir uma criatura em silêncio, vigiar um lugar, criar uma distração ou te ajudar a manter o disfarce. Ele não pode manipular fisicamente o ambiente. Quando você faz uma ação envolvendo uma criatura ou lugar vigiado pelo seu Recurso das Sombras, ganha vantagem.</p><p>Você também pode queimar o recurso para atingir um adversário: faça uma Rolagem de Interface contra um alvo dentro do alcance Muito Distante. Num acerto, role uma quantidade de d6 igual ao seu atributo de Interface e cause esse total de dano tecno ao alvo. Depois, o Recurso das Sombras se dissipa. Você só pode ter um por vez.</p>"
+      "description": "<p>Gaste 1 Esperança para posicionar um recurso silencioso de infiltração, como um microdrone, isca óptica ou marcador de assassinato. Até o seu próximo descanso, o Recurso das Sombras pode seguir uma criatura em silêncio, vigiar um lugar, criar uma distração ou te ajudar a manter o disfarce. Ele não pode manipular fisicamente o ambiente. Quando você faz uma ação envolvendo uma criatura ou lugar vigiado pelo seu Recurso das Sombras, ganha vantagem.</p><p>Você também pode queimar o recurso para atingir um adversário: faça uma Rolagem de Interface contra um alvo dentro do alcance Muito Distante. Num acerto, role uma quantidade de d6 igual ao seu atributo de Interface e cause esse total de dano tecno ao alvo. Depois, o Recurso das Sombras se dissipa. Você só pode ter um por vez.</p>",
+      "actions": {
+        "Deploy": {
+          "name": "Posicionar"
+        },
+        "Attack Adversary": {
+          "name": "Atacar Adversário"
+        }
+      }
     },
     "Mass Captivation": {
       "name": "Cativação em Massa",
       "description": "<p>Faça uma Rolagem de Interface contra todos os alvos dentro do alcance Distante. Os alvos contra os quais tiver sucesso ficam temporariamente <strong>Captivated</strong>. Enquanto Captivated, a atenção do alvo fica presa em você, estreitando o campo de visão dele e abafando qualquer som que não seja a sua voz, transmissão, performance ou projeção.</p><p>Marque 1 Estresse para forçar todos os alvos Captivated a marcar 1 Estresse, encerrando este protocolo.</p>",
+      "actions": {
+        "Enrapture": {
+          "name": "Cativar"
+        },
+        "Mark Stress": {
+          "name": "Marcar Estresse"
+        }
+      },
       "effects": {
         "Mass Captivation": {
           "name": "Cativação em Massa"
@@ -1612,6 +1981,14 @@
     "Fearmask": {
       "name": "Máscara do Medo",
       "description": "<p>Uma vez por descanso longo, escolha quaisquer alvos dentro do alcance Muito Próximo para te perceberem como uma ameaça de pesadelo, assassino impossível, fantasma de sensor corrompido ou alucinação disparada pelo medo. Os alvos precisam ter sucesso numa Rolagem de Reação (16) ou ficam temporariamente <strong>Horrified</strong>. Enquanto Horrified, ficam Vulneráveis.</p><p>Roube do mestre uma quantidade de Medo igual ao número de alvos Horrified, até o total de Medo na reserva dele. Role uma quantidade de d6 igual ao Medo roubado e cause o total de dano a cada alvo Horrified. Descarte o Medo roubado.</p>",
+      "actions": {
+        "Horrify": {
+          "name": "Aterrorizar"
+        },
+        "Steal Fear": {
+          "name": "Roubar Medo"
+        }
+      },
       "effects": {
         "Fearmask": {
           "name": "Máscara do Medo"
@@ -1629,7 +2006,12 @@
     },
     "Refuse Shutdown": {
       "name": "Recusar Desligamento",
-      "description": "<p>Quando você fosse marcar o seu último PV, gaste 1 Esperança para marcar 1 Estresse em vez disso. O seu coração reserva, estimulante de emergência, editor de dor, descarga adrenal ou implante de sobrevivência se recusa a deixar o seu corpo desligar.</p>"
+      "description": "<p>Quando você fosse marcar o seu último PV, gaste 1 Esperança para marcar 1 Estresse em vez disso. O seu coração reserva, estimulante de emergência, editor de dor, descarga adrenal ou implante de sobrevivência se recusa a deixar o seu corpo desligar.</p>",
+      "actions": {
+        "Mark Stress Instead of the Last HP": {
+          "name": "Marcar Estresse em vez do Último PV"
+        }
+      }
     },
     "Combat Drive": {
       "name": "Impulso de Combate",
@@ -1642,7 +2024,15 @@
     },
     "Drain Signal": {
       "name": "Drenar Sinal",
-      "description": "<p>Faça uma Rolagem de Interface contra um alvo dentro do alcance Distante. Em um sucesso, uma vez por descanso curto, o alvo sofre d8 de dano tecno usando a sua Proficiência e você limpa 2 PV. Num sucesso com Medo, você limpa 3 PV. Isso pode ser drenar energia, roubar biofeedback, sugar carga de processador, se alimentar do pânico neural ou deixar um daemon extrair algo útil do alvo.</p>"
+      "description": "<p>Faça uma Rolagem de Interface contra um alvo dentro do alcance Distante. Em um sucesso, uma vez por descanso curto, o alvo sofre d8 de dano tecno usando a sua Proficiência e você limpa 2 PV. Num sucesso com Medo, você limpa 3 PV. Isso pode ser drenar energia, roubar biofeedback, sugar carga de processador, se alimentar do pânico neural ou deixar um daemon extrair algo útil do alvo.</p>",
+      "actions": {
+        "Interface Roll": {
+          "name": "Rolagem de Interface"
+        },
+        "Clear 2 HP": {
+          "name": "Limpar 2 PV"
+        }
+      }
     },
     "Korvax Control Suite": {
       "name": "Suíte de Controle Korvax",
@@ -1683,6 +2073,9 @@
       "actions": {
         "Corrupted Protocol": {
           "name": "Protocolo Corrompido"
+        },
+        "Interface Roll": {
+          "name": "Rolagem de Interface"
         }
       }
     },
@@ -1716,6 +2109,14 @@
     "Jumpjet Protocol": {
       "name": "Protocolo Jato de Salto",
       "description": "<p>Faça uma Rolagem de Agilidade (15). Em um sucesso, coloque nesta carta marcadores iguais à sua Agilidade (mínimo 1).</p><p>Quando você faz uma rolagem de ação enquanto voa, gaste um marcador desta carta. Depois que a ação que gasta o último marcador se resolve, você desce até o chão logo abaixo de você.</p>",
+      "actions": {
+        "Interface Roll": {
+          "name": "Rolagem de Interface"
+        },
+        "Spend Token": {
+          "name": "Gastar Marcador"
+        }
+      },
       "effects": {
         "Jumpjet Protocol": {
           "name": "Protocolo Jato de Salto"
@@ -1726,7 +2127,10 @@
       "name": "Sequestro Térmico",
       "description": "<p>Faça uma Rolagem de Interface contra um alvo dentro do alcance Corpo a Corpo. Em um sucesso, você força as portas de implante dele a superaquecerem violentamente. Ele sofre 1d20+3 de dano tecno e fica Superaquecido.</p><p>Quando uma criatura age enquanto Superaquecido, ela deve sofrer 2d6 de dano tecno extra se ainda estiver Superaquecido no fim de sua ação.</p>",
       "actions": {
-        "Dano de Overheated": {
+        "Interface Roll": {
+          "name": "Rolagem de Interface"
+        },
+        "Overheated Damage": {
           "name": "Dano de Superaquecido"
         }
       },
@@ -1739,6 +2143,14 @@
     "Commanding Bulk": {
       "name": "Porte Imponente",
       "description": "<p>Quando você faz uma Rolagem de Presença, você pode gastar 1 Esperança para somar sua Força à rolagem.</p><p>Além disso, uma vez por descanso, quando você fosse ganhar uma condição, você pode descrever como sua presença blindada, disciplina de combate, massa bruta ou postura defensiva te ajudam a aguentar e evitar a condição.</p>",
+      "actions": {
+        "Spend Hope": {
+          "name": "Gastar Esperança"
+        },
+        "Avoid Condition": {
+          "name": "Evitar Condição"
+        }
+      },
       "effects": {
         "Commanding Bulk": {
           "name": "Porte Imponente"
@@ -1757,6 +2169,11 @@
     "Redline-Synced": {
       "name": "Sincronizado à Linha Vermelha",
       "description": "<p>Quando 4 ou mais cartas de domínio do seu loadout forem da Competência Linha Vermelha, ganhe o seguinte:</p><ul><li><p>Quando você sofre dano suficiente para marcar 2 ou mais Pontos de Vida, ganhe 1 Esperança.</p></li><li><p>Para cada 3 Pontos de Vida marcados, ganhe +1 de Evasão.</p></li></ul>",
+      "actions": {
+        "Gain 1 Hope": {
+          "name": "Ganhar 1 Esperança"
+        }
+      },
       "effects": {
         "Redline-Synced": {
           "name": "Sincronizado à Linha Vermelha"
@@ -1780,6 +2197,23 @@
     "Emergency Procedure": {
       "name": "Procedimento de Emergência",
       "description": "<p>Faça uma Rolagem de Interface (13) tendo como alvo uma criatura que não seja você dentro do alcance Corpo a Corpo. Em um sucesso, marque 1 Estresse para limpar 2 PV ou 2 de Estresse do alvo. Em uma falha, marque 1 Estresse para limpar 1 PV ou 1 Estresse do alvo.</p><p>Você não pode curar o mesmo alvo com Procedimento de Emergência de novo até o seu próximo descanso longo.</p>",
+      "actions": {
+        "Interface Roll": {
+          "name": "Rolagem de Interface"
+        },
+        "Clear 1 HP": {
+          "name": "Limpar 1 PV"
+        },
+        "Clear 2 HP": {
+          "name": "Limpar 2 PV"
+        },
+        "Clear 1 Stress": {
+          "name": "Limpar 1 Estresse"
+        },
+        "Clear 2 Stress": {
+          "name": "Limpar 2 Estresse"
+        }
+      },
       "effects": {
         "Emergency Procedure": {
           "name": "Procedimento de Emergência"
@@ -1802,6 +2236,14 @@
     "Thought Profile": {
       "name": "Perfil de Pensamento",
       "description": "<p>Você lê padrões nos outros por microexpressões, estresse na voz, vazamentos neurais, câmeras de vigilância ou perfil emocional. Gaste 1 Esperança para ler os pensamentos superficiais e vagos de um alvo dentro do alcance Distante.</p><p>Faça uma Rolagem de Interface contra o alvo para ir atrás de pensamentos mais profundos e escondidos. Numa rolagem com Medo, o alvo pode, a critério do mestre, perceber que você está lendo ele.</p>",
+      "actions": {
+        "Read Surface Thoughts": {
+          "name": "Ler Pensamentos"
+        },
+        "Delve Deeper": {
+          "name": "Ir Mais Fundo"
+        }
+      },
       "effects": {
         "Thought Profile": {
           "name": "Perfil de Pensamento"
@@ -1824,8 +2266,16 @@
     "Invoke Shutdown": {
       "name": "Invocar Desligamento",
       "description": "<p>Quando você causa dano a uma criatura que tem todo o Estresse marcado, dobre o dano. Se isso a derrotar, desativar ou destruir, você limpa 1 Estresse. Se não, ela fica permanentemente Vulnerável. Isso pode ser um comando de morte, colapso de identidade, travamento total do sistema nervoso ou um sinal de desligamento que deixa o alvo comprometido para sempre.</p>",
+      "actions": {
+        "Clear 1 Stress": {
+          "name": "Limpar 1 Estresse"
+        },
+        "Permanently Vulnerable": {
+          "name": "Vulnerável Permanente"
+        }
+      },
       "effects": {
-        "Invoke Shutdown (dano dobrado)": {
+        "Invoke Shutdown (double damage)": {
           "name": "Invocar Desligamento (dano dobrado)"
         },
         "Invoke Shutdown": {
@@ -1836,11 +2286,24 @@
     },
     "Feed on Panic": {
       "name": "Alimentar-se do Pânico",
-      "description": "<p>Sempre que uma criatura dentro do alcance Próximo marca qualquer quantidade de Estresse ou sofre dano Severo, você pode gastar 1 Esperança para limpar 1 Estresse ou limpar 1 Medo que o mestre tem. Isso pode ser o seu sistema colhendo dados de pânico, convertendo sofrimento em poder de processamento, ou deixando algo além do muro se alimentar pela sua interface.</p>"
+      "description": "<p>Sempre que uma criatura dentro do alcance Próximo marca qualquer quantidade de Estresse ou sofre dano Severo, você pode gastar 1 Esperança para limpar 1 Estresse ou limpar 1 Medo que o mestre tem. Isso pode ser o seu sistema colhendo dados de pânico, convertendo sofrimento em poder de processamento, ou deixando algo além do muro se alimentar pela sua interface.</p>",
+      "actions": {
+        "Clear 1 Stress": {
+          "name": "Limpar 1 Estresse"
+        }
+      }
     },
     "Dead Drop Exit": {
       "name": "Saída pelo Ponto de Coleta",
-      "description": "<p>Gaste 1 Esperança para preparar uma saída escondida onde você está, como um corredor de serviço, ângulo cego de câmera ou rota de extração planejada. Até o seu próximo descanso, você pode gastar 1 Esperança para acionar o plano de saída.</p><p>Quando fizer isso, você se move imediatamente até a saída preparada ou a uma posição segura dentro do alcance Muito Próximo dela, fica Escondido, e este protocolo termina. Esse movimento precisa seguir uma rota que possa plausivelmente existir na ficção.</p>"
+      "description": "<p>Gaste 1 Esperança para preparar uma saída escondida onde você está, como um corredor de serviço, ângulo cego de câmera ou rota de extração planejada. Até o seu próximo descanso, você pode gastar 1 Esperança para acionar o plano de saída.</p><p>Quando fizer isso, você se move imediatamente até a saída preparada ou a uma posição segura dentro do alcance Muito Próximo dela, fica Escondido, e este protocolo termina. Esse movimento precisa seguir uma rota que possa plausivelmente existir na ficção.</p>",
+      "actions": {
+        "Activate": {
+          "name": "Ativar"
+        },
+        "Trigger the Exit": {
+          "name": "Acionar a Saída"
+        }
+      }
     },
     "Studying the Victim": {
       "name": "Estudando a Vítima",
@@ -1859,6 +2322,20 @@
     "Never Off Camera": {
       "name": "Sempre na Câmera",
       "description": "<p>Quando você marca 1 ou mais Pontos de Vida por um ataque, pode marcar 1 Estresse para colocar nesta carta marcadores iguais aos Pontos de Vida marcados.</p><p>No seu próximo ataque bem-sucedido, ganhe +5 na rolagem de dano por marcador na carta e depois limpe todos os marcadores.</p>",
+      "actions": {
+        "Mark Stress (1 token)": {
+          "name": "Marcar Estresse (1 marcador)"
+        },
+        "Mark Stress (2 tokens)": {
+          "name": "Marcar Estresse (2 marcadores)"
+        },
+        "Mark Stress (3 tokens)": {
+          "name": "Marcar Estresse (3 marcadores)"
+        },
+        "Mark Stress (4 tokens)": {
+          "name": "Marcar Estresse (4 marcadores)"
+        }
+      },
       "effects": {
         "Never Off Camera": {
           "name": "Sempre na Câmera"
@@ -1868,6 +2345,11 @@
     "System Decay": {
       "name": "Decadência de Sistema",
       "description": "<p>Faça uma Rolagem de Interface contra um alvo dentro do alcance Distante. Em um sucesso, gaste 1 Esperança para infectá-lo com firmware corrompido ou código obsoleto que o sistema dele não sabe mais processar. O alvo fica temporariamente <strong>Degradado</strong>. Enquanto Degradado, usa um d12 em vez de um d20 nas rolagens de ataque. Você só pode manter este protocolo em uma criatura por vez.</p>",
+      "actions": {
+        "Interface Roll": {
+          "name": "Rolagem de Interface"
+        }
+      },
       "effects": {
         "Degraded": {
           "name": "Degradado",
@@ -1905,11 +2387,24 @@
     },
     "Blackwall Shroud": {
       "name": "Mortalha da Muralha Negra",
-      "description": "<p>Faça uma Rolagem de Interface (10). Em um sucesso, gaste qualquer quantidade de Esperança e coloque a mesma quantidade de marcadores nesta carta, envolvendo-se em ruído de sensor, sombra digital, sobreposições corrompidas, IA assombrada ou distorção de sinal. Depois que uma rolagem de ataque é feita contra você, pode gastar qualquer quantidade de marcadores para ganhar +1 de Evasão por marcador contra esse ataque.</p>"
+      "description": "<p>Faça uma Rolagem de Interface (10). Em um sucesso, gaste qualquer quantidade de Esperança e coloque a mesma quantidade de marcadores nesta carta, envolvendo-se em ruído de sensor, sombra digital, sobreposições corrompidas, IA assombrada ou distorção de sinal. Depois que uma rolagem de ataque é feita contra você, pode gastar qualquer quantidade de marcadores para ganhar +1 de Evasão por marcador contra esse ataque.</p>",
+      "actions": {
+        "Spend Hope": {
+          "name": "Gastar Esperança"
+        },
+        "Spend Tokens (+1 Evasion each)": {
+          "name": "Gastar Marcadores (+1 Evasão cada)"
+        }
+      }
     },
     "Kill-Switch Overdrive": {
       "name": "Overdrive do Interruptor da Morte",
-      "description": "<p>Faça uma Rolagem de Interface contra um adversário dentro do alcance Próximo. Em um sucesso, gaste 2 Esperança para marcar de 1 a 3 PV. O alvo marca o dobro dos Pontos de Vida que você marcou. Se isso fizer o alvo marcar o último PV dele, você pode limpar os PV que marcou para ativar este protocolo. Isso pode ser um golpe de overclock letal, execução de rageware, kill-switch neural, queima de cyberware, detonação adrenal ou uma pane de sistema à queima-roupa que converte o colapso do alvo na sua sobrevivência.</p>"
+      "description": "<p>Faça uma Rolagem de Interface contra um adversário dentro do alcance Próximo. Em um sucesso, gaste 2 Esperança para marcar de 1 a 3 PV. O alvo marca o dobro dos Pontos de Vida que você marcou. Se isso fizer o alvo marcar o último PV dele, você pode limpar os PV que marcou para ativar este protocolo. Isso pode ser um golpe de overclock letal, execução de rageware, kill-switch neural, queima de cyberware, detonação adrenal ou uma pane de sistema à queima-roupa que converte o colapso do alvo na sua sobrevivência.</p>",
+      "actions": {
+        "Interface Roll": {
+          "name": "Rolagem de Interface"
+        }
+      }
     },
     "Adaptive Persona": {
       "name": "Persona Adaptável",
@@ -1959,6 +2454,11 @@
         "Kinetic Push": {
           "name": "Empurrão Cinético"
         }
+      },
+      "effects": {
+        "Pushed": {
+          "name": "Empurrado"
+        }
       }
     },
     "Convoy Vehicles": {
@@ -1992,6 +2492,17 @@
     "Grapple Snare": {
       "name": "Laço de Captura",
       "description": "<p>Faça uma Rolagem de Interface contra um alvo dentro do alcance Próximo e escolha uma:</p><ol><li>Você puxa o alvo para o alcance Corpo a Corpo ou se puxa para o alcance Corpo a Corpo dele.</li><li>Você aperta o alvo e o força a marcar 2 de Estresse.</li><li>Todos os adversários entre você e o alvo precisam ter sucesso numa Rolagem de Reação (13) ou são pegos pelos cabos, sofrendo 3d6+2 de dano físico.</li></ol><p>Em um sucesso, a armadilha sai das suas mãos, equipamento, veículo ou drone, causando o efeito escolhido e deixando o alvo temporariamente Imobilizado.</p>",
+      "actions": {
+        "Pull": {
+          "name": "Puxar"
+        },
+        "Constrict": {
+          "name": "Apertar"
+        },
+        "Hit All in the Path": {
+          "name": "Atingir Todos no Caminho"
+        }
+      },
       "effects": {
         "Grapple Snare": {
           "name": "Laço de Captura"
@@ -2000,7 +2511,12 @@
     },
     "Redline Detonation": {
       "name": "Detonação Linha Vermelha",
-      "description": "<p>Faça uma Rolagem de Interface (12). Em um sucesso, marque 1 PV enquanto força os seus sistemas Linha Vermelha além dos limites seguros, despejando calor excedente, sobrecarga neural, feedback de agressão ou saída instável de cyberware num ponto dentro do alcance Distante. Um pulso violento de distorção térmica, choque de pressão, grito de sensor ou resíduo de overclock enche a área dentro do alcance Muito Próximo desse ponto. Cada alvo na área marca 1 PV. Num sucesso com Esperança, cada alvo marca 2 PV.</p>"
+      "description": "<p>Faça uma Rolagem de Interface (12). Em um sucesso, marque 1 PV enquanto força os seus sistemas Linha Vermelha além dos limites seguros, despejando calor excedente, sobrecarga neural, feedback de agressão ou saída instável de cyberware num ponto dentro do alcance Distante. Um pulso violento de distorção térmica, choque de pressão, grito de sensor ou resíduo de overclock enche a área dentro do alcance Muito Próximo desse ponto. Cada alvo na área marca 1 PV. Num sucesso com Esperança, cada alvo marca 2 PV.</p>",
+      "actions": {
+        "Each Target Marks 2 HP (Hope)": {
+          "name": "Cada Alvo Marca 2 PV (Esperança)"
+        }
+      }
     },
     "Manifest Cover": {
       "name": "Cobertura Manifesta",
@@ -2036,7 +2552,15 @@
     },
     "Total System Crash": {
       "name": "Colapso Total do Sistema",
-      "description": "<p>Faça uma Rolagem de Interface contra um alvo dentro do alcance Distante. Em um sucesso, marque 3 de Estresse e role uma quantidade de d20 igual ao seu atributo de Interface, causando esse total de dano tecno. Se o dano for suficiente para derrotar, desativar ou destruir o alvo, todos os adversários dentro do alcance Distante dele marcam 1 Estresse. Isso pode ser uma pane catastrófica de cyberware, alucinação em massa, cascata de comandos corrompidos, queimadura terminal de GELO Negro ou rotina de execução de IA desgovernada.</p>"
+      "description": "<p>Faça uma Rolagem de Interface contra um alvo dentro do alcance Distante. Em um sucesso, marque 3 de Estresse e role uma quantidade de d20 igual ao seu atributo de Interface, causando esse total de dano tecno. Se o dano for suficiente para derrotar, desativar ou destruir o alvo, todos os adversários dentro do alcance Distante dele marcam 1 Estresse. Isso pode ser uma pane catastrófica de cyberware, alucinação em massa, cascata de comandos corrompidos, queimadura terminal de GELO Negro ou rotina de execução de IA desgovernada.</p>",
+      "actions": {
+        "Interface Roll": {
+          "name": "Rolagem de Interface"
+        },
+        "Adversaries Mark 1 Stress": {
+          "name": "Adversários Marcam 1 Estresse"
+        }
+      }
     },
     "Homet Access Suite": {
       "name": "Suíte de Acesso Homet",
@@ -2056,6 +2580,9 @@
       "actions": {
         "Daemon Proxy": {
           "name": "Proxy Daemon"
+        },
+        "Failed Reaction: 1d4 Stress": {
+          "name": "Falhou na Reação: 1d4 Estresse"
         }
       }
     },
@@ -2076,6 +2603,14 @@
     "Systems-Synced": {
       "name": "Sincronizado aos Sistemas",
       "description": "<p>Quando 4 ou mais cartas de domínio do seu loadout forem da Competência Sistemas, ganhe o seguinte:</p><ul><li>Você pode marcar 1 Estresse para somar a sua Proficiência a uma Rolagem de Interface.</li><li>Uma vez por descanso, troque esta carta por qualquer carta do seu cofre sem pagar o Custo de Recordação.</li></ul>",
+      "actions": {
+        "Mark Stress": {
+          "name": "Marcar Estresse"
+        },
+        "Replace Card": {
+          "name": "Trocar Carta"
+        }
+      },
       "effects": {
         "Systems-Synced": {
           "name": "Sincronizado aos Sistemas"
@@ -2085,6 +2620,14 @@
     "Total Blackout": {
       "name": "Apagão Total",
       "description": "<p>Faça uma Rolagem de Interface (16). Uma vez por descanso longo, em um sucesso, mergulhe a área inteira dentro do alcance Distante em escuridão completa, apagão de sinal, saturação de fumaça, negação de sensores ou interferência que devora a luz, que só você e seus aliados conseguem atravessar com a vista.</p><p>Rolagens de ataque contra você ou um aliado dentro desse apagão têm desvantagem. Além disso, quando você ou um aliado tem sucesso com Esperança contra um adversário dentro do apagão, o alvo marca 1 Estresse.</p><p>O protocolo dura até o mestre gastar 1 Medo no turno dele para limpar o efeito ou você sofrer dano Severo.</p>",
+      "actions": {
+        "Interface Roll": {
+          "name": "Rolagem de Interface"
+        },
+        "Target Marks Stress": {
+          "name": "Alvo Marca Estresse"
+        }
+      },
       "effects": {
         "Total Blackout": {
           "name": "Apagão Total"
@@ -2094,6 +2637,14 @@
     "Influence-Synced": {
       "name": "Sincronizado à Influência",
       "description": "<p>Quando 4 ou mais cartas de domínio do seu loadout forem da Competência Influência, ganhe o seguinte:</p><ul><li>Você pode marcar um Espaço de Armadura em vez de marcar 1 Estresse.</li><li>Quando você fosse forçar um alvo a marcar uma quantidade de Pontos de Vida, pode forçá-lo a marcar essa mesma quantidade de Estresse em vez disso.</li></ul>",
+      "actions": {
+        "Mark Armor Slot": {
+          "name": "Marcar Armadura"
+        },
+        "Mark 1 Stress": {
+          "name": "Marcar 1 Estresse"
+        }
+      },
       "effects": {
         "Influence-Synced": {
           "name": "Sincronizado à Influência"
@@ -2202,7 +2753,21 @@
     },
     "Psycho Surge": {
       "name": "Surto Psicótico",
-      "description": "<p>Uma vez por descanso, gaste 1 Esperança para liberar ao seu redor uma onda violenta de adrenalina, ruído neural, instabilidade de rageware, implantes superaquecidos, falha do editor de dor e agressão à beira da ciberpsicose. Faça uma única Rolagem de Interface contra cada adversário dentro do alcance Próximo. Em um sucesso, o alvo marca 1 PV e 1 Estresse. Em uma falha, marca 1 Estresse. Cada aliado dentro do alcance Próximo marca 1 Estresse, mas limpa 1 PV.</p>"
+      "description": "<p>Uma vez por descanso, gaste 1 Esperança para liberar ao seu redor uma onda violenta de adrenalina, ruído neural, instabilidade de rageware, implantes superaquecidos, falha do editor de dor e agressão à beira da ciberpsicose. Faça uma única Rolagem de Interface contra cada adversário dentro do alcance Próximo. Em um sucesso, o alvo marca 1 PV e 1 Estresse. Em uma falha, marca 1 Estresse. Cada aliado dentro do alcance Próximo marca 1 Estresse, mas limpa 1 PV.</p>",
+      "actions": {
+        "Interface Roll": {
+          "name": "Rolagem de Interface"
+        },
+        "Success: 1 HP and 1 Stress": {
+          "name": "Sucesso: 1 PV e 1 Estresse"
+        },
+        "Failure: 1 Stress": {
+          "name": "Falha: 1 Estresse"
+        },
+        "Allies Mark 1 Stress": {
+          "name": "Aliados Marcam 1 Estresse"
+        }
+      }
     },
     "Lean On Me": {
       "name": "Apoie-se em Mim",
@@ -2219,6 +2784,12 @@
       "actions": {
         "Neurospike": {
           "name": "Neuropico"
+        },
+        "Target Marks 1 Stress (Hope)": {
+          "name": "Alvo Marca 1 Estresse (Esperança)"
+        },
+        "Rolled with Fear (1 Stress)": {
+          "name": "Rolou com Medo (1 Estresse)"
         }
       }
     },
@@ -2254,6 +2825,14 @@
     "Trapline Launcher": {
       "name": "Lançador de Armadilhas",
       "description": "<p>Faça uma Rolagem de Interface contra um alvo dentro do alcance Distante. Num acerto, você dispara uma linha de captura no alvo. Ele sofre 1d8+1 de dano físico e fica Imobilizado.</p><p>Além disso, você pode gastar 1 Esperança para lançar uma segunda linha contra outro adversário dentro do alcance Próximo do alvo, deixando-o temporariamente Imobilizado.</p>",
+      "actions": {
+        "Interface Roll": {
+          "name": "Rolagem de Interface"
+        },
+        "Restrain Another": {
+          "name": "Imobilizar Outro Alvo"
+        }
+      },
       "effects": {
         "Trapline Launcher": {
           "name": "Lançador de Armadilhas"
@@ -2305,7 +2884,10 @@
       "name": "Retroalimentação Agressiva",
       "description": "<p>Quando você causa dano a uma criatura, marque 1 Estresse para gravar o perfil de ameaça dela no seu sistema Linha Vermelha. Até este feedback terminar, seus implantes de combate, processadores adrenais, editor de dor e software de agressão ficam fixados no alvo. Você sempre sabe a direção dele em relação a você. Além disso, cada vez que essa criatura causar dano a você ou a um aliado dentro do alcance Muito Próximo, o seu sistema Linha Vermelha dispara um pico de feedback hostil de volta pelo link, forçando-a a marcar 1 Estresse. O feedback termina quando você usa este protocolo de novo.</p>",
       "actions": {
-        "Feedback: Alvo Marca 1 Estresse": {
+        "Record Profile (1 Stress)": {
+          "name": "Gravar Perfil (1 Estresse)"
+        },
+        "Feedback: Target Marks 1 Stress": {
           "name": "Retroalimentação: Alvo Marca 1 Estresse"
         }
       }
@@ -2313,6 +2895,14 @@
     "Mass Disguise": {
       "name": "Disfarce em Massa",
       "description": "<p>Quando você tem alguns minutos de silêncio para se concentrar, pode marcar 1 Estresse para mudar a aparência de todas as criaturas voluntárias dentro do alcance Próximo, usando equipamentos de rosto falso, identidades projetadas, camadas de pele inteligente, máscaras sintéticas ou tecnologia de disfarce coordenada. As novas formas precisam ter estrutura corporal e tamanho gerais parecidos, e podem ser alguém ou algo que você já viu ou algo totalmente inventado.</p><p>Uma criatura disfarçada tem vantagem em Rolagens de Presença para evitar ser examinada. Ative uma Contagem Regressiva (8). Ela avança como consequência escolhida pelo mestre. Quando dispara, os disfarces caem.</p>",
+      "actions": {
+        "Interface Roll": {
+          "name": "Rolagem de Interface"
+        },
+        "Start Countdown": {
+          "name": "Iniciar Contagem Regressiva"
+        }
+      },
       "effects": {
         "Mass Disguise": {
           "name": "Disfarce em Massa"
@@ -2345,7 +2935,12 @@
     },
     "Feedback Retaliation": {
       "name": "Retaliação por Retroalimentação",
-      "description": "<p>Quando um ataque de uma criatura te faz marcar um ou mais PV, você pode fazer uma Rolagem de Reação usando o seu atributo de Interface contra a criatura. Em um sucesso, o seu sistema Linha Vermelha converte o impacto num contragolpe hostil pelo firmware de combate, relés de choque, rageware ou implantes de feedback neural, forçando a criatura a marcar a mesma quantidade de PV que você marcou. Você não pode usar este protocolo de novo até terminar um descanso.</p>"
+      "description": "<p>Quando um ataque de uma criatura te faz marcar um ou mais PV, você pode fazer uma Rolagem de Reação usando o seu atributo de Interface contra a criatura. Em um sucesso, o seu sistema Linha Vermelha converte o impacto num contragolpe hostil pelo firmware de combate, relés de choque, rageware ou implantes de feedback neural, forçando a criatura a marcar a mesma quantidade de PV que você marcou. Você não pode usar este protocolo de novo até terminar um descanso.</p>",
+      "actions": {
+        "Reaction Roll (Interface)": {
+          "name": "Rolagem de Reação (Interface)"
+        }
+      }
     }
   }
 }

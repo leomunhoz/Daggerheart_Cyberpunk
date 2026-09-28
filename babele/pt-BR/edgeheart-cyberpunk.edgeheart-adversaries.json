@@ -187,7 +187,7 @@
       "items": {
         "Witness Me": {
           "name": "Testemunhem",
-          "description": "<p>Se um personagem rolar com Medo dentro do alcance Próximo deste adversário, o Duelist ganha vantagem no próximo ataque.</p>",
+          "description": "<p>Se um personagem rolar com Medo dentro do alcance Próximo deste adversário, o Duelista ganha vantagem no próximo ataque.</p>",
           "actions": {
             "Witness Me": {
               "name": "Testemunhem"
@@ -213,17 +213,17 @@
           "name": "Humilhação Pública",
           "description": "<p>Quando este adversário causa dano Maior ou Severo, escolha um personagem dentro do alcance Próximo que viu acontecer. Ele perde 1 Esperança ou fica <em>Vulnerável</em>.</p>",
           "actions": {
-            "Public Humiliation: Esperança": {
+            "Public Humiliation: Hope": {
               "name": "Humilhação Pública: Esperança"
             },
-            "Public Humiliation: Vulnerável": {
+            "Public Humiliation: Vulnerable": {
               "name": "Humilhação Pública: Vulnerável"
             }
           },
           "effects": {
             "Public Humiliation": {
               "name": "Humilhação Pública",
-              "description": "<p>Temporariamente Vulnerável pela humilhação pública do Duelist.</p>"
+              "description": "<p>Temporariamente Vulnerável pela humilhação pública do Duelista.</p>"
             }
           }
         }
@@ -292,7 +292,7 @@
             "Stack Up": {
               "name": "Em Formação"
             },
-            "Stack Up: Estresse": {
+            "Stack Up: Stress": {
               "name": "Em Formação: Estresse"
             }
           }
@@ -320,7 +320,7 @@
           "name": "Posição Preparada",
           "description": "<p>Este adversário começa a cena <em>Escondido</em>. Na primeira vez que atacar enquanto Escondido, some +1d8 de dano.</p>",
           "actions": {
-            "Prepared Position: Escondido": {
+            "Prepared Position: Hidden": {
               "name": "Posição Preparada: Escondido"
             }
           },
@@ -348,7 +348,7 @@
         },
         "Relocate": {
           "name": "Reposicionar",
-          "description": "<p>Quando um personagem rola com Medo contra este adversário, o Sniper fica <em>Escondido</em> se não houver nenhum personagem dentro do alcance Muito Próximo dele.</p>",
+          "description": "<p>Quando um personagem rola com Medo contra este adversário, o Atirador fica <em>Escondido</em> se não houver nenhum personagem dentro do alcance Muito Próximo dele.</p>",
           "actions": {
             "Relocate": {
               "name": "Reposicionar"
@@ -800,7 +800,7 @@
         },
         "Group Attack": {
           "name": "Ataque em Grupo",
-          "description": "<p><strong>Gaste 1 Medo</strong> para escolher um alvo e dar o Holofote a todos os @Lookup[@name] dentro do alcance Próximo dele. Esses Minions se movem para o alcance Corpo a Corpo do alvo e fazem uma rolagem de ataque compartilhada. Em um sucesso, cada um causa @Lookup[@system.attack.damageFormula] de dano físico. Some esse dano.</p>",
+          "description": "<p><strong>Gaste 1 Medo</strong> para escolher um alvo e dar o Holofote a todos os @Lookup[@name] dentro do alcance Próximo dele. Esses Lacaios se movem para o alcance Corpo a Corpo do alvo e fazem uma rolagem de ataque compartilhada. Em um sucesso, cada um causa @Lookup[@system.attack.damageFormula] de dano físico. Some esse dano.</p>",
           "actions": {
             "Group Attack": {
               "name": "Ataque em Grupo"
@@ -809,7 +809,7 @@
         },
         "Show of Force": {
           "name": "Demonstração de Força",
-          "description": "<p>Quando outro aliado de gangue dentro do alcance Próximo causa dano, este Ganger pode se mover imediatamente dentro do alcance Muito Próximo do alvo atingido.</p>"
+          "description": "<p>Quando outro aliado de gangue dentro do alcance Próximo causa dano, este Gangueiro pode se mover imediatamente dentro do alcance Muito Próximo do alvo atingido.</p>"
         }
       }
     },
@@ -828,7 +828,7 @@
       "items": {
         "Unwanted Revelation": {
           "name": "Revelação Indesejada",
-          "description": "<p>Quando um personagem rola com Medo dentro do alcance Próximo, ele responde uma pergunta que o Oracle faz sobre o medo, o desejo ou o cyberware dele, e depois marca 1 Estresse.</p>",
+          "description": "<p>Quando um personagem rola com Medo dentro do alcance Próximo, ele responde uma pergunta que o Oráculo faz sobre o medo, o desejo ou o cyberware dele, e depois marca 1 Estresse.</p>",
           "actions": {
             "Unwanted Revelation": {
               "name": "Revelação Indesejada"
@@ -852,7 +852,7 @@
         },
         "Cult Transmission": {
           "name": "Transmissão do Culto",
-          "description": "<p>Marque 2 de Estresse. Até o próximo Holofote deste adversário, os aliados do Oracle dentro do alcance Próximo ganham +1 de Dificuldade e os ataques deles causam +1d6 de dano tecno.</p>",
+          "description": "<p>Marque 2 de Estresse. Até o próximo Holofote deste adversário, os aliados do Oráculo dentro do alcance Próximo ganham +1 de Dificuldade e os ataques deles causam +1d6 de dano tecno.</p>",
           "actions": {
             "Cult Transmission": {
               "name": "Transmissão do Culto"
@@ -867,7 +867,7 @@
         },
         "Signal Martyr": {
           "name": "Mártir do Sinal",
-          "description": "<p>Quando este adversário é derrotado, um Digital Fantasma dentro do alcance Distante limpa 2 de Estresse e 1 PV.</p>"
+          "description": "<p>Quando este adversário é derrotado, um Fantasma Digital dentro do alcance Distante limpa 2 de Estresse e 1 PV.</p>"
         }
       }
     },
@@ -902,7 +902,7 @@
             }
           },
           "effects": {
-            "Alvo (Black Hand)": {
+            "Target (Black Hand)": {
               "name": "Alvo (Mão Negra)",
               "description": "<p>Alvo de Mão Negra até o fim da cena ou até outro personagem causar dano Maior a ele: os ataques de Mão Negra contra este alvo causam +1d8 de dano.</p>"
             }
@@ -1081,7 +1081,7 @@
         },
         "Reputation Cut": {
           "name": "Corte de Reputação",
-          "description": "<p>Marque 1 Estresse para atacar um alvo dentro do alcance Corpo a Corpo. Em um sucesso, cause dano; o alvo não pode gastar Esperança até o próximo Holofote do Cutter.</p>",
+          "description": "<p>Marque 1 Estresse para atacar um alvo dentro do alcance Corpo a Corpo. Em um sucesso, cause dano; o alvo não pode gastar Esperança até o próximo Holofote do Retalhador.</p>",
           "actions": {
             "Reputation Cut": {
               "name": "Corte de Reputação"
@@ -1128,10 +1128,10 @@
           "name": "Pico de Sinal",
           "description": "<p>Marque 1 Estresse e escolha um personagem dentro do alcance Distante usando equipamento conectado, cyberware, sensores ou comunicadores. Ele marca 1 Estresse ou perde o benefício desse sistema até gastar 1 Esperança para reativá-lo.</p>",
           "actions": {
-            "Signal Spike: Estresse": {
+            "Signal Spike: Stress": {
               "name": "Pico de Sinal: Estresse"
             },
-            "Signal Spike: Desligar Sistema": {
+            "Signal Spike: Shut Down System": {
               "name": "Pico de Sinal: Desligar Sistema"
             }
           },
@@ -1183,14 +1183,14 @@
         },
         "Killbox Execution": {
           "name": "Execução na Zona de Abate",
-          "description": "<p>Marque 3 de Estresse. O Raven inunda a área dentro do alcance Distante com mísseis, fogo de supressão e assalto de curta distância. Faça um ataque padrão contra todos os personagens na área. Em um sucesso, cause dano e o personagem fica marcado como Alvo de Mão Negra.</p>",
+          "description": "<p>Marque 3 de Estresse. O Corvo inunda a área dentro do alcance Distante com mísseis, fogo de supressão e assalto de curta distância. Faça um ataque padrão contra todos os personagens na área. Em um sucesso, cause dano e o personagem fica marcado como Alvo de Mão Negra.</p>",
           "actions": {
             "Killbox Execution": {
               "name": "Execução na Zona de Abate"
             }
           },
           "effects": {
-            "Alvo (Black Hand)": {
+            "Target (Black Hand)": {
               "name": "Alvo (Mão Negra)",
               "description": "<p>Alvo de Mão Negra até o fim da cena ou até outro personagem causar dano Maior a ele: os ataques de Mão Negra contra este alvo causam +1d8 de dano.</p>"
             }
@@ -1281,10 +1281,10 @@
           "name": "Quebra-Queixo",
           "description": "<p>Marque 1 Estresse para atacar um alvo dentro do alcance Corpo a Corpo. Em um sucesso, o alvo marca 1 Estresse ou fica temporariamente <em>Vulnerável</em>.</p>",
           "actions": {
-            "Jawbreaker: Estresse": {
+            "Jawbreaker: Stress": {
               "name": "Quebra-Queixo: Estresse"
             },
-            "Jawbreaker: Vulnerável": {
+            "Jawbreaker: Vulnerable": {
               "name": "Quebra-Queixo: Vulnerável"
             }
           },
@@ -1323,25 +1323,25 @@
           "name": "Troca de Função",
           "description": "<p>Quando este adversário recebe o Holofote, escolha uma opção, ou marque 1 Estresse para escolher duas: ganhar +2 de Dificuldade; causar +1d8 de dano; limpar 1 Estresse.</p>",
           "actions": {
-            "Role Switch: +2 Dificuldade": {
+            "Role Switch: +2 Difficulty": {
               "name": "Troca de Função: +2 Dificuldade"
             },
-            "Role Switch: +1d8 de Dano": {
+            "Role Switch: +1d8 Damage": {
               "name": "Troca de Função: +1d8 de Dano"
             },
-            "Role Switch: Limpar 1 Estresse": {
+            "Role Switch: Clear 1 Stress": {
               "name": "Troca de Função: Limpar 1 Estresse"
             },
-            "Role Switch: Duas Opções": {
+            "Role Switch: Two Options": {
               "name": "Troca de Função: Duas Opções"
             }
           },
           "effects": {
-            "Role Switch: Dificuldade": {
+            "Role Switch: Difficulty": {
               "name": "Troca de Função: Dificuldade",
               "description": "<p>+2 de Dificuldade.</p>"
             },
-            "Role Switch: Dano": {
+            "Role Switch: Damage": {
               "name": "Troca de Função: Dano",
               "description": "<p>+1d8 de dano.</p>"
             }
@@ -1353,6 +1353,12 @@
           "actions": {
             "Setpiece Combo": {
               "name": "Combo Ensaiado"
+            },
+            "Setpiece: Reaction Roll": {
+              "name": "Setpiece: Rolagem de Reação"
+            },
+            "Setpiece: Next Attack": {
+              "name": "Setpiece: Próximo Ataque"
             }
           },
           "effects": {
@@ -1392,7 +1398,7 @@
           "effects": {
             "Cover Shooter": {
               "name": "Atirador na Cobertura",
-              "description": "<p>+1 de Dificuldade. Ligue enquanto o Rookie estiver atrás de cobertura.</p>"
+              "description": "<p>+1 de Dificuldade. Ligue enquanto o Novato estiver atrás de cobertura.</p>"
             }
           }
         },
@@ -1426,7 +1432,7 @@
         },
         "Digital Afterlife": {
           "name": "Além-Vida Digital",
-          "description": "<p>Quando uma criatura dentro do alcance Distante marca o último Ponto de Vida, Hades cria um eco de Digital Fantasma dela.</p>"
+          "description": "<p>Quando uma criatura dentro do alcance Distante marca o último Ponto de Vida, Hades cria um eco de Fantasma Digital dela.</p>"
         },
         "Identity Collapse": {
           "name": "Colapso de Identidade",
@@ -1445,7 +1451,7 @@
         },
         "Ghost Birth": {
           "name": "Nascimento Fantasma",
-          "description": "<p>Marque 3 de Estresse e escolha um dispositivo conectado ou implante de cyberware dentro do alcance Distante. Uma manifestação de Digital Fantasma surge dele como ameaça temporária.</p>",
+          "description": "<p>Marque 3 de Estresse e escolha um dispositivo conectado ou implante de cyberware dentro do alcance Distante. Uma manifestação de Fantasma Digital surge dele como ameaça temporária.</p>",
           "actions": {
             "Ghost Birth": {
               "name": "Nascimento Fantasma"

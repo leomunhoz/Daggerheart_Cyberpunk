@@ -1,5 +1,14 @@
 # Changelog
 
+## v1.29.0
+- **Texto original em inglês:** a versão em inglês agora usa o texto do PDF em tudo: descrições, ações e efeitos dos itens, cyberware e Eidolons (com as peças), armas, armaduras, loot, consumíveis, veículos, cartas, classes, subclasses, Life Paths, Afiliações, adversários, ambientes e tabelas (`data/content-en.json`).
+- Os 51 diários também têm versão em inglês (`journals/en`), incluindo as tabelas, os statblocks, as páginas de classe e as de Competência.
+- Os diários em português perderam as glosas em inglês, e as boas-vindas foram reescritas (conteúdo atual, como ativar o Babele e crédito ao The Void).
+- O diário "Edgeheart: Campaign Frame" agora se chama "Edgeheart: Cenário de Campanha" em português.
+- **Arte dos adversários:** os 25 agora têm retrato (com fundo transparente) e token redondo com aro na cor da facção.
+- **Ícones das Competências:** Network, Aegis, Assault, Ghost, Chrome, Systems, Influence, Frontier e Medtech ganharam sigilos próprios. Redline e Blackwall continuam com os ícones anteriores.
+- **Cartas de Competência no padrão das oficiais:** cada Competência tem a sua cor no Homebrew do sistema (o banner da carta usa essa cor, e Chrome usa texto escuro, como Bone) e uma arte própria: degradê na cor da Competência com o sigilo branco no centro. Todas as cartas da Competência usam essa arte, como as oficiais.
+
 ## v1.28.0
 - **Duas línguas (Babele):** os compêndios agora são em inglês e o módulo traz a tradução completa para português em `babele/pt-BR`. Com o Babele ativo e o Foundry em Português (Brasil), tudo aparece traduzido. Classes e subclasses mantêm o nome em inglês.
 - Os nomes seguem o glossário revisado (`data/glossary-pt-BR.json`): Competências (Rede, Assalto, Cromo...), termos (Cadeia de Abate, Disfarce, Brecha, Equipe, Ímpeto, GELO Negro, dano tecno...), cartas, features, cyberware, armas, armaduras, loot, veículos, adversários e ambientes.

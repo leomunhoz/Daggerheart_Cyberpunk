@@ -78,6 +78,10 @@ function createContext(glossary, protectedNames, extraNames, contentEn) {
   ];
   const term = makeTermReplacer(pairs, protectedNames, extra);
   const unknown = new Set();
+  // Entrada de content-en.json de um documento, pelo nome dele em inglês.
+  const contentFor = (pack, name) => contentEn?.[pack.metadata.name]?.[names(name, { track: false }).en] ?? {};
+  // Nomes de ação e efeito que se repetem em vários itens ("Bolt Gun: Imobilizado"): content-en.json "_names".
+  const globalName = name => contentEn?._names?.[name] ?? name;
 
   const names = (name, { track = true } = {}) => {
     if (extraNames.has(name)) return { en: extraNames.get(name).en, pt: extraNames.get(name).pt };
@@ -89,20 +93,21 @@ function createContext(glossary, protectedNames, extraNames, contentEn) {
     if (track && !protectedNames.has(name)) unknown.add(name);
     return { en: name, pt: term(name) };
   };
-  return { term, names, unknown, contentEn };
+  return { term, names, unknown, contentEn, contentFor, globalName };
 }
 
-// Ações e efeitos: a base mantém o nome de origem (provisório) a não ser que o nome seja o de um item
-// do glossário; a tradução leva o nome e a descrição em português com os termos aplicados.
+// Ações: a base fica com o nome do glossário (ou o de origem) e, se houver, o nome e a descrição em
+// inglês de content-en.json (chave: esse nome da base). A tradução leva o português com os termos aplicados.
 function translateActions(ctx, actions, en = {}) {
   const base = {};
   const pt = {};
   for (const action of actions ?? []) {
     const src = action.name ?? "";
     const known = ctx.names(src, { track: false });
-    const enName = en[src]?.name ?? known.en;
+    const override = en?.[known.en] ?? {};
+    const enName = override.name ?? ctx.globalName(known.en);
     if (enName !== src) base[`system.actions.${action.id}.name`] = enName;
-    if (en[src]?.description) base[`system.actions.${action.id}.description`] = en[src].description;
+    if (override.description) base[`system.actions.${action.id}.description`] = override.description;
     const entry = {};
     const ptName = known.pt !== known.en ? known.pt : ctx.term(src);
     if (ptName !== enName) entry.name = ptName;
@@ -112,19 +117,33 @@ function translateActions(ctx, actions, en = {}) {
   return { base, pt };
 }
 
-function translateEffects(ctx, effects) {
+// Efeitos: mesma ideia, pelo nome de origem. Devolve as mudanças da base como updates de ActiveEffect.
+// `item`: descrição de origem do item e a dele em inglês — o efeito passivo de uma feature costuma repetir
+// a descrição do item (armas, armaduras, peças de Eidolon), e aí recebe a mesma em inglês.
+function translateEffects(ctx, effects, en = {}, item = {}) {
   const pt = {};
+  const updates = [];
   for (const effect of effects ?? []) {
+    const byName = ctx.globalName(effect.name);
+    // A entrada pode usar o nome de origem ou o nome já em inglês.
+    const override = en?.[effect.name] ?? en?.[byName] ?? {};
+    const enName = override.name ?? (byName !== effect.name ? byName : ctx.names(effect.name, { track: false }).en);
+    const change = {};
+    if (enName !== effect.name) change.name = enName;
+    if (override.description) change.description = override.description;
+    else if (item.en && effect.description && effect.description === item.src) change.description = item.en;
+    if (Object.keys(change).length) updates.push({ _id: effect._id, src: effect.name, change });
     const entry = {};
     const name = ctx.term(effect.name);
-    if (name !== effect.name) entry.name = name;
+    if (name !== enName) entry.name = name;
     if (effect.description) entry.description = ctx.term(effect.description);
-    if (Object.keys(entry).length) pt[effect.name] = entry;
+    if (Object.keys(entry).length) pt[enName] = entry;
   }
-  return pt;
+  return { pt, updates };
 }
 
-// Dados de item (documento ou item embutido/guardado em flag) → { update da base, entrada pt-BR }.
+// Dados de item (documento ou item embutido/guardado em flag) → { update da base, updates dos efeitos,
+// entrada pt-BR }. `en` é a entrada do item em content-en.json.
 function translateItemData(ctx, data, en = {}) {
   const system = data.system ?? {};
   const { en: enName, pt: ptName } = ctx.names(data.name);
@@ -137,14 +156,18 @@ function translateItemData(ctx, data, en = {}) {
   const actions = translateActions(ctx, actionList, en.actions);
   Object.assign(update, actions.base);
   if (Object.keys(actions.pt).length) entry.actions = actions.pt;
-  const effects = translateEffects(ctx, data.effects);
-  if (Object.keys(effects).length) entry.effects = effects;
+  const effects = translateEffects(ctx, data.effects, en.effects, { src: system.description, en: en.description });
+  if (Object.keys(effects.pt).length) entry.effects = effects.pt;
   if (system.attack?.name) {
+    const attackEn = en.attack?.name ?? ctx.globalName(system.attack.name);
+    if (attackEn !== system.attack.name) update["system.attack.name"] = attackEn;
     const attack = ctx.term(system.attack.name);
-    if (attack !== system.attack.name) entry.attack = { name: attack };
+    if (attack !== attackEn) entry.attack = { name: attack };
   }
   for (const field of ["backgroundQuestions", "connections"]) {
-    if (Array.isArray(system[field]) && system[field].length) entry[field] = system[field].map(ctx.term);
+    if (!Array.isArray(system[field]) || !system[field].length) continue;
+    entry[field] = system[field].map(ctx.term);
+    if (Array.isArray(en[field]) && en[field].length === system[field].length) update[`system.${field}`] = en[field];
   }
   const flags = data.flags?.[MODULE_ID] ?? {};
   if (flags.pick) {
@@ -152,6 +175,8 @@ function translateItemData(ctx, data, en = {}) {
       title: ctx.term(flags.pick.title), prompt: ctx.term(flags.pick.prompt),
       options: Object.fromEntries(Object.entries(flags.pick.options ?? {}).map(([k, v]) => [k, ctx.term(v)]))
     };
+    // A chave "action" é o nome de origem usado pela automação; só os textos mudam.
+    if (en.pick) for (const key of ["title", "prompt", "options"]) if (en.pick[key]) update[`flags.${MODULE_ID}.pick.${key}`] = en.pick[key];
   }
   if (flags.vehicle?.baseName) {
     const vehicle = ctx.names(flags.vehicle.baseName);
@@ -162,15 +187,19 @@ function translateItemData(ctx, data, en = {}) {
     const parts = foundry.utils.deepClone(flags.eidolon.parts);
     const ptParts = {};
     for (const part of parts) {
-      const t = translateItemData(ctx, part);
-      if (t.update.name) part.name = t.update.name;
-      for (const [path, value] of Object.entries(t.update)) if (path !== "name") foundry.utils.setProperty(part, path, value);
+      const t = translateItemData(ctx, part, en.parts?.[ctx.names(part.name, { track: false }).en]);
+      for (const [path, value] of Object.entries(t.update)) foundry.utils.setProperty(part, path, value);
+      // Peças guardadas em flag podem não ter _id nos efeitos: casa pelo nome de origem.
+      for (const { _id, src, change } of t.effectUpdates) {
+        const effect = part.effects?.find(e => (_id && e._id === _id) || e.name === src);
+        if (effect) Object.assign(effect, change);
+      }
       ptParts[part.name] = t.entry;
     }
     update[`flags.${MODULE_ID}.eidolon.parts`] = parts;
     entry.eidolonParts = ptParts;
   }
-  return { update, entry, enName };
+  return { update, effectUpdates: effects.updates, entry, enName };
 }
 
 // Chave da entrada: o nome em inglês; se houver nome repetido no compêndio, o _id (o Babele aceita os dois).
@@ -187,9 +216,10 @@ async function localizeItemPack(ctx, pack) {
   const updates = [];
   const seen = new Set();
   for (const doc of docs) {
-    const en = ctx.contentEn?.[pack.metadata.name]?.[doc.id] ?? {};
-    const { update, entry, enName } = translateItemData(ctx, doc.toObject(), en);
+    const en = ctx.contentFor(pack, doc.name);
+    const { update, effectUpdates, entry, enName } = translateItemData(ctx, doc.toObject(), en);
     if (Object.keys(update).length) updates.push({ _id: doc.id, ...update });
+    if (effectUpdates.length) await doc.updateEmbeddedDocuments("ActiveEffect", effectUpdates.map(({ _id, change }) => ({ _id, ...change })));
     entries[entryKey(seen, enName, doc.id)] = entry;
   }
   if (updates.length) await Item.updateDocuments(updates, { pack: pack.collection });
@@ -203,6 +233,7 @@ async function localizeActorPack(ctx, pack) {
   for (const actor of docs) {
     const data = actor.toObject();
     const { en: enName, pt: ptName } = ctx.names(data.name);
+    const en = ctx.contentFor(pack, data.name);
     const entry = { name: ptName };
     for (const field of ["description", "motivesAndTactics", "impulses"]) if (data.system[field]) entry[field] = ctx.term(data.system[field]);
     if (data.system.attack?.name) entry.attack = { name: ctx.term(data.system.attack.name) };
@@ -214,13 +245,18 @@ async function localizeActorPack(ctx, pack) {
     const itemUpdates = [];
     const seenItems = new Set();
     for (const item of data.items) {
-      const t = translateItemData(ctx, item);
+      const t = translateItemData(ctx, item, en.items?.[ctx.names(item.name, { track: false }).en]);
       if (Object.keys(t.update).length) itemUpdates.push({ _id: item._id, ...t.update });
+      if (t.effectUpdates.length) await actor.items.get(item._id).updateEmbeddedDocuments("ActiveEffect", t.effectUpdates.map(({ _id, change }) => ({ _id, ...change })));
       items[entryKey(seenItems, t.enName, item._id)] = t.entry;
     }
     if (Object.keys(items).length) entry.items = items;
     if (itemUpdates.length) await actor.updateEmbeddedDocuments("Item", itemUpdates);
-    if (enName !== data.name) await actor.update({ name: enName, "prototypeToken.name": enName });
+    const actorUpdate = {};
+    if (enName !== data.name) Object.assign(actorUpdate, { name: enName, "prototypeToken.name": enName });
+    for (const field of ["description", "motivesAndTactics", "impulses"]) if (en[field]) actorUpdate[`system.${field}`] = en[field];
+    if (en.attack?.name) actorUpdate["system.attack.name"] = en.attack.name;
+    if (Object.keys(actorUpdate).length) await actor.update(actorUpdate);
     entries[entryKey(seen, enName, actor.id)] = entry;
   }
   return { mapping: ACTOR_MAPPING, entries };
@@ -235,7 +271,12 @@ async function localizeJournalPack(ctx, pack) {
     const pageUpdates = [];
     for (const page of journal.pages) {
       const p = ctx.names(page.name);
-      if (p.en !== page.name) pageUpdates.push({ _id: page.id, name: p.en });
+      const change = {};
+      if (p.en !== page.name) change.name = p.en;
+      // Texto em inglês da página (journals/en/...), quando já existe.
+      const enText = ctx.journalEn?.get(page.id);
+      if (enText) change["text.content"] = enText;
+      if (Object.keys(change).length) pageUpdates.push({ _id: page.id, ...change });
       pages[p.en] = { name: p.pt, text: ctx.term(page.text?.content ?? "") };
     }
     if (pageUpdates.length) await journal.updateEmbeddedDocuments("JournalEntryPage", pageUpdates);
@@ -250,7 +291,11 @@ async function localizeTablePack(ctx, pack) {
   const entries = {};
   for (const table of docs) {
     const { en, pt } = ctx.names(table.name);
-    if (en !== table.name) await table.update({ name: en });
+    const change = {};
+    if (en !== table.name) change.name = en;
+    const enDescription = ctx.contentEn?._tables?.[en]?.description;
+    if (enDescription) change.description = enDescription;
+    if (Object.keys(change).length) await table.update(change);
     entries[en] = { name: pt, description: ctx.term(table.description ?? "") };
   }
   return { entries };
@@ -280,7 +325,7 @@ async function writeTranslation(collection, data) {
  * @param {{collection: string, labelPt: string}[]} options.packs
  * @param {Map<string, {en: string, pt: string}>} options.extraNames  nomes fora do glossário (diários, tabelas), pelo nome de origem
  */
-export async function localizePacks({ packs, extraNames = new Map(), packFolders = {} }) {
+export async function localizePacks({ packs, extraNames = new Map(), packFolders = {}, journalEn = new Map() }) {
   const fetchJson = async (path, fallback) => {
     const response = await fetch(`modules/${MODULE_ID}/${path}`, { cache: "no-store" });
     return response.ok ? response.json() : fallback;
@@ -297,6 +342,7 @@ export async function localizePacks({ packs, extraNames = new Map(), packFolders
     for (const entry of await pack.getIndex({ fields: ["type"] })) if (["class", "subclass"].includes(entry.type)) protectedNames.add(entry.name);
   }
   const ctx = createContext(glossary, protectedNames, extraNames, contentEn);
+  ctx.journalEn = journalEn;
 
   for (const { collection, labelPt } of packs) {
     const pack = game.packs.get(collection);

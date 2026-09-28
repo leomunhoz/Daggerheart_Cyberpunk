@@ -137,7 +137,7 @@
         "Field Salvage": {
           "name": "Recuperação de Campo"
         },
-        "Rolar Hazard": {
+        "Roll Hazard": {
           "name": "Rolar Perigo"
         }
       }
@@ -199,7 +199,7 @@
       "name": "Explosivo Plantado",
       "description": "<p>Quando você pode tocar um objeto, superfície ou máquina, marque 1 Estresse para plantar uma carga. Acione-a mais tarde na cena para escolher uma:</p><ul><li><strong>Brecha:</strong> abra, quebre ou desmorone o alvo.</li><li><strong>Desativar:</strong> trave, tranque ou desligue o alvo até ser consertado.</li><li><strong>Interromper:</strong> um adversário dentro do alcance Muito Próximo marca 1 Estresse e fica temporariamente <em>Vulnerável</em>.</li></ul><p>Você pode ter uma carga ativa por vez.</p>",
       "actions": {
-        "Acionar: Disrupt": {
+        "Trigger: Disrupt": {
           "name": "Acionar: Interromper"
         }
       },
@@ -323,7 +323,12 @@
     },
     "Black-Clinic Procedure": {
       "name": "Procedimento de Clínica Clandestina",
-      "description": "<p>Quando você usa Medicina de Emergência com sucesso numa criatura, pode dar a ela um aprimoramento perigoso além do efeito normal. Escolha um:</p><ul><li>Ela soma 1d8 à próxima rolagem de dano.</li><li>Ela ganha +2 na próxima Rolagem de Agilidade, Força ou Acuidade.</li><li>Ela ganha +2 de Evasão contra o próximo ataque que a tiver como alvo.</li></ul><p>Depois que a rolagem ou efeito aprimorado se resolver, ela marca 1 Estresse.</p><p><em>Na ficha: \"Rolar 1d8\" rola o dano extra da primeira opção.</em></p>"
+      "description": "<p>Quando você usa Medicina de Emergência com sucesso numa criatura, pode dar a ela um aprimoramento perigoso além do efeito normal. Escolha um:</p><ul><li>Ela soma 1d8 à próxima rolagem de dano.</li><li>Ela ganha +2 na próxima Rolagem de Agilidade, Força ou Acuidade.</li><li>Ela ganha +2 de Evasão contra o próximo ataque que a tiver como alvo.</li></ul><p>Depois que a rolagem ou efeito aprimorado se resolver, ela marca 1 Estresse.</p><p><em>Na ficha: \"Rolar 1d8\" rola o dano extra da primeira opção.</em></p>",
+      "actions": {
+        "Roll 1d8": {
+          "name": "Rolar 1d8"
+        }
+      }
     },
     "Rootkill": {
       "name": "Morte na Raiz",
@@ -508,7 +513,7 @@
         "Drone Network": {
           "name": "Rede de Drones"
         },
-        "Reduzir Dano (Drone Network)": {
+        "Reduce Damage (Drone Network)": {
           "name": "Reduzir Dano (Rede de Drones)"
         }
       },
@@ -568,7 +573,7 @@
     },
     "Phantom": {
       "name": "Phantom",
-      "description": "<p><em>Jogue de Phantom se você quiser passar por espaços vigiados, se reposicionar por pontos cegos, tirar aliados do perigo e desaparecer antes que o inimigo consiga te prender.</em></p>\n<p><em>(A lista de subclasses do PDF chama esta de \"Deep Disfarce\", mas a seção dela se chama Phantom.)</em></p>\n<p><strong>Build Sugerida:</strong> Agilidade +2, Acuidade +1, Instinto +1, Presença 0, Conhecimento 0, Força −1. Equipamento recomendado: Submetralhadora Compacta (primária, uma mão) + Faca de Combate (secundária) + Jaqueta de Sintcouro — mobilidade e Evasão alta.</p>"
+      "description": "<p><em>Jogue de Phantom se você quiser passar por espaços vigiados, se reposicionar por pontos cegos, tirar aliados do perigo e desaparecer antes que o inimigo consiga te prender.</em></p>\n<p><em>(A lista de subclasses do PDF chama esta de \"Deep Cover\", mas a seção dela se chama Phantom.)</em></p>\n<p><strong>Build Sugerida:</strong> Agilidade +2, Acuidade +1, Instinto +1, Presença 0, Conhecimento 0, Força −1. Equipamento recomendado: Submetralhadora Compacta (primária, uma mão) + Faca de Combate (secundária) + Jaqueta de Sintcouro — mobilidade e Evasão alta.</p>"
     },
     "Accelerated Loop": {
       "name": "Ciclo Acelerado",
@@ -619,6 +624,9 @@
       "actions": {
         "Contacts Everywhere": {
           "name": "Contatos em Todo Lugar"
+        },
+        "Roll 2d8": {
+          "name": "Rolar 2d8"
         }
       }
     },
@@ -634,7 +642,7 @@
       "name": "Persona Pública",
       "description": "<p>Escolha o que o seu nome significa na rua:</p><ul><li><strong>Adorado:</strong> quando usa <em>Termos de Engajamento</em> para você ou um aliado limpar Estresse, esse alvo limpa 2 Estresse em vez de 1.</li><li><strong>Temido:</strong> quando usa <em>Termos de Engajamento</em> para fazer um alvo marcar Estresse, pode marcar 1 Estresse para deixá-lo temporariamente Vulnerável.</li><li><strong>Famoso:</strong> quando usa <em>Termos de Engajamento</em> para dar +2 numa rolagem, dê +4 em vez disso.</li></ul><p>Você pode trocar a sua Persona Pública quando faz um descanso longo, explicando como a sua imagem muda.</p><p><em>Na ficha: \"Escolher Persona Pública\" guarda a escolha, mostrada no selo do cabeçalho.</em></p>",
       "actions": {
-        "Escolher Public Persona": {
+        "Choose Public Persona": {
           "name": "Escolher Persona Pública"
         }
       },
@@ -704,7 +712,12 @@
     },
     "Signature Vehicle": {
       "name": "Veículo de Assinatura",
-      "description": "<p>Você tem um veículo pessoal. Ao operá-lo, pode usar Agilidade em vez do atributo indicado.</p><p>Uma vez por cena, impeça o seu Veículo de Assinatura de ficar <strong>Danificado</strong> ou <strong>Inutilizado</strong>. Você pode designar um novo Veículo de Assinatura durante um descanso.</p>"
+      "description": "<p>Você tem um veículo pessoal. Ao operá-lo, pode usar Agilidade em vez do atributo indicado.</p><p>Uma vez por cena, impeça o seu Veículo de Assinatura de ficar <strong>Danificado</strong> ou <strong>Inutilizado</strong>. Você pode designar um novo Veículo de Assinatura durante um descanso.</p>",
+      "actions": {
+        "Protect Vehicle": {
+          "name": "Proteger Veículo"
+        }
+      }
     },
     "Zonebreaker": {
       "name": "Zonebreaker",
@@ -717,7 +730,7 @@
         "Dead Zone": {
           "name": "Zona Morta"
         },
-        "Rolar Dead Zone": {
+        "Roll Dead Zone": {
           "name": "Rolar Zona Morta"
         }
       },
@@ -755,7 +768,15 @@
     },
     "Companion Drone": {
       "name": "Drone Companheiro",
-      "description": "<p>Você tem um pequeno drone ou máquina companheira que pode se mover de forma independente dentro do alcance Distante, carregar objetos pequenos, gravar, escanear e interagir com controles.</p><p>Você pode Ajudar um aliado dentro do alcance Próximo do drone, não importa onde você esteja. Se a rolagem dele envolver equipamento ou sistemas conectados, use um d8 como dado de Ajuda.</p><p>Quando o drone fosse sofrer dano, marque 1 Estresse para tirá-lo do perigo. Caso contrário, ele fica desativado até o seu próximo descanso.</p><p><em>Na ficha: \"Ajuda do Drone\" gasta 1 Esperança e rola o d8 de Ajuda; \"Proteger Drone\" marca 1 Estresse.</em></p>"
+      "description": "<p>Você tem um pequeno drone ou máquina companheira que pode se mover de forma independente dentro do alcance Distante, carregar objetos pequenos, gravar, escanear e interagir com controles.</p><p>Você pode Ajudar um aliado dentro do alcance Próximo do drone, não importa onde você esteja. Se a rolagem dele envolver equipamento ou sistemas conectados, use um d8 como dado de Ajuda.</p><p>Quando o drone fosse sofrer dano, marque 1 Estresse para tirá-lo do perigo. Caso contrário, ele fica desativado até o seu próximo descanso.</p><p><em>Na ficha: \"Ajuda do Drone\" gasta 1 Esperança e rola o d8 de Ajuda; \"Proteger Drone\" marca 1 Estresse.</em></p>",
+      "actions": {
+        "Drone Help": {
+          "name": "Ajuda do Drone"
+        },
+        "Protect Drone": {
+          "name": "Proteger Drone"
+        }
+      }
     },
     "Hard Entry": {
       "name": "Entrada Forçada",

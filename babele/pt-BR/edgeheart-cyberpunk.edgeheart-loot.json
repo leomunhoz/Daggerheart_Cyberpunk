@@ -140,7 +140,7 @@
         }
       },
       "effects": {
-        "Heavy: dirigindo (−1 Evasão, +2 Limiares)": {
+        "Heavy: driving (−1 Evasion, +2 Thresholds)": {
           "name": "Pesado: dirigindo (−1 Evasão, +2 Limiares)"
         }
       },
@@ -174,12 +174,12 @@
         "Repair": {
           "name": "Consertar"
         },
-        "Armored: reduzir a gravidade": {
+        "Armored: reduce severity": {
           "name": "Blindado: reduzir a gravidade"
         }
       },
       "effects": {
-        "Hard Cover (+2 Evasão)": {
+        "Hard Cover (+2 Evasion)": {
           "name": "Cobertura Sólida (+2 Evasão)"
         }
       },
@@ -198,7 +198,7 @@
       "name": "Espeto de Fechadura",
       "description": "<p>Quando você cria uma Brecha contra uma fechadura, porta ou painel de segurança local, ganhe +2 na rolagem.</p>",
       "effects": {
-        "Lockspike (+2 na rolagem)": {
+        "Lockspike (+2 to the roll)": {
           "name": "Espeto de Fechadura (+2 na rolagem)"
         }
       }
@@ -224,7 +224,7 @@
         }
       },
       "effects": {
-        "Swift: alta velocidade (+1 Evasão)": {
+        "Swift: high speed (+1 Evasion)": {
           "name": "Veloz: alta velocidade (+1 Evasão)"
         }
       },
@@ -272,10 +272,10 @@
         "Repair": {
           "name": "Consertar"
         },
-        "Cargo: revelar equipamento": {
+        "Cargo: reveal gear": {
           "name": "Cargueiro: revelar equipamento"
         },
-        "Mobile Kit (+2 na rolagem)": {
+        "Mobile Kit (+2 to the roll)": {
           "name": "Kit Móvel (+2 na rolagem)"
         }
       },
@@ -302,7 +302,7 @@
         }
       },
       "effects": {
-        "Swift: alta velocidade (+1 Evasão)": {
+        "Swift: high speed (+1 Evasion)": {
           "name": "Veloz: alta velocidade (+1 Evasão)"
         }
       },
@@ -423,12 +423,12 @@
         "Autopilot Ghost (14)": {
           "name": "Piloto Automático Fantasma (14)"
         },
-        "Autopilot Ghost: Escondido": {
+        "Autopilot Ghost: Hidden": {
           "name": "Piloto Automático Fantasma: Escondido"
         }
       },
       "effects": {
-        "Autopilot Ghost: Escondido": {
+        "Autopilot Ghost: Hidden": {
           "name": "Piloto Automático Fantasma: Escondido"
         }
       },
@@ -564,7 +564,7 @@
         "Repair": {
           "name": "Consertar"
         },
-        "Soaring: voar até Distante": {
+        "Soaring: fly up to Far": {
           "name": "Voador: voar até Distante"
         }
       },

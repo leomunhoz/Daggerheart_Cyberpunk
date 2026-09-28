@@ -86,7 +86,17 @@
   "entries": {
     "Stress Regulator": {
       "name": "Regulador de Estresse",
-      "description": "<p><strong>Cyberware 19</strong> · Tier 1 · <strong>Custo Cibernético 2</strong></p><p>Ganhe um espaço adicional de Estresse. Uma vez por descanso, quando você rolar com Esperança, você pode limpar 1 Estresse.</p>"
+      "description": "<p><strong>Cyberware 19</strong> · Tier 1 · <strong>Custo Cibernético 2</strong></p><p>Ganhe um espaço adicional de Estresse. Uma vez por descanso, quando você rolar com Esperança, você pode limpar 1 Estresse.</p>",
+      "actions": {
+        "Clear 1 Stress": {
+          "name": "Limpar 1 Estresse"
+        }
+      },
+      "effects": {
+        "Stress Regulator": {
+          "name": "Regulador de Estresse"
+        }
+      }
     },
     "Netdaemon Cortex": {
       "name": "Córtex Netdaemon",
@@ -94,12 +104,22 @@
     },
     "Smartgun Link": {
       "name": "Link Smartgun",
-      "description": "<p><strong>Cyberware 23</strong> · Tier 1 · <strong>Custo Cibernético 1</strong></p><p>Quando você ataca com uma arma de fogo ou arma inteligente e rola com Esperança, você pode marcar 1 Estresse para mirar outra criatura dentro do alcance Muito Próximo do alvo original, causando metade do dano.</p>"
+      "description": "<p><strong>Cyberware 23</strong> · Tier 1 · <strong>Custo Cibernético 1</strong></p><p>Quando você ataca com uma arma de fogo ou arma inteligente e rola com Esperança, você pode marcar 1 Estresse para mirar outra criatura dentro do alcance Muito Próximo do alvo original, causando metade do dano.</p>",
+      "actions": {
+        "Secondary Shot": {
+          "name": "Disparo Secundário"
+        }
+      }
     },
     "Time-Slice Accelerator": {
       "name": "Acelerador de Fatia de Tempo",
       "description": "<p><strong>Cyberware 49</strong> · Tier 4 · <strong>Custo Cibernético 4</strong></p><p>Ganhe +1 de Evasão. Uma vez por descanso longo, depois de fazer uma Rolagem de Agilidade ou Acuidade, você pode imediatamente realizar outra ação como reação. Depois, marque 2 Estresse.</p>",
       "actions": {
+        "Time-Slice Accelerator": {
+          "name": "Acelerador de Fatia de Tempo"
+        }
+      },
+      "effects": {
         "Time-Slice Accelerator": {
           "name": "Acelerador de Fatia de Tempo"
         }
@@ -111,23 +131,29 @@
       "eidolonParts": {
         "Forge Cannon": {
           "name": "Canhão de Forja",
-          "description": "<p><strong>Canhão de Forja:</strong> numa rolagem com Esperança, desative temporariamente uma arma, drone, veículo ou maquinário usado pelo alvo até o mestre gastar 1 Medo para reativá-lo.</p><p><em>Arma embutida do Eidolon: usa o atributo de Interface do piloto.</em></p>"
+          "description": "<p><strong>Canhão de Forja:</strong> numa rolagem com Esperança, desative temporariamente uma arma, drone, veículo ou maquinário usado pelo alvo até o mestre gastar 1 Medo para reativá-lo.</p><p><em>Arma embutida do Eidolon: usa o atributo de Interface do piloto.</em></p>",
+          "attack": {
+            "name": "Ataque"
+          }
         },
         "Industrial Grasp": {
           "name": "Pegada Industrial",
           "description": "<p><strong>Pegada Industrial:</strong> em dano Maior, o alvo fica temporariamente Imobilizado. Se o alvo for um objeto, estrutura, veículo ou Eidolon, some também +1 de Proficiência à rolagem de dano.</p><p><em>Arma embutida do Eidolon: usa o atributo de Interface do piloto.</em></p>",
           "actions": {
-            "Industrial Grasp: Imobilizado": {
+            "Industrial Grasp: Restrained": {
               "name": "Pegada Industrial: Imobilizado"
             },
-            "Industrial Grasp (+1 Proficiência)": {
+            "Industrial Grasp (+1 Proficiency)": {
               "name": "Pegada Industrial (+1 Proficiência)"
             }
           },
           "effects": {
-            "Industrial Grasp: Imobilizado": {
+            "Industrial Grasp: Restrained": {
               "name": "Pegada Industrial: Imobilizado"
             }
+          },
+          "attack": {
+            "name": "Ataque"
           }
         },
         "Miracle Fabricator": {
@@ -169,7 +195,12 @@
     },
     "Subdermal Plating": {
       "name": "Blindagem Subdérmica",
-      "description": "<p><strong>Cyberware 22</strong> · Tier 1 · <strong>Custo Cibernético 2</strong></p><p>Ganhe +2 na Pontuação de Armadura.</p>"
+      "description": "<p><strong>Cyberware 22</strong> · Tier 1 · <strong>Custo Cibernético 2</strong></p><p>Ganhe +2 na Pontuação de Armadura.</p>",
+      "effects": {
+        "Subdermal Plating": {
+          "name": "Blindagem Subdérmica"
+        }
+      }
     },
     "Gripware Palms": {
       "name": "Palmas Aderentes",
@@ -183,20 +214,26 @@
           "name": "Marreta de Cerco",
           "description": "<p><strong>Marreta de Cerco:</strong> em dano Maior ou Severo, todos os adversários dentro do alcance Muito Próximo do alvo marcam 1 Estresse.</p><p><em>Arma embutida do Eidolon: usa o atributo de Interface do piloto.</em></p>",
           "actions": {
-            "Siege Maul: adversários marcam 1 Estresse": {
+            "Siege Maul: adversaries mark 1 Stress": {
               "name": "Marreta de Cerco: adversários marcam 1 Estresse"
             }
+          },
+          "attack": {
+            "name": "Ataque"
           }
         },
         "Shoulder Mortar": {
           "name": "Morteiro de Ombro",
-          "description": "<p><strong>Morteiro de Ombro:</strong> pode atingir inimigos atrás de cobertura se você souber a posição deles, e todos os alvos dentro do alcance Muito Próximo sofrem metade do dano se o ataque tivesse sucesso contra eles.</p><p><em>Arma embutida do Eidolon: usa o atributo de Interface do piloto.</em></p>"
+          "description": "<p><strong>Morteiro de Ombro:</strong> pode atingir inimigos atrás de cobertura se você souber a posição deles, e todos os alvos dentro do alcance Muito Próximo sofrem metade do dano se o ataque tivesse sucesso contra eles.</p><p><em>Arma embutida do Eidolon: usa o atributo de Interface do piloto.</em></p>",
+          "attack": {
+            "name": "Ataque"
+          }
         },
         "Immovable Mass": {
           "name": "Massa Inamovível",
           "description": "<p>Você tem vantagem em rolagens para resistir a ser empurrado, derrubado, Imobilizado, arrastado ou movido contra a vontade. Quando você marca um Espaço de Armadura, pode forçar um adversário dentro do alcance Próximo a marcar 1 Estresse ou parar de se mover.</p>",
           "actions": {
-            "Immovable Mass: adversário marca 1 Estresse": {
+            "Immovable Mass: adversary marks 1 Stress": {
               "name": "Massa Inamovível: adversário marca 1 Estresse"
             }
           },
@@ -229,6 +266,11 @@
         "Perfected Pain Editor": {
           "name": "Editor de Dor Aperfeiçoado"
         }
+      },
+      "effects": {
+        "Perfected Pain Editor": {
+          "name": "Editor de Dor Aperfeiçoado"
+        }
       }
     },
     "Reflex Spur": {
@@ -242,7 +284,12 @@
     },
     "Synaptic Accelerator": {
       "name": "Acelerador Sináptico",
-      "description": "<p><strong>Cyberware 17</strong> · Tier 1 · <strong>Custo Cibernético 2</strong></p><p>Ganhe +1 de Evasão.</p>"
+      "description": "<p><strong>Cyberware 17</strong> · Tier 1 · <strong>Custo Cibernético 2</strong></p><p>Ganhe +1 de Evasão.</p>",
+      "effects": {
+        "Synaptic Accelerator": {
+          "name": "Acelerador Sináptico"
+        }
+      }
     },
     "Omega Organ Cluster": {
       "name": "Aglomerado de Órgãos Ômega",
@@ -251,11 +298,19 @@
         "Omega Organ Cluster": {
           "name": "Aglomerado de Órgãos Ômega"
         }
+      },
+      "effects": {
+        "Omega Organ Cluster": {
+          "name": "Aglomerado de Órgãos Ômega"
+        }
       }
     },
     "Street Mantis Blades": {
       "name": "Lâminas Mantis de Rua",
-      "description": "<p><strong>Cyberware 24</strong> · Tier 1 · <strong>Custo Cibernético 2</strong></p><p>Este implante conta como uma Arma Primária sempre equipada: Acuidade, Corpo a Corpo, d8+5 físico. <strong>Bote:</strong> quando você se move até o alcance Corpo a Corpo antes de atacar, some 1d6 à rolagem de dano. Em uma rolagem com Esperança, o alvo fica temporariamente Imobilizado.</p>"
+      "description": "<p><strong>Cyberware 24</strong> · Tier 1 · <strong>Custo Cibernético 2</strong></p><p>Este implante conta como uma Arma Primária sempre equipada: Acuidade, Corpo a Corpo, d8+5 físico. <strong>Bote:</strong> quando você se move até o alcance Corpo a Corpo antes de atacar, some 1d6 à rolagem de dano. Em uma rolagem com Esperança, o alvo fica temporariamente Imobilizado.</p>",
+      "attack": {
+        "name": "Ataque"
+      }
     },
     "Systems Module Bay": {
       "name": "Baia de Módulos de Sistemas",
@@ -275,7 +330,12 @@
     },
     "Auxiliary Organ": {
       "name": "Órgão Auxiliar",
-      "description": "<p><strong>Cyberware 05</strong> · Tier 1 · <strong>Custo Cibernético 1</strong></p><p>Ganhe um espaço adicional de Ponto de Vida.</p>"
+      "description": "<p><strong>Cyberware 05</strong> · Tier 1 · <strong>Custo Cibernético 1</strong></p><p>Ganhe um espaço adicional de Ponto de Vida.</p>",
+      "effects": {
+        "Auxiliary Organ": {
+          "name": "Órgão Auxiliar"
+        }
+      }
     },
     "Tyfar Bulldog": {
       "name": "Tyfar Bulldog",
@@ -283,15 +343,21 @@
       "eidolonParts": {
         "Frame Carbine": {
           "name": "Carabina da Estrutura",
-          "description": "<p><strong>Carabina da Estrutura:</strong> numa rolagem com Esperança, ganhe +1 no próximo ataque dentro da cena.</p><p><em>Arma embutida do Eidolon: usa o atributo de Interface do piloto.</em></p>"
+          "description": "<p><strong>Carabina da Estrutura:</strong> numa rolagem com Esperança, ganhe +1 no próximo ataque dentro da cena.</p><p><em>Arma embutida do Eidolon: usa o atributo de Interface do piloto.</em></p>",
+          "attack": {
+            "name": "Ataque"
+          }
         },
         "Piston Fist": {
           "name": "Punho de Pistão",
           "description": "<p><strong>Punho de Pistão:</strong> ignora redução de dano e soma +1 de Proficiência contra objetos, veículos ou Eidolons.</p><p><em>Arma embutida do Eidolon: usa o atributo de Interface do piloto.</em></p>",
           "actions": {
-            "Piston Fist (+1 Proficiência)": {
+            "Piston Fist (+1 Proficiency)": {
               "name": "Punho de Pistão (+1 Proficiência)"
             }
+          },
+          "attack": {
+            "name": "Ataque"
           }
         },
         "Linebreaker": {
@@ -310,7 +376,7 @@
             "Assault Suite (+1d12)": {
               "name": "Suíte de Assalto (+1d12)"
             },
-            "Assault Suite: alvo marca 1 Estresse": {
+            "Assault Suite: target marks 1 Stress": {
               "name": "Suíte de Assalto: alvo marca 1 Estresse"
             }
           }
@@ -335,11 +401,19 @@
     },
     "Shock Palm": {
       "name": "Palma de Choque",
-      "description": "<p><strong>Cyberware 10</strong> · Tier 1 · <strong>Custo Cibernético 1</strong></p><p>Este implante conta como uma Arma Secundária sempre equipada: Presença, Corpo a Corpo, d6 tecno. <strong>Descarga:</strong> em uma rolagem com Esperança, o alvo marca 1 Estresse e fica Vulnerável.</p>"
+      "description": "<p><strong>Cyberware 10</strong> · Tier 1 · <strong>Custo Cibernético 1</strong></p><p>Este implante conta como uma Arma Secundária sempre equipada: Presença, Corpo a Corpo, d6 tecno. <strong>Descarga:</strong> em uma rolagem com Esperança, o alvo marca 1 Estresse e fica Vulnerável.</p>",
+      "attack": {
+        "name": "Ataque"
+      }
     },
     "Trait Booster": {
       "name": "Reforço de Atributo",
-      "description": "<p><strong>Cyberware 16</strong> · Tier 1 · <strong>Custo Cibernético 2</strong></p><p>Escolha um atributo. Ganhe +1 de bônus nesse atributo.</p>"
+      "description": "<p><strong>Cyberware 16</strong> · Tier 1 · <strong>Custo Cibernético 2</strong></p><p>Escolha um atributo. Ganhe +1 de bônus nesse atributo.</p>",
+      "effects": {
+        "Trait Booster": {
+          "name": "Reforço de Atributo"
+        }
+      }
     },
     "Clone Reflex Loop": {
       "name": "Loop de Reflexo Clone",
@@ -352,7 +426,12 @@
     },
     "Skillsoft Socket": {
       "name": "Soquete de Skillsoft",
-      "description": "<p><strong>Cyberware 03</strong> · Tier 1 · <strong>Custo Cibernético 1</strong></p><p>Escolha uma de suas Experiências. Ela ganha +1 de bônus.</p>"
+      "description": "<p><strong>Cyberware 03</strong> · Tier 1 · <strong>Custo Cibernético 1</strong></p><p>Escolha uma de suas Experiências. Ela ganha +1 de bônus.</p>",
+      "effects": {
+        "Skillsoft Socket": {
+          "name": "Soquete de Skillsoft"
+        }
+      }
     },
     "Norai Hermes-Arrow": {
       "name": "Norai Hermes-Arrow",
@@ -362,28 +441,34 @@
           "name": "Arma de Dardos",
           "description": "<p><strong>Arma de Dardos:</strong> depois de um ataque bem-sucedido, você pode se mover dentro do alcance Muito Próximo ou deixar o alvo temporariamente Imobilizado.</p><p><em>Arma embutida do Eidolon: usa o atributo de Interface do piloto.</em></p>",
           "actions": {
-            "Bolt Gun: Imobilizado": {
+            "Bolt Gun: Restrained": {
               "name": "Arma de Dardos: Imobilizado"
             }
           },
           "effects": {
-            "Bolt Gun: Imobilizado": {
+            "Bolt Gun: Restrained": {
               "name": "Arma de Dardos: Imobilizado"
             }
+          },
+          "attack": {
+            "name": "Ataque"
           }
         },
         "Shock Kick": {
           "name": "Chute de Choque",
           "description": "<p><strong>Chute de Choque:</strong> numa rolagem com Esperança, empurre o alvo até o alcance Próximo ou deixe-o temporariamente Vulnerável.</p><p><em>Arma embutida do Eidolon: usa o atributo de Interface do piloto.</em></p>",
           "actions": {
-            "Shock Kick: Vulnerável": {
+            "Shock Kick: Vulnerable": {
               "name": "Chute de Choque: Vulnerável"
             }
           },
           "effects": {
-            "Shock Kick: Vulnerável": {
+            "Shock Kick: Vulnerable": {
               "name": "Chute de Choque: Vulnerável"
             }
+          },
+          "attack": {
+            "name": "Ataque"
           }
         },
         "Vector Dash": {
@@ -416,20 +501,26 @@
       "eidolonParts": {
         "Suppression Array": {
           "name": "Matriz de Supressão",
-          "description": "<p><strong>Matriz de Supressão:</strong> numa rolagem com Esperança, o alvo não pode se aproximar de um aliado ou posição que você escolher, a menos que marque 1 Estresse.</p><p><em>Arma embutida do Eidolon: usa o atributo de Interface do piloto.</em></p>"
+          "description": "<p><strong>Matriz de Supressão:</strong> numa rolagem com Esperança, o alvo não pode se aproximar de um aliado ou posição que você escolher, a menos que marque 1 Estresse.</p><p><em>Arma embutida do Eidolon: usa o atributo de Interface do piloto.</em></p>",
+          "attack": {
+            "name": "Ataque"
+          }
         },
         "Riot Ram": {
           "name": "Aríete Antimotim",
           "description": "<p><strong>Aríete Antimotim:</strong> em dano Maior, empurre o alvo até o alcance Próximo ou deixe-o temporariamente Imobilizado.</p><p><em>Arma embutida do Eidolon: usa o atributo de Interface do piloto.</em></p>",
           "actions": {
-            "Riot Ram: Imobilizado": {
+            "Riot Ram: Restrained": {
               "name": "Aríete Antimotim: Imobilizado"
             }
           },
           "effects": {
-            "Riot Ram: Imobilizado": {
+            "Riot Ram: Restrained": {
               "name": "Aríete Antimotim: Imobilizado"
             }
+          },
+          "attack": {
+            "name": "Ataque"
           }
         },
         "Perimeter Lock": {
@@ -439,15 +530,15 @@
             "Perimeter Lock": {
               "name": "Bloqueio de Perímetro"
             },
-            "Perimeter Lock: 1 Estresse": {
+            "Perimeter Lock: 1 Stress": {
               "name": "Bloqueio de Perímetro: 1 Estresse"
             },
-            "Perimeter Lock: Vulnerável": {
+            "Perimeter Lock: Vulnerable": {
               "name": "Bloqueio de Perímetro: Vulnerável"
             }
           },
           "effects": {
-            "Perimeter Lock: Vulnerável": {
+            "Perimeter Lock: Vulnerable": {
               "name": "Bloqueio de Perímetro: Vulnerável"
             }
           }
@@ -469,7 +560,10 @@
     },
     "Military Mantis Blades": {
       "name": "Lâminas Mantis Militares",
-      "description": "<p><strong>Cyberware 31</strong> · Tier 2 · <strong>Custo Cibernético 3</strong></p><p>Este implante conta como uma Arma Primária sempre equipada: Acuidade, Corpo a Corpo, d8+7 físico. <strong>Dilacerar:</strong> quando você se move até o alcance Corpo a Corpo antes de atacar, some 1d8 à rolagem de dano. Em uma rolagem com Esperança, o alvo fica temporariamente Vulnerável.</p>"
+      "description": "<p><strong>Cyberware 31</strong> · Tier 2 · <strong>Custo Cibernético 3</strong></p><p>Este implante conta como uma Arma Primária sempre equipada: Acuidade, Corpo a Corpo, d8+7 físico. <strong>Dilacerar:</strong> quando você se move até o alcance Corpo a Corpo antes de atacar, some 1d8 à rolagem de dano. Em uma rolagem com Esperança, o alvo fica temporariamente Vulnerável.</p>",
+      "attack": {
+        "name": "Ataque"
+      }
     },
     "Audio Filters": {
       "name": "Filtros de Áudio",
@@ -490,17 +584,23 @@
       "eidolonParts": {
         "Monowire Spear": {
           "name": "Lança de Monofio",
-          "description": "<p><strong>Lança de Monofio:</strong> numa rolagem com Esperança, puxe-se até o alcance Muito Próximo do alvo.</p><p><em>Arma embutida do Eidolon: usa o atributo de Interface do piloto.</em></p>"
+          "description": "<p><strong>Lança de Monofio:</strong> numa rolagem com Esperança, puxe-se até o alcance Muito Próximo do alvo.</p><p><em>Arma embutida do Eidolon: usa o atributo de Interface do piloto.</em></p>",
+          "attack": {
+            "name": "Ataque"
+          }
         },
         "Suppressed Cannon": {
           "name": "Canhão Silenciado",
-          "description": "<p><strong>Canhão Silenciado:</strong> se você atacar enquanto Escondido, continua Escondido numa rolagem com Esperança.</p><p><em>Arma embutida do Eidolon: usa o atributo de Interface do piloto.</em></p>"
+          "description": "<p><strong>Canhão Silenciado:</strong> se você atacar enquanto Escondido, continua Escondido numa rolagem com Esperança.</p><p><em>Arma embutida do Eidolon: usa o atributo de Interface do piloto.</em></p>",
+          "attack": {
+            "name": "Ataque"
+          }
         },
         "Specter Cloak": {
           "name": "Manto Espectral",
           "description": "<p>Uma vez por cena, quando você fosse ser detectado por visão, câmeras, sensores, drones ou sistemas de mira, fique Escondido em vez disso. O primeiro ataque que você fizer Escondido com esta estrutura causa +1d8 de dano.</p>",
           "actions": {
-            "Specter Cloak: Escondido": {
+            "Specter Cloak: Hidden": {
               "name": "Manto Espectral: Escondido"
             },
             "Specter Cloak (+1d8)": {
@@ -508,7 +608,7 @@
             }
           },
           "effects": {
-            "Specter Cloak: Escondido": {
+            "Specter Cloak: Hidden": {
               "name": "Manto Espectral: Escondido"
             }
           }
@@ -525,7 +625,10 @@
     },
     "Pop-Up Blade": {
       "name": "Lâmina Retrátil",
-      "description": "<p><strong>Cyberware 11</strong> · Tier 1 · <strong>Custo Cibernético 1</strong></p><p>Este implante conta como uma Arma Secundária sempre equipada: Acuidade, Corpo a Corpo, d6+3 físico. <strong>Oculta:</strong> você tem vantagem no seu primeiro ataque com ela em cada cena.</p>"
+      "description": "<p><strong>Cyberware 11</strong> · Tier 1 · <strong>Custo Cibernético 1</strong></p><p>Este implante conta como uma Arma Secundária sempre equipada: Acuidade, Corpo a Corpo, d6+3 físico. <strong>Oculta:</strong> você tem vantagem no seu primeiro ataque com ela em cada cena.</p>",
+      "attack": {
+        "name": "Ataque"
+      }
     },
     "Black ICE Cortex": {
       "name": "Córtex de GELO Negro",
@@ -537,16 +640,19 @@
       "eidolonParts": {
         "Spear Rifle": {
           "name": "Fuzil-Lança",
-          "description": "<p><strong>Fuzil-Lança:</strong> numa rolagem com Esperança, ignore a redução de dano.</p><p><em>Arma embutida do Eidolon: usa o atributo de Interface do piloto.</em></p>"
+          "description": "<p><strong>Fuzil-Lança:</strong> numa rolagem com Esperança, ignore a redução de dano.</p><p><em>Arma embutida do Eidolon: usa o atributo de Interface do piloto.</em></p>",
+          "attack": {
+            "name": "Ataque"
+          }
         },
         "Predictive Command": {
           "name": "Comando Preditivo",
           "description": "<p>No fim da sua ação, escolha Padrão de Ataque ou Padrão de Defesa. <strong>Padrão de Ataque:</strong> ataques feitos por aliados dentro do alcance Distante ganham +2 na rolagem de ataque. <strong>Padrão de Defesa:</strong> ataques feitos contra aliados dentro do alcance Distante têm desvantagem.</p>",
           "actions": {
-            "Attack Pattern (+2 nos ataques dos aliados)": {
+            "Attack Pattern (+2 to allies' attacks)": {
               "name": "Padrão de Ataque (+2 nos ataques dos aliados)"
             },
-            "Defense Pattern (desvantagem contra aliados)": {
+            "Defense Pattern (disadvantage against allies)": {
               "name": "Padrão de Defesa (desvantagem contra aliados)"
             }
           }
@@ -580,12 +686,22 @@
     },
     "Pain Gate": {
       "name": "Portão de Dor",
-      "description": "<p><strong>Cyberware 04</strong> · Tier 1 · <strong>Custo Cibernético 1</strong></p><p>Ganhe um espaço adicional de Estresse.</p>"
+      "description": "<p><strong>Cyberware 04</strong> · Tier 1 · <strong>Custo Cibernético 1</strong></p><p>Ganhe um espaço adicional de Estresse.</p>",
+      "effects": {
+        "Pain Gate": {
+          "name": "Portão de Dor"
+        }
+      }
     },
     "Angel-Skin Plating": {
       "name": "Blindagem Pele-de-Anjo",
       "description": "<p><strong>Cyberware 51</strong> · Tier 4 · <strong>Custo Cibernético 3</strong></p><p>Ganhe +2 na Pontuação de Armadura. Uma vez por descanso longo, quando um aliado dentro do alcance Muito Próximo fosse marcar Pontos de Vida, você pode marcar um Espaço de Armadura para reduzir a gravidade em um limiar.</p>",
       "actions": {
+        "Angel-Skin Plating": {
+          "name": "Blindagem Pele-de-Anjo"
+        }
+      },
+      "effects": {
         "Angel-Skin Plating": {
           "name": "Blindagem Pele-de-Anjo"
         }
@@ -610,7 +726,12 @@
     },
     "Cortical Buffer": {
       "name": "Buffer Cortical",
-      "description": "<p><strong>Cyberware 37</strong> · Tier 3 · <strong>Custo Cibernético 2</strong></p><p>Ganhe um espaço adicional de Estresse. Quando você rolar seu Dado de Humanidade, você pode marcar 1 Estresse para somar +1 ao resultado (a Ficha Edgeheart pergunta quando isso muda o resultado).</p>"
+      "description": "<p><strong>Cyberware 37</strong> · Tier 3 · <strong>Custo Cibernético 2</strong></p><p>Ganhe um espaço adicional de Estresse. Quando você rolar seu Dado de Humanidade, você pode marcar 1 Estresse para somar +1 ao resultado (a Ficha Edgeheart pergunta quando isso muda o resultado).</p>",
+      "effects": {
+        "Cortical Buffer": {
+          "name": "Buffer Cortical"
+        }
+      }
     },
     "Siege Organ Rig": {
       "name": "Equipamento de Órgão de Cerco",
@@ -628,11 +749,21 @@
         "Ablative Dermal Shell": {
           "name": "Casca Dérmica Ablativa"
         }
+      },
+      "effects": {
+        "Ablative Dermal Shell": {
+          "name": "Casca Dérmica Ablativa"
+        }
       }
     },
     "Auxiliary Organ Cluster": {
       "name": "Aglomerado de Órgãos Auxiliares",
-      "description": "<p><strong>Cyberware 21</strong> · Tier 1 · <strong>Custo Cibernético 2</strong></p><p>Ganhe dois espaços adicionais de Ponto de Vida.</p>"
+      "description": "<p><strong>Cyberware 21</strong> · Tier 1 · <strong>Custo Cibernético 2</strong></p><p>Ganhe dois espaços adicionais de Ponto de Vida.</p>",
+      "effects": {
+        "Auxiliary Organ Cluster": {
+          "name": "Aglomerado de Órgãos Auxiliares"
+        }
+      }
     },
     "Synthetic Lungs": {
       "name": "Pulmões Sintéticos",
@@ -648,20 +779,26 @@
       "eidolonParts": {
         "Horizon Rifle": {
           "name": "Fuzil Horizon",
-          "description": "<p><strong>Fuzil Horizon:</strong> numa rolagem com Esperança, você pode mover o alvo dentro do alcance Próximo enquanto a gravidade se curva ao redor do impacto.</p><p><em>Arma embutida do Eidolon: usa o atributo de Interface do piloto.</em></p>"
+          "description": "<p><strong>Fuzil Horizon:</strong> numa rolagem com Esperança, você pode mover o alvo dentro do alcance Próximo enquanto a gravidade se curva ao redor do impacto.</p><p><em>Arma embutida do Eidolon: usa o atributo de Interface do piloto.</em></p>",
+          "attack": {
+            "name": "Ataque"
+          }
         },
         "Grav-Shear Talons": {
           "name": "Garras Cisalha-Grav",
           "description": "<p><strong>Garras Cisalha-Grav:</strong> em dano Maior, o alvo é empurrado até o alcance Próximo, puxado para o Corpo a Corpo ou fica temporariamente Vulnerável.</p><p><em>Arma embutida do Eidolon: usa o atributo de Interface do piloto.</em></p>",
           "actions": {
-            "Grav-Shear Talons: Vulnerável": {
+            "Grav-Shear Talons: Vulnerable": {
               "name": "Garras Cisalha-Grav: Vulnerável"
             }
           },
           "effects": {
-            "Grav-Shear Talons: Vulnerável": {
+            "Grav-Shear Talons: Vulnerable": {
               "name": "Garras Cisalha-Grav: Vulnerável"
             }
+          },
+          "attack": {
+            "name": "Ataque"
           }
         },
         "Mirage Crossing": {
@@ -675,7 +812,12 @@
         },
         "Dead-Zone Adaptation": {
           "name": "Adaptação à Zona Morta",
-          "description": "<p>Quando você rola com Esperança usando uma carta de Fronteira, ganhe 1 Carga de Perigo (máximo 3). Gaste 1 Carga para criar uma cobertura que você ou um aliado pode usar para ganhar vantagem em Rolagens de Reação. Gaste 3 Cargas para transformar a área dentro do alcance Próximo em terreno hostil: adversários que se movem ou agem nela marcam 1 Estresse.</p>"
+          "description": "<p>Quando você rola com Esperança usando uma carta de Fronteira, ganhe 1 Carga de Perigo (máximo 3). Gaste 1 Carga para criar uma cobertura que você ou um aliado pode usar para ganhar vantagem em Rolagens de Reação. Gaste 3 Cargas para transformar a área dentro do alcance Próximo em terreno hostil: adversários que se movem ou agem nela marcam 1 Estresse.</p>",
+          "actions": {
+            "Hostile Terrain: 1 Stress": {
+              "name": "Terreno Hostil: 1 Estresse"
+            }
+          }
         },
         "Frame: Exota Horizon-Mirage": {
           "name": "Estrutura: Exota Horizon-Mirage",
@@ -707,6 +849,11 @@
         "Reflex Ghostware": {
           "name": "Ghostware Reflexo"
         }
+      },
+      "effects": {
+        "Reflex Ghostware": {
+          "name": "Ghostware Reflexo"
+        }
       }
     },
     "Overload Governor": {
@@ -720,12 +867,22 @@
     },
     "Titanium Soul Frame": {
       "name": "Estrutura de Alma de Titânio",
-      "description": "<p><strong>Cyberware 50</strong> · Tier 4 · <strong>Custo Cibernético 4</strong></p><p>Ganhe um espaço adicional de Ponto de Vida e +1 na Pontuação de Armadura. Quando você sofrer dano Maior ou Severo, role um d6. Em 5 ou mais, marque 1 Ponto de Vida a menos.</p>"
+      "description": "<p><strong>Cyberware 50</strong> · Tier 4 · <strong>Custo Cibernético 4</strong></p><p>Ganhe um espaço adicional de Ponto de Vida e +1 na Pontuação de Armadura. Quando você sofrer dano Maior ou Severo, role um d6. Em 5 ou mais, marque 1 Ponto de Vida a menos.</p>",
+      "effects": {
+        "Titanium Soul Frame": {
+          "name": "Estrutura de Alma de Titânio"
+        }
+      }
     },
     "Reflex Cable Legs": {
       "name": "Pernas de Cabo Reflexo",
       "description": "<p><strong>Cyberware 29</strong> · Tier 2 · <strong>Custo Cibernético 2</strong></p><p>Ganhe +1 de Evasão enquanto não estiver Imobilizado (remova o bônus manualmente enquanto estiver). Uma vez por descanso, mova-se dentro do alcance Distante sem fazer uma Rolagem de Agilidade.</p>",
       "actions": {
+        "Reflex Cable Legs": {
+          "name": "Pernas de Cabo Reflexo"
+        }
+      },
+      "effects": {
         "Reflex Cable Legs": {
           "name": "Pernas de Cabo Reflexo"
         }
@@ -747,26 +904,32 @@
           "name": "Acelerador de Massa",
           "description": "<p><strong>Acelerador de Massa:</strong> em dano Maior, o alvo é arremessado até o alcance Próximo e marca 1 Estresse. Se esse movimento o jogar contra uma parede, veículo, estrutura, Eidolon ou outra criatura, ele também fica temporariamente Vulnerável.</p><p><em>Arma embutida do Eidolon: usa o atributo de Interface do piloto.</em></p>",
           "actions": {
-            "Mass Driver: 1 Estresse": {
+            "Mass Driver: 1 Stress": {
               "name": "Acelerador de Massa: 1 Estresse"
             },
-            "Mass Driver: Vulnerável": {
+            "Mass Driver: Vulnerable": {
               "name": "Acelerador de Massa: Vulnerável"
             }
           },
           "effects": {
-            "Mass Driver: Vulnerável": {
+            "Mass Driver: Vulnerable": {
               "name": "Acelerador de Massa: Vulnerável"
             }
+          },
+          "attack": {
+            "name": "Ataque"
           }
         },
         "Thermal Talon": {
           "name": "Garra Térmica",
           "description": "<p><strong>Garra Térmica:</strong> em dano Maior, o alvo também fica Superaquecido e sofre 2d6 de dano tecno extra se ainda estiver Superaquecido no fim da ação dele.</p><p><em>Arma embutida do Eidolon: usa o atributo de Interface do piloto.</em></p>",
           "actions": {
-            "Dano de Overheated": {
+            "Overheated Damage": {
               "name": "Dano de Superaquecido"
             }
+          },
+          "attack": {
+            "name": "Ataque"
           }
         },
         "Deus-Class Overdrive": {
@@ -803,7 +966,12 @@
     },
     "Reinforced Skeleton": {
       "name": "Esqueleto Reforçado",
-      "description": "<p><strong>Cyberware 18</strong> · Tier 1 · <strong>Custo Cibernético 2</strong></p><p>Ganhe um espaço adicional de Ponto de Vida e +2 de bônus nos seus limiares de dano.</p>"
+      "description": "<p><strong>Cyberware 18</strong> · Tier 1 · <strong>Custo Cibernético 2</strong></p><p>Ganhe um espaço adicional de Ponto de Vida e +2 de bônus nos seus limiares de dano.</p>",
+      "effects": {
+        "Reinforced Skeleton": {
+          "name": "Esqueleto Reforçado"
+        }
+      }
     },
     "AVA Apollo-Lancet": {
       "name": "AVA Apollo-Lancet",
@@ -813,28 +981,34 @@
           "name": "Laser Cirúrgico",
           "description": "<p><strong>Laser Cirúrgico:</strong> em dano Maior, o alvo fica temporariamente Vulnerável.</p><p><em>Arma embutida do Eidolon: usa o atributo de Interface do piloto.</em></p>",
           "actions": {
-            "Surgical Laser: Vulnerável": {
+            "Surgical Laser: Vulnerable": {
               "name": "Laser Cirúrgico: Vulnerável"
             }
           },
           "effects": {
-            "Surgical Laser: Vulnerável": {
+            "Surgical Laser: Vulnerable": {
               "name": "Laser Cirúrgico: Vulnerável"
             }
+          },
+          "attack": {
+            "name": "Ataque"
           }
         },
         "Restraint Latch": {
           "name": "Trava de Contenção",
           "description": "<p><strong>Trava de Contenção:</strong> numa rolagem com Esperança, o alvo fica temporariamente Imobilizado.</p><p><em>Arma embutida do Eidolon: usa o atributo de Interface do piloto.</em></p>",
           "actions": {
-            "Restraint Latch: Imobilizado": {
+            "Restraint Latch: Restrained": {
               "name": "Trava de Contenção: Imobilizado"
             }
           },
           "effects": {
-            "Restraint Latch: Imobilizado": {
+            "Restraint Latch: Restrained": {
               "name": "Trava de Contenção: Imobilizado"
             }
+          },
+          "attack": {
+            "name": "Ataque"
           }
         },
         "Trauma Cradle": {
@@ -863,7 +1037,12 @@
     },
     "Pain Gate Array": {
       "name": "Matriz de Portões de Dor",
-      "description": "<p><strong>Cyberware 20</strong> · Tier 1 · <strong>Custo Cibernético 2</strong></p><p>Ganhe dois espaços adicionais de Estresse.</p>"
+      "description": "<p><strong>Cyberware 20</strong> · Tier 1 · <strong>Custo Cibernético 2</strong></p><p>Ganhe dois espaços adicionais de Estresse.</p>",
+      "effects": {
+        "Pain Gate Array": {
+          "name": "Matriz de Portões de Dor"
+        }
+      }
     },
     "Subdermal Comms": {
       "name": "Comunicador Subdérmico",
@@ -880,11 +1059,21 @@
         "Second Heart": {
           "name": "Segundo Coração"
         }
+      },
+      "effects": {
+        "Second Heart": {
+          "name": "Segundo Coração"
+        }
       }
     },
     "Metamorphic Chassis": {
       "name": "Chassi Metamórfico",
-      "description": "<p><strong>Cyberware 54</strong> · Tier 4 · <strong>Custo Cibernético 4</strong></p><p>Quando terminar um descanso longo, escolha Evasão, Armadura ou Limiares. Até seu próximo descanso longo, ganhe um destes: +1 de Evasão, +1 na Pontuação de Armadura ou +4 nos limiares de dano (ajuste manual). Uma vez por descanso longo, quando você gastar Esperança ou marcar Estresse para usar uma feature, você não gasta nem marca.</p>"
+      "description": "<p><strong>Cyberware 54</strong> · Tier 4 · <strong>Custo Cibernético 4</strong></p><p>Quando terminar um descanso longo, escolha Evasão, Armadura ou Limiares. Até seu próximo descanso longo, ganhe um destes: +1 de Evasão, +1 na Pontuação de Armadura ou +4 nos limiares de dano (ajuste manual). Uma vez por descanso longo, quando você gastar Esperança ou marcar Estresse para usar uma feature, você não gasta nem marca.</p>",
+      "actions": {
+        "Don't Spend Hope/Stress": {
+          "name": "Não gastar Esperança/Estresse"
+        }
+      }
     }
   }
 }

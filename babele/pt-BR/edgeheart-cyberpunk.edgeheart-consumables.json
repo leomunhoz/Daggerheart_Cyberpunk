@@ -79,7 +79,20 @@
   "entries": {
     "Smart Grenade": {
       "name": "Granada Inteligente",
-      "description": "<p>Escolha um ponto dentro do alcance Distante. Todos os adversários dentro do alcance Muito Próximo desse ponto fazem uma Rolagem de Reação (14). Em uma falha, marcam 1 Estresse e ficam temporariamente Vulneráveis.</p>"
+      "description": "<p>Escolha um ponto dentro do alcance Distante. Todos os adversários dentro do alcance Muito Próximo desse ponto fazem uma Rolagem de Reação (14). Em uma falha, marcam 1 Estresse e ficam temporariamente Vulneráveis.</p>",
+      "actions": {
+        "Failed Reaction (14): 1 Stress": {
+          "name": "Falhou na Reação (14): 1 Estresse"
+        },
+        "Failed Reaction (14): Vulnerable": {
+          "name": "Falhou na Reação (14): Vulnerável"
+        }
+      },
+      "effects": {
+        "Failed Reaction (14): Vulnerable": {
+          "name": "Falhou na Reação (14): Vulnerável"
+        }
+      }
     },
     "Adrenal Inhaler": {
       "name": "Inalador Adrenal",
@@ -232,7 +245,17 @@
     },
     "Flash Grenade": {
       "name": "Granada de Clarão",
-      "description": "<p>Todos os alvos dentro do alcance Próximo fazem uma Rolagem de Reação (14). Em uma falha, ficam temporariamente Vulneráveis.</p>"
+      "description": "<p>Todos os alvos dentro do alcance Próximo fazem uma Rolagem de Reação (14). Em uma falha, ficam temporariamente Vulneráveis.</p>",
+      "actions": {
+        "Failed Reaction (14): Vulnerable": {
+          "name": "Falhou na Reação (14): Vulnerável"
+        }
+      },
+      "effects": {
+        "Failed Reaction (14): Vulnerable": {
+          "name": "Falhou na Reação (14): Vulnerável"
+        }
+      }
     },
     "Breach Spike": {
       "name": "Espeto de Brecha",
@@ -316,6 +339,9 @@
       "name": "Mina de Choque",
       "description": "<p>Coloque numa superfície. A próxima criatura que se mover dentro do alcance Corpo a Corpo dela marca 1 Estresse e fica temporariamente Vulnerável.</p>",
       "actions": {
+        "Target Marks 1 Stress": {
+          "name": "Alvo Marca 1 Estresse"
+        },
         "Shock Mine": {
           "name": "Mina de Choque"
         }
@@ -355,7 +381,15 @@
     },
     "Med-Gel Slab": {
       "name": "Placa de Medgel",
-      "description": "<p>Durante um descanso, uma criatura limpa 1 PV ou 2 de Estresse.</p>"
+      "description": "<p>Durante um descanso, uma criatura limpa 1 PV ou 2 de Estresse.</p>",
+      "actions": {
+        "Clear 1 HP": {
+          "name": "Limpar 1 PV"
+        },
+        "Clear 2 Stress": {
+          "name": "Limpar 2 Estresse"
+        }
+      }
     },
     "Panic Button": {
       "name": "Botão de Pânico",
@@ -377,7 +411,15 @@
     },
     "EMP Charge": {
       "name": "Carga PEM",
-      "description": "<p>Faça uma Rolagem de Interface contra um dispositivo, drone, veículo ou alvo ligado a cyberware dentro do alcance Próximo. Em um sucesso, ele marca 1 Estresse ou fica desativado por um instante.</p>"
+      "description": "<p>Faça uma Rolagem de Interface contra um dispositivo, drone, veículo ou alvo ligado a cyberware dentro do alcance Próximo. Em um sucesso, ele marca 1 Estresse ou fica desativado por um instante.</p>",
+      "actions": {
+        "Interface Roll": {
+          "name": "Rolagem de Interface"
+        },
+        "Target Marks 1 Stress": {
+          "name": "Alvo Marca 1 Estresse"
+        }
+      }
     },
     "Door Eater": {
       "name": "Come-Portas",

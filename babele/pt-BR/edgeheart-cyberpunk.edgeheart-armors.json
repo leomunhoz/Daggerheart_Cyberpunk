@@ -193,7 +193,7 @@
       "name": "Macacão Blindado",
       "description": "<p><strong>Furtividade:</strong> ganhe +2 nas rolagens para ficar ou continuar Escondido.</p>",
       "effects": {
-        "Stealth (+2 para ficar Escondido)": {
+        "Stealth (+2 to become Hidden)": {
           "name": "Furtividade (+2 para ficar Escondido)"
         }
       }

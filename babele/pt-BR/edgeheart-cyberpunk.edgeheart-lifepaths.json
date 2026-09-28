@@ -108,7 +108,7 @@
     },
     "Streetborn": {
       "name": "Nascido nas Ruas",
-      "description": "<p>Você cresceu nas ruas, becos e distritos de gangues da Nova Idade das Trevas. Você aprendeu a ler o perigo antes que ele fale.</p>"
+      "description": "<p>Você cresceu nas ruas, becos e distritos de gangues da Nova Era das Trevas. Você aprendeu a ler o perigo antes que ele fale.</p>"
     },
     "Corpo-Raised": {
       "name": "Criação Corporativa",
@@ -118,7 +118,8 @@
       "name": "Duro como Aço",
       "description": "<p>Ganhe um bônus em seus limiares de dano igual à sua Proficiência.</p>",
       "effects": {
-        "Duro como Aço": {
+        "Hard as Nails": {
+          "name": "Duro como Aço",
           "description": "<p>Ganhe um bônus em seus limiares de dano igual à sua Proficiência.</p>"
         }
       }
@@ -155,7 +156,8 @@
       "name": "Reflexos de Beco",
       "description": "<p>Quando você faz uma Rolagem de Agilidade, você pode gastar 2 Esperança para re-rolar seu Dado de Esperança.</p>",
       "actions": {
-        "Re-rolar Dado de Esperança": {
+        "Reroll Hope Die": {
+          "name": "Re-rolar Dado de Esperança",
           "description": "<p>Re-role seu Dado de Esperança em uma Rolagem de Agilidade.</p>"
         }
       }

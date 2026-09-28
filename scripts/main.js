@@ -142,6 +142,9 @@ function featureAction({
 // ---------- Ícones customizados do módulo (classe / life paths / affiliations) ----------
 
 const ICON = name => `modules/${MODULE_ID}/assets/icons/${name}.svg`;
+const ICON_PNG = name => `modules/${MODULE_ID}/assets/icons/${name}.png`;
+// Arte das cartas de Competência, no padrão das oficiais (degradê na cor do domínio + sigilo branco).
+const CARD_ART = id => `modules/${MODULE_ID}/assets/art/competencies/${id}.png`;
 // Pacote de ícones em assets/cpr (pastas do zip original). CPR("programs/shield") = .svg;
 // passe a extensão quando não for svg (ex.: CPR("classes/runner/class-icon.png")).
 const CPR = path => `modules/${MODULE_ID}/assets/cpr/${/\.\w+$/.test(path) ? path : `${path}.svg`}`;
@@ -2757,17 +2760,17 @@ const REDLINE_CARDS = [
 // Competências (domínios homebrew). Para adicionar uma, registre aqui com as cartas dela;
 // importDomainCards registra o domínio no Homebrew do sistema e cria as cartas.
 const COMPETENCIES = [
-  { id: "network", label: "Network", src: ICON("competency-network"), cardImg: "systems/daggerheart/assets/icons/domains/domain-card/blade.png", cards: NETWORK_CARDS },
-  { id: "aegis", label: "Aegis", src: ICON("competency-aegis"), cardImg: "systems/daggerheart/assets/icons/domains/domain-card/valor.png", cards: AEGIS_CARDS },
-  { id: "assault", label: "Assault", src: ICON("competency-assault"), cardImg: "systems/daggerheart/assets/icons/domains/domain-card/blade.png", cards: ASSAULT_CARDS },
-  { id: "ghost", label: "Ghost", src: ICON("competency-ghost"), cardImg: "systems/daggerheart/assets/icons/domains/domain-card/midnight.png", cards: GHOST_CARDS },
-  { id: "chrome", label: "Chrome", src: ICON("competency-chrome"), cardImg: "systems/daggerheart/assets/icons/domains/domain-card/bone.png", cards: CHROME_CARDS },
-  { id: "systems", label: "Systems", src: ICON("competency-systems"), cardImg: "systems/daggerheart/assets/icons/domains/domain-card/codex.png", cards: SYSTEMS_CARDS },
-  { id: "influence", label: "Influence", src: ICON("competency-influence"), cardImg: "systems/daggerheart/assets/icons/domains/domain-card/grace.png", cards: INFLUENCE_CARDS },
-  { id: "frontier", label: "Frontier", src: ICON("competency-frontier"), cardImg: "systems/daggerheart/assets/icons/domains/domain-card/sage.png", cards: FRONTIER_CARDS },
-  { id: "medtech", label: "Medtech", src: ICON("competency-medtech"), cardImg: "systems/daggerheart/assets/icons/domains/domain-card/splendor.png", cards: MEDTECH_CARDS },
-  { id: "redline", label: "Redline", src: ICON("competency-redline"), cardImg: "systems/daggerheart/assets/icons/domains/domain-card/blade.png", cards: REDLINE_CARDS },
-  { id: "blackwall", label: "Blackwall", src: ICON("competency-blackwall"), cardImg: "systems/daggerheart/assets/icons/domains/domain-card/dread.png", cards: BLACKWALL_CARDS }
+  { id: "network", label: "Network", src: ICON_PNG("competency-network"), color: "#0f6f80", cardImg: CARD_ART("network"), cards: NETWORK_CARDS },
+  { id: "aegis", label: "Aegis", src: ICON_PNG("competency-aegis"), color: "#9a6b1e", cardImg: CARD_ART("aegis"), cards: AEGIS_CARDS },
+  { id: "assault", label: "Assault", src: ICON_PNG("competency-assault"), color: "#b3361a", cardImg: CARD_ART("assault"), cards: ASSAULT_CARDS },
+  { id: "ghost", label: "Ghost", src: ICON_PNG("competency-ghost"), color: "#2b2f3a", cardImg: CARD_ART("ghost"), cards: GHOST_CARDS },
+  { id: "chrome", label: "Chrome", src: ICON_PNG("competency-chrome"), color: "#a4a9a8", invertText: true, cardImg: CARD_ART("chrome"), cards: CHROME_CARDS },
+  { id: "systems", label: "Systems", src: ICON_PNG("competency-systems"), color: "#2d4f8a", cardImg: CARD_ART("systems"), cards: SYSTEMS_CARDS },
+  { id: "influence", label: "Influence", src: ICON_PNG("competency-influence"), color: "#8f2d72", cardImg: CARD_ART("influence"), cards: INFLUENCE_CARDS },
+  { id: "frontier", label: "Frontier", src: ICON_PNG("competency-frontier"), color: "#7a5a2c", cardImg: CARD_ART("frontier"), cards: FRONTIER_CARDS },
+  { id: "medtech", label: "Medtech", src: ICON_PNG("competency-medtech"), color: "#1f7a55", cardImg: CARD_ART("medtech"), cards: MEDTECH_CARDS },
+  { id: "redline", label: "Redline", src: ICON("competency-redline"), color: "#9e0f2a", cardImg: CARD_ART("redline"), cards: REDLINE_CARDS },
+  { id: "blackwall", label: "Blackwall", src: ICON("competency-blackwall"), color: "#2a2448", cardImg: CARD_ART("blackwall"), cards: BLACKWALL_CARDS }
 ];
 
 // A chave em system.actions precisa ser igual ao _id da ação: o sistema grava usos e outros
@@ -2786,9 +2789,11 @@ async function ensureHomebrewDomains() {
   const data = homebrew?.toObject ? homebrew.toObject() : foundry.utils.deepClone(homebrew ?? {});
   data.domains = data.domains || {};
   // Também atualiza nome/ícone de Competências já registradas por versões anteriores do módulo.
-  const changed = COMPETENCIES.filter(c => data.domains[c.id]?.label !== c.label || data.domains[c.id]?.src !== c.src);
+  // A cor e o invertText pintam o banner da carta, como nos domínios oficiais.
+  const fields = c => ({ id: c.id, label: c.label, src: c.src, color: c.color, invertText: !!c.invertText });
+  const changed = COMPETENCIES.filter(c => Object.entries(fields(c)).some(([k, v]) => (data.domains[c.id]?.[k] ?? (k === "invertText" ? false : undefined)) !== v));
   if (!changed.length) return;
-  for (const { id, label, src } of changed) data.domains[id] = { ...(data.domains[id] ?? {}), id, label, src };
+  for (const c of changed) data.domains[c.id] = { ...(data.domains[c.id] ?? {}), ...fields(c) };
   await game.settings.set("daggerheart", "Homebrew", data);
   console.log(`Edgeheart | Competências homebrew registradas/atualizadas: ${changed.map(c => c.id).join(", ")}.`);
 }
@@ -2820,7 +2825,7 @@ async function importDomainCards() {
       _id: cardId(competency.id, c.name),
       name: c.name,
       type: "domainCard",
-      img: c.img ?? competency.cardImg,
+      img: competency.cardImg,
       folder: levelFolders[c.level].id,
       effects: c.effects || [],
       system: {
@@ -4443,7 +4448,7 @@ const JOURNALS = [
     pages: [["THE EDGEHEART MODULE", "O MÓDULO EDGEHEART", "01-modulo"], ["THE EDGEHEART SHEET", "A FICHA EDGEHEART", "02-ficha"], ["CREDITS", "CRÉDITOS", "03-creditos"]]
   },
   {
-    key: "campaign-frame", name: ["Edgeheart Campaign Frame", "Edgeheart: Campaign Frame"], folder: "campaign-frame",
+    key: "campaign-frame", name: ["Edgeheart Campaign Frame", "Edgeheart: Cenário de Campanha"], folder: "campaign-frame",
     pages: [
       ["EDGEHEART", "EDGEHEART", "01-edgeheart"], ["OVERVIEW", "VISÃO GERAL", "02-visao-geral"], ["A NEW DARK AGE", "UMA NOVA ERA DAS TREVAS", "03-nova-era"],
       ["PLAYER PRINCIPLES", "PRINCÍPIOS DO JOGADOR", "04-principios-jogador"], ["GM PRINCIPLES", "PRINCÍPIOS DO MESTRE", "05-principios-mestre"],
@@ -4509,6 +4514,60 @@ function competencyCards(id) {
     + `<p><em>Nível ${card.level} · ${{ spell: "Protocol", grimoire: "Protocol Suite" }[card.type] ?? "Ability"} · Custo de Recordação ${card.recallCost}</em></p>`
     + card.description
   ).join("")).join("");
+}
+
+// Versões em inglês das duas tabelas acima (diários de journals/en), com o texto de data/content-en.json.
+const TIER_NAMES_EN = ["Common", "Uncommon", "Rare", "Legendary"];
+const ACCESS_LABELS_EN = { card: "Card Access", half: "Half Access", full: "Full Access" };
+const lastParagraph = html => (String(html ?? "").match(/<p>((?:(?!<p>).)*)<\/p>\s*$/s)?.[1] ?? "");
+
+function cyberwareTableEn(glossary, contentEn) {
+  const namesEn = Object.keys(glossary.sections.cyberware.entries);
+  const competencyEn = id => COMPETENCIES.find(c => c.id === id)?.label ?? id;
+  return [1, 2, 3, 4].map(tier => {
+    const rows = CYBERWARE.filter(def => cyberTier(def.n) === tier).map(def => {
+      const name = namesEn[def.n - 1] ?? def.name;
+      const text = lastParagraph(contentEn["edgeheart-cyberware"]?.[name]?.description) || def.text;
+      const access = def.access
+        ? `<strong>${ACCESS_LABELS_EN[def.access.level]}: ${competencyEn(def.access.competency)}${def.choice === "tacticalMesh" ? " or Influence" : ""}.</strong> ` : "";
+      return `<tr><td>${String(def.n).padStart(2, "0")}</td>`
+        + `<td>@UUID[Compendium.${PACK_SCOPE}.${PACKS.cyberware.name}.Item.${stableId(`cyberware:${def.n}`)}]{${name}}</td>`
+        + `<td>${def.choice === "competency" ? "1–3" : def.cost}</td><td>${access}${text}</td></tr>`;
+    }).join("");
+    return `<h3>Tier ${tier} — ${TIER_NAMES_EN[tier - 1]}</h3><table><thead><tr><th>Roll</th><th>Cyberware</th><th>Cost</th><th>Feature</th></tr></thead><tbody>${rows}</tbody></table>`;
+  }).join("");
+}
+
+function competencyCardsEn(id, contentEn) {
+  const competency = COMPETENCIES.find(c => c.id === id);
+  if (!competency) return "";
+  const levels = [...new Set(competency.cards.map(c => c.level))].sort((a, b) => a - b);
+  return levels.map(level => `<h2>LEVEL ${level}</h2>` + competency.cards.filter(c => c.level === level).map(card =>
+    `<h3>@UUID[Compendium.${PACK_SCOPE}.${PACKS.domains.name}.Item.${cardId(id, card.name)}]{${card.name}}</h3>`
+    + `<p><em>Level ${card.level} · ${{ spell: "Protocol", grimoire: "Protocol Suite" }[card.type] ?? "Ability"} · Recall Cost ${card.recallCost}</em></p>`
+    + (contentEn["edgeheart-domains"]?.[card.name]?.description ?? card.description)
+  ).join("")).join("");
+}
+
+// Páginas em inglês (journals/en/<pasta>/<arquivo>.html) pelo _id da página; as que não existem ficam com o
+// texto em português até serem traduzidas.
+async function loadJournalsEn() {
+  const load = async path => { const r = await fetch(`modules/${MODULE_ID}/${path}`, { cache: "no-store" }); return r.ok ? r.json() : null; };
+  const glossary = await load("data/glossary-pt-BR.json");
+  const contentEn = (await load("data/content-en.json")) ?? {};
+  const pages = new Map();
+  for (const journal of JOURNALS) {
+    for (const [, , file] of journal.pages) {
+      const response = await fetch(`modules/${MODULE_ID}/journals/en/${journal.folder}/${file}.html`, { cache: "no-store" });
+      if (!response.ok) continue;
+      const content = (await response.text())
+        .replace("{{cyberware-table}}", () => cyberwareTableEn(glossary, contentEn))
+        .replace(/\{\{cards:(\w+)\}\}/g, (_, id) => competencyCardsEn(id, contentEn))
+        .replace(/\{\{id:([^}]+)\}\}/g, (_, key) => stableId(key.trim()));
+      pages.set(stableId(`journal:${journal.key}:${file}`), content);
+    }
+  }
+  return pages;
 }
 
 async function importJournals() {
@@ -4653,7 +4712,8 @@ async function buildPacks() {
   const { unknown } = await localizePacks({
     packs: Object.values(PACKS).map(p => ({ collection: `${PACK_SCOPE}.${p.name}`, labelPt: p.label })),
     extraNames: extraLocalizedNames(),
-    packFolders: { "Character Options": "Opções de Personagem", "Items": "Itens" }
+    packFolders: { "Character Options": "Opções de Personagem", "Items": "Itens" },
+    journalEn: await loadJournalsEn()
   });
   if (unknown.length) ui.notifications.warn(`Edgeheart: ${unknown.length} nomes fora do glossário (veja o console).`);
   for (const key of Object.keys(PACKS)) await game.packs.get(`${PACK_SCOPE}.${PACKS[key].name}`)?.configure({ locked: true });

@@ -155,19 +155,19 @@
       "name": "Terreno Conhecido",
       "description": "<p>Gaste 3 Esperança quando um adversário dentro do alcance Distante se move, ataca ou tem como alvo você ou um aliado, para usar o terreno contra ele. Ele faz uma Rolagem de Reação (14).</p><p>Em uma falha, fica temporariamente <em>Vulnerável</em> ou temporariamente <em>Imobilizado</em> e marca 1 Estresse. Se estiver operando um veículo, você pode deixar o veículo <strong>Danificado</strong> em vez disso. Em um sucesso, ele marca 1 Estresse.</p><p><em>Na ficha: uma ação para cada condição; use a que você escolher quando o alvo falhar.</em></p>",
       "actions": {
-        "Home Ground: Vulnerável": {
+        "Home Ground: Vulnerable": {
           "name": "Terreno Conhecido: Vulnerável"
         },
-        "Home Ground: Imobilizado": {
+        "Home Ground: Restrained": {
           "name": "Terreno Conhecido: Imobilizado"
         }
       },
       "effects": {
-        "Home Ground (Vulnerável)": {
+        "Home Ground (Vulnerable)": {
           "name": "Terreno Conhecido (Vulnerável)",
           "description": "<p>O terreno se virou contra ele: marcou 1 Estresse e ficou temporariamente Vulnerável.</p>"
         },
-        "Home Ground (Imobilizado)": {
+        "Home Ground (Restrained)": {
           "name": "Terreno Conhecido (Imobilizado)",
           "description": "<p>O terreno se virou contra ele: marcou 1 Estresse e ficou temporariamente Imobilizado.</p>"
         }
@@ -204,7 +204,7 @@
       "name": "Trabalho de Disfarce",
       "description": "<p>Você tem um recurso chamado <strong>Disfarce</strong>. Quando você rola com Esperança usando uma carta de Fantasma, furtividade, disfarce, despiste ou uma rota preparada, ganhe 1 Disfarce. Você pode guardar até 3 Disfarce.</p><p>Gaste 1 Disfarce para fazer uma das opções:</p><ul><li><strong>Preparação:</strong> ganhe +2 numa rolagem para se esconder, infiltrar, sabotar, se passar por alguém ou burlar a segurança.</li><li><strong>Neutralização:</strong> some 1d6 à rolagem de dano quando causar dano a um alvo de quem você está <em>Escondido</em>, que não sabe da sua presença ou que está <em>Vulnerável</em>.</li></ul><p>Você perde todo o Disfarce não gasto quando a cena termina.</p><p><em>Na ficha: o contador desta feature mostra o seu Disfarce. Use \"Ganhar Disfarce\" depois de uma rolagem com Esperança que se encaixe; Preparação e Neutralização gastam 1 Disfarce (o Neutralização já rola o dado). No fim da cena o Disfarce zera sozinho.</em></p>",
       "actions": {
-        "Ganhar Cover": {
+        "Gain Cover": {
           "name": "Ganhar Disfarce"
         },
         "Setup": {
@@ -254,6 +254,9 @@
       "actions": {
         "Emergency Medicine": {
           "name": "Medicina de Emergência"
+        },
+        "Clear 1 HP": {
+          "name": "Limpar 1 PV"
         }
       }
     },
@@ -267,7 +270,7 @@
         "Jury-Rig Extra": {
           "name": "Gambiarra Extra"
         },
-        "Rolar Boost": {
+        "Roll Boost": {
           "name": "Rolar Impulso"
         }
       }
@@ -393,6 +396,9 @@
         "Reassurance": {
           "name": "Tranquilização",
           "description": "<p><strong>Tranquilização:</strong> você ou um aliado dentro do alcance Próximo limpa 1 Estresse.</p>"
+        },
+        "Additional Option": {
+          "name": "Opção Adicional"
         }
       }
     },
@@ -458,6 +464,9 @@
       "name": "Cromo Integrado",
       "description": "<p>Seu cyberware está totalmente integrado ao seu sistema nervoso. Quando você termina um descanso, escolha Agilidade, Força ou Acuidade como o seu <strong>Atributo Calibrado</strong>.</p><p>Quando você faz uma rolagem de ação usando o Atributo Calibrado ou usa uma carta de Cromo, pode marcar 1 Estresse para rolar um d6 e somar o resultado à rolagem.</p><p>Além disso, quando você rola o Dado de Humanidade para resistir à Ciberpsicose, trate a sua Carga Cibernética como 1 menor, até o mínimo de 0.</p><p><em>Na ficha: \"Calibrar Atributo\" escolhe o Atributo Calibrado (mostrado no selo do cabeçalho); \"Cromo Integrado\" marca 1 Estresse e rola o d6. A Rolagem de Humanidade já desconta 1 da Carga.</em></p>",
       "actions": {
+        "Calibrate Trait": {
+          "name": "Calibrar Atributo"
+        },
         "Integrated Chrome": {
           "name": "Cromo Integrado"
         }
@@ -524,13 +533,13 @@
       "name": "Cadeia de Abate",
       "description": "<p>No início de cada cena, o seu <strong>Dado de Cadeia de Abate</strong> é um d4. Quando você acerta um ataque com arma ou carta de Assalto que causa dano, role o Dado de Cadeia de Abate e some o resultado à rolagem de dano.</p><p>Se o ataque causar dano Maior ou Severo, aumente o Dado de Cadeia de Abate em um passo, de d4 até d20.</p><p>Se você falhar numa rolagem de ataque, fizer um descanso ou a cena terminar, o Dado de Cadeia de Abate volta a ser d4.</p><p><em>Na ficha: o dado ao lado desta feature mostra o tamanho atual e o último resultado. Use as ações para rolar, aumentar ou resetar; no fim da cena ele volta a d4 sozinho.</em></p>",
       "actions": {
-        "Rolar Kill Chain Die": {
+        "Roll Kill Chain Die": {
           "name": "Rolar Dado de Cadeia de Abate"
         },
-        "Aumentar Kill Chain Die": {
+        "Increase Kill Chain Die": {
           "name": "Aumentar Dado de Cadeia de Abate"
         },
-        "Resetar Kill Chain Die": {
+        "Reset Kill Chain Die": {
           "name": "Resetar Dado de Cadeia de Abate"
         }
       }
