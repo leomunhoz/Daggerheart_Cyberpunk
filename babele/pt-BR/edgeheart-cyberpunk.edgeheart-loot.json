@@ -1,0 +1,605 @@
+{
+  "label": "Edgeheart: Loot",
+  "mapping": {
+    "description": "system.description",
+    "actions": {
+      "path": "system.actions",
+      "converter": "structured",
+      "container": "keyed",
+      "keys": [
+        "name"
+      ],
+      "mapping": {
+        "name": "name",
+        "description": "description"
+      }
+    },
+    "attack": {
+      "path": "system.attack",
+      "converter": "structured",
+      "cardinality": "one",
+      "mapping": {
+        "name": "name",
+        "description": "description"
+      }
+    },
+    "backgroundQuestions": {
+      "path": "system.backgroundQuestions",
+      "converter": "edgeheartList"
+    },
+    "connections": {
+      "path": "system.connections",
+      "converter": "edgeheartList"
+    },
+    "pick": {
+      "path": "flags.edgeheart-cyberpunk.pick",
+      "converter": "structured",
+      "cardinality": "one",
+      "mapping": {
+        "title": "title",
+        "prompt": "prompt",
+        "options": {
+          "path": "options",
+          "converter": "edgeheartLabels"
+        }
+      }
+    },
+    "vehicleName": "flags.edgeheart-cyberpunk.vehicle.baseName",
+    "eidolonParts": {
+      "path": "flags.edgeheart-cyberpunk.eidolon.parts",
+      "converter": "document",
+      "documentType": "Item",
+      "cardinality": "many",
+      "mapping": {
+        "description": "system.description",
+        "actions": {
+          "path": "system.actions",
+          "converter": "structured",
+          "container": "keyed",
+          "keys": [
+            "name"
+          ],
+          "mapping": {
+            "name": "name",
+            "description": "description"
+          }
+        },
+        "attack": {
+          "path": "system.attack",
+          "converter": "structured",
+          "cardinality": "one",
+          "mapping": {
+            "name": "name",
+            "description": "description"
+          }
+        }
+      }
+    }
+  },
+  "folders": {
+    "Vehicles": "Veículos"
+  },
+  "entries": {
+    "Filter Hood": {
+      "name": "Capuz Filtrante",
+      "description": "<p>Você respira e age normalmente em fumaça, poeira, cinzas, fedor químico, gás lacrimogêneo e ar poluído, a menos que o perigo seja imediatamente letal.</p>"
+    },
+    "Microfab Key": {
+      "name": "Chave Microfab",
+      "description": "<p>No tempo livre, você pode fabricar uma ferramenta comum, peça de reposição, carcaça, adaptador ou componente simples de arma.</p>"
+    },
+    "Burner ID": {
+      "name": "Identidade Descartável",
+      "description": "<p>Quando você entra numa área de baixa segurança, pode gastar 1 Esperança para se passar por alguém inofensivo ou esperado.</p>",
+      "actions": {
+        "Burner ID": {
+          "name": "Identidade Descartável"
+        }
+      }
+    },
+    "Rumor Deck": {
+      "name": "Baralho de Boatos",
+      "description": "<p>Uma vez por descanso, quando você entra num bar, mercado, clínica, garagem, esconderijo ou estação, pergunte ao mestre que boato todo mundo ali está evitando dizer em voz alta.</p>",
+      "actions": {
+        "Rumor Deck": {
+          "name": "Baralho de Boatos"
+        }
+      }
+    },
+    "EMP Thread": {
+      "name": "Fio PEM",
+      "description": "<p>Você tem vantagem em rolagens para resistir a pequenos perigos elétricos, etiquetas de rastreamento ou scanners de curto alcance.</p>",
+      "effects": {
+        "EMP Thread": {
+          "name": "Fio PEM",
+          "description": "<p><strong>Fio PEM:</strong> Você tem vantagem em rolagens para resistir a pequenos perigos elétricos, etiquetas de rastreamento ou scanners de curto alcance.</p>"
+        }
+      }
+    },
+    "War Rig": {
+      "name": "Caminhão de Guerra",
+      "description": "<p><strong>Atributo:</strong> Strength · <strong>Dano:</strong> d12+3 físico · <strong>Carga:</strong> Pesado</p><p><strong>Pesado:</strong> um veículo volumoso, reforçado ou difícil de manobrar. Enquanto o usa, sofra −1 de Evasão, mas ganhe +2 nos Limiares de Dano.</p><p><strong>Esmaga-Estrada:</strong> num ataque de veículo bem-sucedido, o alvo precisa se afastar de você ou marcar 1 Estresse. Se o alvo for um objeto, ele é rompido ou desativado.</p><p><strong>Dano em veículos:</strong> veículos não têm PV. Quando um ataque ou batida fosse danificar seriamente o veículo, o motorista pode marcar 1 Estresse para mantê-lo funcionando, ou ele fica <strong>Danificado</strong> (a Característica não pode ser usada e as rolagens para dirigi-lo ou manobrá-lo sofrem −2). Danificado de novo vira <strong>Inutilizado</strong>: não se move nem pode ser usado até ser consertado (durante um descanso ou por uma feature como Gambiarra).</p>",
+      "actions": {
+        "Vehicle Attack": {
+          "name": "Ataque do Veículo"
+        },
+        "Maneuver": {
+          "name": "Manobrar"
+        },
+        "Keep It Running": {
+          "name": "Manter Funcionando"
+        },
+        "Take Serious Damage": {
+          "name": "Sofrer Dano Sério"
+        },
+        "Repair": {
+          "name": "Consertar"
+        },
+        "Road Crusher": {
+          "name": "Esmaga-Estrada"
+        }
+      },
+      "effects": {
+        "Heavy: dirigindo (−1 Evasão, +2 Limiares)": {
+          "name": "Pesado: dirigindo (−1 Evasão, +2 Limiares)"
+        }
+      },
+      "vehicleName": "Caminhão de Guerra"
+    },
+    "Emergency Beacon": {
+      "name": "Sinalizador de Emergência",
+      "description": "<p>Uma vez por descanso, ative este sinalizador para os aliados saberem a sua localização e estado exatos.</p>",
+      "actions": {
+        "Emergency Beacon": {
+          "name": "Sinalizador de Emergência"
+        }
+      }
+    },
+    "Armored Sedan": {
+      "name": "Sedã Blindado",
+      "description": "<p><strong>Atributo:</strong> Finesse · <strong>Dano:</strong> d10 físico · <strong>Carga:</strong> Blindado</p><p><strong>Blindado:</strong> um veículo de combate protegido. Uma vez por cena, quando você ou um aliado dentro dele fosse marcar PV, reduza a gravidade em 1.</p><p><strong>Cobertura Sólida:</strong> quando você ou um aliado dentro ou atrás do veículo é alvo de um ataque vindo de além do alcance Corpo a Corpo, ganhe +2 de Evasão contra esse ataque.</p><p><strong>Dano em veículos:</strong> veículos não têm PV. Quando um ataque ou batida fosse danificar seriamente o veículo, o motorista pode marcar 1 Estresse para mantê-lo funcionando, ou ele fica <strong>Danificado</strong> (a Característica não pode ser usada e as rolagens para dirigi-lo ou manobrá-lo sofrem −2). Danificado de novo vira <strong>Inutilizado</strong>: não se move nem pode ser usado até ser consertado (durante um descanso ou por uma feature como Gambiarra).</p>",
+      "actions": {
+        "Vehicle Attack": {
+          "name": "Ataque do Veículo"
+        },
+        "Maneuver": {
+          "name": "Manobrar"
+        },
+        "Keep It Running": {
+          "name": "Manter Funcionando"
+        },
+        "Take Serious Damage": {
+          "name": "Sofrer Dano Sério"
+        },
+        "Repair": {
+          "name": "Consertar"
+        },
+        "Armored: reduzir a gravidade": {
+          "name": "Blindado: reduzir a gravidade"
+        }
+      },
+      "effects": {
+        "Hard Cover (+2 Evasão)": {
+          "name": "Cobertura Sólida (+2 Evasão)"
+        }
+      },
+      "vehicleName": "Sedã Blindado"
+    },
+    "Old Net Charm": {
+      "name": "Amuleto da Velha Rede",
+      "description": "<p>Uma vez por descanso, quando você rola com Medo ao interagir com dados corrompidos, resíduos da Muralha Negra ou sinais impossíveis, pode marcar 1 Estresse para perguntar ao mestre o que parece errado.</p>",
+      "actions": {
+        "Old Net Charm": {
+          "name": "Amuleto da Velha Rede"
+        }
+      }
+    },
+    "Lockspike": {
+      "name": "Espeto de Fechadura",
+      "description": "<p>Quando você cria uma Brecha contra uma fechadura, porta ou painel de segurança local, ganhe +2 na rolagem.</p>",
+      "effects": {
+        "Lockspike (+2 na rolagem)": {
+          "name": "Espeto de Fechadura (+2 na rolagem)"
+        }
+      }
+    },
+    "Street Bike": {
+      "name": "Moto de Rua",
+      "description": "<p><strong>Atributo:</strong> Agility · <strong>Dano:</strong> d8 físico · <strong>Carga:</strong> Veloz</p><p><strong>Veloz:</strong> um veículo rápido e ágil. Enquanto estiver em alta velocidade, ganhe +1 de Evasão.</p><p><strong>Divisor de Faixa:</strong> depois de uma rolagem de veículo bem-sucedida, você pode se reposicionar dentro do alcance Próximo.</p><p><strong>Dano em veículos:</strong> veículos não têm PV. Quando um ataque ou batida fosse danificar seriamente o veículo, o motorista pode marcar 1 Estresse para mantê-lo funcionando, ou ele fica <strong>Danificado</strong> (a Característica não pode ser usada e as rolagens para dirigi-lo ou manobrá-lo sofrem −2). Danificado de novo vira <strong>Inutilizado</strong>: não se move nem pode ser usado até ser consertado (durante um descanso ou por uma feature como Gambiarra).</p>",
+      "actions": {
+        "Vehicle Attack": {
+          "name": "Ataque do Veículo"
+        },
+        "Maneuver": {
+          "name": "Manobrar"
+        },
+        "Keep It Running": {
+          "name": "Manter Funcionando"
+        },
+        "Take Serious Damage": {
+          "name": "Sofrer Dano Sério"
+        },
+        "Repair": {
+          "name": "Consertar"
+        }
+      },
+      "effects": {
+        "Swift: alta velocidade (+1 Evasão)": {
+          "name": "Veloz: alta velocidade (+1 Evasão)"
+        }
+      },
+      "vehicleName": "Moto de Rua"
+    },
+    "Clean Needle": {
+      "name": "Agulha Limpa",
+      "description": "<p>Você tem vantagem em rolagens para administrar drogas, estabilizar envenenamento, coletar sangue ou fazer cirurgia delicada em campo.</p>",
+      "effects": {
+        "Clean Needle": {
+          "name": "Agulha Limpa",
+          "description": "<p><strong>Agulha Limpa:</strong> Você tem vantagem em rolagens para administrar drogas, estabilizar envenenamento, coletar sangue ou fazer cirurgia delicada em campo.</p>"
+        }
+      }
+    },
+    "Mirror Tag": {
+      "name": "Etiqueta Espelho",
+      "description": "<p>Uma vez por descanso, coloque esta etiqueta numa superfície ou objeto. Até o seu próximo descanso, scanners e rastreadores procurando você podem ser redirecionados para ela.</p>",
+      "actions": {
+        "Mirror Tag": {
+          "name": "Etiqueta Espelho"
+        }
+      }
+    },
+    "Memory Shard": {
+      "name": "Fragmento de Memória",
+      "description": "<p>Durante um descanso, encaixe este fragmento num dispositivo ou porta neural e pergunte ao mestre uma coisa sobre o lugar, pessoa, facção ou evento gravado nele.</p>"
+    },
+    "Crew Van": {
+      "name": "Van da Equipe",
+      "description": "<p><strong>Atributo:</strong> Knowledge · <strong>Dano:</strong> d8 físico · <strong>Carga:</strong> Cargueiro</p><p><strong>Cargueiro:</strong> um veículo de Equipe com espaço de carga, ferramentas ou suprimentos. Uma vez por descanso, revele uma peça de equipamento útil guardada dentro dele.</p><p><strong>Kit Móvel:</strong> uma vez por descanso, quando você ou um aliado usa um equipamento do veículo, ganhe +2 na rolagem.</p><p><strong>Dano em veículos:</strong> veículos não têm PV. Quando um ataque ou batida fosse danificar seriamente o veículo, o motorista pode marcar 1 Estresse para mantê-lo funcionando, ou ele fica <strong>Danificado</strong> (a Característica não pode ser usada e as rolagens para dirigi-lo ou manobrá-lo sofrem −2). Danificado de novo vira <strong>Inutilizado</strong>: não se move nem pode ser usado até ser consertado (durante um descanso ou por uma feature como Gambiarra).</p>",
+      "actions": {
+        "Vehicle Attack": {
+          "name": "Ataque do Veículo"
+        },
+        "Maneuver": {
+          "name": "Manobrar"
+        },
+        "Keep It Running": {
+          "name": "Manter Funcionando"
+        },
+        "Take Serious Damage": {
+          "name": "Sofrer Dano Sério"
+        },
+        "Repair": {
+          "name": "Consertar"
+        },
+        "Cargo: revelar equipamento": {
+          "name": "Cargueiro: revelar equipamento"
+        },
+        "Mobile Kit (+2 na rolagem)": {
+          "name": "Kit Móvel (+2 na rolagem)"
+        }
+      },
+      "vehicleName": "Van da Equipe"
+    },
+    "Interceptor": {
+      "name": "Interceptador",
+      "description": "<p><strong>Atributo:</strong> Finesse · <strong>Dano:</strong> d10+3 físico · <strong>Carga:</strong> Veloz</p><p><strong>Veloz:</strong> um veículo rápido e ágil. Enquanto estiver em alta velocidade, ganhe +1 de Evasão.</p><p><strong>Trava de Perseguição:</strong> numa rolagem de veículo bem-sucedida, o alvo não pode aumentar a distância de você além do alcance Próximo até o seu próximo Holofote.</p><p><strong>Dano em veículos:</strong> veículos não têm PV. Quando um ataque ou batida fosse danificar seriamente o veículo, o motorista pode marcar 1 Estresse para mantê-lo funcionando, ou ele fica <strong>Danificado</strong> (a Característica não pode ser usada e as rolagens para dirigi-lo ou manobrá-lo sofrem −2). Danificado de novo vira <strong>Inutilizado</strong>: não se move nem pode ser usado até ser consertado (durante um descanso ou por uma feature como Gambiarra).</p>",
+      "actions": {
+        "Vehicle Attack": {
+          "name": "Ataque do Veículo"
+        },
+        "Maneuver": {
+          "name": "Manobrar"
+        },
+        "Keep It Running": {
+          "name": "Manter Funcionando"
+        },
+        "Take Serious Damage": {
+          "name": "Sofrer Dano Sério"
+        },
+        "Repair": {
+          "name": "Consertar"
+        }
+      },
+      "effects": {
+        "Swift: alta velocidade (+1 Evasão)": {
+          "name": "Veloz: alta velocidade (+1 Evasão)"
+        }
+      },
+      "vehicleName": "Interceptador"
+    },
+    "Nomad Buggy": {
+      "name": "Buggy Nômade",
+      "description": "<p><strong>Atributo:</strong> Instinct · <strong>Dano:</strong> d8+3 físico · <strong>Carga:</strong> Fora de Estrada</p><p><strong>Fora de Estrada:</strong> um veículo feito para estradas ruins. Ignore terreno difícil causado por chão quebrado, escombros ou ruas instáveis.</p><p><strong>Corredor da Poeira:</strong> numa rolagem com Esperança enquanto dirige por terreno acidentado, um alvo dentro do alcance Próximo marca 1 Estresse.</p><p><strong>Dano em veículos:</strong> veículos não têm PV. Quando um ataque ou batida fosse danificar seriamente o veículo, o motorista pode marcar 1 Estresse para mantê-lo funcionando, ou ele fica <strong>Danificado</strong> (a Característica não pode ser usada e as rolagens para dirigi-lo ou manobrá-lo sofrem −2). Danificado de novo vira <strong>Inutilizado</strong>: não se move nem pode ser usado até ser consertado (durante um descanso ou por uma feature como Gambiarra).</p>",
+      "actions": {
+        "Vehicle Attack": {
+          "name": "Ataque do Veículo"
+        },
+        "Maneuver": {
+          "name": "Manobrar"
+        },
+        "Keep It Running": {
+          "name": "Manter Funcionando"
+        },
+        "Take Serious Damage": {
+          "name": "Sofrer Dano Sério"
+        },
+        "Repair": {
+          "name": "Consertar"
+        },
+        "Dust Runner": {
+          "name": "Corredor da Poeira"
+        }
+      },
+      "vehicleName": "Buggy Nômade"
+    },
+    "Forensic Lens": {
+      "name": "Lente Forense",
+      "description": "<p>Quando você inspeciona um corpo, ferida, máquina destruída ou veículo danificado, pergunte ao mestre o que causou o dano ou que detalhe a maioria das pessoas deixaria passar.</p>"
+    },
+    "Pocket Drone": {
+      "name": "Drone de Bolso",
+      "description": "<p>Você pode lançar este drone para explorar dentro do alcance Muito Distante. Se ele entrar em perigo, role um d6; num 1, ele é destruído.</p>"
+    },
+    "Climbing Filament": {
+      "name": "Filamento de Escalada",
+      "description": "<p>Você ganha vantagem em rolagens para escalar, descer ou se prender em superfícies verticais.</p>",
+      "effects": {
+        "Climbing Filament": {
+          "name": "Filamento de Escalada",
+          "description": "<p><strong>Filamento de Escalada:</strong> Você ganha vantagem em rolagens para escalar, descer ou se prender em superfícies verticais.</p>"
+        }
+      }
+    },
+    "Breach Cord": {
+      "name": "Cordão de Brecha",
+      "description": "<p>Você tem vantagem em rolagens para forçar, cortar ou contornar portas, cercas, dutos, fechaduras e painéis de acesso comuns.</p>",
+      "effects": {
+        "Breach Cord": {
+          "name": "Cordão de Brecha",
+          "description": "<p><strong>Cordão de Brecha:</strong> Você tem vantagem em rolagens para forçar, cortar ou contornar portas, cercas, dutos, fechaduras e painéis de acesso comuns.</p>"
+        }
+      }
+    },
+    "Signal Leech": {
+      "name": "Sanguessuga de Sinal",
+      "description": "<p>Quando você tem sucesso numa Rolagem de Interface contra um sistema conectado, pode descobrir outro dispositivo ou usuário conectado a ele no momento.</p>"
+    },
+    "Ghost Plate": {
+      "name": "Placa Fantasma",
+      "description": "<p>Uma vez por descanso, quando você fica Escondido, também pode deixar para trás uma assinatura de calor falsa ou um loop de câmera.</p>",
+      "actions": {
+        "Ghost Plate": {
+          "name": "Placa Fantasma"
+        }
+      }
+    },
+    "Mag Boots": {
+      "name": "Botas Magnéticas",
+      "description": "<p>Você tem vantagem em rolagens para resistir a ser empurrado, derrubado, arrastado ou movido contra a vontade enquanto estiver sobre metal, blindagem de veículo ou piso reforçado.</p>",
+      "effects": {
+        "Mag Boots": {
+          "name": "Botas Magnéticas",
+          "description": "<p><strong>Botas Magnéticas:</strong> Você tem vantagem em rolagens para resistir a ser empurrado, derrubado, arrastado ou movido contra a vontade enquanto estiver sobre metal, blindagem de veículo ou piso reforçado.</p>"
+        }
+      }
+    },
+    "Blackbox Recorder": {
+      "name": "Gravador Caixa-Preta",
+      "description": "<p>Quando uma cena perigosa termina, você pode perguntar ao mestre o que um dispositivo, sinal ou câmera próximo gravou.</p>"
+    },
+    "Garage Token": {
+      "name": "Ficha de Garagem",
+      "description": "<p>Uma vez por sessão, quando você chega a uma garagem, acampamento de estrada, parada de comboio ou contato mecânico, pode consertar um veículo Danificado sem pagar o custo normal.</p>",
+      "actions": {
+        "Garage Token": {
+          "name": "Ficha de Garagem"
+        }
+      }
+    },
+    "Comm Beads": {
+      "name": "Contas de Comunicação",
+      "description": "<p>Você e um aliado carregando contas conectadas podem se comunicar aos sussurros a até 1,5 km.</p>"
+    },
+    "Ghost Runner": {
+      "name": "Corredor Fantasma",
+      "description": "<p><strong>Atributo:</strong> Knowledge · <strong>Dano:</strong> d8 físico · <strong>Carga:</strong> Conectado</p><p><strong>Conectado:</strong> um veículo em rede com piloto automático, suporte de mira ou sistemas remotos. Ele conta como um sistema conectado para hacking.</p><p><strong>Piloto Automático Fantasma:</strong> uma vez por cena, quando você fosse ser descoberto, rastreado, bloqueado ou pego durante uma perseguição, faça uma Rolagem de Interface (14). Em um sucesso, crie uma rota falsa, sinal falso ou movimento de despiste e fique Escondido ou escape da perseguição imediata.</p><p><strong>Dano em veículos:</strong> veículos não têm PV. Quando um ataque ou batida fosse danificar seriamente o veículo, o motorista pode marcar 1 Estresse para mantê-lo funcionando, ou ele fica <strong>Danificado</strong> (a Característica não pode ser usada e as rolagens para dirigi-lo ou manobrá-lo sofrem −2). Danificado de novo vira <strong>Inutilizado</strong>: não se move nem pode ser usado até ser consertado (durante um descanso ou por uma feature como Gambiarra).</p>",
+      "actions": {
+        "Vehicle Attack": {
+          "name": "Ataque do Veículo"
+        },
+        "Maneuver": {
+          "name": "Manobrar"
+        },
+        "Keep It Running": {
+          "name": "Manter Funcionando"
+        },
+        "Take Serious Damage": {
+          "name": "Sofrer Dano Sério"
+        },
+        "Repair": {
+          "name": "Consertar"
+        },
+        "Autopilot Ghost (14)": {
+          "name": "Piloto Automático Fantasma (14)"
+        },
+        "Autopilot Ghost: Escondido": {
+          "name": "Piloto Automático Fantasma: Escondido"
+        }
+      },
+      "effects": {
+        "Autopilot Ghost: Escondido": {
+          "name": "Piloto Automático Fantasma: Escondido"
+        }
+      },
+      "vehicleName": "Corredor Fantasma"
+    },
+    "Portable Shrine": {
+      "name": "Santuário Portátil",
+      "description": "<p>Durante um descanso, você ou um aliado pode gastar 1 Esperança para limpar 1 Estresse confessando, rezando, relembrando ou se centrando.</p>",
+      "actions": {
+        "Portable Shrine": {
+          "name": "Santuário Portátil"
+        }
+      }
+    },
+    "Signal Splitter": {
+      "name": "Divisor de Sinal",
+      "description": "<p>Você pode manter dois canais de comunicação separados ao mesmo tempo. Uma vez por descanso, quando um sinal fosse bloqueado ou cortado, você pode manter um canal aberto.</p>",
+      "actions": {
+        "Signal Splitter": {
+          "name": "Divisor de Sinal"
+        }
+      }
+    },
+    "Faraday Pouch": {
+      "name": "Bolsa de Faraday",
+      "description": "<p>Itens guardados dentro não podem ser rastreados, escaneados, invadidos ou ativados remotamente por sistemas simples.</p>"
+    },
+    "Sound Sponge": {
+      "name": "Esponja Sonora",
+      "description": "<p>Gaste 1 Esperança para silenciar uma área pequena dentro do alcance Muito Próximo até o seu próximo Holofote.</p>",
+      "actions": {
+        "Sound Sponge": {
+          "name": "Esponja Sonora"
+        }
+      }
+    },
+    "Smart Chalk": {
+      "name": "Giz Inteligente",
+      "description": "<p>Você pode marcar uma rota, porta, veículo ou criatura. Até o seu próximo descanso, sempre consegue encontrar o alvo marcado se ele estiver a até 1,5 km.</p>"
+    },
+    "Drone Harness": {
+      "name": "Arreio de Drone",
+      "description": "<p>Você carrega, acopla, lança ou conserta drones pequenos com mais facilidade. Sua primeira rolagem em cada descanso para consertar, esconder ou recuperar um drone tem vantagem.</p>"
+    },
+    "Shock Blanket": {
+      "name": "Cobertor de Emergência",
+      "description": "<p>Durante um descanso curto, uma criatura enrolada neste cobertor pode limpar 1 Estresse causado por medo, frio, choque, perda de sangue ou exposição.</p>",
+      "actions": {
+        "Shock Blanket": {
+          "name": "Cobertor de Emergência"
+        }
+      }
+    },
+    "Dead Drop Case": {
+      "name": "Maleta de Ponto de Coleta",
+      "description": "<p>Uma vez por descanso, esconda ou recupere um item pequeno num lugar que você poderia ter preparado antes.</p>",
+      "actions": {
+        "Dead Drop Case": {
+          "name": "Maleta de Ponto de Coleta"
+        }
+      }
+    },
+    "Old World Map": {
+      "name": "Mapa do Velho Mundo",
+      "description": "<p>Quando você entra numa ruína, zona morta, túnel ou instalação selada, pergunte ao mestre uma coisa sobre uma rota oculta, o propósito antigo do lugar ou uma fraqueza estrutural.</p>"
+    },
+    "Debt Chip": {
+      "name": "Chip de Dívida",
+      "description": "<p>Uma vez por sessão, gaste este chip para conseguir um pequeno favor de alguém que reconhece a dívida. O mestre diz o que ele quer depois.</p>",
+      "actions": {
+        "Debt Chip": {
+          "name": "Chip de Dívida"
+        }
+      }
+    },
+    "Hardlight Umbrella": {
+      "name": "Guarda-Chuva de Luz Sólida",
+      "description": "<p>Marque 1 Estresse para criar cobertura temporária para você ou um aliado dentro do alcance Muito Próximo.</p>",
+      "actions": {
+        "Hardlight Umbrella": {
+          "name": "Guarda-Chuva de Luz Sólida"
+        }
+      }
+    },
+    "Forger's Sleeve": {
+      "name": "Manga do Falsário",
+      "description": "<p>Uma vez por descanso, crie um documento, crachá, permissão ou assinatura comum convincente.</p>",
+      "actions": {
+        "Forger's Sleeve": {
+          "name": "Manga do Falsário"
+        }
+      }
+    },
+    "Clinic Cooler": {
+      "name": "Caixa Térmica de Clínica",
+      "description": "<p>Você conserva com segurança remédios, sangue, órgãos, amostras ou bioware instável. Tem vantagem em rolagens para transportar material médico delicado.</p>",
+      "effects": {
+        "Clinic Cooler": {
+          "name": "Caixa Térmica de Clínica",
+          "description": "<p><strong>Caixa Térmica de Clínica:</strong> Você conserva com segurança remédios, sangue, órgãos, amostras ou bioware instável. Tem vantagem em rolagens para transportar material médico delicado.</p>"
+        }
+      }
+    },
+    "Trauma Tag": {
+      "name": "Etiqueta de Trauma",
+      "description": "<p>Quando um aliado dentro do alcance Próximo marca PV, você sabe imediatamente onde ele está e se está morrendo, estável ou consciente.</p>"
+    },
+    "Courier Boots": {
+      "name": "Botas de Mensageiro",
+      "description": "<p>Uma vez por descanso, quando você se move por uma multidão, beco, telhado, ruína ou trânsito, ignore terreno difícil durante esse movimento.</p>",
+      "actions": {
+        "Courier Boots": {
+          "name": "Botas de Mensageiro"
+        }
+      }
+    },
+    "Corporate AV": {
+      "name": "Aeronave Corporativa",
+      "description": "<p><strong>Atributo:</strong> Knowledge · <strong>Dano:</strong> d6 físico · <strong>Carga:</strong> Voador</p><p><strong>Voador:</strong> um veículo voador. Uma vez por cena, mova-se para qualquer lugar dentro do alcance Distante, desde que haja espaço aberto suficiente para manobrar.</p><p><strong>Superioridade Aérea:</strong> numa rolagem com Esperança enquanto opera o veículo, você ou um aliado que possa ver o alvo ganha vantagem na próxima rolagem de ataque antes do seu próximo Holofote.</p><p><strong>Dano em veículos:</strong> veículos não têm PV. Quando um ataque ou batida fosse danificar seriamente o veículo, o motorista pode marcar 1 Estresse para mantê-lo funcionando, ou ele fica <strong>Danificado</strong> (a Característica não pode ser usada e as rolagens para dirigi-lo ou manobrá-lo sofrem −2). Danificado de novo vira <strong>Inutilizado</strong>: não se move nem pode ser usado até ser consertado (durante um descanso ou por uma feature como Gambiarra).</p>",
+      "actions": {
+        "Vehicle Attack": {
+          "name": "Ataque do Veículo"
+        },
+        "Maneuver": {
+          "name": "Manobrar"
+        },
+        "Keep It Running": {
+          "name": "Manter Funcionando"
+        },
+        "Take Serious Damage": {
+          "name": "Sofrer Dano Sério"
+        },
+        "Repair": {
+          "name": "Consertar"
+        },
+        "Soaring: voar até Distante": {
+          "name": "Voador: voar até Distante"
+        }
+      },
+      "vehicleName": "Aeronave Corporativa"
+    },
+    "Decoy Wallet": {
+      "name": "Carteira Isca",
+      "description": "<p>Uma vez por descanso, quando alguém te revista, rouba, escaneia ou extorque, encontra esta falsificação convincente em vez de algo importante.</p>",
+      "actions": {
+        "Decoy Wallet": {
+          "name": "Carteira Isca"
+        }
+      }
+    },
+    "Smart Cuffs": {
+      "name": "Algemas Inteligentes",
+      "description": "<p>Quando você prende uma criatura voluntária, inconsciente ou derrotada, tentativas comuns de fuga dessas algemas têm desvantagem.</p>"
+    },
+    "Collapsible Barricade": {
+      "name": "Barricada Dobrável",
+      "description": "<p>Uma vez por descanso, monte esta barricada para criar cobertura temporária para até duas criaturas dentro do alcance Muito Próximo.</p>",
+      "actions": {
+        "Collapsible Barricade": {
+          "name": "Barricada Dobrável"
+        }
+      }
+    },
+    "Signal Cloak": {
+      "name": "Manto de Sinal",
+      "description": "<p>Uma vez por descanso, quando um drone, câmera ou scanner fosse te detectar, role um d6. Em 4+, ele não te percebe.</p>",
+      "actions": {
+        "Signal Cloak": {
+          "name": "Manto de Sinal"
+        }
+      }
+    }
+  }
+}

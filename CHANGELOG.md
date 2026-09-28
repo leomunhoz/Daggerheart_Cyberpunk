@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.28.0
+- **Duas línguas (Babele):** os compêndios agora são em inglês e o módulo traz a tradução completa para português em `babele/pt-BR`. Com o Babele ativo e o Foundry em Português (Brasil), tudo aparece traduzido. Classes e subclasses mantêm o nome em inglês.
+- Os nomes seguem o glossário revisado (`data/glossary-pt-BR.json`): Competências (Rede, Assalto, Cromo...), termos (Cadeia de Abate, Disfarce, Brecha, Equipe, Ímpeto, GELO Negro, dano tecno...), cartas, features, cyberware, armas, armaduras, loot, veículos, adversários e ambientes.
+- Traduzidos também: ações e efeitos dos itens, ataques e experiências dos adversários, features dos adversários e ambientes, peças dos Eidolons, perguntas e conexões das classes, páginas dos diários, tabelas, pastas e nomes dos compêndios.
+- As automações funcionam nas duas línguas.
+- Por enquanto as descrições em inglês usam o texto em português; o texto original do PDF entra na próxima versão.
+
 ## v1.27.1
 - Preparação para a versão bilíngue: as automações (Kill Chain, Cover, Takedown, Integrated Chrome, Calibrar Atributo, Public Persona, No Way Back e os estados dos veículos) agora reconhecem as ações pelo ID, não pelo nome. Renomear ou traduzir uma ação não quebra mais nada.
 - Itens antigos, já nas fichas, continuam funcionando pelo nome.

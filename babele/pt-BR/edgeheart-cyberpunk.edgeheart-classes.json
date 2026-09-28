@@ -1,0 +1,539 @@
+{
+  "label": "Edgeheart: Classes",
+  "mapping": {
+    "description": "system.description",
+    "actions": {
+      "path": "system.actions",
+      "converter": "structured",
+      "container": "keyed",
+      "keys": [
+        "name"
+      ],
+      "mapping": {
+        "name": "name",
+        "description": "description"
+      }
+    },
+    "attack": {
+      "path": "system.attack",
+      "converter": "structured",
+      "cardinality": "one",
+      "mapping": {
+        "name": "name",
+        "description": "description"
+      }
+    },
+    "backgroundQuestions": {
+      "path": "system.backgroundQuestions",
+      "converter": "edgeheartList"
+    },
+    "connections": {
+      "path": "system.connections",
+      "converter": "edgeheartList"
+    },
+    "pick": {
+      "path": "flags.edgeheart-cyberpunk.pick",
+      "converter": "structured",
+      "cardinality": "one",
+      "mapping": {
+        "title": "title",
+        "prompt": "prompt",
+        "options": {
+          "path": "options",
+          "converter": "edgeheartLabels"
+        }
+      }
+    },
+    "vehicleName": "flags.edgeheart-cyberpunk.vehicle.baseName",
+    "eidolonParts": {
+      "path": "flags.edgeheart-cyberpunk.eidolon.parts",
+      "converter": "document",
+      "documentType": "Item",
+      "cardinality": "many",
+      "mapping": {
+        "description": "system.description",
+        "actions": {
+          "path": "system.actions",
+          "converter": "structured",
+          "container": "keyed",
+          "keys": [
+            "name"
+          ],
+          "mapping": {
+            "name": "name",
+            "description": "description"
+          }
+        },
+        "attack": {
+          "path": "system.attack",
+          "converter": "structured",
+          "cardinality": "one",
+          "mapping": {
+            "name": "name",
+            "description": "description"
+          }
+        }
+      }
+    }
+  },
+  "folders": {
+    "Class Items": "Itens de Classe",
+    "Class Features": "Talentos de Classe"
+  },
+  "entries": {
+    "Exploit": {
+      "name": "Exploração",
+      "description": "<p>Marque 1 Estresse para aplicar Exploração temporariamente em um alvo dentro do alcance Distante. Enquanto Explorado, o alvo recebe uma penalidade em seus Limiares e Dificuldade igual ao seu Tier. O número máximo de criaturas que você pode manter Explorado ao mesmo tempo é igual ao seu atributo de Interface.</p>",
+      "actions": {
+        "Exploit": {
+          "name": "Exploração"
+        }
+      },
+      "effects": {
+        "Exploited": {
+          "name": "Explorado",
+          "description": "<p>Penalidade nos Limiares e na Dificuldade igual ao Tier do Runner que fez o Exploração neste alvo.</p>"
+        }
+      }
+    },
+    "Augmented": {
+      "name": "Augmented",
+      "description": "<p><strong>Cromo, cyberware, movimento, otimização do corpo</strong><br>\"A carne era o protótipo.\"</p>\n<p><em>Jogue de Augmented se você quiser…</em> Levar seu corpo além dos limites naturais com membros reforçados, implantes de mobilidade, sentidos aprimorados e precisão construída em cromo.</p>\n<p>Augmenteds são mercenários que transformaram o próprio corpo no seu ganha-pão. Eles sabem se mover com ossos de metal, golpear com membros calibrados, sobreviver com órgãos artificiais e forçar seus sistemas sem queimar na hora.</p>\n<p><strong>Itens de Classe:</strong> Um kit de manutenção para o seu implante mais importante ou a peça original do seu corpo que foi substituída por cromo.</p>\n<p><em>Nota: atributos sugeridos e equipamento variam por subclasse — veja a nota de \"Build Sugerida\" na subclasse escolhida.</em></p>",
+      "backgroundQuestions": [
+        "Qual foi o seu primeiro implante, e por que você o colocou?",
+        "De que parte do seu corpo original você mais sente falta?",
+        "Você escolheu virar Augmented, ou o seu corpo foi reconstruído depois de algo terrível?"
+      ],
+      "connections": [
+        "Qual personagem te conheceu antes do cromo?",
+        "Quem te ajudou a sobreviver a uma instalação ruim?",
+        "Quem trata o seu corpo como uma pessoa, e não como uma máquina?"
+      ]
+    },
+    "Contract Chip": {
+      "name": "Chip de Contrato",
+      "description": "<p>Um chip de contrato com um grande e ilegal acordo corporativo. Quem pagaria para tê-lo, e quem mataria para apagá-lo?</p>"
+    },
+    "Tech": {
+      "name": "Tech",
+      "description": "<p><strong>Sistemas, engenharia, drones, equipamento</strong><br>\"Me dá peças, ferramentas e dez minutos.\"</p>\n<p><em>Jogue de Tech se você quiser…</em> Construir ferramentas, consertar sistemas, posicionar dispositivos, controlar drones, modificar equipamento e transformar preparação em poder.</p>\n<p>Techs resolvem problemas e entendem que toda máquina tem um jeito de quebrar, entortar ou se tornar útil. Eles fazem planos impossíveis funcionarem só o tempo suficiente para fazer diferença.</p>\n<p><strong>Itens de Classe:</strong> Um kit de ferramentas personalizado cheio de adaptadores ilegais e peças recuperadas ou uma máquina quebrada que você se recusa a parar de consertar.</p>\n<p><em>Nota: atributos sugeridos e equipamento variam por subclasse — veja a nota de \"Build Sugerida\" na subclasse escolhida.</em></p>",
+      "backgroundQuestions": [
+        "Que máquina, arma, drone ou dispositivo você se recusa a abandonar?",
+        "Que peça de tecnologia te deixou na mão quando você mais precisava?",
+        "Você virou Tech porque amava máquinas, ou porque as pessoas eram menos confiáveis?"
+      ],
+      "connections": [
+        "Quem quebrou algo importante que você ainda não perdoou?",
+        "Quem confia mais nas suas máquinas do que em você?",
+        "Qual personagem te ajudou a carregar, esconder ou reconstruir algo ilegal?"
+      ]
+    },
+    "Damaged Dog Tag": {
+      "name": "Plaqueta Danificada",
+      "description": "<p>Uma plaqueta de identificação danificada da luta que fez a sua reputação. De quem era o nome gravado nela?</p>"
+    },
+    "Cracked Route-Map": {
+      "name": "Mapa de Rotas Rachado",
+      "description": "<p>Um mapa de rotas rachado, cheio de marcações pessoais: atalhos, esconderijos, zonas mortas e nomes que só você entende.</p>"
+    },
+    "Surveyed Route": {
+      "name": "Rota Mapeada",
+      "description": "<p>Gaste 1 Esperança e tire um momento para ler o terreno, as ruínas ou as ruas ao seu redor. Faça uma Rolagem de Instinto (12). Em um sucesso, a área dentro do alcance Distante vira a sua <strong>Rota Mapeada</strong> até a cena terminar ou você sofrer dano Severo. Enquanto estiver dentro da sua Rota Mapeada:</p><ul><li>Você e os aliados dentro do alcance Próximo podem ignorar terreno difícil ao se mover ou dirigir.</li><li>Quando você causa dano a um adversário na zona, pode forçá-lo a marcar 1 Estresse.</li><li>Quando falha numa rolagem de ação, você pode encerrar a sua Rota Mapeada para rolar de novo os Dados de Dualidade.</li></ul>",
+      "actions": {
+        "Surveyed Route": {
+          "name": "Rota Mapeada"
+        }
+      },
+      "effects": {
+        "Surveyed Route": {
+          "name": "Rota Mapeada",
+          "description": "<p>Rota Mapeada ativa até a cena terminar ou você sofrer dano Severo: você e os aliados dentro do alcance Próximo ignoram terreno difícil; ao causar dano a um adversário na zona, pode forçá-lo a marcar 1 Estresse; ao falhar numa rolagem de ação, pode encerrar a Rota Mapeada para rolar de novo os Dados de Dualidade.</p>"
+        }
+      }
+    },
+    "Home Ground": {
+      "name": "Terreno Conhecido",
+      "description": "<p>Gaste 3 Esperança quando um adversário dentro do alcance Distante se move, ataca ou tem como alvo você ou um aliado, para usar o terreno contra ele. Ele faz uma Rolagem de Reação (14).</p><p>Em uma falha, fica temporariamente <em>Vulnerável</em> ou temporariamente <em>Imobilizado</em> e marca 1 Estresse. Se estiver operando um veículo, você pode deixar o veículo <strong>Danificado</strong> em vez disso. Em um sucesso, ele marca 1 Estresse.</p><p><em>Na ficha: uma ação para cada condição; use a que você escolher quando o alvo falhar.</em></p>",
+      "actions": {
+        "Home Ground: Vulnerável": {
+          "name": "Terreno Conhecido: Vulnerável"
+        },
+        "Home Ground: Imobilizado": {
+          "name": "Terreno Conhecido: Imobilizado"
+        }
+      },
+      "effects": {
+        "Home Ground (Vulnerável)": {
+          "name": "Terreno Conhecido (Vulnerável)",
+          "description": "<p>O terreno se virou contra ele: marcou 1 Estresse e ficou temporariamente Vulnerável.</p>"
+        },
+        "Home Ground (Imobilizado)": {
+          "name": "Terreno Conhecido (Imobilizado)",
+          "description": "<p>O terreno se virou contra ele: marcou 1 Estresse e ficou temporariamente Imobilizado.</p>"
+        }
+      }
+    },
+    "Hold Your Breach": {
+      "name": "Segure a Brecha",
+      "description": "<p>Depois de criar uma Brecha, gaste 1 Esperança para usá-la sem gastá-la.</p>",
+      "actions": {
+        "Hold Your Breach": {
+          "name": "Segure a Brecha"
+        }
+      }
+    },
+    "Suppressed Weapon": {
+      "name": "Arma com Silenciador",
+      "description": "<p>Uma arma com silenciador de um trabalho que oficialmente nunca aconteceu. O número de série foi raspado; a memória, não.</p>"
+    },
+    "Reclaimer": {
+      "name": "Reclaimer",
+      "description": "<p><strong>Fronteira, sobrevivência, ruínas, zonas hostis</strong><br>\"O velho mundo está morto. Isso não quer dizer que esteja vazio.\"</p>\n<p><em>Jogue de Reclaimer se você quiser…</em> Sobreviver longe do controle corporativo, atravessar zonas mortas, ler o terreno, recuperar tecnologia perdida, navegar por ruínas, explorar ambientes hostis e transformar o próprio campo de batalha numa ferramenta.</p>\n<p>Reclaimers são sobreviventes que sabem viver onde a civilização falhou. Eles atravessam cidades mortas e enxergam as rotas, os abrigos e os recursos do velho mundo esperando para serem usados.</p>\n<p><strong>Itens de Classe:</strong> Um mapa de rotas rachado, cheio de marcações pessoais, ou um pedaço de sucata do lugar que deveria ter te matado.</p>\n<p><em>Nota: atributos sugeridos e equipamento variam por subclasse — veja a nota de \"Build Sugerida\" na subclasse escolhida.</em></p>",
+      "backgroundQuestions": [
+        "O que você recuperou das ruínas que mudou a sua vida?",
+        "Você foi criado fora das cidades, na estrada, ou num lugar que as corporações abandonaram?",
+        "Que veículo, rota ou peça de sucata você se recusa a abandonar?"
+      ],
+      "connections": [
+        "Qual personagem você guiou por um lugar que deveria tê-lo matado?",
+        "Quem confia mais nas suas rotas do que no mapa?",
+        "Qual personagem já te viu arriscar tudo por um veículo, uma estrada ou uma peça de tecnologia antiga?"
+      ]
+    },
+    "Cover Work": {
+      "name": "Trabalho de Disfarce",
+      "description": "<p>Você tem um recurso chamado <strong>Disfarce</strong>. Quando você rola com Esperança usando uma carta de Fantasma, furtividade, disfarce, despiste ou uma rota preparada, ganhe 1 Disfarce. Você pode guardar até 3 Disfarce.</p><p>Gaste 1 Disfarce para fazer uma das opções:</p><ul><li><strong>Preparação:</strong> ganhe +2 numa rolagem para se esconder, infiltrar, sabotar, se passar por alguém ou burlar a segurança.</li><li><strong>Neutralização:</strong> some 1d6 à rolagem de dano quando causar dano a um alvo de quem você está <em>Escondido</em>, que não sabe da sua presença ou que está <em>Vulnerável</em>.</li></ul><p>Você perde todo o Disfarce não gasto quando a cena termina.</p><p><em>Na ficha: o contador desta feature mostra o seu Disfarce. Use \"Ganhar Disfarce\" depois de uma rolagem com Esperança que se encaixe; Preparação e Neutralização gastam 1 Disfarce (o Neutralização já rola o dado). No fim da cena o Disfarce zera sozinho.</em></p>",
+      "actions": {
+        "Ganhar Cover": {
+          "name": "Ganhar Disfarce"
+        },
+        "Setup": {
+          "name": "Preparação"
+        },
+        "Takedown": {
+          "name": "Neutralização"
+        }
+      }
+    },
+    "Stay With Me": {
+      "name": "Fica Comigo",
+      "description": "<p>Gaste 3 Esperança quando uma criatura dentro do alcance Próximo fosse marcar o último Ponto de Vida não marcado ou fazer um Movimento de Morte. Ela não sofre as consequências do Movimento de Morte e continua viva e consciente, limpando 1 Ponto de Vida, mas fica temporariamente <em>Vulnerável</em> até receber atendimento médico ou a cena terminar.</p>",
+      "actions": {
+        "Stay With Me": {
+          "name": "Fica Comigo"
+        }
+      },
+      "effects": {
+        "Stay With Me": {
+          "name": "Fica Comigo",
+          "description": "<p>Mantido vivo pelo Fica Comigo: temporariamente Vulnerável até receber atendimento médico ou a cena terminar.</p>"
+        }
+      }
+    },
+    "Make It Work": {
+      "name": "Faz Funcionar",
+      "description": "<p>Gaste 3 Esperança depois que você ou um aliado dentro do alcance Próximo falhar numa rolagem de ação usando um dispositivo, arma ou carta de Sistemas. Descreva o seu conserto de emergência; o alvo pode rolar de novo os Dados de Dualidade e usar o novo resultado.</p>",
+      "actions": {
+        "Make It Work": {
+          "name": "Faz Funcionar"
+        }
+      }
+    },
+    "Chrome Surge": {
+      "name": "Surto de Cromo",
+      "description": "<p>Gaste 3 Esperança quando fizer uma Rolagem de Agilidade, Força ou Acuidade. Role um d8 e some o resultado à rolagem. Se a rolagem tiver sucesso, escolha uma:</p><ul><li>Mova-se imediatamente dentro do alcance Próximo.</li><li>Limpe 1 Estresse.</li><li>Ganhe +2 de Evasão até o seu próximo Holofote.</li></ul><p><em>Na ficha: a ação gasta a Esperança e rola o d8 para somar à rolagem.</em></p>",
+      "actions": {
+        "Chrome Surge": {
+          "name": "Surto de Cromo"
+        }
+      }
+    },
+    "Emergency Medicine": {
+      "name": "Medicina de Emergência",
+      "description": "<p>Quando você tem um momento para tratar uma criatura dentro do alcance Corpo a Corpo, faça uma Rolagem de Interface (12). Em um sucesso, escolha uma:</p><ul><li>O alvo limpa 1 Estresse.</li><li>O alvo limpa uma condição física temporária, como <em>Vulnerável</em> ou <em>Imobilizado</em>.</li><li>O alvo estabiliza um implante danificado, sistema de suporte de vida ou componente de cyberware até o próximo descanso dele.</li></ul><p>Uma vez por descanso, quando você tem sucesso nessa rolagem, o alvo pode limpar 1 Ponto de Vida além de escolher um dos efeitos acima. Uma criatura só pode limpar um Ponto de Vida com Medicina de Emergência uma vez por descanso.</p><p><em>Na ficha: \"Medicina de Emergência\" faz a Rolagem de Interface (12); \"Limpar 1 PV\" controla o uso por descanso.</em></p>",
+      "actions": {
+        "Emergency Medicine": {
+          "name": "Medicina de Emergência"
+        }
+      }
+    },
+    "Jury-Rig": {
+      "name": "Gambiarra",
+      "description": "<p>Uma vez por cena, quando você tem alguns momentos e acesso às suas ferramentas, pode modificar, consertar ou improvisar com um dispositivo, arma ou máquina dentro do alcance Corpo a Corpo. Escolha uma:</p><ul><li><strong>Impulso:</strong> na próxima vez que o item modificado for usado antes de a cena terminar, some +1d6 à rolagem de ação, Rolagem de Interface ou rolagem de dano dele.</li><li><strong>Remendo:</strong> restaure um item quebrado, travado, desativado ou danificado para que funcione até a cena terminar, ou permita que uma criatura usando o item limpe um Espaço de Armadura.</li><li><strong>Religar:</strong> conecte ou desconecte o item de uma rede, contorne os controles locais dele ou permita que ele seja operado do alcance Distante até a cena terminar.</li></ul><p>Você pode marcar 1 Estresse para usar Gambiarra de novo na mesma cena.</p><p><em>Na ficha: \"Gambiarra\" é o uso da cena; \"Gambiarra Extra\" marca 1 Estresse para usar de novo; \"Rolar Impulso\" rola o d6 quando o item modificado for usado.</em></p>",
+      "actions": {
+        "Jury-Rig": {
+          "name": "Gambiarra"
+        },
+        "Jury-Rig Extra": {
+          "name": "Gambiarra Extra"
+        },
+        "Rolar Boost": {
+          "name": "Rolar Impulso"
+        }
+      }
+    },
+    "Marked Defensive Rig": {
+      "name": "Equipamento Defensivo Marcado",
+      "description": "<p>Um equipamento defensivo marcado por impactos antigos. Cada amassado conta uma história de alguém que não se feriu porque você estava na frente.</p>"
+    },
+    "Clean Exit": {
+      "name": "Saída Limpa",
+      "description": "<p>Gaste 3 Esperança quando você fosse ser descoberto, disparar um alarme ou ser alvo de um ataque. Você fica imediatamente <em>Escondido</em> e se move para um ponto dentro do alcance Próximo.</p><ul><li>Se isso foi disparado por um ataque, o ataque tem desvantagem.</li><li>Se foi disparado por uma descoberta ou alarme, ele é adiado até o seu próximo Holofote.</li></ul>",
+      "actions": {
+        "Clean Exit": {
+          "name": "Saída Limpa"
+        }
+      },
+      "effects": {
+        "Clean Exit": {
+          "name": "Saída Limpa",
+          "description": "<p>Escondido pelo Saída Limpa.</p>"
+        }
+      }
+    },
+    "Fire Superiority": {
+      "name": "Superioridade de Fogo",
+      "description": "<p>Gaste 3 Esperança depois de acertar um ataque com arma. Escolha uma:</p><ul><li>Some +2d6 à rolagem de dano.</li><li>Escolha outro alvo dentro do alcance contra quem a sua rolagem de ataque também teria sucesso.</li><li>O alvo marca 1 Estresse e fica temporariamente <em>Vulnerável</em>.</li></ul>",
+      "actions": {
+        "Fire Superiority": {
+          "name": "Superioridade de Fogo"
+        }
+      },
+      "effects": {
+        "Fire Superiority": {
+          "name": "Superioridade de Fogo",
+          "description": "<p>Marcou 1 Estresse e ficou temporariamente Vulnerável pela Superioridade de Fogo.</p>"
+        }
+      }
+    },
+    "Runner": {
+      "name": "Runner",
+      "description": "<p><strong>Rede, hacking, Acesso, guerra digital</strong><br>\"Todo sistema trancado é só uma porta esperando para aprender o medo.\"</p>\n<p><em>Jogue de Runner se você quiser…</em> Invadir redes, sequestrar drones, destravar sistemas, expor pontos fracos e transformar hacking em controle de campo de batalha.</p>\n<p><strong>Itens de Classe:</strong> Um cyberdeck ilegal com interface personalizada ou um fragmento de acesso roubado de um trabalho que deveria ter te matado.</p>\n<p><strong>Hacking e Brechas:</strong> Quando você tem sucesso em uma Rolagem de Interface para invadir um sistema conectado, você cria uma Brecha. Uma Brecha é uma abertura temporária em um sistema. Ao criar uma Brecha, gaste-a imediatamente para escolher um Hack: <em>Open/Lock</em>, <em>Loop/Spoof</em>, <em>Pull Data</em>, <em>Jam</em>, <em>Expose</em> ou <em>Command</em>.</p>\n<p><em>Nota: atributos sugeridos e equipamento variam por subclasse — veja a nota de \"Build Sugerida\" na subclasse escolhida.</em></p>",
+      "backgroundQuestions": [
+        "Quem te ensinou a invadir sistemas, e o que essa pessoa te avisou para nunca tocar?",
+        "Qual foi a primeira rede que você invadiu, e o que você encontrou lá?",
+        "Qual corporação, gangue ou sistema governamental ainda tem seu rastro enterrado em algum lugar dentro dele?"
+      ],
+      "connections": [
+        "Eu já apaguei uma evidência que poderia ter te arruinado. O que eu apaguei?",
+        "Você me viu me conectar a um sistema que quase me matou. O que você fez para me tirar de lá?",
+        "Eu sei um segredo seu por causa de algo que encontrei em uma rede. Você sabe que eu sei?"
+      ]
+    },
+    "Illegal Cyberdeck": {
+      "name": "Cyberdeck Ilegal",
+      "description": "<p>Um cyberdeck feito sob encomenda, sem licença, com manias e interface próprias. Descreva sua aparência, sua idade, e onde você o conseguiu.</p>"
+    },
+    "Fine Print": {
+      "name": "Letras Miúdas",
+      "description": "<p>Gaste 3 Esperança depois que você ou um aliado dentro do alcance Distante falhar numa Rolagem de Presença. Revele um segredo, suborno, ameaça ou interrupção perfeita. A falha vira um sucesso com Medo.</p><p>Se a rolagem que falhou foi feita diretamente contra uma criatura, ela também marca 1 Estresse.</p>",
+      "actions": {
+        "Fine Print": {
+          "name": "Letras Miúdas"
+        }
+      }
+    },
+    "Guardian Protocol": {
+      "name": "Protocolo Guardião",
+      "description": "<p>No fim do seu Holofote, escolha um aliado, veículo ou objetivo dentro do alcance Próximo como o seu <strong>Recurso Protegido</strong> até o seu próximo Holofote.</p><p>O primeiro ataque feito contra o seu Recurso Protegido antes do seu próximo Holofote tem desvantagem.</p><p>Se esse ataque errar, você pode se mover imediatamente dentro do alcance Muito Próximo do atacante ou do seu Recurso Protegido, e o atacante marca 1 Estresse.</p>",
+      "actions": {
+        "Guardian Protocol": {
+          "name": "Protocolo Guardião"
+        }
+      },
+      "effects": {
+        "Guarded Asset": {
+          "name": "Recurso Protegido",
+          "description": "<p>Protegido pelo Protocolo Guardião de um Warden: o primeiro ataque contra este alvo antes do próximo Holofote do Warden tem desvantagem. Se esse ataque errar, o Warden pode se mover dentro do alcance Muito Próximo do atacante ou do alvo, e o atacante marca 1 Estresse.</p>"
+        }
+      }
+    },
+    "Solo": {
+      "name": "Solo",
+      "description": "<p><strong>Assalto, armas, violência, domínio em combate</strong><br>\"Quando o tiroteio começa, eu viro o plano.\"</p>\n<p><em>Jogue de Solo se você quiser…</em> Vencer lutas com maestria em armas, agressividade tática, fogo de supressão, ataque pesado e pressão implacável.</p>\n<p>Solos são combatentes profissionais, armas de aluguel, especialistas em assalto e matadores de campo de batalha que sobrevivem acabando com as ameaças antes que virem problemas. São os mercenários chamados quando o trabalho fica barulhento.</p>\n<p><strong>Itens de Classe:</strong> Uma arma personalizada com nome ou uma plaqueta de identificação danificada da luta que fez a sua reputação.</p>\n<p><em>Nota: atributos sugeridos e equipamento variam por subclasse — veja a nota de \"Build Sugerida\" na subclasse escolhida.</em></p>",
+      "backgroundQuestions": [
+        "Em que arma você confia mais do que na maioria das pessoas?",
+        "Que batalha, contrato ou massacre tornou o seu nome conhecido?",
+        "Que tipo de luta ainda te assusta?"
+      ],
+      "connections": [
+        "Quem te puxou de volta quando você estava indo longe demais?",
+        "Em quem você confia para ficar do seu lado quando o trabalho fica barulhento?",
+        "Qual personagem te salvou depois de uma luta a que você não deveria ter sobrevivido?"
+      ]
+    },
+    "Original Body Part": {
+      "name": "Peça Original do Corpo",
+      "description": "<p>A peça original do seu corpo que foi substituída por cromo. Por que você ainda a guarda?</p>"
+    },
+    "Contact List": {
+      "name": "Lista de Contatos",
+      "description": "<p>Uma lista de contatos que vale mais do que o seu saldo bancário. Quem está no topo dela, e quem foi riscado?</p>"
+    },
+    "Trauma Kit": {
+      "name": "Kit de Trauma",
+      "description": "<p>Um kit de trauma cheio de fármacos e ferramentas ilegais. Metade do conteúdo não tem registro; a outra metade foi registrada no nome de outra pessoa.</p>"
+    },
+    "Named Custom Weapon": {
+      "name": "Arma Personalizada com Nome",
+      "description": "<p>Uma arma personalizada que tem nome. Descreva o nome, a história dela e o que você já fez com ela.</p>"
+    },
+    "Terms of Engagement": {
+      "name": "Termos de Engajamento",
+      "description": "<p>Quando você tem sucesso numa Rolagem de Presença ou carta de Influência contra uma criatura ou grupo, escolha uma:</p><ul><li><strong>Pressão:</strong> um alvo afetado marca 1 Estresse.</li><li><strong>Abertura:</strong> a próxima rolagem de ação feita por você ou um aliado contra um alvo afetado ganha +2.</li><li><strong>Tranquilização:</strong> você ou um aliado dentro do alcance Próximo limpa 1 Estresse.</li></ul><p>Num sucesso com Esperança, você pode marcar 1 Estresse para escolher uma opção adicional.</p><p><em>Na ficha: cada opção é uma ação que registra a escolha no chat; \"Opção Adicional\" marca o Estresse.</em></p>",
+      "actions": {
+        "Pressure": {
+          "name": "Pressão",
+          "description": "<p><strong>Pressão:</strong> um alvo afetado marca 1 Estresse.</p>"
+        },
+        "Opening": {
+          "name": "Abertura",
+          "description": "<p><strong>Abertura:</strong> a próxima rolagem de ação feita por você ou um aliado contra um alvo afetado ganha +2.</p>"
+        },
+        "Reassurance": {
+          "name": "Tranquilização",
+          "description": "<p><strong>Tranquilização:</strong> você ou um aliado dentro do alcance Próximo limpa 1 Estresse.</p>"
+        }
+      }
+    },
+    "Broken Machine": {
+      "name": "Máquina Quebrada",
+      "description": "<p>Uma máquina quebrada que você se recusa a parar de consertar. O que ela era, e por que importa tanto?</p>"
+    },
+    "Zero-Day": {
+      "name": "Dia Zero",
+      "description": "<p>Gaste 3 Esperança para criar imediatamente 2 Brechas.</p>",
+      "actions": {
+        "Zero-Day": {
+          "name": "Dia Zero"
+        }
+      }
+    },
+    "False Credentials": {
+      "name": "Credenciais Falsas",
+      "description": "<p>Um conjunto de credenciais falsas: crachá, identidade digital e histórico forjado. De quem é o rosto na foto, e quanto tempo até alguém conferir?</p>"
+    },
+    "Broker": {
+      "name": "Broker",
+      "description": "<p><strong>Influência, contatos, manipulação, reputação</strong><br>\"Todo mundo tem um preço. O truque é descobrir em que moeda eles aceitam.\"</p>\n<p><em>Jogue de Broker se você quiser…</em> Negociar contratos, manipular facções, comandar pressão social, construir redes de favores, usar a reputação como arma e vencer antes de as armas aparecerem.</p>\n<p>Brokers são negociadores, rostos públicos e predadores sociais que entendem que o poder raramente está nas mãos de quem segura a arma. Eles sabem quem paga, quem pode ser comprado e quem precisa desaparecer antes do próximo contrato.</p>\n<p><strong>Itens de Classe:</strong> Uma lista de contatos que vale mais do que o seu saldo bancário ou um chip de contrato com um grande e ilegal acordo corporativo.</p>\n<p><em>Nota: atributos sugeridos e equipamento variam por subclasse — veja a nota de \"Build Sugerida\" na subclasse escolhida.</em></p>",
+      "backgroundQuestions": [
+        "Quem te deu o seu primeiro contato de verdade?",
+        "Qual facção te deve algo, e qual facção te quer morto?",
+        "Que segredo você guarda porque vale mais sem ser vendido?"
+      ],
+      "connections": [
+        "Qual personagem você recrutou, resgatou, contratou ou comprou para tirar de uma encrenca?",
+        "Quem sabe quando você está mentindo?",
+        "Quem tem com você uma dívida de que nenhum dos dois fala?"
+      ]
+    },
+    "Not Today": {
+      "name": "Hoje Não",
+      "description": "<p>Gaste 3 Esperança quando um aliado dentro do alcance Próximo fosse marcar um ou mais Pontos de Vida. Mova-se para dentro do alcance Muito Próximo desse aliado e reduza a gravidade do dano em um limiar. Se isso evitar que ele marque qualquer Ponto de Vida, você também pode limpar 1 Estresse ou forçar o atacante a marcar 1 Estresse.</p>",
+      "actions": {
+        "Not Today": {
+          "name": "Hoje Não"
+        }
+      }
+    },
+    "Custom Toolkit": {
+      "name": "Kit de Ferramentas Personalizado",
+      "description": "<p>Um kit de ferramentas personalizado cheio de adaptadores ilegais e peças recuperadas. Metade das ferramentas você mesmo fabricou.</p>"
+    },
+    "Infiltrator": {
+      "name": "Infiltrator",
+      "description": "<p><strong>Fantasma, furtividade, assassinato, sabotagem</strong><br>\"A melhor entrada é aquela de que ninguém se lembra.\"</p>\n<p><em>Jogue de Infiltrator se você quiser…</em> Mover-se sem ser visto, passar pela segurança, desaparecer do perigo, sabotar operações e não deixar rastro.</p>\n<p>Outros mercenários sabem se esconder, se esgueirar ou passar pela segurança. Os Infiltrators transformam esses momentos numa profissão. Eles sentem o segundo exato em que um alvo fica vulnerável.</p>\n<p><strong>Itens de Classe:</strong> Um conjunto de credenciais falsas ou uma arma com silenciador de um trabalho que oficialmente nunca aconteceu.</p>\n<p><em>Nota: atributos sugeridos e equipamento variam por subclasse — veja a nota de \"Build Sugerida\" na subclasse escolhida.</em></p>",
+      "backgroundQuestions": [
+        "Qual foi o primeiro lugar que você invadiu e que deveria ter sido impossível?",
+        "Você virou Infiltrator por treinamento, coerção, desespero ou traição?",
+        "Qual alvo você não conseguiu eliminar, e quanto isso te custou?"
+      ],
+      "connections": [
+        "Qual personagem conhece uma das suas identidades falsas?",
+        "Em quem você confia para cobrir a sua saída?",
+        "Que segredo você descobriu sobre outro personagem e escolheu não usar?"
+      ]
+    },
+    "Integrated Chrome": {
+      "name": "Cromo Integrado",
+      "description": "<p>Seu cyberware está totalmente integrado ao seu sistema nervoso. Quando você termina um descanso, escolha Agilidade, Força ou Acuidade como o seu <strong>Atributo Calibrado</strong>.</p><p>Quando você faz uma rolagem de ação usando o Atributo Calibrado ou usa uma carta de Cromo, pode marcar 1 Estresse para rolar um d6 e somar o resultado à rolagem.</p><p>Além disso, quando você rola o Dado de Humanidade para resistir à Ciberpsicose, trate a sua Carga Cibernética como 1 menor, até o mínimo de 0.</p><p><em>Na ficha: \"Calibrar Atributo\" escolhe o Atributo Calibrado (mostrado no selo do cabeçalho); \"Cromo Integrado\" marca 1 Estresse e rola o d6. A Rolagem de Humanidade já desconta 1 da Carga.</em></p>",
+      "actions": {
+        "Integrated Chrome": {
+          "name": "Cromo Integrado"
+        }
+      },
+      "pick": {
+        "title": "Atributo Calibrado",
+        "prompt": "Escolha o Atributo Calibrado até o próximo descanso.",
+        "options": {
+          "agility": "Agilidade",
+          "strength": "Força",
+          "finesse": "Acuidade"
+        }
+      }
+    },
+    "Stolen Access Shard": {
+      "name": "Fragmento de Acesso Roubado",
+      "description": "<p>Um fragmento de acesso físico tirado de um trabalho que deveria ter te matado. Ele ainda abre alguma coisa — você só não tem certeza o quê, ou quem vai perceber quando isso acontecer.</p>"
+    },
+    "Patient Tag": {
+      "name": "Etiqueta de Paciente",
+      "description": "<p>A etiqueta de paciente manchada de sangue de alguém que você não conseguiu salvar. Você ainda lembra o nome.</p>"
+    },
+    "Warden": {
+      "name": "Warden",
+      "description": "<p><strong>Égide, proteção, armadura, interceptação</strong><br>\"Se eles querem a Equipe, vão ter que passar por mim.\"</p>\n<p><em>Jogue de Warden se você quiser…</em> Proteger aliados, absorver dano, controlar o espaço, usar armadura pesada, interceptar ataques, sobreviver a pressões impossíveis e se tornar a coisa mais difícil de mover no campo de batalha.</p>\n<p>Wardens são guarda-costas, quebradores de motim e protetores profissionais que sobrevivem se tornando o problema mais difícil da sala enquanto ficam entre a Equipe e o que quer que a queira morta.</p>\n<p><strong>Itens de Classe:</strong> Um equipamento defensivo marcado por impactos antigos ou uma ficha de contrato de alguém que você jurou proteger.</p>\n<p><em>Nota: atributos sugeridos e equipamento variam por subclasse — veja a nota de \"Build Sugerida\" na subclasse escolhida.</em></p>",
+      "backgroundQuestions": [
+        "Quem te ensinou a se colocar entre o perigo e outra pessoa?",
+        "Quem você não conseguiu proteger?",
+        "Que parte da sua armadura, escudo ou equipamento defensivo mais salvou a sua vida?"
+      ],
+      "connections": [
+        "Qual personagem você já carregou pessoalmente para fora do perigo?",
+        "Qual personagem já te protegeu quando você não conseguia se proteger?",
+        "Quem sabe o nome de alguém que você não conseguiu salvar?"
+      ]
+    },
+    "Implant Maintenance Kit": {
+      "name": "Kit de Manutenção de Implante",
+      "description": "<p>Um kit de manutenção para o seu implante mais importante: chaves de precisão, gel condutor, peças de reposição e um manual cheio de anotações suas.</p>"
+    },
+    "Piece of Salvage": {
+      "name": "Pedaço de Sucata",
+      "description": "<p>Um pedaço de sucata do lugar que deveria ter te matado. Você o carrega para lembrar que saiu de lá.</p>"
+    },
+    "Contract Token": {
+      "name": "Ficha de Contrato",
+      "description": "<p>Uma ficha de contrato de alguém que você jurou proteger. O contrato pode ter acabado; a promessa, não.</p>"
+    },
+    "Trauma Doc": {
+      "name": "Trauma Doc",
+      "description": "<p><strong>Medtec, medicina, cirurgia, sobrevivência</strong><br>\"A morte é só uma falha de sistema com uma janela de reparo estreita.\"</p>\n<p><em>Jogue de Trauma Doc se você quiser…</em> Manter a Equipe viva, fazer cirurgia no campo de batalha, estabilizar cyberware, usar drones médicos, reanimar aliados e transformar ferimentos num problema que você sabe resolver.</p>\n<p>Trauma Docs são médicos de campo, cirurgiões de clínica clandestina e milagreiros do cyberware que sabem manter as pessoas vivas quando o mundo já decidiu que elas deveriam estar mortas.</p>\n<p><strong>Itens de Classe:</strong> Um kit de trauma cheio de fármacos e ferramentas ilegais ou a etiqueta de paciente manchada de sangue de alguém que você não conseguiu salvar.</p>\n<p><em>Nota: atributos sugeridos e equipamento variam por subclasse — veja a nota de \"Build Sugerida\" na subclasse escolhida.</em></p>",
+      "backgroundQuestions": [
+        "Quem foi a primeira pessoa que você não conseguiu salvar?",
+        "Que procedimento você fez que deveria ter sido impossível?",
+        "Que droga, implante ou técnica ilegal você conhece bem demais?"
+      ],
+      "connections": [
+        "Quem se recusa a seguir as suas instruções médicas?",
+        "Qual personagem sabe o que você faz quando não há suprimentos para todo mundo?",
+        "Qual personagem você remendou depois de um trabalho sobre o qual ele ainda não fala?"
+      ]
+    },
+    "Kill Chain": {
+      "name": "Cadeia de Abate",
+      "description": "<p>No início de cada cena, o seu <strong>Dado de Cadeia de Abate</strong> é um d4. Quando você acerta um ataque com arma ou carta de Assalto que causa dano, role o Dado de Cadeia de Abate e some o resultado à rolagem de dano.</p><p>Se o ataque causar dano Maior ou Severo, aumente o Dado de Cadeia de Abate em um passo, de d4 até d20.</p><p>Se você falhar numa rolagem de ataque, fizer um descanso ou a cena terminar, o Dado de Cadeia de Abate volta a ser d4.</p><p><em>Na ficha: o dado ao lado desta feature mostra o tamanho atual e o último resultado. Use as ações para rolar, aumentar ou resetar; no fim da cena ele volta a d4 sozinho.</em></p>",
+      "actions": {
+        "Rolar Kill Chain Die": {
+          "name": "Rolar Dado de Cadeia de Abate"
+        },
+        "Aumentar Kill Chain Die": {
+          "name": "Aumentar Dado de Cadeia de Abate"
+        },
+        "Resetar Kill Chain Die": {
+          "name": "Resetar Dado de Cadeia de Abate"
+        }
+      }
+    }
+  }
+}

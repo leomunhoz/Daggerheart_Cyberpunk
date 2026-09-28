@@ -1,0 +1,451 @@
+{
+  "label": "Edgeheart: Consumíveis",
+  "mapping": {
+    "description": "system.description",
+    "actions": {
+      "path": "system.actions",
+      "converter": "structured",
+      "container": "keyed",
+      "keys": [
+        "name"
+      ],
+      "mapping": {
+        "name": "name",
+        "description": "description"
+      }
+    },
+    "attack": {
+      "path": "system.attack",
+      "converter": "structured",
+      "cardinality": "one",
+      "mapping": {
+        "name": "name",
+        "description": "description"
+      }
+    },
+    "backgroundQuestions": {
+      "path": "system.backgroundQuestions",
+      "converter": "edgeheartList"
+    },
+    "connections": {
+      "path": "system.connections",
+      "converter": "edgeheartList"
+    },
+    "pick": {
+      "path": "flags.edgeheart-cyberpunk.pick",
+      "converter": "structured",
+      "cardinality": "one",
+      "mapping": {
+        "title": "title",
+        "prompt": "prompt",
+        "options": {
+          "path": "options",
+          "converter": "edgeheartLabels"
+        }
+      }
+    },
+    "vehicleName": "flags.edgeheart-cyberpunk.vehicle.baseName",
+    "eidolonParts": {
+      "path": "flags.edgeheart-cyberpunk.eidolon.parts",
+      "converter": "document",
+      "documentType": "Item",
+      "cardinality": "many",
+      "mapping": {
+        "description": "system.description",
+        "actions": {
+          "path": "system.actions",
+          "converter": "structured",
+          "container": "keyed",
+          "keys": [
+            "name"
+          ],
+          "mapping": {
+            "name": "name",
+            "description": "description"
+          }
+        },
+        "attack": {
+          "path": "system.attack",
+          "converter": "structured",
+          "cardinality": "one",
+          "mapping": {
+            "name": "name",
+            "description": "description"
+          }
+        }
+      }
+    }
+  },
+  "entries": {
+    "Smart Grenade": {
+      "name": "Granada Inteligente",
+      "description": "<p>Escolha um ponto dentro do alcance Distante. Todos os adversários dentro do alcance Muito Próximo desse ponto fazem uma Rolagem de Reação (14). Em uma falha, marcam 1 Estresse e ficam temporariamente Vulneráveis.</p>"
+    },
+    "Adrenal Inhaler": {
+      "name": "Inalador Adrenal",
+      "description": "<p>Ganhe vantagem na sua próxima rolagem de ação. Depois que a rolagem se resolver, marque 1 Estresse.</p>",
+      "actions": {
+        "Adrenal Inhaler": {
+          "name": "Inalador Adrenal"
+        }
+      }
+    },
+    "Breach Gel": {
+      "name": "Gel de Brecha",
+      "description": "<p>Use numa porta, parede, barricada, fechadura ou painel de veículo. Depois de alguns momentos, ele abre, enfraquece ou cria um ponto de entrada.</p>",
+      "actions": {
+        "Breach Gel": {
+          "name": "Gel de Brecha"
+        }
+      }
+    },
+    "Focus Ampoule": {
+      "name": "Ampola de Foco",
+      "description": "<p>Some 1d6 à sua próxima Rolagem de Conhecimento, Instinto ou Presença. Depois da rolagem, marque 1 Estresse.</p>",
+      "actions": {
+        "Focus Ampoule": {
+          "name": "Ampola de Foco"
+        }
+      }
+    },
+    "Cryo Pack": {
+      "name": "Pacote Criogênico",
+      "description": "<p>Quando você ou um aliado dentro do alcance Corpo a Corpo fosse sofrer dano de fogo, calor, ácido ou explosão, reduza a gravidade em um limiar.</p>",
+      "actions": {
+        "Cryo Pack": {
+          "name": "Pacote Criogênico"
+        }
+      }
+    },
+    "Minor Stamina Injector": {
+      "name": "Injetor de Vigor Menor",
+      "description": "<p>Limpe 1d4 de Estresse.</p>",
+      "actions": {
+        "Minor Stamina Injector": {
+          "name": "Injetor de Vigor Menor"
+        }
+      }
+    },
+    "Memory Wipe Tab": {
+      "name": "Comprimido Apaga-Memória",
+      "description": "<p>Use depois de uma conversa curta com um PNJ menor. Ele esquece um pequeno detalhe da interação, a menos que isso obviamente o coloque em perigo.</p>",
+      "actions": {
+        "Memory Wipe Tab": {
+          "name": "Comprimido Apaga-Memória"
+        }
+      }
+    },
+    "Foamcrete Canister": {
+      "name": "Lata de Espumacreto",
+      "description": "<p>Crie cobertura temporária, vede uma porta, tampe uma brecha ou bloqueie uma passagem pequena dentro do alcance Próximo.</p>",
+      "actions": {
+        "Foamcrete Canister": {
+          "name": "Lata de Espumacreto"
+        }
+      }
+    },
+    "Patch Plate": {
+      "name": "Placa de Remendo",
+      "description": "<p>Limpe imediatamente 1 Espaço de Armadura de você, de um aliado dentro do alcance Corpo a Corpo ou de um veículo Danificado.</p>",
+      "actions": {
+        "Patch Plate": {
+          "name": "Placa de Remendo"
+        }
+      }
+    },
+    "Combat Stim": {
+      "name": "Estimulante de Combate",
+      "description": "<p>Some 1d6 à sua próxima Rolagem de Agilidade, Força ou Acuidade. Depois da rolagem, marque 1 Estresse.</p>",
+      "actions": {
+        "Combat Stim": {
+          "name": "Estimulante de Combate"
+        }
+      }
+    },
+    "Decoy Transponder": {
+      "name": "Transponder Isca",
+      "description": "<p>Até o seu próximo descanso, um veículo, drone, dispositivo ou criatura carregando este transponder aparece com uma identidade falsa para scanners simples.</p>",
+      "actions": {
+        "Decoy Transponder": {
+          "name": "Transponder Isca"
+        }
+      }
+    },
+    "Sonic Spike": {
+      "name": "Pico Sônico",
+      "description": "<p>Todas as criaturas dentro do alcance Muito Próximo do ponto escolhido marcam 1 Estresse, e vidros frágeis, sensores ou eletrônicos expostos quebram.</p>",
+      "actions": {
+        "Sonic Spike": {
+          "name": "Pico Sônico"
+        }
+      }
+    },
+    "Redline Dose": {
+      "name": "Dose Linha Vermelha",
+      "description": "<p>Some +1 de Proficiência à sua próxima rolagem de dano. Depois que o ataque se resolver, role o seu Dado de Humanidade. Se o resultado for menor que a sua Carga Cibernética, marque 1 Estresse.</p>",
+      "actions": {
+        "Redline Dose": {
+          "name": "Dose Linha Vermelha"
+        }
+      },
+      "effects": {
+        "Redline Dose": {
+          "name": "Dose Linha Vermelha"
+        }
+      }
+    },
+    "Major Health Patch": {
+      "name": "Adesivo de Saúde Maior",
+      "description": "<p>Limpe 1 Ponto de Vida. Depois, marque 1 Estresse.</p>",
+      "actions": {
+        "Major Health Patch": {
+          "name": "Adesivo de Saúde Maior"
+        }
+      }
+    },
+    "Adrenal Plug": {
+      "name": "Plugue Adrenal",
+      "description": "<p>Quando você fosse marcar o seu último Ponto de Vida, use isto para continuar consciente até a cena terminar. Depois, marque 2 de Estresse.</p>",
+      "actions": {
+        "Adrenal Plug": {
+          "name": "Plugue Adrenal"
+        }
+      }
+    },
+    "Black ICE Shard": {
+      "name": "Fragmento de GELO Negro",
+      "description": "<p>Gaste antes de uma Rolagem de Interface. Em um sucesso, crie uma Brecha adicional. Numa rolagem com Medo, marque 1 Estresse.</p>",
+      "actions": {
+        "Black ICE Shard": {
+          "name": "Fragmento de GELO Negro"
+        }
+      }
+    },
+    "Nanowire Saw": {
+      "name": "Serra de Nanofio",
+      "description": "<p>Corte uma fechadura, cabo, amarra, duto, cerca ou barreira leve comum depois de alguns momentos de trabalho.</p>",
+      "actions": {
+        "Nanowire Saw": {
+          "name": "Serra de Nanofio"
+        }
+      }
+    },
+    "Flash Grenade": {
+      "name": "Granada de Clarão",
+      "description": "<p>Todos os alvos dentro do alcance Próximo fazem uma Rolagem de Reação (14). Em uma falha, ficam temporariamente Vulneráveis.</p>"
+    },
+    "Breach Spike": {
+      "name": "Espeto de Brecha",
+      "description": "<p>Use antes de uma Rolagem de Interface contra um sistema conectado simples. Em um sucesso, crie uma Brecha adicional.</p>",
+      "actions": {
+        "Breach Spike": {
+          "name": "Espeto de Brecha"
+        }
+      }
+    },
+    "Hard Reset Ampoule": {
+      "name": "Ampola de Reinício Forçado",
+      "description": "<p>Limpe uma condição física temporária de você ou de uma criatura dentro do alcance Corpo a Corpo. O alvo fica temporariamente Vulnerável até a próxima ação dele.</p>",
+      "actions": {
+        "Hard Reset Ampoule": {
+          "name": "Ampola de Reinício Forçado"
+        }
+      },
+      "effects": {
+        "Hard Reset Ampoule": {
+          "name": "Ampola de Reinício Forçado"
+        }
+      }
+    },
+    "Shock Leash": {
+      "name": "Coleira de Choque",
+      "description": "<p>Faça um ataque contra um alvo dentro do alcance Muito Próximo. Em um sucesso, não cause dano; o alvo fica temporariamente Imobilizado.</p>",
+      "actions": {
+        "Shock Leash": {
+          "name": "Coleira de Choque"
+        }
+      },
+      "effects": {
+        "Shock Leash": {
+          "name": "Coleira de Choque"
+        }
+      }
+    },
+    "Overclock Round": {
+      "name": "Munição de Overclock",
+      "description": "<p>O próximo ataque bem-sucedido com arma de distância causa +1d8 de dano tecno. Numa rolagem com Medo, marque 1 Estresse.</p>",
+      "actions": {
+        "Overclock Round": {
+          "name": "Munição de Overclock"
+        }
+      }
+    },
+    "Signal Flare": {
+      "name": "Sinalizador",
+      "description": "<p>Revele a sua localização a todos os aliados na cena e tire a condição Escondido das criaturas dentro do alcance Próximo do sinalizador.</p>",
+      "actions": {
+        "Signal Flare": {
+          "name": "Sinalizador"
+        }
+      }
+    },
+    "Blackout Capsule": {
+      "name": "Cápsula de Apagão",
+      "description": "<p>Desative luzes, câmeras simples, sensores baratos e telas desprotegidas dentro do alcance Próximo até o seu próximo Holofote.</p>",
+      "actions": {
+        "Blackout Capsule": {
+          "name": "Cápsula de Apagão"
+        }
+      }
+    },
+    "Smoke Canister": {
+      "name": "Lata de Fumaça",
+      "description": "<p>Encha de fumaça uma área dentro do alcance Próximo. Criaturas dentro dela podem ficar Escondidas se a ficção permitir.</p>",
+      "actions": {
+        "Smoke Canister": {
+          "name": "Lata de Fumaça"
+        }
+      },
+      "effects": {
+        "Smoke Canister": {
+          "name": "Lata de Fumaça"
+        }
+      }
+    },
+    "Shock Mine": {
+      "name": "Mina de Choque",
+      "description": "<p>Coloque numa superfície. A próxima criatura que se mover dentro do alcance Corpo a Corpo dela marca 1 Estresse e fica temporariamente Vulnerável.</p>",
+      "actions": {
+        "Shock Mine": {
+          "name": "Mina de Choque"
+        }
+      },
+      "effects": {
+        "Shock Mine": {
+          "name": "Mina de Choque"
+        }
+      }
+    },
+    "Ghost Tag": {
+      "name": "Etiqueta Fantasma",
+      "description": "<p>Use ao entrar numa área restrita, vigiada ou guardada. Até o seu próximo Holofote, câmeras e sensores básicos te tratam como autorizado ou inofensivo.</p>",
+      "actions": {
+        "Ghost Tag": {
+          "name": "Etiqueta Fantasma"
+        }
+      }
+    },
+    "Smart Ammo": {
+      "name": "Munição Inteligente",
+      "description": "<p>O próximo ataque bem-sucedido com arma de fogo pode acertar outro alvo dentro do alcance Muito Próximo, causando metade do dano.</p>",
+      "actions": {
+        "Smart Ammo": {
+          "name": "Munição Inteligente"
+        }
+      }
+    },
+    "Hardlight Patch": {
+      "name": "Remendo de Luz Sólida",
+      "description": "<p>Na próxima vez que você marcar um Espaço de Armadura antes do próximo descanso, reduza a gravidade em um limiar adicional.</p>",
+      "actions": {
+        "Hardlight Patch": {
+          "name": "Remendo de Luz Sólida"
+        }
+      }
+    },
+    "Med-Gel Slab": {
+      "name": "Placa de Medgel",
+      "description": "<p>Durante um descanso, uma criatura limpa 1 PV ou 2 de Estresse.</p>"
+    },
+    "Panic Button": {
+      "name": "Botão de Pânico",
+      "description": "<p>Use quando você fosse ser capturado, encurralado ou separado. Um alarme, sinal para aliados, sinalizador de emergência ou protocolo de fuga planejado é ativado imediatamente.</p>",
+      "actions": {
+        "Panic Button": {
+          "name": "Botão de Pânico"
+        }
+      }
+    },
+    "Prototype Battery": {
+      "name": "Bateria Protótipo",
+      "description": "<p>Recarregue um item de Loot gasto que funcione por energia, sinal, drones, hardlight, scanners ou eletrônicos, permitindo usá-lo uma vez a mais antes do seu próximo descanso.</p>",
+      "actions": {
+        "Prototype Battery": {
+          "name": "Bateria Protótipo"
+        }
+      }
+    },
+    "EMP Charge": {
+      "name": "Carga PEM",
+      "description": "<p>Faça uma Rolagem de Interface contra um dispositivo, drone, veículo ou alvo ligado a cyberware dentro do alcance Próximo. Em um sucesso, ele marca 1 Estresse ou fica desativado por um instante.</p>"
+    },
+    "Door Eater": {
+      "name": "Come-Portas",
+      "description": "<p>Aplique esta carga química numa porta, parede, barricada, painel de veículo ou fechadura. Depois de alguns momentos, ela abre uma passagem do tamanho de uma pessoa ou destrói a fechadura.</p>",
+      "actions": {
+        "Door Eater": {
+          "name": "Come-Portas"
+        }
+      }
+    },
+    "Anti-Hack Token": {
+      "name": "Ficha Anti-Hack",
+      "description": "<p>Use quando um rastreio, hack, escaneamento ou sinal hostil fosse afetar você ou o seu equipamento. Role um d6. Em 4+, o efeito falha.</p>",
+      "actions": {
+        "Anti-Hack Token": {
+          "name": "Ficha Anti-Hack"
+        }
+      }
+    },
+    "Minor Health Patch": {
+      "name": "Adesivo de Saúde Menor",
+      "description": "<p>Limpe 1d4 Pontos de Vida.</p>",
+      "actions": {
+        "Minor Health Patch": {
+          "name": "Adesivo de Saúde Menor"
+        }
+      }
+    },
+    "Cloak Mist": {
+      "name": "Névoa Camuflante",
+      "description": "<p>Fique Escondido até se mover para um lugar visível, atacar ou o mestre gastar 1 Medo para revelar a sua posição.</p>",
+      "actions": {
+        "Cloak Mist": {
+          "name": "Névoa Camuflante"
+        }
+      },
+      "effects": {
+        "Cloak Mist": {
+          "name": "Névoa Camuflante"
+        }
+      }
+    },
+    "Anti-Toxin Cartridge": {
+      "name": "Cartucho Antitoxina",
+      "description": "<p>Limpe imediatamente envenenamento, contaminação, exposição química ou condição temporária parecida.</p>",
+      "actions": {
+        "Anti-Toxin Cartridge": {
+          "name": "Cartucho Antitoxina"
+        }
+      }
+    },
+    "Trauma Foam": {
+      "name": "Espuma de Trauma",
+      "description": "<p>Quando uma criatura dentro do alcance Corpo a Corpo marca PV, use isto para fazê-la limpar 1 Estresse e parar de sangrar, queimar ou vazar.</p>",
+      "actions": {
+        "Trauma Foam": {
+          "name": "Espuma de Trauma"
+        }
+      }
+    },
+    "Kinetic Booster": {
+      "name": "Reforço Cinético",
+      "description": "<p>Mova-se dentro do alcance Distante ignorando terreno difícil durante esse movimento. Depois, marque 1 Estresse.</p>",
+      "actions": {
+        "Kinetic Booster": {
+          "name": "Reforço Cinético"
+        }
+      }
+    }
+  }
+}

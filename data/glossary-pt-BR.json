@@ -9,6 +9,12 @@
     "Gangues (Neon Claw, Tiger Choir, Blood Saints, Chrome Maw)": "mantém o nome",
     "Codinomes": "traduzidos (Black Hand → Mão Negra, The Raven → O Corvo)"
   },
+  "keep": ["Norai Hermes-Arrow", "Tyfar Bulldog", "Vagras Atlas-Breaker", "Ronin Wraith-9", "AVA Apollo-Lancet", "Sitil Cordon-6", "Exota Horizon-Mirage", "Korvax Athena-Pallas", "Ronin Ares-Tyrant", "Hephaestus Forge-Saint"],
+  "legacyPt": {
+    "Córtex Black ICE": "Black ICE Cortex",
+    "Coprocessador Blackwall": "Blackwall Co-Processor",
+    "Rede de Fixers": "Fixer Network"
+  },
   "sections": {
     "competencies": {
       "title": "Competências",
@@ -33,7 +39,60 @@
         "Frame": "Estrutura", "Damaged": "Danificado", "Disabled": "Inutilizado", "Creds": "Creds", "Stack": "Pilha", "Case": "Maleta", "Vault": "Cofre",
         "New Dark Age": "Nova Era das Trevas", "Old Net": "Velha Rede", "Black ICE": "GELO Negro", "Edgerunner": "Mercenário",
         "Vehicle Attack": "Ataque do Veículo", "Maneuver": "Manobrar", "Keep It Running": "Manter Funcionando", "Take Serious Damage": "Sofrer Dano Sério", "Repair": "Consertar",
-        "Swift": "Veloz", "Heavy": "Pesado", "Armored": "Blindado", "Soaring": "Voador", "Cargo": "Cargueiro", "Off-Road": "Fora de Estrada", "Connected": "Conectado"
+        "Swift": "Veloz", "Heavy": "Pesado", "Armored": "Blindado", "Soaring": "Voador", "Cargo": "Cargueiro", "Off-Road": "Fora de Estrada", "Connected": "Conectado",
+        "Setup": "Preparação", "Takedown": "Neutralização", "Breaches": "Brechas"
+      }
+    },
+    "features": {
+      "title": "Features de armas, armaduras, itens e cartas",
+      "entries": {
+        "Adaptive": "Adaptável", "Adaptive Shell": "Casca Adaptável", "Adjust Appearance": "Ajustar Aparência", "Agile Frame": "Estrutura Ágil", "Aim Down": "Mirar",
+        "Air Superiority": "Superioridade Aérea", "Anchored": "Ancorado", "Arc Barrage": "Barragem de Arco", "Arc-Deflection": "Deflexão de Arco", "Assault Frame": "Estrutura de Assalto",
+        "Attack Pattern": "Padrão de Ataque", "Auto Aim": "Mira Automática", "Barrier": "Barreira", "Blacksite Gate": "Portão do Local Secreto", "Blindside": "Ataque pelas Costas",
+        "Blink Cut": "Corte Relâmpago", "Boost": "Impulso", "Breach Path": "Caminho da Brecha", "Ceramite": "Ceramita", "Chaffstorm Screen": "Cortina de Chaff",
+        "Chain Signal": "Sinal em Cadeia", "Claimed": "Reivindicado", "Clean Cut": "Corte Limpo", "Collapse Point": "Ponto de Colapso", "Controlled Fire": "Fogo Controlado",
+        "Counterweight": "Contrapeso", "Cover Brace": "Apoio na Cobertura", "Cover Line": "Linha de Cobertura", "Crater": "Cratera", "Crowd Breaker": "Dispersor de Multidão",
+        "Cryofoam Flood": "Inundação de Crioespuma", "Deadly": "Mortal", "Defense Pattern": "Padrão de Defesa", "Deploy Construct": "Implantar Construto", "Difficult": "Difícil",
+        "Direct Message": "Mensagem Direta", "Disable": "Desativar", "Disrupt": "Interromper", "Double Barrel": "Cano Duplo", "Dragline": "Linha de Arrasto", "Draw": "Sacar",
+        "Emergency Door": "Porta de Emergência", "Emergency Halo": "Halo de Emergência", "Executive Defense": "Defesa Executiva", "Feedback": "Retroalimentação", "Fire-Wall": "Muro de Fogo",
+        "Firebomb": "Bomba Incendiária", "First Impression": "Primeira Impressão", "Flexible": "Flexível", "Flowing Cut": "Corte Fluido", "Fortified": "Fortificado",
+        "Ghosted": "Sumido", "Gravity Clamp": "Garra Gravitacional", "Grounded": "Aterrado", "Guard": "Guarda", "Guarded Asset": "Recurso Protegido", "Guardian Frame": "Estrutura Guardiã",
+        "Guardian Swarm": "Enxame Guardião", "Hard Cover": "Cobertura Sólida", "Hard-Light Decoy": "Isca de Luz Sólida", "Harrier": "Perseguidor", "Hazard": "Perigo",
+        "Hazard Mark": "Marca de Perigo", "Heavy Round": "Munição Pesada", "Hook": "Gancho", "Hooked": "Fisgado", "Impale": "Empalar", "Impenetrable": "Impenetrável", "Implode": "Implodir",
+        "Jolt": "Choque", "Junkshot": "Tiro de Sucata", "Knockback": "Repulsão", "Lane Splitter": "Divisor de Faixa", "Lash Field": "Campo de Açoite",
+        "Legendary Cyberpunk": "Cyberpunk Lendário", "Life Support": "Suporte de Vida", "Long": "Longo", "Marked": "Marcado", "Memory Delve": "Mergulho na Memória",
+        "Memory Scrub": "Limpeza de Memória", "Mind Spike": "Pico Mental", "Mono-Blade": "Monolâmina", "Name Carries Weight": "Nome de Peso", "Net": "Rede",
+        "Neural Crash": "Colapso Neural", "Neural Loadshare": "Carga Neural Compartilhada", "Neural Lullaby": "Canção de Ninar Neural", "Open Lane": "Faixa Aberta", "Opening": "Abertura",
+        "Overheat": "Superaquecer", "Pain Loop": "Ciclo de Dor", "Paired": "Pareado", "Patch": "Remendo", "Perfect Cut": "Corte Perfeito", "Permanent Weakpoint": "Ponto Fraco Permanente",
+        "Phase Breach": "Brecha de Fase", "Power Push": "Empurrão Potente", "Pressure": "Pressão", "Protective": "Protetor", "Pursuit Lock": "Trava de Perseguição", "Quickdraw": "Saque Rápido",
+        "Rail Punch": "Soco de Trilho", "Ram": "Aríete", "Razor Swarm": "Enxame Navalha", "Reach Arc": "Arco de Alcance", "Reaction Shot": "Tiro de Reação", "Reactive Plating": "Blindagem Reativa",
+        "Rebound": "Ricochete", "Recognizable": "Reconhecível", "Red Static": "Estática Vermelha", "Reinforced": "Reforçado", "Reliable": "Confiável", "Repudiate": "Repudiar",
+        "Repulsion Circle": "Círculo de Repulsão", "Resonance": "Ressonância", "Return Flight": "Voo de Retorno", "Reveal": "Revelar", "Rewire": "Religar", "Room Clearer": "Limpa-Salas",
+        "Routine Lock": "Trava de Rotina", "Scatter": "Dispersão", "Scramble": "Embaralhar", "Sealed": "Selado", "Sedative": "Sedativo", "Self Correcting": "Autocorretivo",
+        "Serrated": "Serrilhado", "Sever": "Decepar", "Shift": "Deslocar", "Shifting": "Mutável", "Shock Gauntlet": "Manopla de Choque", "Shock Pulse": "Pulso de Choque",
+        "Signal Dead": "Sinal Morto", "Silent Kill": "Morte Silenciosa", "Smart Lock": "Trava Inteligente", "Smart Rifle": "Fuzil Inteligente", "Smoke": "Fumaça", "Smoke Field": "Campo de Fumaça",
+        "Spike Printer": "Impressora de Espetos", "Spotlight Altar": "Altar do Holofote", "Spotter": "Observador", "Spray": "Rajada", "Stealth": "Furtividade", "Suppress": "Suprimir",
+        "System Bite": "Mordida no Sistema", "Target Assist": "Assistência de Mira", "Target Splitter": "Divisor de Alvos", "Techno Immunity": "Imunidade Tecno", "Tether Clamp": "Grampo de Amarra",
+        "Time Dilation Field": "Campo de Dilatação Temporal", "Tool": "Ferramenta", "Touch Arc": "Arco de Toque", "Utility Arm": "Braço Utilitário", "Vector Fan Grid": "Grade de Propulsores Vetoriais",
+        "Very Heavy": "Muito Pesado", "Walking Barricade": "Barricada Ambulante", "Wild Flame": "Chama Selvagem",
+        "Beloved": "Adorado", "Famous": "Famoso", "Feared": "Temido"
+      }
+    },
+    "adversaryDetails": {
+      "title": "Ataques e experiências dos adversários",
+      "entries": {
+        "Street Blade": "Lâmina de Rua", "Security Rifle": "Fuzil de Segurança", "Chrome Fists": "Punhos de Cromo", "Shock Drone": "Drone de Choque", "Smart Pistol": "Pistola Inteligente",
+        "Tactical Rifles": "Fuzis Táticos", "Bone Saw": "Serra de Ossos", "Long Rifle": "Fuzil Longo", "Static Spike": "Pico de Estática", "Command Rifle": "Fuzil de Comando",
+        "Mixed Loadout": "Arsenal Misto", "Integrated Weapon": "Arma Integrada", "Forbidden Signal": "Sinal Proibido", "Memory Claws": "Garras de Memória", "Rotary Cannon": "Canhão Rotativo",
+        "Rail Spear": "Lança de Trilho", "Black Signal": "Sinal Negro", "Executive Override": "Anulação Executiva", "Integrated Arsenal": "Arsenal Integrado", "Black Arsenal": "Arsenal Negro",
+        "Integrated War Suite": "Suíte de Guerra Integrada",
+        "Street Violence": "Violência de Rua", "Corporate Procedure": "Procedimento Corporativo", "Intimidating Chrome": "Cromo Intimidador", "Street Ambush": "Emboscada de Rua",
+        "Drone Operations": "Operação de Drones", "First Contract": "Primeiro Contrato", "Duelist Reputation": "Reputação de Duelista", "Interrogation": "Interrogatório",
+        "Breach Formation": "Formação de Invasão", "Illegal Surgery": "Cirurgia Ilegal", "Kill Lane": "Corredor de Abate", "Sensor Corruption": "Corrupção de Sensores",
+        "Tactical Command": "Comando Tático", "Crew Tactics": "Táticas de Equipe", "Eidolon Warfare": "Guerra de Eidolons", "Blackwall Theology": "Teologia da Muralha Negra",
+        "Impossible Presence": "Presença Impossível", "Heavy Weapons": "Armas Pesadas", "Perfect Kill Angle": "Ângulo de Abate Perfeito", "Deus-Class Warfare": "Guerra Classe-Deus",
+        "Dead Internet": "Internet Morta", "Corporate Sovereignty": "Soberania Corporativa", "Living Weapon": "Arma Viva", "Legendary Mercenary": "Mercenário Lendário",
+        "Legendary Eidolon": "Eidolon Lendário", "Adversaries": "Adversários"
       }
     },
     "classFeatures": {

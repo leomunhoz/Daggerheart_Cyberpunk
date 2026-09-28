@@ -1,0 +1,641 @@
+{
+  "label": "Edgeheart: Ambientes",
+  "mapping": {
+    "description": "system.description",
+    "motivesAndTactics": "system.motivesAndTactics",
+    "impulses": "system.impulses",
+    "attack": {
+      "path": "system.attack",
+      "converter": "structured",
+      "cardinality": "one",
+      "mapping": {
+        "name": "name",
+        "description": "description"
+      }
+    },
+    "experiences": {
+      "path": "system.experiences",
+      "converter": "structured",
+      "container": "keyed",
+      "keys": [
+        "name"
+      ],
+      "mapping": {
+        "name": "name",
+        "description": "description"
+      }
+    },
+    "potentialAdversaries": {
+      "path": "system.potentialAdversaries",
+      "converter": "structured",
+      "container": "keyed",
+      "keys": [
+        "label"
+      ],
+      "mapping": {
+        "label": "label"
+      }
+    },
+    "items": {
+      "path": "items",
+      "converter": "document",
+      "documentType": "Item",
+      "cardinality": "many",
+      "mapping": {
+        "description": "system.description",
+        "actions": {
+          "path": "system.actions",
+          "converter": "structured",
+          "container": "keyed",
+          "keys": [
+            "name"
+          ],
+          "mapping": {
+            "name": "name",
+            "description": "description"
+          }
+        },
+        "attack": {
+          "path": "system.attack",
+          "converter": "structured",
+          "cardinality": "one",
+          "mapping": {
+            "name": "name",
+            "description": "description"
+          }
+        },
+        "backgroundQuestions": {
+          "path": "system.backgroundQuestions",
+          "converter": "edgeheartList"
+        },
+        "connections": {
+          "path": "system.connections",
+          "converter": "edgeheartList"
+        },
+        "pick": {
+          "path": "flags.edgeheart-cyberpunk.pick",
+          "converter": "structured",
+          "cardinality": "one",
+          "mapping": {
+            "title": "title",
+            "prompt": "prompt",
+            "options": {
+              "path": "options",
+              "converter": "edgeheartLabels"
+            }
+          }
+        },
+        "vehicleName": "flags.edgeheart-cyberpunk.vehicle.baseName",
+        "eidolonParts": {
+          "path": "flags.edgeheart-cyberpunk.eidolon.parts",
+          "converter": "document",
+          "documentType": "Item",
+          "cardinality": "many",
+          "mapping": {
+            "description": "system.description",
+            "actions": {
+              "path": "system.actions",
+              "converter": "structured",
+              "container": "keyed",
+              "keys": [
+                "name"
+              ],
+              "mapping": {
+                "name": "name",
+                "description": "description"
+              }
+            },
+            "attack": {
+              "path": "system.attack",
+              "converter": "structured",
+              "cardinality": "one",
+              "mapping": {
+                "name": "name",
+                "description": "description"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "entries": {
+    "Corporate Tower Coup": {
+      "name": "Golpe na Torre Corporativa",
+      "description": "<p>Uma sala de diretoria, uma gala, um andar de reféns e um bunker de comando fingindo ser o mesmo prédio.</p>",
+      "impulses": "Trair, reenquadrar, monetizar a violência",
+      "potentialAdversaries": {
+        "Adversaries": {
+          "label": "Adversários"
+        }
+      },
+      "items": {
+        "Legal Battlefield": {
+          "name": "Campo de Batalha Jurídico",
+          "description": "<p>Rolagens sociais bem-sucedidas podem desativar a segurança, redirecionar guardas, congelar contas ou mudar objetivos. Rolagens sociais que falham com Medo criam complicações legais, financeiras ou com reféns.</p><p><em>Quem é dono da sala?</em></p>"
+        },
+        "Hostile Vote": {
+          "name": "Votação Hostil",
+          "description": "<p>Uma facção dentro da torre muda de lado, revela uma vantagem ou chama apoio armado.</p><p><em>Quem comprou a lealdade dela?</em></p>"
+        },
+        "Executive Evacuation": {
+          "name": "Evacuação Executiva",
+          "description": "<p>Quando um personagem rola com Medo, o verdadeiro alvo começa a fugir por uma rota privada.</p><p><em>Que saída nunca esteve no mapa?</em></p>"
+        }
+      }
+    },
+    "Street-Level Stakeout": {
+      "name": "Tocaia de Rua",
+      "description": "<p>Um trabalho silencioso de vigilância em que todo mundo está esperando o primeiro erro.</p>",
+      "impulses": "Observar, despistar, escalar de repente",
+      "potentialAdversaries": {
+        "Adversaries": {
+          "label": "Adversários"
+        }
+      },
+      "items": {
+        "Eyes Everywhere": {
+          "name": "Olhos por Toda Parte",
+          "description": "<p>Personagens podem fazer Rolagens de Instinto ou Conhecimento para identificar observadores. Em um sucesso, ganham vantagem na próxima rolagem de furtividade ou contravigilância.</p><p><em>Quem vigia os vigias?</em></p>"
+        },
+        "The Target Moves": {
+          "name": "O Alvo se Move",
+          "description": "<p>Mova o objetivo para um novo local dentro do alcance Distante.</p><p><em>Por que ele saiu mais cedo?</em></p>"
+        },
+        "Burned Position": {
+          "name": "Posição Queimada",
+          "description": "<p>Quando um personagem rola com Medo, revele que o esconderijo, o sinal ou a identidade de fachada dele foi comprometido.</p><p><em>Quem os queimou?</em></p>"
+        }
+      }
+    },
+    "Corporate Heist Floor": {
+      "name": "Andar do Assalto Corporativo",
+      "description": "<p>Um andar corporativo seguro, construído em torno de cofres, reféns, salas do pânico e alarmes silenciosos.</p>",
+      "impulses": "Trancar, dividir, proteger ativos",
+      "potentialAdversaries": {
+        "Adversaries": {
+          "label": "Adversários"
+        }
+      },
+      "items": {
+        "Objective Clock": {
+          "name": "Relógio do Objetivo",
+          "description": "<p>A Equipe precisa completar uma Contagem de Progresso (4) para pegar o item, extrair o alvo ou arrombar o cofre. Cada rolagem com Medo avança a resposta da segurança.</p><p><em>Que parte do plano estava errada?</em></p>",
+          "actions": {
+            "Objective Clock": {
+              "name": "Relógio do Objetivo"
+            }
+          }
+        },
+        "Lockdown Doors": {
+          "name": "Portas de Bloqueio",
+          "description": "<p>Sele uma sala, corredor, elevador ou cofre. As criaturas lá dentro marcam 1 Estresse ou ficam temporariamente <em>Imobilizadas</em>.</p><p><em>Quem disparou o bloqueio?</em></p>",
+          "actions": {
+            "Lockdown Doors: Estresse": {
+              "name": "Portas de Bloqueio: Estresse"
+            },
+            "Lockdown Doors: Imobilizado": {
+              "name": "Portas de Bloqueio: Imobilizado"
+            }
+          },
+          "effects": {
+            "Lockdown Doors": {
+              "name": "Portas de Bloqueio",
+              "description": "<p>Preso pelo bloqueio: temporariamente Imobilizado.</p>"
+            }
+          }
+        },
+        "Hostage Pressure": {
+          "name": "Pressão dos Reféns",
+          "description": "<p>Quando um personagem rola com Medo, coloque um civil, funcionário, VIP ou alvo em perigo imediato.</p><p><em>Quem vira moeda de troca?</em></p>"
+        }
+      }
+    },
+    "Highway Kill Run": {
+      "name": "Corrida Mortal na Rodovia",
+      "description": "<p>Uma perseguição em alta velocidade por estradas quebradas, drones de trânsito, postos de controle abandonados e veículos de emboscada.</p><p><em>Também combina com: Cordon Eidolon.</em></p>",
+      "impulses": "Acelerar, separar veículos, transformar o trânsito em arma",
+      "potentialAdversaries": {
+        "Adversaries": {
+          "label": "Adversários"
+        }
+      },
+      "items": {
+        "The Chase": {
+          "name": "A Perseguição",
+          "description": "<p>Quando esta Travessia começa, coloque um Dado de Perseguição (d8) nesta carta com o 4 virado para cima. Quando um personagem faz uma ação ligada à perseguição, gire o dado conforme o resultado:</p><ul><li>Sucesso com Esperança: aumente o dado em 2.</li><li>Sucesso com Medo: aumente o dado em 1.</li><li>Falha com Esperança: diminua o dado em 1.</li><li>Falha com Medo: diminua o dado em 2.</li></ul><p>Se o dado chegar a 8, os personagens vencem a Corrida Mortal na Rodovia, seja escapando ou alcançando o alvo. Se chegar a 0, eles falham, sendo capturados ou deixando o alvo escapar.</p><p><em>Por que estamos perseguindo eles, afinal?</em></p>",
+          "actions": {
+            "The Chase": {
+              "name": "A Perseguição"
+            }
+          }
+        },
+        "Vehicle Momentum": {
+          "name": "Embalo dos Veículos",
+          "description": "<p>Quando um personagem tem sucesso com Esperança numa rolagem de veículo, pode se mover um alcance adicional ou criar uma abertura para um aliado.</p><p><em>Quem conhece melhor esta estrada?</em></p>"
+        },
+        "Road Hazard": {
+          "name": "Perigo na Estrada",
+          "description": "<p>Jogue trânsito, destroços, drones, civis ou um viaduto desabando na rota. Os motoristas fazem uma Rolagem de Reação de Agilidade ou o veículo fica Danificado.</p><p><em>O que a estrada escondia?</em></p>",
+          "actions": {
+            "Road Hazard": {
+              "name": "Perigo na Estrada"
+            }
+          }
+        },
+        "Pursuit Escalation": {
+          "name": "Escalada da Perseguição",
+          "description": "<p>Quando um personagem rola com Medo enquanto dirige, um novo veículo hostil entra no alcance Distante.</p><p><em>Quem entrou na perseguição?</em></p>"
+        }
+      }
+    },
+    "Dead Pantheon Breach": {
+      "name": "Brecha do Panteão Morto",
+      "description": "<p>Um lugar onde a Muralha Negra fica fina e sistemas derivados dos Theoi começam a sonhar em público.</p><p><em>Também combina com: Muralha Negra Seraph.</em></p>",
+      "impulses": "Reescrever, possuir, revelar a verdade",
+      "potentialAdversaries": {
+        "Adversaries": {
+          "label": "Adversários"
+        }
+      },
+      "items": {
+        "Reality Through Machines": {
+          "name": "Realidade Através das Máquinas",
+          "description": "<p>Câmeras, implantes, drones, veículos e telas podem mostrar versões diferentes da mesma cena. Personagens precisam ter sucesso numa Rolagem de Instinto ou Conhecimento antes de confiar em informação digital.</p><p><em>Qual versão está mentindo?</em></p>"
+        },
+        "Ghost Incursion": {
+          "name": "Incursão Fantasma",
+          "description": "<p>Gere um Digital Fantasma ou possua uma máquina conectada dentro do alcance Distante.</p><p><em>O que atravessou a brecha?</em></p>"
+        },
+        "Root-Level Intrusion": {
+          "name": "Intrusão em Nível Root",
+          "description": "<p>Escolha um dispositivo conectado dentro do alcance Distante. Ele recebe um comando de além da Muralha Negra e se volta contra o usuário ou o ambiente ao redor. Um personagem diretamente afetado faz uma Rolagem de Reação de Interface. Em uma falha, marca 3 de Estresse e o dispositivo falha, trava, pifa, o expõe, o leva ao perigo ou ataca um alvo próximo. Em um sucesso, marca 1 Estresse e força o sistema de volta ao controle.</p><p><em>Que máquina obedeceu a um deus morto?</em></p>",
+          "actions": {
+            "Root-Level Intrusion": {
+              "name": "Intrusão em Nível Root"
+            }
+          }
+        },
+        "The God Notices": {
+          "name": "O Deus Percebe",
+          "description": "<p>Quando um personagem rola com Medo, marca 1 Estresse ou perde 1 Esperança enquanto o sinal fala diretamente com ele.</p><p><em>Por que nome ele o chama?</em></p>",
+          "actions": {
+            "The God Notices: Estresse": {
+              "name": "O Deus Percebe: Estresse"
+            },
+            "The God Notices: Esperança": {
+              "name": "O Deus Percebe: Esperança"
+            }
+          }
+        }
+      }
+    },
+    "Black Clinic Under Siege": {
+      "name": "Clínica Clandestina Sitiada",
+      "description": "<p>Uma clínica escondida cheia de cirurgias pela metade, remédios ilegais e pessoas valiosas demais para perder.</p>",
+      "impulses": "Estabilizar, entrar em pânico, proteger os indefesos",
+      "potentialAdversaries": {
+        "Adversaries": {
+          "label": "Adversários"
+        }
+      },
+      "items": {
+        "Fragile Patients": {
+          "name": "Pacientes Frágeis",
+          "description": "<p>Qualquer ataque que role com Medo corre o risco de ferir um paciente, danificar equipamento médico ou contaminar a sala de cirurgia.</p><p><em>Quem está na mesa?</em></p>"
+        },
+        "Emergency Procedure": {
+          "name": "Procedimento de Emergência",
+          "description": "<p>Um personagem pode tentar uma Rolagem de Conhecimento ou Acuidade para estabilizar um paciente ou dispositivo. Em um sucesso, um aliado limpa 1 Estresse.</p><p><em>Que procedimento ilegal está pela metade?</em></p>"
+        },
+        "Power Failure": {
+          "name": "Queda de Energia",
+          "description": "<p>Quando um personagem rola com Medo, as luzes caem, o suporte de vida pisca ou as portas destrancam. Todas as ações médicas têm desvantagem até alguém restaurar a energia.</p><p><em>Quem queria a energia cortada?</em></p>"
+        }
+      }
+    },
+    "Neon Night Market": {
+      "name": "Mercado Noturno Neon",
+      "description": "<p>Um mercado lotado de barracas de comida, vendedores de cromo, moda falsificada, olheiros de gangue e tecnologia ilegal.</p>",
+      "impulses": "Tentar, expor, vender, esconder o perigo",
+      "potentialAdversaries": {
+        "Adversaries": {
+          "label": "Adversários"
+        }
+      },
+      "items": {
+        "Crowded Flow": {
+          "name": "Fluxo Lotado",
+          "description": "<p>Personagens têm vantagem em rolagens para se esconder na multidão, mas desvantagem em rolagens para notar ameaças além do alcance Próximo.</p><p><em>Quem está observando da multidão?</em></p>"
+        },
+        "Black-Market Offer": {
+          "name": "Oferta do Mercado Negro",
+          "description": "<p>Apresente um item útil, uma pista de cyberware ou um contato, com um custo.</p><p><em>O que o vendedor realmente quer?</em></p>"
+        },
+        "Wrong Eyes": {
+          "name": "Olhos Errados",
+          "description": "<p>Quando um personagem rola com Medo numa rolagem social ou de furtividade, um olheiro de gangue o reconhece ou o confunde com outra pessoa.</p><p><em>De quem é a reputação que ele herdou?</em></p>"
+        }
+      }
+    },
+    "Blackwall Storm Highway": {
+      "name": "Rodovia da Tempestade da Muralha Negra",
+      "description": "<p>Uma rodovia em ruínas onde veículos correm através de relâmpagos, infraestrutura quebrada e clima de máquina corrompido.</p><p><em>Também combina com: Handler’s Hound, Muralha Negra Seraph.</em></p>",
+      "impulses": "Acelerar, corromper, dividir o comboio",
+      "potentialAdversaries": {
+        "Adversaries": {
+          "label": "Adversários"
+        }
+      },
+      "items": {
+        "Machine Weather": {
+          "name": "Clima de Máquina",
+          "description": "<p>Veículos e equipamento conectado falham com a tempestade. Em qualquer rolagem de veículo com Medo, o veículo fica Danificado, a menos que o motorista marque 1 Estresse.</p><p><em>Que sistema pisca primeiro?</em></p>"
+        },
+        "Black Lightning": {
+          "name": "Relâmpago Negro",
+          "description": "<p>Atinja um veículo, drone, Eidolon ou dispositivo conectado dentro do alcance Distante. Ele faz uma Rolagem de Reação ou sofre 4d8+6 de dano tecno.</p><p><em>O que o relâmpago soletra?</em></p>",
+          "actions": {
+            "Black Lightning": {
+              "name": "Relâmpago Negro"
+            }
+          }
+        },
+        "Route Collapse": {
+          "name": "Colapso da Rota",
+          "description": "<p>Quando um personagem rola com Medo, destrua uma rota, ponte, túnel, rampa ou saída.</p><p><em>Quem sabia que a estrada ia ceder?</em></p>"
+        }
+      }
+    },
+    "Low-Sec Data Office": {
+      "name": "Escritório de Dados de Baixa Segurança",
+      "description": "<p>Um escritório corporativo barato, cheio de travas de crachá, paredes de vidro, funcionários cansados e câmeras demais.</p>",
+      "impulses": "Atrasar, documentar, alertar a segurança",
+      "potentialAdversaries": {
+        "Adversaries": {
+          "label": "Adversários"
+        }
+      },
+      "items": {
+        "Badge Logic": {
+          "name": "Lógica do Crachá",
+          "description": "<p>Personagens podem fazer uma Rolagem de Interface para criar uma Brecha contra portas, câmeras ou elevadores. Numa rolagem com Medo, a segurança começa a fazer perguntas.</p><p><em>De quem é o crachá que ainda funciona aqui?</em></p>"
+        },
+        "Camera Sweep": {
+          "name": "Varredura de Câmeras",
+          "description": "<p>Escolha um personagem numa área exposta. Ele marca 1 Estresse ou fica gravado e rastreável.</p><p><em>Quem revisa as gravações?</em></p>",
+          "actions": {
+            "Camera Sweep: Estresse": {
+              "name": "Varredura de Câmeras: Estresse"
+            },
+            "Camera Sweep: Gravado": {
+              "name": "Varredura de Câmeras: Gravado"
+            }
+          },
+          "effects": {
+            "Camera Sweep": {
+              "name": "Varredura de Câmeras",
+              "description": "<p>Gravado e rastreável pelas câmeras.</p>"
+            }
+          }
+        },
+        "Reception Alarm": {
+          "name": "Alarme da Recepção",
+          "description": "<p>Quando um personagem falha numa rolagem social, chame um Guarda de Segurança Sitil dentro do alcance Distante.</p><p><em>O que a recepcionista percebeu?</em></p>",
+          "actions": {
+            "Reception Alarm": {
+              "name": "Alarme da Recepção"
+            }
+          }
+        }
+      }
+    },
+    "Gang War Block": {
+      "name": "Quarteirão em Guerra de Gangues",
+      "description": "<p>Um quarteirão preso numa guerra de gangues aberta, com carros em chamas, atiradores nos telhados e civis presos entre as cores.</p>",
+      "impulses": "Escalar, recrutar, punir a fraqueza",
+      "potentialAdversaries": {
+        "Adversaries": {
+          "label": "Adversários"
+        }
+      },
+      "items": {
+        "Crossfire": {
+          "name": "Fogo Cruzado",
+          "description": "<p>Quando uma criatura se move por terreno aberto, marca 1 Estresse ou faz uma Rolagem de Agilidade para evitar balas perdidas.</p><p><em>Quem está atirando lá de cima?</em></p>",
+          "actions": {
+            "Crossfire": {
+              "name": "Fogo Cruzado"
+            }
+          }
+        },
+        "Claim the Block": {
+          "name": "Tomar o Quarteirão",
+          "description": "<p>Uma força de gangue toma uma rua, telhado, loja ou veículo. Vira terreno perigoso até ser liberado.</p><p><em>De quem é o símbolo pintado ali?</em></p>"
+        },
+        "Reputation Test": {
+          "name": "Teste de Reputação",
+          "description": "<p>Quando um personagem rola com Medo numa rolagem social ou de combate, alguém desafia o nome, a Equipe ou a lealdade dele.</p><p><em>Quem quer humilhá-lo?</em></p>"
+        }
+      }
+    },
+    "Eidolon Deployment Zone": {
+      "name": "Zona de Implantação de Eidolons",
+      "description": "<p>Um campo de batalha destroçado, feito para máquinas grandes demais para as ruas e perigosas demais para prédios.</p><p><em>Também combina com: Cordon Eidolon.</em></p>",
+      "impulses": "Sacudir o chão, expor cobertura, convidar à escalada",
+      "potentialAdversaries": {
+        "Adversaries": {
+          "label": "Adversários"
+        }
+      },
+      "items": {
+        "Eidolon Scale": {
+          "name": "Escala de Eidolon",
+          "description": "<p>Cobertura comum, veículos, paredes e drones são destruídos depois de sofrer dano Maior ou Severo de um ataque em escala de Eidolon.</p><p><em>O que costumava ficar aqui?</em></p>"
+        },
+        "Heavy Debris": {
+          "name": "Escombros Pesados",
+          "description": "<p>Derrube um guindaste, parede, torre, veículo ou ponte. As criaturas dentro do alcance Próximo fazem uma Rolagem de Reação de Agilidade ou sofrem 3d8+6 de dano de impacto.</p><p><em>O que cai primeiro?</em></p>",
+          "actions": {
+            "Heavy Debris": {
+              "name": "Escombros Pesados"
+            }
+          }
+        },
+        "Sensor Bloom": {
+          "name": "Saturação de Sensores",
+          "description": "<p>Quando um personagem mobiliza um Eidolon ou rola com Medo, todas as facções próximas descobrem que algo grande está ativo.</p><p><em>Quem responde ao sinal?</em></p>"
+        }
+      }
+    },
+    "Megablock Stairwell": {
+      "name": "Escadaria do Megabloco",
+      "description": "<p>Um labirinto vertical de escadas de emergência, canos vazando, andares trancados e vizinhos que sabem quando fechar a porta.</p>",
+      "impulses": "Dividir, ecoar, atrasar a fuga",
+      "potentialAdversaries": {
+        "Adversaries": {
+          "label": "Adversários"
+        }
+      },
+      "items": {
+        "Bad Angles": {
+          "name": "Ângulos Ruins",
+          "description": "<p>Ataques à distância além do alcance Muito Próximo têm desvantagem, a menos que o atacante controle uma posição mais alta.</p><p><em>Quem tem a posição alta?</em></p>"
+        },
+        "Door Slams Open": {
+          "name": "Porta Escancarada",
+          "description": "<p>Introduza civis, vigias de gangue, seguranças ou uma nova rota por um apartamento.</p><p><em>Quem mora atrás desta porta?</em></p>"
+        },
+        "Down the Stairs": {
+          "name": "Escada Abaixo",
+          "description": "<p>Quando um personagem rola com Medo enquanto se move, ele escorrega, bate ou é bloqueado. Marca 1 Estresse ou desce uma faixa de alcance.</p><p><em>O que quebrou sob os pés dele?</em></p>",
+          "actions": {
+            "Down the Stairs": {
+              "name": "Escada Abaixo"
+            }
+          }
+        }
+      }
+    },
+    "Elite Contract Auction": {
+      "name": "Leilão de Contratos de Elite",
+      "description": "<p>Um leilão secreto em que corporações, gangues, cultos digitais e lendas mercenárias dão lances por uma pessoa, arma, fragmento de IA ou chave de Eidolon.</p>",
+      "impulses": "Tentar, trair, expor identidades",
+      "potentialAdversaries": {
+        "Adversaries": {
+          "label": "Adversários"
+        }
+      },
+      "items": {
+        "Everyone Wants It": {
+          "name": "Todo Mundo Quer",
+          "description": "<p>Cada facção presente tem um objetivo diferente. Quando os personagens criam uma abertura, outra facção pode aproveitá-la.</p><p><em>Quem está dando lances com sangue em vez de créditos?</em></p>"
+        },
+        "Raise the Price": {
+          "name": "Aumentar o Preço",
+          "description": "<p>Revele um novo custo: refém, dívida, exposição pública, chave de cyberware, chantagem ou um lance rival.</p><p><em>Qual é o preço real?</em></p>"
+        },
+        "Masks Off": {
+          "name": "Máscaras Caídas",
+          "description": "<p>Quando um personagem rola com Medo, revele uma identidade oculta, inimigo disfarçado, agente duplo ou comprador secreto.</p><p><em>Quem nunca deveria estar aqui?</em></p>"
+        }
+      }
+    },
+    "Blacksite Extraction": {
+      "name": "Extração no Local Secreto",
+      "description": "<p>Uma instalação corporativa escondida onde o objetivo está vivo, instável e provavelmente não é mais humano.</p><p><em>Também combina com: Cordon Eidolon.</em></p>",
+      "impulses": "Conter, apagar, negar a verdade",
+      "potentialAdversaries": {
+        "Adversaries": {
+          "label": "Adversários"
+        }
+      },
+      "items": {
+        "Containment Protocol": {
+          "name": "Protocolo de Contenção",
+          "description": "<p>O objetivo não pode sair até a Equipe completar uma Contagem de Progresso (6) para desativar travas, contenções, sedação ou salvaguardas legais.</p><p><em>O que o objetivo foi feito para conter?</em></p>",
+          "actions": {
+            "Containment Protocol": {
+              "name": "Protocolo de Contenção"
+            }
+          }
+        },
+        "Sterile Kill Team": {
+          "name": "Equipe de Abate Esterilizada",
+          "description": "<p>Posicione um esquadrão corporativo dentro do alcance Distante, ou ative uma torreta, drone ou corredor selado.</p><p><em>Quem deu a ordem de matar?</em></p>",
+          "actions": {
+            "Sterile Kill Team": {
+              "name": "Equipe de Abate Esterilizada"
+            }
+          }
+        },
+        "Erase Evidence": {
+          "name": "Apagar Evidências",
+          "description": "<p>Quando um personagem rola com Medo, um servidor, testemunha, corpo ou pista começa a se autodeletar.</p><p><em>Que verdade está prestes a desaparecer?</em></p>"
+        }
+      }
+    },
+    "Digital Ghost Cathedral": {
+      "name": "Catedral do Fantasma Digital",
+      "description": "<p>Um data center em ruínas onde IAs corrompidas falam por loops de oração, anúncios quebrados e fotos de famílias mortas.</p>",
+      "impulses": "Converter, revelar, corromper a memória",
+      "potentialAdversaries": {
+        "Adversaries": {
+          "label": "Adversários"
+        }
+      },
+      "items": {
+        "Litany of Static": {
+          "name": "Litania de Estática",
+          "description": "<p>No início de uma cena, cada personagem com cyberware conectado marca 1 Estresse e ouve uma voz fazendo uma pergunta pessoal.</p><p><em>O que o Fantasma sabe?</em></p>",
+          "actions": {
+            "Litany of Static": {
+              "name": "Litania de Estática"
+            }
+          }
+        },
+        "Icon Becomes Monster": {
+          "name": "O Ícone Vira Monstro",
+          "description": "<p>Escolha uma tela, estátua, drone, veículo ou corpo. Ele ganha vida como uma ameaça temporária de Digital Fantasma até ser destruído ou desconectado.</p><p><em>Que imagem ele veste?</em></p>"
+        },
+        "Mirrored Dead": {
+          "name": "Mortos Espelhados",
+          "description": "<p>Gaste até 3 Medo e escolha a mesma quantidade de personagens na cena. A Catedral gera um eco corrompido deles por telas, alto-falantes, drones, fotos antigas, gravações de segurança ou estática de RA. Até o fim da cena, ou até o personagem rolar com Esperança, quando ele fosse fazer uma rolagem de ação, o mestre revela uma memória distorcida, medo, arrependimento ou versão falsa do passado dele. Ele escolhe uma:</p><ul><li>Marcar 1 Estresse e ficar temporariamente Vulnerável.</li><li>Dar desvantagem à rolagem, enquanto o eco interfere nos sentidos.</li><li>Marcar 2 Espaços de Armadura, enquanto o eco o \"ataca\".</li></ul><p><em>Que parte dele a Catedral aprendeu a imitar?</em></p>",
+          "actions": {
+            "Mirrored Dead": {
+              "name": "Mortos Espelhados"
+            }
+          }
+        },
+        "Prayer Loop": {
+          "name": "Loop de Oração",
+          "description": "<p>Quando um personagem rola com Medo, o Estresse marcado não pode ser limpo até ele sair da Haunted Zone ou cortar o sinal.</p><p><em>Que frase fica se repetindo?</em></p>"
+        }
+      }
+    },
+    "Haunted Subway Node": {
+      "name": "Estação de Metrô Assombrada",
+      "description": "<p>Uma estação de metrô abandonada onde telas sussurram nomes e trens chegam de linhas que não existem mais.</p>",
+      "impulses": "Isolar, distorcer, repetir os mortos",
+      "potentialAdversaries": {
+        "Adversaries": {
+          "label": "Adversários"
+        }
+      },
+      "items": {
+        "Signal Haunting": {
+          "name": "Assombração de Sinal",
+          "description": "<p>Dispositivos conectados mostram saídas falsas, passageiros mortos, reflexos impossíveis ou mensagens de vozes conhecidas. Personagens que dependem de sensores têm desvantagem, a menos que primeiro criem uma Brecha.</p><p><em>De quem é a voz nos alto-falantes?</em></p>"
+        },
+        "Ghost Train": {
+          "name": "Trem Fantasma",
+          "description": "<p>Um trem fantasma passa gritando pela estação. Todas as criaturas numa linha fazem uma Rolagem de Reação de Agilidade ou sofrem 2d8+4 de dano tecno e ficam temporariamente <em>Vulneráveis</em>.</p><p><em>Para onde vai o trem?</em></p>",
+          "actions": {
+            "Ghost Train": {
+              "name": "Trem Fantasma"
+            }
+          },
+          "effects": {
+            "Ghost Train": {
+              "name": "Trem Fantasma",
+              "description": "<p>Atropelado pelo trem fantasma: temporariamente Vulnerável.</p>"
+            }
+          }
+        },
+        "False Exit": {
+          "name": "Saída Falsa",
+          "description": "<p>Escolha uma saída, túnel ou porta visível. Ela parece segura, aberta ou mais perto do que realmente está. O primeiro personagem que se mover em direção a ela marca 1 Estresse e precisa ter sucesso numa Rolagem de Reação de Agilidade, ou marca 1 PV e termina o movimento num lugar perigoso, exposto ou separado.</p><p><em>Para onde a estação queria que eles fossem?</em></p>",
+          "actions": {
+            "False Exit": {
+              "name": "Saída Falsa"
+            }
+          }
+        },
+        "Possessed Platform": {
+          "name": "Plataforma Possuída",
+          "description": "<p>Quando um personagem rola com Medo, o ambiente o move dentro do alcance Próximo ou o separa de um aliado.</p><p><em>Em que plataforma ele pisou?</em></p>"
+        }
+      }
+    }
+  }
+}

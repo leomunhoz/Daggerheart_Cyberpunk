@@ -19,6 +19,9 @@ export const ITEM_MAPPING = {
   // O padrão do Babele é system.description.value; no Daggerheart a descrição é o próprio campo.
   description: "system.description",
   ...PART_MAPPING,
+  // Perguntas de história e conexões das classes (listas de textos).
+  backgroundQuestions: { path: "system.backgroundQuestions", converter: "edgeheartList" },
+  connections: { path: "system.connections", converter: "edgeheartList" },
   // Flags do módulo com texto que aparece na tela.
   pick: { path: `${FLAGS}.pick`, converter: "structured", cardinality: "one", mapping: { title: "title", prompt: "prompt", options: { path: "options", converter: "edgeheartLabels" } } },
   vehicleName: `${FLAGS}.vehicle.baseName`,
@@ -42,5 +45,8 @@ Hooks.once("babele.init", babele => {
   // { chave: texto } (ex: as opções do Calibrar Atributo): troca só os textos que têm tradução.
   const labels = (value, translation) => (value && translation ? { ...value, ...translation } : value);
   labels.extract = value => ({ ...(value ?? {}) });
-  babele.registerConverters({ edgeheartLabels: labels });
+  // Lista de textos: a tradução substitui a lista inteira quando tem o mesmo tamanho.
+  const list = (value, translation) => (Array.isArray(value) && Array.isArray(translation) && translation.length === value.length ? translation : value);
+  list.extract = value => [...(value ?? [])];
+  babele.registerConverters({ edgeheartLabels: labels, edgeheartList: list });
 });

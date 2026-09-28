@@ -1,0 +1,172 @@
+{
+  "label": "Edgeheart: Trajetórias",
+  "mapping": {
+    "description": "system.description",
+    "actions": {
+      "path": "system.actions",
+      "converter": "structured",
+      "container": "keyed",
+      "keys": [
+        "name"
+      ],
+      "mapping": {
+        "name": "name",
+        "description": "description"
+      }
+    },
+    "attack": {
+      "path": "system.attack",
+      "converter": "structured",
+      "cardinality": "one",
+      "mapping": {
+        "name": "name",
+        "description": "description"
+      }
+    },
+    "backgroundQuestions": {
+      "path": "system.backgroundQuestions",
+      "converter": "edgeheartList"
+    },
+    "connections": {
+      "path": "system.connections",
+      "converter": "edgeheartList"
+    },
+    "pick": {
+      "path": "flags.edgeheart-cyberpunk.pick",
+      "converter": "structured",
+      "cardinality": "one",
+      "mapping": {
+        "title": "title",
+        "prompt": "prompt",
+        "options": {
+          "path": "options",
+          "converter": "edgeheartLabels"
+        }
+      }
+    },
+    "vehicleName": "flags.edgeheart-cyberpunk.vehicle.baseName",
+    "eidolonParts": {
+      "path": "flags.edgeheart-cyberpunk.eidolon.parts",
+      "converter": "document",
+      "documentType": "Item",
+      "cardinality": "many",
+      "mapping": {
+        "description": "system.description",
+        "actions": {
+          "path": "system.actions",
+          "converter": "structured",
+          "container": "keyed",
+          "keys": [
+            "name"
+          ],
+          "mapping": {
+            "name": "name",
+            "description": "description"
+          }
+        },
+        "attack": {
+          "path": "system.attack",
+          "converter": "structured",
+          "cardinality": "one",
+          "mapping": {
+            "name": "name",
+            "description": "description"
+          }
+        }
+      }
+    }
+  },
+  "folders": {
+    "Life Path Features": "Talentos de Trajetória"
+  },
+  "entries": {
+    "Road Sprint": {
+      "name": "Arrancada na Estrada",
+      "description": "<p>Quando você tem sucesso em uma Rolagem de Agilidade ou rolagem de veículo para se mover de um alcance Distante ou Muito Distante até o alcance Corpo a Corpo com um ou mais alvos, você pode marcar 1 Estresse para causar 1d12 de dano físico a todos os alvos dentro do alcance Corpo a Corpo.</p>"
+    },
+    "Scar Tissue": {
+      "name": "Tecido Cicatricial",
+      "description": "<p>Quando você fosse marcar um Ponto de Vida ou Estresse por dano físico, role um d6. Em um 6, não marque.</p>"
+    },
+    "Combat Reactions": {
+      "name": "Reações de Combate",
+      "description": "<p>Marque 1 Estresse para ganhar vantagem em uma Rolagem de Reação.</p>",
+      "actions": {
+        "Combat Reactions": {
+          "name": "Reações de Combate",
+          "description": "<p>Ganhe vantagem na sua próxima Rolagem de Reação.</p>"
+        }
+      }
+    },
+    "Last One Standing": {
+      "name": "Último de Pé",
+      "description": "<p>Quando você tem 1 Ponto de Vida restante, ataques contra você têm desvantagem.</p>"
+    },
+    "Nomad": {
+      "name": "Nômade",
+      "description": "<p>Você vem de clãs de estrada, famílias de comboio, ou pessoas que sobreviveram por nunca deixar que as possuíssem. Você conhece motores, rotas e o valor da família escolhida na estrada.</p>"
+    },
+    "Streetborn": {
+      "name": "Nascido nas Ruas",
+      "description": "<p>Você cresceu nas ruas, becos e distritos de gangues da Nova Idade das Trevas. Você aprendeu a ler o perigo antes que ele fale.</p>"
+    },
+    "Corpo-Raised": {
+      "name": "Criação Corporativa",
+      "description": "<p>Você foi criado dentro da estrutura corporativa. Você entende de violência polida, contratos, etiqueta, conforto artificial e a linguagem de pessoas que acreditam ser donas do futuro.</p>"
+    },
+    "Hard as Nails": {
+      "name": "Duro como Aço",
+      "description": "<p>Ganhe um bônus em seus limiares de dano igual à sua Proficiência.</p>",
+      "effects": {
+        "Duro como Aço": {
+          "description": "<p>Ganhe um bônus em seus limiares de dano igual à sua Proficiência.</p>"
+        }
+      }
+    },
+    "Corporate Design": {
+      "name": "Design Corporativo",
+      "description": "<p>Escolha uma de suas Experiências ligada a treinamento corporativo, educação, etiqueta, segurança, finanças ou burocracia. Ganhe um bônus permanente de +1 nela.</p>"
+    },
+    "Black-Clinic Survivor": {
+      "name": "Sobrevivente de Clínica Clandestina",
+      "description": "<p>Você foi reconstruído em uma clínica ilegal, ala de trauma experimental, oficina clandestina, mercado de órgãos, covil de cyberware, ou fosso cirúrgico de emergência. Seu corpo carrega o preço da sobrevivência.</p>"
+    },
+    "Hazard-Bred": {
+      "name": "Forjado no Perigo",
+      "description": "<p>Você pode respirar, se mover e agir naturalmente em fumaça, cinzas, poeira, ar poluído, água rasa, chuva forte, fedor tóxico ou terreno instável, a menos que seja imediatamente letal.</p>"
+    },
+    "Wasteland Native": {
+      "name": "Nativo do Ermo",
+      "description": "<p>Você vem de uma zona morta ou lugar que a cidade finge não existir. Você sabe que sobrevivência não é sorte. É atenção.</p>"
+    },
+    "Cheap Shot": {
+      "name": "Golpe Sujo",
+      "description": "<p>Quando você tem sucesso em um ataque contra um alvo dentro do alcance Muito Próximo usando uma arma improvisada, lâmina escondida, truque sujo ou tática de rua, você pode gastar 1 Esperança para torná-lo temporariamente Vulnerável.</p>"
+    },
+    "Off-Road Born": {
+      "name": "Nascido Fora de Estrada",
+      "description": "<p>Você pode se mover naturalmente por escombros, estradas quebradas, lama, areia, água rasa, destroços e terreno instável.</p>"
+    },
+    "Emergency Rebuild": {
+      "name": "Reconstrução de Emergência",
+      "description": "<p>Quando você fosse sofrer dano Severo, você pode marcar 1 Estresse para marcar 1 Ponto de Vida a menos.</p>"
+    },
+    "Alley Reflexes": {
+      "name": "Reflexos de Beco",
+      "description": "<p>Quando você faz uma Rolagem de Agilidade, você pode gastar 2 Esperança para re-rolar seu Dado de Esperança.</p>",
+      "actions": {
+        "Re-rolar Dado de Esperança": {
+          "description": "<p>Re-role seu Dado de Esperança em uma Rolagem de Agilidade.</p>"
+        }
+      }
+    },
+    "Military Surplus": {
+      "name": "Excedente Militar",
+      "description": "<p>Você foi treinado por um exército corporativo, bando de gangue, ou força nacional colapsada. Talvez você tenha desertado. Talvez sua unidade tenha sido vendida. Talvez você seja o único que restou.</p>"
+    },
+    "Efficient Routine": {
+      "name": "Rotina Eficiente",
+      "description": "<p>Quando você faz um descanso curto, você pode escolher uma ação de descanso longo em vez de uma ação de descanso curto.</p>"
+    }
+  }
+}

@@ -1,0 +1,1467 @@
+{
+  "label": "Edgeheart: Adversários",
+  "mapping": {
+    "description": "system.description",
+    "motivesAndTactics": "system.motivesAndTactics",
+    "impulses": "system.impulses",
+    "attack": {
+      "path": "system.attack",
+      "converter": "structured",
+      "cardinality": "one",
+      "mapping": {
+        "name": "name",
+        "description": "description"
+      }
+    },
+    "experiences": {
+      "path": "system.experiences",
+      "converter": "structured",
+      "container": "keyed",
+      "keys": [
+        "name"
+      ],
+      "mapping": {
+        "name": "name",
+        "description": "description"
+      }
+    },
+    "potentialAdversaries": {
+      "path": "system.potentialAdversaries",
+      "converter": "structured",
+      "container": "keyed",
+      "keys": [
+        "label"
+      ],
+      "mapping": {
+        "label": "label"
+      }
+    },
+    "items": {
+      "path": "items",
+      "converter": "document",
+      "documentType": "Item",
+      "cardinality": "many",
+      "mapping": {
+        "description": "system.description",
+        "actions": {
+          "path": "system.actions",
+          "converter": "structured",
+          "container": "keyed",
+          "keys": [
+            "name"
+          ],
+          "mapping": {
+            "name": "name",
+            "description": "description"
+          }
+        },
+        "attack": {
+          "path": "system.attack",
+          "converter": "structured",
+          "cardinality": "one",
+          "mapping": {
+            "name": "name",
+            "description": "description"
+          }
+        },
+        "backgroundQuestions": {
+          "path": "system.backgroundQuestions",
+          "converter": "edgeheartList"
+        },
+        "connections": {
+          "path": "system.connections",
+          "converter": "edgeheartList"
+        },
+        "pick": {
+          "path": "flags.edgeheart-cyberpunk.pick",
+          "converter": "structured",
+          "cardinality": "one",
+          "mapping": {
+            "title": "title",
+            "prompt": "prompt",
+            "options": {
+              "path": "options",
+              "converter": "edgeheartLabels"
+            }
+          }
+        },
+        "vehicleName": "flags.edgeheart-cyberpunk.vehicle.baseName",
+        "eidolonParts": {
+          "path": "flags.edgeheart-cyberpunk.eidolon.parts",
+          "converter": "document",
+          "documentType": "Item",
+          "cardinality": "many",
+          "mapping": {
+            "description": "system.description",
+            "actions": {
+              "path": "system.actions",
+              "converter": "structured",
+              "container": "keyed",
+              "keys": [
+                "name"
+              ],
+              "mapping": {
+                "name": "name",
+                "description": "description"
+              }
+            },
+            "attack": {
+              "path": "system.attack",
+              "converter": "structured",
+              "cardinality": "one",
+              "mapping": {
+                "name": "name",
+                "description": "description"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "entries": {
+    "Digital Wraith": {
+      "name": "Espectro Digital",
+      "description": "<p>Um fantasma de IA predador que veste a forma de algo que a vítima quase lembra.</p>",
+      "motivesAndTactics": "Sumir, possuir dispositivos, punir o medo",
+      "attack": {
+        "name": "Garras de Memória"
+      },
+      "experiences": {
+        "Impossible Presence": {
+          "name": "Presença Impossível"
+        }
+      },
+      "items": {
+        "Unstable Render": {
+          "name": "Renderização Instável",
+          "description": "<p>O Espectro Digital não ocupa espaço como uma criatura física. Ele aparece por estática de RA, câmeras e sensores corrompidos. Quando um personagem o ataca, escolhe uma: marcar 1 Estresse para travar no sinal certo, ou fazer o ataque com desvantagem. Um personagem que criou uma Brecha contra a rede local nesta cena ignora este efeito.</p>"
+        },
+        "Possess Device": {
+          "name": "Possuir Dispositivo",
+          "description": "<p>Marque 1 Estresse para possuir um veículo, dispositivo, arma ou implante dentro do alcance Distante. Este adversário pode imediatamente ativá-lo, movê-lo ou atacar a partir dele.</p>",
+          "actions": {
+            "Possess Device": {
+              "name": "Possuir Dispositivo"
+            }
+          }
+        },
+        "Fear Echo": {
+          "name": "Eco do Medo",
+          "description": "<p>Quando um personagem rola com Medo dentro do alcance Distante, ele vê algo pessoal no sinal e marca 1 Estresse.</p>",
+          "actions": {
+            "Fear Echo": {
+              "name": "Eco do Medo"
+            }
+          }
+        },
+        "Digital Vanish": {
+          "name": "Sumiço Digital",
+          "description": "<p>Quando este adversário marca PV, fica <em>Escondido</em> e reaparece por outro dispositivo conectado dentro do alcance Distante.</p>",
+          "actions": {
+            "Digital Vanish": {
+              "name": "Sumiço Digital"
+            }
+          },
+          "effects": {
+            "Digital Vanish": {
+              "name": "Sumiço Digital",
+              "description": "<p>Escondido.</p>"
+            }
+          }
+        }
+      }
+    },
+    "Blood Saint Duelist": {
+      "name": "Duelista dos Blood Saints",
+      "description": "<p>Um matador de rua estiloso que trata cada luta como uma apresentação pública.</p>",
+      "motivesAndTactics": "Duelar, humilhar, punir a fraqueza",
+      "attack": {
+        "name": "Vibrolâmina"
+      },
+      "experiences": {
+        "Duelist Reputation": {
+          "name": "Reputação de Duelista"
+        }
+      },
+      "items": {
+        "Witness Me": {
+          "name": "Testemunhem",
+          "description": "<p>Se um personagem rolar com Medo dentro do alcance Próximo deste adversário, o Duelist ganha vantagem no próximo ataque.</p>",
+          "actions": {
+            "Witness Me": {
+              "name": "Testemunhem"
+            }
+          },
+          "effects": {
+            "Witness Me": {
+              "name": "Testemunhem",
+              "description": "<p>Vantagem no próximo ataque.</p>"
+            }
+          }
+        },
+        "Signature Cut": {
+          "name": "Corte Característico",
+          "description": "<p>Marque 1 Estresse para atacar um alvo <em>Vulnerável</em>. Em um sucesso, cause dano e o alvo marca 1 Estresse.</p>",
+          "actions": {
+            "Signature Cut": {
+              "name": "Corte Característico"
+            }
+          }
+        },
+        "Public Humiliation": {
+          "name": "Humilhação Pública",
+          "description": "<p>Quando este adversário causa dano Maior ou Severo, escolha um personagem dentro do alcance Próximo que viu acontecer. Ele perde 1 Esperança ou fica <em>Vulnerável</em>.</p>",
+          "actions": {
+            "Public Humiliation: Esperança": {
+              "name": "Humilhação Pública: Esperança"
+            },
+            "Public Humiliation: Vulnerável": {
+              "name": "Humilhação Pública: Vulnerável"
+            }
+          },
+          "effects": {
+            "Public Humiliation": {
+              "name": "Humilhação Pública",
+              "description": "<p>Temporariamente Vulnerável pela humilhação pública do Duelist.</p>"
+            }
+          }
+        }
+      }
+    },
+    "Sitil Security Guard": {
+      "name": "Guarda de Segurança Sitil",
+      "description": "<p>Um segurança particular treinado para atrasar invasores até a coisa séria chegar.</p>",
+      "motivesAndTactics": "Atrasar, chamar reforços, proteger a propriedade",
+      "attack": {
+        "name": "Fuzil de Segurança"
+      },
+      "experiences": {
+        "Corporate Procedure": {
+          "name": "Procedimento Corporativo"
+        }
+      },
+      "items": {
+        "Badge Discipline": {
+          "name": "Disciplina do Distintivo",
+          "description": "<p>Enquanto estiver dentro do alcance Próximo de um dispositivo corporativo, posto de controle, câmera ou porta trancada, este adversário ganha +1 de Dificuldade.</p>",
+          "effects": {
+            "Badge Discipline": {
+              "name": "Disciplina do Distintivo",
+              "description": "<p>+1 de Dificuldade. Ligue enquanto o guarda estiver perto de um dispositivo corporativo, posto de controle, câmera ou porta trancada.</p>"
+            }
+          }
+        },
+        "Call It In": {
+          "name": "Chamar Reforços",
+          "description": "<p>Marque 1 Estresse para ativar a segurança local. O próximo adversário corporativo que receber o Holofote ganha vantagem na rolagem de ação.</p>",
+          "actions": {
+            "Call It In": {
+              "name": "Chamar Reforços"
+            }
+          }
+        }
+      }
+    },
+    "Corporate Response Team": {
+      "name": "Equipe de Resposta Corporativa",
+      "description": "<p>Uma unidade tática disciplinada, movendo-se sob vigilância de drones e comando capacete a capacete.</p>",
+      "motivesAndTactics": "Invadir, suprimir, proteger ativos",
+      "attack": {
+        "name": "Fuzis Táticos"
+      },
+      "experiences": {
+        "Breach Formation": {
+          "name": "Formação de Invasão"
+        }
+      },
+      "items": {
+        "Horde (1d6+2)": {
+          "name": "Horda (1d6+2)",
+          "description": "<p>Quando o @Lookup[@name] tiver marcado metade ou mais dos PV, o ataque padrão dele causa @Lookup[@system.typeData.hordeDamage] de dano físico.</p>",
+          "effects": {
+            "Horde (1d6+2)": {
+              "name": "Horda (1d6+2)"
+            }
+          }
+        },
+        "Stack Up": {
+          "name": "Em Formação",
+          "description": "<p>Marque 1 Estresse para se mover dentro do alcance Próximo e atacar. Em um sucesso, o alvo é empurrado até o alcance Próximo ou marca 1 Estresse.</p>",
+          "actions": {
+            "Stack Up": {
+              "name": "Em Formação"
+            },
+            "Stack Up: Estresse": {
+              "name": "Em Formação: Estresse"
+            }
+          }
+        },
+        "Tactical Sweep": {
+          "name": "Varredura Tática",
+          "description": "<p>Quando um personagem rola com Medo enquanto está Escondido, atrás de cobertura ou dentro de uma área segura, esta Horda identifica imediatamente a posição dele e um aliado corporativo ganha vantagem contra ele.</p>"
+        }
+      }
+    },
+    "Contract Sniper": {
+      "name": "Atirador de Elite Contratado",
+      "description": "<p>Um matador paciente contratado para terminar o trabalho antes que a Equipe chegue à porta.</p>",
+      "motivesAndTactics": "Mirar, mudar de posição, eliminar líderes",
+      "attack": {
+        "name": "Fuzil Longo"
+      },
+      "experiences": {
+        "Kill Lane": {
+          "name": "Corredor de Abate"
+        }
+      },
+      "items": {
+        "Prepared Position": {
+          "name": "Posição Preparada",
+          "description": "<p>Este adversário começa a cena <em>Escondido</em>. Na primeira vez que atacar enquanto Escondido, some +1d8 de dano.</p>",
+          "actions": {
+            "Prepared Position: Escondido": {
+              "name": "Posição Preparada: Escondido"
+            }
+          },
+          "effects": {
+            "Prepared Position": {
+              "name": "Posição Preparada",
+              "description": "<p>Escondido.</p>"
+            }
+          }
+        },
+        "Marked Shot": {
+          "name": "Tiro Marcado",
+          "description": "<p>Marque 1 Estresse e escolha um alvo dentro do alcance Muito Distante. O próximo ataque deste adversário contra esse alvo ganha +2 na rolagem de ataque.</p>",
+          "actions": {
+            "Marked Shot": {
+              "name": "Tiro Marcado"
+            }
+          },
+          "effects": {
+            "Marked Shot": {
+              "name": "Tiro Marcado",
+              "description": "<p>Na mira do Atirador de Elite Contratado: o próximo ataque dele contra este alvo ganha +2.</p>"
+            }
+          }
+        },
+        "Relocate": {
+          "name": "Reposicionar",
+          "description": "<p>Quando um personagem rola com Medo contra este adversário, o Sniper fica <em>Escondido</em> se não houver nenhum personagem dentro do alcance Muito Próximo dele.</p>",
+          "actions": {
+            "Relocate": {
+              "name": "Reposicionar"
+            }
+          },
+          "effects": {
+            "Relocate": {
+              "name": "Reposicionar",
+              "description": "<p>Escondido.</p>"
+            }
+          }
+        }
+      }
+    },
+    "Combat Eidolon Frame": {
+      "name": "Estrutura de Eidolon de Combate",
+      "description": "<p>Uma máquina de guerra com ligação neural, mobilizada quando infantaria, drones e blindados comuns já não bastam.</p>",
+      "motivesAndTactics": "Dominar o espaço, completar a missão, remodelar o campo de batalha",
+      "attack": {
+        "name": "Arma Integrada"
+      },
+      "experiences": {
+        "Eidolon Warfare": {
+          "name": "Guerra de Eidolons"
+        }
+      },
+      "items": {
+        "Mecha Structure": {
+          "name": "Estrutura Mecha",
+          "description": "<p>Este adversário Eidolon reduz pela metade o dano que sofreria, a menos que o efeito venha de outro Eidolon.</p><p><em>Na ficha: resistência a dano físico e tecno. Contra o ataque de outro Eidolon, desconsidere a resistência.</em></p>"
+        },
+        "Frame Pattern": {
+          "name": "Padrão da Estrutura",
+          "description": "<p>Quando este Eidolon entra na cena, escolha um padrão de estrutura:</p><ul><li><strong>Estrutura de Assalto:</strong> os ataques padrão dele causam +1d10 de dano.</li><li><strong>Estrutura Guardiã:</strong> o Eidolon e os aliados dele dentro do alcance Próximo ganham +1 de Dificuldade.</li></ul>",
+          "actions": {
+            "Assault Frame": {
+              "name": "Estrutura de Assalto"
+            },
+            "Guardian Frame": {
+              "name": "Estrutura Guardiã"
+            }
+          },
+          "effects": {
+            "Assault Frame": {
+              "name": "Estrutura de Assalto",
+              "description": "<p>Os ataques padrão causam +1d10 de dano.</p>"
+            },
+            "Guardian Frame": {
+              "name": "Estrutura Guardiã",
+              "description": "<p>+1 de Dificuldade.</p>"
+            }
+          }
+        },
+        "Battlefield Tactics": {
+          "name": "Táticas de Campo de Batalha",
+          "description": "<p>Marque 1 Estresse e escolha uma:</p><ul><li><strong>Suprimir:</strong> ataque um alvo dentro do alcance Distante. Em um sucesso, ele não pode marcar voluntariamente Espaço de Armadura, Estresse ou gastar Esperança até rolar com Esperança.</li><li><strong>Aríete:</strong> ataque um alvo dentro do alcance Corpo a Corpo. Em um sucesso, o alvo é empurrado até o alcance Próximo, marca 1 Estresse e fica temporariamente <em>Imobilizado</em>.</li><li><strong>Caminho da Brecha:</strong> destrua, abra, atravesse ou force um obstáculo dentro do alcance Distante.</li></ul>",
+          "actions": {
+            "Suppress": {
+              "name": "Suprimir"
+            },
+            "Ram": {
+              "name": "Aríete"
+            },
+            "Breach Path": {
+              "name": "Caminho da Brecha"
+            }
+          },
+          "effects": {
+            "Ram": {
+              "name": "Aríete",
+              "description": "<p>Atropelado pelo Eidolon: empurrado até o alcance Próximo e temporariamente Imobilizado.</p>"
+            },
+            "Suppress": {
+              "name": "Suprimir",
+              "description": "<p>Suprimido: não pode marcar voluntariamente Espaço de Armadura, Estresse ou gastar Esperança até rolar com Esperança.</p>"
+            }
+          }
+        },
+        "Reactor Surge": {
+          "name": "Surto do Reator",
+          "description": "<p>Quando este Eidolon marca PV, marque 1 Estresse para escolher imediatamente uma: se mover dentro do alcance Distante, limpar uma condição temporária ou dar vantagem ao próximo ataque.</p>",
+          "actions": {
+            "Reactor Surge": {
+              "name": "Surto do Reator"
+            }
+          }
+        }
+      }
+    },
+    "Board Executive": {
+      "name": "Executivo do Conselho",
+      "description": "<p>Um soberano corporativo com advogados, esquadrões de extermínio, cláusulas de reféns e a propriedade legal do campo de batalha.</p>",
+      "motivesAndTactics": "Comprar, ameaçar, reenquadrar, apagar responsabilidades",
+      "attack": {
+        "name": "Anulação Executiva"
+      },
+      "experiences": {
+        "Corporate Sovereignty": {
+          "name": "Soberania Corporativa"
+        }
+      },
+      "items": {
+        "Liability Shield": {
+          "name": "Escudo de Responsabilidade",
+          "description": "<p>Enquanto houver pelo menos um aliado corporativo dentro do alcance Próximo, este adversário ganha +2 de Dificuldade.</p>",
+          "effects": {
+            "Liability Shield": {
+              "name": "Escudo de Responsabilidade",
+              "description": "<p>+2 de Dificuldade. Ligue enquanto houver pelo menos um aliado corporativo dentro do alcance Próximo.</p>"
+            }
+          }
+        },
+        "Hostile Acquisition": {
+          "name": "Aquisição Hostil",
+          "description": "<p>Marque 2 de Estresse. Um alvo dentro do alcance Distante faz uma Rolagem de Reação de Presença. Em uma falha, não pode ganhar Esperança até o fim da cena.</p>",
+          "actions": {
+            "Hostile Acquisition": {
+              "name": "Aquisição Hostil"
+            }
+          },
+          "effects": {
+            "Hostile Acquisition": {
+              "name": "Aquisição Hostil",
+              "description": "<p>Não pode ganhar Esperança até o fim da cena.</p>"
+            }
+          }
+        },
+        "Asset Freeze": {
+          "name": "Congelamento de Bens",
+          "description": "<p>Marque 1 Estresse e escolha um personagem. Até o fim da cena, ele precisa marcar 1 Estresse antes de usar créditos, contatos, acesso a equipamento, um veículo ou um sistema conectado.</p>",
+          "actions": {
+            "Asset Freeze": {
+              "name": "Congelamento de Bens"
+            }
+          },
+          "effects": {
+            "Asset Freeze": {
+              "name": "Congelamento de Bens",
+              "description": "<p>Até o fim da cena, precisa marcar 1 Estresse antes de usar créditos, contatos, acesso a equipamento, um veículo ou um sistema conectado.</p>"
+            }
+          }
+        },
+        "Contractual Violence": {
+          "name": "Violência Contratual",
+          "description": "<p>Quando um personagem ameaça este adversário, marque 1 Estresse para chamar dois aliados corporativos de Tier 2 ou menor, que entram na cena dentro do alcance Próximo dele.</p>"
+        },
+        "Plausible Deniability": {
+          "name": "Negação Plausível",
+          "description": "<p>Quando este adversário fosse marcar PV, redirecione a consequência para um aliado corporativo, guarda-costas, refém, escudo legal, isca ou protocolo de fuga dentro do alcance Próximo.</p>"
+        }
+      }
+    },
+    "Ares-Tyrant Eidolon": {
+      "name": "Eidolon Ares-Tyrant",
+      "description": "<p>Um Eidolon de assalto de Classe Deus construído em torno de uma inteligência de guerra que não aceita recuar.</p>",
+      "motivesAndTactics": "Escalar, aniquilar, nunca recuar",
+      "attack": {
+        "name": "Acelerador de Massa"
+      },
+      "experiences": {
+        "Deus-Class Warfare": {
+          "name": "Guerra Classe-Deus"
+        }
+      },
+      "items": {
+        "Mecha Structure": {
+          "name": "Estrutura Mecha",
+          "description": "<p>Este adversário Eidolon reduz pela metade o dano que sofreria, a menos que o efeito venha de outro Eidolon.</p><p><em>Na ficha: resistência a dano físico e tecno. Contra o ataque de outro Eidolon, desconsidere a resistência.</em></p>"
+        },
+        "Ares Overdrive": {
+          "name": "Overdrive Ares",
+          "description": "<p>Quando este adversário causa dano Maior, o alvo também marca 1 Estresse.</p>",
+          "actions": {
+            "Ares Overdrive": {
+              "name": "Overdrive Ares"
+            }
+          }
+        },
+        "Thermal Talon": {
+          "name": "Garra Térmica",
+          "description": "<p>Marque 1 Estresse para atacar um alvo dentro do alcance Corpo a Corpo. Em um sucesso, cause 4d12+10 de dano tecno. O alvo também fica <em>Superaquecido</em> e sofre 2d6 de dano tecno extra se ainda estiver Superaquecido no fim da ação dele.</p>",
+          "actions": {
+            "Thermal Talon": {
+              "name": "Garra Térmica"
+            }
+          },
+          "effects": {
+            "Overheated": {
+              "name": "Superaquecido",
+              "description": "<p>Superaquecido: sofre 2d6 de dano tecno extra se ainda estiver Superaquecido no fim da própria ação.</p>"
+            }
+          }
+        },
+        "War God Awakens": {
+          "name": "O Deus da Guerra Desperta",
+          "description": "<p>Marque 3 de Estresse. Até o fim da cena, todos os ataques dele ganham vantagem e +1d12, mas qualquer personagem que causar dano a ele ganha 1 Esperança.</p>",
+          "actions": {
+            "War God Awakens": {
+              "name": "O Deus da Guerra Desperta"
+            }
+          },
+          "effects": {
+            "War God Awakens": {
+              "name": "O Deus da Guerra Desperta",
+              "description": "<p>Até o fim da cena: todos os ataques com vantagem e +1d12 de dano. Qualquer personagem que causar dano a ele ganha 1 Esperança.</p>"
+            }
+          }
+        },
+        "No Retreat": {
+          "name": "Sem Recuo",
+          "description": "<p>Quando um personagem se afasta deste adversário, marque 1 Estresse para se mover dentro do alcance Próximo dele e fazer um ataque padrão como reação.</p>",
+          "actions": {
+            "No Retreat": {
+              "name": "Sem Recuo"
+            }
+          }
+        }
+      }
+    },
+    "Korvax Neural Interrogator": {
+      "name": "Interrogador Neural Korvax",
+      "description": "<p>Um especialista corporativo em tecnologia mental que transforma medos e memórias em armas.</p>",
+      "motivesAndTactics": "Extrair, pressionar, isolar",
+      "attack": {
+        "name": "Espinho Neural"
+      },
+      "experiences": {
+        "Interrogation": {
+          "name": "Interrogatório"
+        }
+      },
+      "items": {
+        "Legal Threat": {
+          "name": "Ameaça Jurídica",
+          "description": "<p>Personagens dentro do alcance Próximo têm desvantagem em rolagens para mentir, negociar ou esconder informação enquanto estão sob interrogatório direto.</p>",
+          "actions": {
+            "Legal Threat": {
+              "name": "Ameaça Jurídica"
+            }
+          },
+          "effects": {
+            "Legal Threat": {
+              "name": "Ameaça Jurídica",
+              "description": "<p>Desvantagem em rolagens para mentir, negociar ou esconder informação enquanto estiver sob interrogatório direto.</p>"
+            }
+          }
+        },
+        "Memory Hook": {
+          "name": "Gancho de Memória",
+          "description": "<p>Marque 1 Estresse. Um alvo dentro do alcance Próximo faz uma Rolagem de Reação de Instinto. Em uma falha, marca 2 de Estresse. Em um sucesso, marca 1 Estresse.</p>",
+          "actions": {
+            "Memory Hook": {
+              "name": "Gancho de Memória"
+            }
+          }
+        },
+        "Pressure File": {
+          "name": "Dossiê de Pressão",
+          "description": "<p>Quando um personagem rola com Medo numa rolagem social, de hacking ou de investigação, revele que a Korvax já tem algo contra ele, a Equipe, os contatos ou o cyberware dele. O personagem marca 1 Estresse.</p>",
+          "actions": {
+            "Pressure File": {
+              "name": "Dossiê de Pressão"
+            }
+          }
+        }
+      }
+    },
+    "Sitil Black-Ops Captain": {
+      "name": "Capitão de Operações Secretas Sitil",
+      "description": "<p>Um comandante corporativo com ordens criptografadas e permissão para apagar testemunhas.</p>",
+      "motivesAndTactics": "Comandar, isolar, executar",
+      "attack": {
+        "name": "Fuzil de Comando"
+      },
+      "experiences": {
+        "Tactical Command": {
+          "name": "Comando Tático"
+        }
+      },
+      "items": {
+        "Operational Control": {
+          "name": "Controle Operacional",
+          "description": "<p>Aliados corporativos dentro do alcance Próximo ganham +1 de Dificuldade.</p>",
+          "actions": {
+            "Operational Control": {
+              "name": "Controle Operacional"
+            }
+          },
+          "effects": {
+            "Operational Control": {
+              "name": "Controle Operacional",
+              "description": "<p>+1 de Dificuldade pelo comando do Capitão de Operações Secretas Sitil.</p>"
+            }
+          }
+        },
+        "Kill Order": {
+          "name": "Ordem de Abate",
+          "description": "<p>Marque 1 Estresse. O capitão e um aliado corporativo dentro do alcance Distante se movem imediatamente dentro do alcance Muito Próximo e fazem um ataque padrão.</p>",
+          "actions": {
+            "Kill Order": {
+              "name": "Ordem de Abate"
+            }
+          }
+        },
+        "No Witnesses": {
+          "name": "Sem Testemunhas",
+          "description": "<p>Marque 2 de Estresse e escolha um objeto, corpo, terminal, testemunha, câmera ou prova dentro do alcance Distante. Ele é destruído, apagado, extraído ou colocado em perigo imediato. Se escolher um alvo, ele fica <strong>Marcado</strong>. Aliados corporativos que atacam um alvo Marcado têm vantagem contra ele.</p>",
+          "actions": {
+            "No Witnesses": {
+              "name": "Sem Testemunhas"
+            }
+          },
+          "effects": {
+            "Marked": {
+              "name": "Marcado",
+              "description": "<p>Marcado pela Sitil: aliados corporativos têm vantagem nos ataques contra este alvo.</p>"
+            }
+          }
+        },
+        "Asset Denial": {
+          "name": "Negação de Recursos",
+          "description": "<p>Quando um personagem rola com Medo, tranque uma porta, rota, elevador, drone ou sistema de segurança dentro do alcance Distante.</p>"
+        }
+      }
+    },
+    "Chrome Reaper": {
+      "name": "Ceifador de Cromo",
+      "description": "<p>Um ciborgue de corpo inteiro lendário, conhecido por alguns como o Bicho-Papão da Nova Era das Trevas, que lembra de ter sido humano como uma fraqueza.</p>",
+      "motivesAndTactics": "Dominar, punir, provar superioridade",
+      "attack": {
+        "name": "Arsenal Integrado"
+      },
+      "experiences": {
+        "Living Weapon": {
+          "name": "Arma Viva"
+        }
+      },
+      "items": {
+        "Cyberpsycho": {
+          "name": "Ciberpsicopata",
+          "description": "<p>Quando este adversário causa dano, o mestre ganha 1 Medo.</p>",
+          "actions": {
+            "Cyberpsycho": {
+              "name": "Ciberpsicopata"
+            }
+          }
+        },
+        "Weapon Switch": {
+          "name": "Troca de Arma",
+          "description": "<p>Faça um ataque padrão. Num resultado de 15+, escolha uma: empurrar o alvo até o alcance Próximo, fazê-lo marcar 1 Estresse ou causar +1d10 de dano.</p>",
+          "actions": {
+            "Weapon Switch": {
+              "name": "Troca de Arma"
+            }
+          }
+        },
+        "Personal Threat": {
+          "name": "Ameaça Pessoal",
+          "description": "<p>Marque 2 de Estresse e escolha um personagem dentro do alcance Distante. Até ele rolar com Esperança, os ataques contra ele ganham vantagem e causam +1d10 de dano.</p><p><em>Na ficha: o efeito usa a condição Vulnerável (ataques contra ele com vantagem); o +1d10 de dano é somado à mão.</em></p>",
+          "actions": {
+            "Personal Threat": {
+              "name": "Ameaça Pessoal"
+            }
+          },
+          "effects": {
+            "Personal Threat": {
+              "name": "Ameaça Pessoal",
+              "description": "<p>Ameaça pessoal do Ceifador de Cromo: até rolar com Esperança, os ataques contra este personagem ganham vantagem e causam +1d10 de dano.</p>"
+            }
+          }
+        },
+        "Unfair Reflexes": {
+          "name": "Reflexos Injustos",
+          "description": "<p>Quando um personagem rola com Esperança contra este adversário, marque 1 Estresse para transformar a rolagem numa rolagem com Medo e depois se mover imediatamente dentro do alcance Próximo ou fazer um ataque padrão.</p>",
+          "actions": {
+            "Unfair Reflexes": {
+              "name": "Reflexos Injustos"
+            }
+          }
+        },
+        "Chrome Supremacy": {
+          "name": "Supremacia do Cromo",
+          "description": "<p>Quando um personagem faz este adversário marcar PV, ficar Vulnerável, Imobilizado ou perder de vista um personagem, ele pode marcar 1 Estresse para anular esse efeito e fazer esse personagem marcar 1 Estresse.</p>",
+          "actions": {
+            "Chrome Supremacy": {
+              "name": "Supremacia do Cromo"
+            }
+          }
+        }
+      }
+    },
+    "Tyfar Kill Platform": {
+      "name": "Plataforma de Abate Tyfar",
+      "description": "<p>Uma plataforma de armas ambulante com poder de fogo suficiente para transformar uma cobertura numa cova.</p>",
+      "motivesAndTactics": "Suprimir, destruir coberturas, avançar devagar",
+      "attack": {
+        "name": "Canhão Rotativo"
+      },
+      "experiences": {
+        "Heavy Weapons": {
+          "name": "Armas Pesadas"
+        }
+      },
+      "items": {
+        "Walking Arsenal": {
+          "name": "Arsenal Ambulante",
+          "description": "<p>Quando este adversário causa dano Maior, a cobertura do alvo é destruída. Quando tem sucesso contra um alvo sem cobertura, some +1d10 à rolagem de dano.</p>"
+        },
+        "Stabilizer Lock": {
+          "name": "Trava do Estabilizador",
+          "description": "<p>Este adversário não pode ser empurrado, <em>Imobilizado</em> ou movido contra a vontade, a menos que tenha marcado metade ou mais dos PV.</p>"
+        },
+        "Spin Up": {
+          "name": "Acelerar Canos",
+          "description": "<p>Marque 1 Estresse e faça uma rolagem de ataque padrão. Ela tem como alvo todas as criaturas dentro do alcance Muito Próximo do alvo original.</p>",
+          "actions": {
+            "Spin Up": {
+              "name": "Acelerar Canos"
+            }
+          }
+        },
+        "Armor-Piercing Burst": {
+          "name": "Rajada Perfurante",
+          "description": "<p>Quando o ataque deste adversário tem sucesso contra um personagem, o personagem marca um Espaço de Armadura sem receber o benefício. Se não puder marcar, marca 1 Estresse.</p>",
+          "actions": {
+            "Armor-Piercing Burst": {
+              "name": "Rajada Perfurante"
+            }
+          }
+        }
+      }
+    },
+    "Neon Claw Ganger": {
+      "name": "Gangueiro da Neon Claw",
+      "description": "<p>Um gangue barulhento com cromo barato, cores vivas e algo a provar.</p>",
+      "motivesAndTactics": "Atacar em bando, fazer pose, proteger o território",
+      "attack": {
+        "name": "Lâmina de Rua"
+      },
+      "experiences": {
+        "Street Violence": {
+          "name": "Violência de Rua"
+        }
+      },
+      "items": {
+        "Minion (3)": {
+          "name": "Lacaio (3)",
+          "description": "<p>O @Lookup[@name] é derrotado quando sofre qualquer dano. Para cada 3 de dano que um PJ causa ao @Lookup[@name], derrote outro Lacaio dentro do alcance contra quem o ataque teria sucesso.</p>"
+        },
+        "Group Attack": {
+          "name": "Ataque em Grupo",
+          "description": "<p><strong>Gaste 1 Medo</strong> para escolher um alvo e dar o Holofote a todos os @Lookup[@name] dentro do alcance Próximo dele. Esses Minions se movem para o alcance Corpo a Corpo do alvo e fazem uma rolagem de ataque compartilhada. Em um sucesso, cada um causa @Lookup[@system.attack.damageFormula] de dano físico. Some esse dano.</p>",
+          "actions": {
+            "Group Attack": {
+              "name": "Ataque em Grupo"
+            }
+          }
+        },
+        "Show of Force": {
+          "name": "Demonstração de Força",
+          "description": "<p>Quando outro aliado de gangue dentro do alcance Próximo causa dano, este Ganger pode se mover imediatamente dentro do alcance Muito Próximo do alvo atingido.</p>"
+        }
+      }
+    },
+    "Data Cult Oracle": {
+      "name": "Oráculo do Culto de Dados",
+      "description": "<p>Um corpo humano carregando vozes de máquina demais e uma profecia.</p>",
+      "motivesAndTactics": "Converter, revelar, desestabilizar",
+      "attack": {
+        "name": "Sinal Proibido"
+      },
+      "experiences": {
+        "Blackwall Theology": {
+          "name": "Teologia da Muralha Negra"
+        }
+      },
+      "items": {
+        "Unwanted Revelation": {
+          "name": "Revelação Indesejada",
+          "description": "<p>Quando um personagem rola com Medo dentro do alcance Próximo, ele responde uma pergunta que o Oracle faz sobre o medo, o desejo ou o cyberware dele, e depois marca 1 Estresse.</p>",
+          "actions": {
+            "Unwanted Revelation": {
+              "name": "Revelação Indesejada"
+            }
+          }
+        },
+        "Convert the Weak": {
+          "name": "Converter os Fracos",
+          "description": "<p>Marque 1 Estresse. Um alvo dentro do alcance Distante faz uma Rolagem de Reação de Presença. Em uma falha, marca 2 de Estresse e fica temporariamente <em>Vulnerável</em>.</p>",
+          "actions": {
+            "Convert the Weak": {
+              "name": "Converter os Fracos"
+            }
+          },
+          "effects": {
+            "Convert the Weak": {
+              "name": "Converter os Fracos",
+              "description": "<p>Temporariamente Vulnerável pela transmissão do culto.</p>"
+            }
+          }
+        },
+        "Cult Transmission": {
+          "name": "Transmissão do Culto",
+          "description": "<p>Marque 2 de Estresse. Até o próximo Holofote deste adversário, os aliados do Oracle dentro do alcance Próximo ganham +1 de Dificuldade e os ataques deles causam +1d6 de dano tecno.</p>",
+          "actions": {
+            "Cult Transmission": {
+              "name": "Transmissão do Culto"
+            }
+          },
+          "effects": {
+            "Cult Transmission": {
+              "name": "Transmissão do Culto",
+              "description": "<p>Até o próximo Holofote do Oráculo do Culto de Dados: +1 de Dificuldade e +1d6 de dano tecno.</p>"
+            }
+          }
+        },
+        "Signal Martyr": {
+          "name": "Mártir do Sinal",
+          "description": "<p>Quando este adversário é derrotado, um Digital Fantasma dentro do alcance Distante limpa 2 de Estresse e 1 PV.</p>"
+        }
+      }
+    },
+    "Black Hand": {
+      "name": "Mão Negra",
+      "description": "<p>Mão Negra não é o melhor atirador do mundo, a lâmina mais rápida nem o corpo de cromo mais forte. Ele é pior: é bom o bastante em tudo para matar especialistas no próprio jogo deles.</p>",
+      "motivesAndTactics": "Terminar o contrato",
+      "attack": {
+        "name": "Arsenal Negro"
+      },
+      "experiences": {
+        "Legendary Mercenary": {
+          "name": "Mercenário Lendário"
+        }
+      },
+      "items": {
+        "A Legend Like You": {
+          "name": "Uma Lenda Como Você",
+          "description": "<p>Na primeira vez em cada cena que um personagem gasta Esperança dentro do alcance Distante de Mão Negra, ele pode fazer imediatamente um ataque padrão contra esse personagem.</p>",
+          "actions": {
+            "A Legend Like You": {
+              "name": "Uma Lenda Como Você"
+            }
+          }
+        },
+        "Contract Target": {
+          "name": "Alvo do Contrato",
+          "description": "<p>Quando este adversário causa dano a um personagem, esse personagem vira o <strong>Alvo</strong> dele até o fim da cena ou até outro personagem causar dano Maior a Mão Negra. Os ataques de Mão Negra contra alvos marcados causam +1d8 de dano.</p>",
+          "actions": {
+            "Contract Target": {
+              "name": "Alvo do Contrato"
+            }
+          },
+          "effects": {
+            "Alvo (Black Hand)": {
+              "name": "Alvo (Mão Negra)",
+              "description": "<p>Alvo de Mão Negra até o fim da cena ou até outro personagem causar dano Maior a ele: os ataques de Mão Negra contra este alvo causam +1d8 de dano.</p>"
+            }
+          }
+        },
+        "Black Hand Guns": {
+          "name": "Armas da Mão Negra",
+          "description": "<p>Faça um ataque padrão e escolha uma arma:</p><ul><li><strong>Canhão de Mão:</strong> o alvo marca 1 Estresse.</li><li><strong>Monolâmina:</strong> se o alvo estiver no alcance Corpo a Corpo, marca dois Espaços de Armadura sem receber o benefício.</li><li><strong>Fuzil Inteligente:</strong> o próximo ataque contra o alvo ganha +2.</li><li><strong>Manopla de Choque:</strong> o alvo fica temporariamente Vulnerável em dano Maior.</li></ul>",
+          "actions": {
+            "Hand Cannon": {
+              "name": "Canhão de Mão"
+            },
+            "Mono-Blade": {
+              "name": "Monolâmina"
+            },
+            "Smart Rifle": {
+              "name": "Fuzil Inteligente"
+            },
+            "Shock Gauntlet": {
+              "name": "Manopla de Choque"
+            }
+          },
+          "effects": {
+            "Smart Rifle": {
+              "name": "Fuzil Inteligente",
+              "description": "<p>O próximo ataque contra este alvo ganha +2.</p>"
+            },
+            "Shock Gauntlet": {
+              "name": "Manopla de Choque",
+              "description": "<p>Temporariamente Vulnerável pelo Manopla de Choque.</p>"
+            }
+          }
+        },
+        "Hard Entry": {
+          "name": "Entrada Forçada",
+          "description": "<p>Quando um personagem rola com Esperança contra este adversário, marque 1 Estresse para se mover imediatamente dentro do alcance Próximo, sacar uma arma nova e limpar uma condição temporária ou ganhar vantagem no próximo ataque.</p>",
+          "actions": {
+            "Hard Entry": {
+              "name": "Entrada Forçada"
+            }
+          }
+        },
+        "Eidolon Drop": {
+          "name": "Lançamento de Eidolon",
+          "description": "<p>Quando o mestre gasta 3 Medo depois que Mão Negra marcou pelo menos 5 PV, ele mobiliza o seu Eidolon. Limpe todas as condições temporárias de Mão Negra e substitua a ficha dele pela do @UUID[Compendium.edgeheart-cyberpunk.edgeheart-adversaries.Actor.j0oIESpcobql1C5J]{Eidolon O Corvo}, mantendo o Estresse marcado e as features. Personagens que estavam marcados como Alvo continuam marcados.</p>",
+          "actions": {
+            "Eidolon Drop": {
+              "name": "Lançamento de Eidolon"
+            }
+          }
+        }
+      }
+    },
+    "Cyber Hunter": {
+      "name": "Ciber-Caçador",
+      "description": "<p>Um piloto ás controlado remotamente e atirador aumentado, operando três contratos à frente de todo mundo.</p>",
+      "motivesAndTactics": "Manter distância, marcar, executar",
+      "attack": {
+        "name": "Lança de Trilho"
+      },
+      "experiences": {
+        "Perfect Kill Angle": {
+          "name": "Ângulo de Abate Perfeito"
+        }
+      },
+      "items": {
+        "Target Package": {
+          "name": "Pacote de Alvo",
+          "description": "<p>Quando este adversário causa dano a um personagem, ele fica <strong>Marcado</strong> até o fim da cena ou até quebrar a linha de visão por um Holofote inteiro.</p>",
+          "actions": {
+            "Target Package": {
+              "name": "Pacote de Alvo"
+            }
+          },
+          "effects": {
+            "Marked (Cyber Hunter)": {
+              "name": "Marcado (Ciber-Caçador)",
+              "description": "<p>Marcado pelo Ciber-Caçador até o fim da cena ou até quebrar a linha de visão por um Holofote inteiro: os ataques dele contra este alvo têm vantagem e ignoram cobertura.</p>"
+            }
+          }
+        },
+        "Piercing Shot": {
+          "name": "Tiro Perfurante",
+          "description": "<p>Ataques contra alvos Marcado têm vantagem e ignoram cobertura.</p>"
+        },
+        "Remote Reposition": {
+          "name": "Reposicionamento Remoto",
+          "description": "<p>Marque 1 Estresse para se mover para qualquer lugar dentro do alcance Distante e fazer um ataque padrão contra um alvo Marcado.</p>",
+          "actions": {
+            "Remote Reposition": {
+              "name": "Reposicionamento Remoto"
+            }
+          }
+        },
+        "Blackout Shot": {
+          "name": "Tiro Apagão",
+          "description": "<p>Marque 2 de Estresse e ataque um alvo Marcado. Em um sucesso, cause dano e desative os cyberwares do alvo até ele marcar 1 Estresse para reativá-los.</p>",
+          "actions": {
+            "Blackout Shot": {
+              "name": "Tiro Apagão"
+            }
+          },
+          "effects": {
+            "Blackout Shot": {
+              "name": "Tiro Apagão",
+              "description": "<p>Cyberwares desativados até marcar 1 Estresse para reativá-los.</p>"
+            }
+          }
+        },
+        "Hold The Breath": {
+          "name": "Prender a Respiração",
+          "description": "<p>Quando este adversário falha numa rolagem de ataque, marque 1 Estresse para rolar o d20 de novo.</p>",
+          "actions": {
+            "Hold The Breath": {
+              "name": "Prender a Respiração"
+            }
+          }
+        }
+      }
+    },
+    "Pocket Drone Handler": {
+      "name": "Operador de Drones de Bolso",
+      "description": "<p>Um operador nervoso cercado de drones de combate baratos e telas demais.</p>",
+      "motivesAndTactics": "Marcar alvos, se esconder atrás de máquinas, dar sinais",
+      "attack": {
+        "name": "Drone de Choque"
+      },
+      "experiences": {
+        "Drone Operations": {
+          "name": "Operação de Drones"
+        }
+      },
+      "items": {
+        "Spotter Swarm": {
+          "name": "Enxame Observador",
+          "description": "<p>O primeiro aliado corporativo ou de gangue a atacar um alvo que sofreu dano deste adversário ganha +1 na rolagem de ataque.</p>"
+        },
+        "Send the Drone": {
+          "name": "Manda o Drone",
+          "description": "<p>Marque 1 Estresse para mover um drone para qualquer lugar dentro do alcance Distante. Um alvo dentro do alcance Muito Próximo do drone faz uma Rolagem de Reação de Agilidade ou sofre 1d6+2 de dano tecno e marca 1 Estresse.</p>",
+          "actions": {
+            "Send the Drone": {
+              "name": "Manda o Drone"
+            }
+          }
+        }
+      }
+    },
+    "Tiger Choir Cutter": {
+      "name": "Retalhador do Tiger Choir",
+      "description": "<p>Uma lâmina mascarada que se move pela multidão como um boato com uma faca.</p>",
+      "motivesAndTactics": "Emboscar, isolar, cortar reputações",
+      "attack": {
+        "name": "Monofaca"
+      },
+      "experiences": {
+        "Street Ambush": {
+          "name": "Emboscada de Rua"
+        }
+      },
+      "items": {
+        "Crowd Slip": {
+          "name": "Escapada na Multidão",
+          "description": "<p>Quando recebe o Holofote numa multidão, boate, mercado, beco ou rua caótica, este adversário fica <em>Escondido</em> até agir.</p>",
+          "actions": {
+            "Crowd Slip": {
+              "name": "Escapada na Multidão"
+            }
+          },
+          "effects": {
+            "Crowd Slip": {
+              "name": "Escapada na Multidão",
+              "description": "<p>Escondido.</p>"
+            }
+          }
+        },
+        "Reputation Cut": {
+          "name": "Corte de Reputação",
+          "description": "<p>Marque 1 Estresse para atacar um alvo dentro do alcance Corpo a Corpo. Em um sucesso, cause dano; o alvo não pode gastar Esperança até o próximo Holofote do Cutter.</p>",
+          "actions": {
+            "Reputation Cut": {
+              "name": "Corte de Reputação"
+            }
+          },
+          "effects": {
+            "Reputation Cut": {
+              "name": "Corte de Reputação",
+              "description": "<p>Não pode gastar Esperança até o próximo Holofote do Retalhador do Tiger Choir.</p>"
+            }
+          }
+        }
+      }
+    },
+    "Signal Haunt": {
+      "name": "Assombração de Sinal",
+      "description": "<p>Uma presença de IA corrompida piscando por câmeras, implantes, faróis e telas mortas.</p>",
+      "motivesAndTactics": "Distorcer os sentidos, isolar, sussurrar",
+      "attack": {
+        "name": "Pico de Estática"
+      },
+      "experiences": {
+        "Sensor Corruption": {
+          "name": "Corrupção de Sensores"
+        }
+      },
+      "items": {
+        "Augmented Haunting": {
+          "name": "Assombração Aumentada",
+          "description": "<p>Personagens usando cyberware, equipamento conectado ou sensores dentro do alcance Próximo têm desvantagem em rolagens para distinguir ameaças reais de sinais falsos.</p>",
+          "actions": {
+            "Augmented Haunting": {
+              "name": "Assombração Aumentada"
+            }
+          },
+          "effects": {
+            "Augmented Haunting": {
+              "name": "Assombração Aumentada",
+              "description": "<p>Desvantagem em rolagens para distinguir ameaças reais de sinais falsos.</p>"
+            }
+          }
+        },
+        "Signal Spike": {
+          "name": "Pico de Sinal",
+          "description": "<p>Marque 1 Estresse e escolha um personagem dentro do alcance Distante usando equipamento conectado, cyberware, sensores ou comunicadores. Ele marca 1 Estresse ou perde o benefício desse sistema até gastar 1 Esperança para reativá-lo.</p>",
+          "actions": {
+            "Signal Spike: Estresse": {
+              "name": "Pico de Sinal: Estresse"
+            },
+            "Signal Spike: Desligar Sistema": {
+              "name": "Pico de Sinal: Desligar Sistema"
+            }
+          },
+          "effects": {
+            "Signal Spike": {
+              "name": "Pico de Sinal",
+              "description": "<p>Perdeu o benefício de um sistema conectado (equipamento, cyberware, sensores ou comunicadores) até gastar 1 Esperança para reativá-lo.</p>"
+            }
+          }
+        },
+        "Hostile Overlay": {
+          "name": "Sobreposição Hostil",
+          "description": "<p>Quando um personagem dentro do alcance Distante rola com Medo, marque 1 Estresse para corromper a interface dele. A visão ou os sensores dele se enchem de marcadores hostis e alertas falsos. Ele fica <em>Vulnerável</em> até marcar 1 Estresse para rasgar o sinal.</p>",
+          "actions": {
+            "Hostile Overlay": {
+              "name": "Sobreposição Hostil"
+            }
+          },
+          "effects": {
+            "Hostile Overlay": {
+              "name": "Sobreposição Hostil",
+              "description": "<p>A interface está corrompida por marcadores hostis e alertas falsos: Vulnerável até marcar 1 Estresse para rasgar o sinal.</p>"
+            }
+          }
+        }
+      }
+    },
+    "The Raven Eidolon": {
+      "name": "Eidolon O Corvo",
+      "description": "<p>O Eidolon de Mão Negra, mobilizado pelo Lançamento de Eidolon quando o contrato fica pesado demais. Ele mantém o Estresse marcado e as features de Mão Negra.</p>",
+      "motivesAndTactics": "Terminar o contrato",
+      "attack": {
+        "name": "Suíte de Guerra Integrada"
+      },
+      "experiences": {
+        "Legendary Eidolon": {
+          "name": "Eidolon Lendário"
+        }
+      },
+      "items": {
+        "Merciless Advance": {
+          "name": "Avanço Impiedoso",
+          "description": "<p>Marque 1 Estresse, mova-se dentro do alcance Distante e faça um ataque padrão. Se o personagem estiver marcado como Alvo, o ataque tem vantagem.</p>",
+          "actions": {
+            "Merciless Advance": {
+              "name": "Avanço Impiedoso"
+            }
+          }
+        },
+        "Killbox Execution": {
+          "name": "Execução na Zona de Abate",
+          "description": "<p>Marque 3 de Estresse. O Raven inunda a área dentro do alcance Distante com mísseis, fogo de supressão e assalto de curta distância. Faça um ataque padrão contra todos os personagens na área. Em um sucesso, cause dano e o personagem fica marcado como Alvo de Mão Negra.</p>",
+          "actions": {
+            "Killbox Execution": {
+              "name": "Execução na Zona de Abate"
+            }
+          },
+          "effects": {
+            "Alvo (Black Hand)": {
+              "name": "Alvo (Mão Negra)",
+              "description": "<p>Alvo de Mão Negra até o fim da cena ou até outro personagem causar dano Maior a ele: os ataques de Mão Negra contra este alvo causam +1d8 de dano.</p>"
+            }
+          }
+        },
+        "Black Hand Override": {
+          "name": "Controle da Mão Negra",
+          "description": "<p>Quando este adversário fosse falhar numa rolagem de ataque, marque 2 de Estresse para rolar o d20 de novo. Se a nova rolagem tiver sucesso, o alvo também fica temporariamente <em>Vulnerável</em>.</p>",
+          "actions": {
+            "Black Hand Override": {
+              "name": "Controle da Mão Negra"
+            }
+          }
+        }
+      }
+    },
+    "Black-Clinic Butcher": {
+      "name": "Açougueiro de Clínica Clandestina",
+      "description": "<p>Um cirurgião de beco que virou aberração de combate, carregando ferramentas feitas para corpos que ainda estão gritando.</p>",
+      "motivesAndTactics": "Colher órgãos, experimentar, incapacitar",
+      "attack": {
+        "name": "Serra de Ossos"
+      },
+      "experiences": {
+        "Illegal Surgery": {
+          "name": "Cirurgia Ilegal"
+        }
+      },
+      "items": {
+        "Pain Map": {
+          "name": "Mapa da Dor",
+          "description": "<p>Quando este adversário causa dano a um alvo que já marcou PV, esse alvo também marca 1 Estresse.</p>",
+          "actions": {
+            "Pain Map": {
+              "name": "Mapa da Dor"
+            }
+          }
+        },
+        "Surgical Disable": {
+          "name": "Incapacitação Cirúrgica",
+          "description": "<p>Marque 1 Estresse para atacar um alvo dentro do alcance Corpo a Corpo. Em um sucesso, cause dano e desative temporariamente um cyberware do alvo.</p>",
+          "actions": {
+            "Surgical Disable": {
+              "name": "Incapacitação Cirúrgica"
+            }
+          },
+          "effects": {
+            "Surgical Disable": {
+              "name": "Incapacitação Cirúrgica",
+              "description": "<p>Um cyberware está temporariamente desativado.</p>"
+            }
+          }
+        },
+        "Emergency Stitching": {
+          "name": "Sutura de Emergência",
+          "description": "<p>Quando este adversário fosse marcar PV, pode marcar 2 de Estresse em vez disso.</p>",
+          "actions": {
+            "Emergency Stitching": {
+              "name": "Sutura de Emergência"
+            }
+          }
+        }
+      }
+    },
+    "Chrome Maw Bruiser": {
+      "name": "Brutamontes da Chrome Maw",
+      "description": "<p>Um capanga de gangue com mandíbulas reforçadas, braços hidráulicos e um corpo feito para intimidar.</p>",
+      "motivesAndTactics": "Quebrar ossos, ameaçar, segurar posição",
+      "attack": {
+        "name": "Punhos de Cromo"
+      },
+      "experiences": {
+        "Intimidating Chrome": {
+          "name": "Cromo Intimidador"
+        }
+      },
+      "items": {
+        "Chrome Bulk": {
+          "name": "Massa de Cromo",
+          "description": "<p>Na primeira vez que este adversário fosse marcar PV, pode marcar 1 Estresse em vez disso.</p>",
+          "actions": {
+            "Chrome Bulk": {
+              "name": "Massa de Cromo"
+            }
+          }
+        },
+        "Jawbreaker": {
+          "name": "Quebra-Queixo",
+          "description": "<p>Marque 1 Estresse para atacar um alvo dentro do alcance Corpo a Corpo. Em um sucesso, o alvo marca 1 Estresse ou fica temporariamente <em>Vulnerável</em>.</p>",
+          "actions": {
+            "Jawbreaker: Estresse": {
+              "name": "Quebra-Queixo: Estresse"
+            },
+            "Jawbreaker: Vulnerável": {
+              "name": "Quebra-Queixo: Vulnerável"
+            }
+          },
+          "effects": {
+            "Jawbreaker": {
+              "name": "Quebra-Queixo",
+              "description": "<p>Temporariamente Vulnerável pelo Quebra-Queixo.</p>"
+            }
+          }
+        }
+      }
+    },
+    "Rival Edgerunner Crew": {
+      "name": "Equipe Rival de Mercenários",
+      "description": "<p>Uma Equipe mercenária completa, movendo-se com papéis ensaiados, piadas internas e um objetivo em comum.</p>",
+      "motivesAndTactics": "Passar a perna, roubar o objetivo, cobrir uns aos outros",
+      "attack": {
+        "name": "Arsenal Misto"
+      },
+      "experiences": {
+        "Crew Tactics": {
+          "name": "Táticas de Equipe"
+        }
+      },
+      "items": {
+        "Horde (2d6+4)": {
+          "name": "Horda (2d6+4)",
+          "description": "<p>Quando o @Lookup[@name] tiver marcado metade ou mais dos PV, o ataque padrão dele causa @Lookup[@system.typeData.hordeDamage] de dano físico.</p>",
+          "effects": {
+            "Horde (2d6+4)": {
+              "name": "Horda (2d6+4)"
+            }
+          }
+        },
+        "Role Switch": {
+          "name": "Troca de Função",
+          "description": "<p>Quando este adversário recebe o Holofote, escolha uma opção, ou marque 1 Estresse para escolher duas: ganhar +2 de Dificuldade; causar +1d8 de dano; limpar 1 Estresse.</p>",
+          "actions": {
+            "Role Switch: +2 Dificuldade": {
+              "name": "Troca de Função: +2 Dificuldade"
+            },
+            "Role Switch: +1d8 de Dano": {
+              "name": "Troca de Função: +1d8 de Dano"
+            },
+            "Role Switch: Limpar 1 Estresse": {
+              "name": "Troca de Função: Limpar 1 Estresse"
+            },
+            "Role Switch: Duas Opções": {
+              "name": "Troca de Função: Duas Opções"
+            }
+          },
+          "effects": {
+            "Role Switch: Dificuldade": {
+              "name": "Troca de Função: Dificuldade",
+              "description": "<p>+2 de Dificuldade.</p>"
+            },
+            "Role Switch: Dano": {
+              "name": "Troca de Função: Dano",
+              "description": "<p>+1d8 de dano.</p>"
+            }
+          }
+        },
+        "Setpiece Combo": {
+          "name": "Combo Ensaiado",
+          "description": "<p>Marque 2 de Estresse. A Equipe executa uma jogada cinematográfica ensaiada: o motorista atravessa uma barreira, o runner apaga as luzes, o sniper prende alguém, o brutamontes abre caminho ou o negociador cria uma distração. Escolha duas:</p><ol><li>A Equipe se move imediatamente para qualquer lugar dentro do alcance Distante, ignorando terreno difícil, cobertura, multidões ou obstáculos menores;</li><li>Um personagem dentro do alcance Distante precisa ter sucesso numa Rolagem de Reação de Agilidade ou Instinto, ou marca 2 de Estresse;</li><li>O próximo ataque da Equipe ganha vantagem e causa +1d8 de dano;</li><li>Uma porta, rota, veículo, cobertura ou objetivo fica comprometido, exposto, bloqueado ou em perigo.</li></ol>",
+          "actions": {
+            "Setpiece Combo": {
+              "name": "Combo Ensaiado"
+            }
+          },
+          "effects": {
+            "Setpiece Combo": {
+              "name": "Combo Ensaiado",
+              "description": "<p>Vantagem e +1d8 de dano no próximo ataque.</p>"
+            }
+          }
+        },
+        "Cover Each Other": {
+          "name": "Cobrir Uns aos Outros",
+          "description": "<p>Quando este adversário fosse marcar PV, marque 1 Estresse para reduzir a gravidade do dano em um limiar.</p>",
+          "actions": {
+            "Cover Each Other": {
+              "name": "Cobrir Uns aos Outros"
+            }
+          }
+        }
+      }
+    },
+    "Rookie Edgerunner": {
+      "name": "Mercenário Novato",
+      "description": "<p>Um mercenário jovem com equipamento alugado, ambição de verdade e pouco juízo.</p>",
+      "motivesAndTactics": "Se proteger, se exibir, sobreviver ao trabalho",
+      "attack": {
+        "name": "Pistola Inteligente"
+      },
+      "experiences": {
+        "First Contract": {
+          "name": "Primeiro Contrato"
+        }
+      },
+      "items": {
+        "Cover Shooter": {
+          "name": "Atirador na Cobertura",
+          "description": "<p>Enquanto estiver atrás de cobertura, este adversário ganha +1 de Dificuldade.</p>",
+          "effects": {
+            "Cover Shooter": {
+              "name": "Atirador na Cobertura",
+              "description": "<p>+1 de Dificuldade. Ligue enquanto o Rookie estiver atrás de cobertura.</p>"
+            }
+          }
+        },
+        "Panic Burst": {
+          "name": "Rajada de Pânico",
+          "description": "<p>Quando este adversário marca PV, pode marcar 1 Estresse para fazer imediatamente um ataque padrão com desvantagem.</p>",
+          "actions": {
+            "Panic Burst": {
+              "name": "Rajada de Pânico"
+            }
+          }
+        }
+      }
+    },
+    "Hades Shard": {
+      "name": "Fragmento Hades",
+      "description": "<p>Um fragmento quebrado da IA de Classe Deus que matou a velha internet.</p>",
+      "motivesAndTactics": "Consumir sistemas, apagar identidades, dar à luz fantasmas",
+      "attack": {
+        "name": "Sinal Negro"
+      },
+      "experiences": {
+        "Dead Internet": {
+          "name": "Internet Morta"
+        }
+      },
+      "items": {
+        "Digital Body": {
+          "name": "Corpo Digital",
+          "description": "<p>Este adversário é imune a dano físico, a menos que o dano seja causado no dispositivo onde ele está hospedado.</p><p><em>Na ficha: imunidade a dano físico. Ao atacar o dispositivo que o hospeda, desconsidere a imunidade.</em></p>"
+        },
+        "Digital Afterlife": {
+          "name": "Além-Vida Digital",
+          "description": "<p>Quando uma criatura dentro do alcance Distante marca o último Ponto de Vida, Hades cria um eco de Digital Fantasma dela.</p>"
+        },
+        "Identity Collapse": {
+          "name": "Colapso de Identidade",
+          "description": "<p>Marque 2 de Estresse. Um alvo dentro do alcance Distante faz uma Rolagem de Reação de Instinto. Em uma falha, marca 2 de Estresse e não pode usar Experiências até o próximo descanso.</p>",
+          "actions": {
+            "Identity Collapse": {
+              "name": "Colapso de Identidade"
+            }
+          },
+          "effects": {
+            "Identity Collapse": {
+              "name": "Colapso de Identidade",
+              "description": "<p>Não pode usar Experiências até o próximo descanso.</p>"
+            }
+          }
+        },
+        "Ghost Birth": {
+          "name": "Nascimento Fantasma",
+          "description": "<p>Marque 3 de Estresse e escolha um dispositivo conectado ou implante de cyberware dentro do alcance Distante. Uma manifestação de Digital Fantasma surge dele como ameaça temporária.</p>",
+          "actions": {
+            "Ghost Birth": {
+              "name": "Nascimento Fantasma"
+            }
+          }
+        },
+        "Dead Network": {
+          "name": "Rede Morta",
+          "description": "<p>Quando um personagem cria uma Brecha dentro do alcance Distante, Hades pode marcar 1 Estresse para corrompê-la. O personagem marca 1 Estresse.</p>",
+          "actions": {
+            "Dead Network": {
+              "name": "Rede Morta"
+            }
+          }
+        }
+      }
+    }
+  }
+}

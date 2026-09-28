@@ -1,0 +1,783 @@
+{
+  "label": "Edgeheart: Subclasses",
+  "mapping": {
+    "description": "system.description",
+    "actions": {
+      "path": "system.actions",
+      "converter": "structured",
+      "container": "keyed",
+      "keys": [
+        "name"
+      ],
+      "mapping": {
+        "name": "name",
+        "description": "description"
+      }
+    },
+    "attack": {
+      "path": "system.attack",
+      "converter": "structured",
+      "cardinality": "one",
+      "mapping": {
+        "name": "name",
+        "description": "description"
+      }
+    },
+    "backgroundQuestions": {
+      "path": "system.backgroundQuestions",
+      "converter": "edgeheartList"
+    },
+    "connections": {
+      "path": "system.connections",
+      "converter": "edgeheartList"
+    },
+    "pick": {
+      "path": "flags.edgeheart-cyberpunk.pick",
+      "converter": "structured",
+      "cardinality": "one",
+      "mapping": {
+        "title": "title",
+        "prompt": "prompt",
+        "options": {
+          "path": "options",
+          "converter": "edgeheartLabels"
+        }
+      }
+    },
+    "vehicleName": "flags.edgeheart-cyberpunk.vehicle.baseName",
+    "eidolonParts": {
+      "path": "flags.edgeheart-cyberpunk.eidolon.parts",
+      "converter": "document",
+      "documentType": "Item",
+      "cardinality": "many",
+      "mapping": {
+        "description": "system.description",
+        "actions": {
+          "path": "system.actions",
+          "converter": "structured",
+          "container": "keyed",
+          "keys": [
+            "name"
+          ],
+          "mapping": {
+            "name": "name",
+            "description": "description"
+          }
+        },
+        "attack": {
+          "path": "system.attack",
+          "converter": "structured",
+          "cardinality": "one",
+          "mapping": {
+            "name": "name",
+            "description": "description"
+          }
+        }
+      }
+    }
+  },
+  "folders": {
+    "Subclass Features": "Talentos de Subclasse",
+    "Foundation": "Fundação",
+    "Specialization": "Especialização",
+    "Mastery": "Maestria"
+  },
+  "entries": {
+    "Motion Blur": {
+      "name": "Borrão de Movimento",
+      "description": "<p>Quando você se move dentro do alcance Próximo ou mais longe durante o seu Holofote, o próximo ataque contra você antes do seu próximo Holofote tem desvantagem.</p>"
+    },
+    "Deadeye": {
+      "name": "Deadeye",
+      "description": "<p><em>Jogue de Deadeye se você quiser eliminar alvos prioritários, aproveitar aberturas e fazer cada tiro valer.</em></p>\n<p><strong>Build Sugerida:</strong> Acuidade +2, Agilidade +1, Instinto +1, Força 0, Presença 0, Conhecimento −1. Equipamento recomendado: Arco Inteligente (primária, duas mãos) + Jaqueta de Sintcouro — ataques de longe, ficando parado para aproveitar o Sacar do arco.</p>"
+    },
+    "Saboteur": {
+      "name": "Saboteur",
+      "description": "<p><em>Jogue de Saboteur se você quiser plantar cargas, desativar defesas e virar o ambiente contra os seus inimigos.</em></p>\n<p><strong>Build Sugerida:</strong> Acuidade +2, Conhecimento +1, Agilidade +1, Instinto 0, Presença 0, Força −1. Equipamento recomendado: Monokatana (primária, uma mão) + Fio de Arpéu (secundária) + Jaqueta de Sintcouro — chegar perto para plantar as cargas.</p>"
+    },
+    "Cascade Breach": {
+      "name": "Brecha em Cascata",
+      "description": "<p>Uma vez por cena, quando você cria uma Brecha, você pode criar imediatamente outra Brecha em um alvo ou sistema conectado dentro do alcance Próximo do alvo original.</p>",
+      "actions": {
+        "Cascade Breach": {
+          "name": "Brecha em Cascata"
+        }
+      }
+    },
+    "Shock Trooper": {
+      "name": "Shock Trooper",
+      "description": "<p><em>Jogue de Shock Trooper se você quiser invadir posições fortificadas, lutar de perto, romper linhas inimigas e continuar avançando pelo perigo.</em></p>\n<p><strong>Build Sugerida:</strong> Força +2, Agilidade +1, Instinto +1, Acuidade 0, Presença 0, Conhecimento −1. Equipamento recomendado: Escopeta de Rua (primária, duas mãos) + Colete Balístico — combate de perto, entrando no alcance Muito Próximo para o Entrada Forçada.</p>"
+    },
+    "Black-Market Network": {
+      "name": "Rede do Mercado Negro",
+      "description": "<p>Uma vez por descanso, numa área povoada, declare que conhece um contato que pode fornecer equipamento restrito, abrigo, transporte, informação ou acesso a alguém difícil de alcançar. O mestre diz o que ele quer em troca.</p><p>Quando você ou um aliado usar a ajuda do contato, ganhe +2 numa rolagem de ação relevante.</p>",
+      "actions": {
+        "Black-Market Network": {
+          "name": "Rede do Mercado Negro"
+        }
+      }
+    },
+    "Kill Window": {
+      "name": "Janela de Abate",
+      "description": "<p>Quando você gasta Disfarce em <strong>Neutralização</strong>, rola um d8 em vez de um d6. Além disso, se o alvo estiver Vulnerável, ele também marca 1 Estresse.</p>"
+    },
+    "Extraction Window": {
+      "name": "Janela de Extração",
+      "description": "<p>Quando um aliado dentro do alcance Próximo fosse ser alvo de um ataque, descoberto ou pego por um perigo, você pode gastar 1 Disfarce para fazer esse aliado se mover imediatamente para um ponto dentro do alcance Próximo.</p><p>O ataque que disparou isso tem desvantagem contra ele, ou o aliado tem vantagem na rolagem para evitar o perigo.</p>",
+      "actions": {
+        "Extraction Window": {
+          "name": "Janela de Extração"
+        }
+      }
+    },
+    "Field Salvage": {
+      "name": "Recuperação de Campo",
+      "description": "<p>Uma vez por cena, você pode recolher material útil da área ao redor. Escolha uma peça de Recuperação de Campo:</p><ul><li><strong>Remendo:</strong> você ou um aliado dentro do alcance Corpo a Corpo limpa um Espaço de Armadura.</li><li><strong>Ferramenta:</strong> você ou um aliado ganha +2 na próxima ação.</li><li><strong>Perigo:</strong> na próxima vez que você causar dano a um adversário dentro da sua Rota Mapeada, some 1d6 de dano físico à rolagem de dano.</li></ul><p>O Recuperação de Campo não usado se perde quando você faz um descanso.</p><p><em>Na ficha: \"Recuperação de Campo\" controla o uso da cena; \"Rolar Perigo\" rola o d6.</em></p>",
+      "actions": {
+        "Field Salvage": {
+          "name": "Recuperação de Campo"
+        },
+        "Rolar Hazard": {
+          "name": "Rolar Perigo"
+        }
+      }
+    },
+    "Breach Specialist": {
+      "name": "Breach Specialist",
+      "description": "<p><em>Jogue de Breach Specialist se você quiser transformar invasão em arma, quebrar sistemas inimigos, derrubar defesas e transformar redes em vetores de ataque.</em></p>\n<p><strong>Build Sugerida:</strong> Conhecimento +2, Agilidade +1, Instinto +1, Presença 0, Força 0, Finesse −1. Equipamento recomendado: Lançador de Sucata (primária, duas mãos — sem arma secundária) + Colete Balístico — favorece o assalto direto a sistemas e sobreviver ao alcance corpo a corpo que o Morte na Raiz te leva.</p>"
+    },
+    "Virtual Overwatch": {
+      "name": "Vigilância Virtual",
+      "description": "<p>Quando um adversário te ataca ou ataca um aliado dentro do alcance Muito Próximo enquanto você está em Mergulho Profundo, você pode dar desvantagem à rolagem dele. Se o adversário falhar na rolagem, ele também deve marcar 1 Estresse. Se ele tiver sucesso, você deve marcar 1 Estresse.</p>"
+    },
+    "Impact Absorbers": {
+      "name": "Absorvedores de Impacto",
+      "description": "<p>Uma vez por cena, quando você fosse marcar um ou mais Pontos de Vida por dano físico ou de impacto, pode marcar 1 Estresse para reduzir a gravidade em um limiar.</p><p>Se isso evitar que você marque qualquer Ponto de Vida, você pode se mover imediatamente dentro do alcance Muito Próximo ou forçar o atacante a marcar 1 Estresse.</p>",
+      "actions": {
+        "Impact Absorbers": {
+          "name": "Absorvedores de Impacto"
+        }
+      }
+    },
+    "Street Surgeon": {
+      "name": "Street Surgeon",
+      "description": "<p><em>Jogue de Street Surgeon se você quiser usar medicina ilegal, remendos de cyberware, procedimentos de clínica clandestina e estimulantes perigosos para levar corpos além dos limites seguros.</em></p>\n<p><strong>Build Sugerida:</strong> Conhecimento +2, Acuidade +1, Instinto +1, Agilidade 0, Presença 0, Força −1. Equipamento recomendado: Lançador de Sucata (primária, duas mãos, de Conhecimento) + Jaqueta de Sintcouro — o mesmo atributo para atacar e para os protocolos.</p>"
+    },
+    "Cascading Failure": {
+      "name": "Falha em Cascata",
+      "description": "<p>Você pode ter duas cargas ativas. Quando uma é acionada:</p><ul><li><strong>Brecha:</strong> você ou um aliado Próximo a ela pode se mover imediatamente dentro do alcance Próximo.</li><li><strong>Desativar:</strong> um adversário usando o alvo também marca 1 Estresse.</li><li><strong>Interromper:</strong> o adversário afetado tem desvantagem na próxima rolagem de ação antes do seu próximo Holofote.</li></ul>"
+    },
+    "Impossible Exit": {
+      "name": "Saída Impossível",
+      "description": "<p>Uma vez por descanso, você pode gastar 3 Disfarce para revelar uma rota de fuga que preparou ou percebeu. Você e qualquer aliado dentro do alcance Próximo podem se mover imediatamente dentro do alcance Distante, ignorando terreno difícil, alarmes simples e zonas controladas por inimigos durante esse movimento.</p><p>Depois desse movimento, você fica <em>Escondido</em>. Todo aliado que terminar o movimento em cobertura, escuridão, fumaça, multidão ou outro esconderijo plausível também fica Escondido.</p>",
+      "actions": {
+        "Impossible Exit": {
+          "name": "Saída Impossível"
+        }
+      },
+      "effects": {
+        "Impossible Exit": {
+          "name": "Saída Impossível",
+          "description": "<p>Escondido depois do Saída Impossível.</p>"
+        }
+      }
+    },
+    "Field Extraction": {
+      "name": "Extração de Campo",
+      "description": "<p>Quando você usa Medicina de Emergência com sucesso numa criatura, pode movê-la imediatamente dentro do alcance Muito Próximo. Esse movimento pode colocá-la atrás de cobertura, fora do perigo imediato ou longe da visão inimiga.</p>"
+    },
+    "Miracle Cocktail": {
+      "name": "Coquetel Milagroso",
+      "description": "<p>Uma vez por descanso longo, quando você usa Medicina de Emergência com sucesso numa criatura, pode inundar o corpo dela com estabilizantes ilegais, drogas de combate, bloqueadores nervosos ou comandos de emergência de cyberware.</p><p>Além dos benefícios normais da Medicina de Emergência, o alvo pode se mover imediatamente dentro do alcance Próximo e fazer uma rolagem de ação com vantagem. Se essa ação causar dano, some 2d8 à rolagem de dano.</p><p><em>Na ficha: a ação controla o uso e rola os 2d8.</em></p>",
+      "actions": {
+        "Miracle Cocktail": {
+          "name": "Coquetel Milagroso"
+        }
+      }
+    },
+    "Planted Charge": {
+      "name": "Explosivo Plantado",
+      "description": "<p>Quando você pode tocar um objeto, superfície ou máquina, marque 1 Estresse para plantar uma carga. Acione-a mais tarde na cena para escolher uma:</p><ul><li><strong>Brecha:</strong> abra, quebre ou desmorone o alvo.</li><li><strong>Desativar:</strong> trave, tranque ou desligue o alvo até ser consertado.</li><li><strong>Interromper:</strong> um adversário dentro do alcance Muito Próximo marca 1 Estresse e fica temporariamente <em>Vulnerável</em>.</li></ul><p>Você pode ter uma carga ativa por vez.</p>",
+      "actions": {
+        "Acionar: Disrupt": {
+          "name": "Acionar: Interromper"
+        }
+      },
+      "effects": {
+        "Disrupt": {
+          "name": "Interromper",
+          "description": "<p>Marcou 1 Estresse e ficou temporariamente Vulnerável por uma carga (Interromper).</p>"
+        }
+      }
+    },
+    "Impact Frame": {
+      "name": "Estrutura de Impacto",
+      "description": "<p>Ganhe +1 na Pontuação de Armadura.</p><p>Quando você marca um Espaço de Armadura para reduzir o dano recebido, pode forçar o atacante a marcar 1 Estresse ou empurrá-lo até o alcance Próximo, à escolha do atacante.</p>",
+      "effects": {
+        "Impact Frame": {
+          "name": "Estrutura de Impacto",
+          "description": "<p>+1 na Pontuação de Armadura.</p>"
+        }
+      }
+    },
+    "Rigger": {
+      "name": "Rigger",
+      "description": "<p><em>Jogue de Rigger se você quiser controlar drones, operar máquinas remotamente e apoiar aliados por meio de equipamento.</em></p>\n<p><strong>Build Sugerida:</strong> Conhecimento +2, Agilidade +1, Instinto +1, Acuidade 0, Presença 0, Força −1. Equipamento recomendado: Lançador de Sucata (primária, duas mãos) + Colete Balístico — o drone faz o trabalho de perto enquanto você fica no alcance Próximo.</p>"
+    },
+    "Neural Reflexes": {
+      "name": "Reflexos Neurais",
+      "description": "<p>Quando você usa <em>Cromo Integrado</em> numa Rolagem de Agilidade ou Acuidade, pode se mover imediatamente dentro do alcance Muito Próximo depois que a rolagem se resolve. Se a rolagem tiver sucesso com Esperança, pode se mover dentro do alcance Próximo.</p>"
+    },
+    "Bad Medicine": {
+      "name": "Remédio Amargo",
+      "description": "<p>Uma vez por descanso, quando você tem sucesso com uma carta de Medtec, ataque com arma ou Rolagem de Interface contra um adversário dentro do alcance Próximo, pode virar o seu conhecimento médico contra ele.</p><p>O alvo marca 1 Estresse. Na próxima vez que esse alvo causar dano, reduza o dano em 1 Ponto de Vida.</p>",
+      "actions": {
+        "Bad Medicine": {
+          "name": "Remédio Amargo"
+        }
+      }
+    },
+    "Kill Confirmed": {
+      "name": "Abate Confirmado",
+      "description": "<p>Uma vez por descanso longo, quando você causa dano Severo ao alvo marcado, ele marca um Ponto de Vida adicional.</p><p>Se isso o derrotar, você pode marcar imediatamente um novo alvo e ajustar o Dado de Cadeia de Abate para d10.</p>",
+      "actions": {
+        "Kill Confirmed": {
+          "name": "Abate Confirmado"
+        }
+      }
+    },
+    "Deep Dive": {
+      "name": "Mergulho Profundo",
+      "description": "<p>Uma vez por cena, quando você cria uma Brecha em uma rede, você pode entrar em um Mergulho Profundo. Enquanto em Mergulho Profundo: você pode interagir com sistemas conectados na cena independente da distância; ganha um bônus igual ao seu Tier em Rolagens de Interface envolvendo Hacking ou cartas de Rede; você pode fazer ao mestre uma pergunta sobre a rede, sua segurança, sistemas conectados ou rotas ocultas. O Mergulho Profundo termina quando você sofre dano Maior, se desconecta, ou a cena termina.</p>",
+      "actions": {
+        "Deep Dive": {
+          "name": "Mergulho Profundo"
+        }
+      },
+      "effects": {
+        "Deep Dive": {
+          "name": "Mergulho Profundo",
+          "description": "<p>Interage com sistemas conectados na cena independente da distância; +Tier em Rolagens de Interface de Hacking ou cartas de Rede. Termina ao sofrer dano Maior, se desconectar ou no fim da cena.</p>"
+        }
+      }
+    },
+    "Blackout Cascade": {
+      "name": "Apagão em Cascata",
+      "description": "<p>Uma vez por descanso longo, enquanto em Mergulho Profundo, você pode disparar uma disrupção massiva na rede. Escolha até três sistemas conectados, dispositivos ou alvos ligados a cyberware na cena. Para cada um, escolha uma opção: Desativá-lo até o mestre gastar 1 Medo; Alimentá-lo com informações falsas, dando desvantagem em sua próxima rolagem; Sobrecarregá-lo, fazendo seu operador marcar 1 Estresse; Abrir, trancar, travar, redirecionar, controlar ou acioná-lo de um jeito que mude significativamente a cena. Depois, marque 1 Estresse ou se torne temporariamente Vulnerável.</p>",
+      "actions": {
+        "Blackout Cascade": {
+          "name": "Apagão em Cascata"
+        }
+      }
+    },
+    "Fixer": {
+      "name": "Fixer",
+      "description": "<p><em>Jogue de Fixer se você quiser arranjar trabalhos, cobrar favores e navegar pela economia oculta da cidade.</em></p>\n<p><strong>Build Sugerida:</strong> Presença +2, Conhecimento +1, Instinto +1, Agilidade 0, Acuidade 0, Força −1. Equipamento recomendado: Bastão de Choque (primária, uma mão) + Luva de Choque (secundária) + Jaqueta de Sintcouro — as duas armas usam Presença.</p>"
+    },
+    "Drive Off": {
+      "name": "Arrancar",
+      "description": "<p>Uma vez por descanso longo, quando você tem sucesso numa rolagem de direção com o seu Veículo de Assinatura, pode se mover dentro do alcance Distante ou limpar 1 Estresse.</p><p>Além disso, um adversário faz uma Rolagem de Reação (16). Em uma falha, sofre <strong>3d10 de dano físico</strong> e fica temporariamente <em>Vulnerável</em>. Em um sucesso, sofre metade do dano.</p><p><em>Na ficha: a ação rola os 3d10 e deixa o alvo Vulnerável se ele falhar.</em></p>",
+      "actions": {
+        "Drive Off": {
+          "name": "Arrancar"
+        }
+      },
+      "effects": {
+        "Drive Off": {
+          "name": "Arrancar",
+          "description": "<p>Atingido pelo Arrancar: temporariamente Vulnerável.</p>"
+        }
+      }
+    },
+    "Stunt Driver": {
+      "name": "Piloto de Manobras",
+      "description": "<p>Uma vez por cena, enquanto opera o seu Veículo de Assinatura, descreva uma manobra e faça uma Rolagem de Agilidade (15). Em um sucesso, escolha duas. Em uma falha, escolha uma, e depois o seu veículo fica Danificado ou você marca 1 Estresse.</p><ul><li>Mova-se dentro do alcance Distante.</li><li>Dê +2 a um aliado na próxima rolagem de ação dele.</li><li>Faça um adversário marcar 1 Estresse.</li></ul>",
+      "actions": {
+        "Stunt Driver": {
+          "name": "Piloto de Manobras"
+        }
+      }
+    },
+    "Load-Bearing Body": {
+      "name": "Corpo de Carga",
+      "description": "<p>Você tem vantagem em rolagens para resistir a ser empurrado, derrubado, desarmado, movido contra a sua vontade ou ficar temporariamente <em>Imobilizado</em>.</p>"
+    },
+    "Combat Medic": {
+      "name": "Combat Medic",
+      "description": "<p><em>Jogue de Combat Medic se você quiser manter a Equipe viva e fazer tratamentos de emergência no meio do combate.</em></p>\n<p><strong>Build Sugerida:</strong> Instinto +2, Agilidade +1, Conhecimento +1, Acuidade 0, Presença 0, Força −1. Equipamento recomendado: Submetralhadora Compacta (primária, uma mão) + Drone Tático (secundária, de Instinto) + Colete Balístico — mobilidade para chegar até quem caiu.</p>"
+    },
+    "Clear the Line": {
+      "name": "Limpar a Linha",
+      "description": "<p>Uma vez por descanso, quando você causa dano Maior ou Severo a um adversário dentro do alcance Corpo a Corpo ou Muito Próximo, pode forçar ele e cada adversário dentro do alcance Muito Próximo dele a marcar 1 Estresse.</p><p>Depois, escolha um adversário afetado e deixe-o temporariamente <em>Vulnerável</em>.</p>",
+      "actions": {
+        "Clear the Line": {
+          "name": "Limpar a Linha"
+        }
+      },
+      "effects": {
+        "Clear the Line": {
+          "name": "Limpar a Linha",
+          "description": "<p>Temporariamente Vulnerável pelo Limpar a Linha.</p>"
+        }
+      }
+    },
+    "Black-Clinic Procedure": {
+      "name": "Procedimento de Clínica Clandestina",
+      "description": "<p>Quando você usa Medicina de Emergência com sucesso numa criatura, pode dar a ela um aprimoramento perigoso além do efeito normal. Escolha um:</p><ul><li>Ela soma 1d8 à próxima rolagem de dano.</li><li>Ela ganha +2 na próxima Rolagem de Agilidade, Força ou Acuidade.</li><li>Ela ganha +2 de Evasão contra o próximo ataque que a tiver como alvo.</li></ul><p>Depois que a rolagem ou efeito aprimorado se resolver, ela marca 1 Estresse.</p><p><em>Na ficha: \"Rolar 1d8\" rola o dano extra da primeira opção.</em></p>"
+    },
+    "Rootkill": {
+      "name": "Morte na Raiz",
+      "description": "<p>Uma vez por descanso longo, quando você faz um Hack com sucesso em um alvo Explorado por você, você pode forçar uma falha catastrófica no sistema. O alvo marca 1 Estresse e 1 Ponto de Vida, então fica temporariamente Degradado. Enquanto Degradado, o alvo usa um d12 em vez de um d20 para rolagens de ataque.</p>",
+      "actions": {
+        "Rootkill": {
+          "name": "Morte na Raiz"
+        }
+      },
+      "effects": {
+        "Degraded": {
+          "name": "Degradado",
+          "description": "<p>Enquanto Degradado, o alvo usa um d12 em vez de um d20 para rolagens de ataque.</p>"
+        }
+      }
+    },
+    "Reinforced Build": {
+      "name": "Estrutura Reforçada",
+      "description": "<p>Quando o seu Atributo Calibrado é Força, ganhe +1 na Pontuação de Armadura. Além disso, quando usar <em>Cromo Integrado</em> numa Rolagem de Força, role um d8 em vez de um d6.</p><p><em>Na ficha: o +1 de Armadura liga sozinho quando você calibra Força e desliga nos outros atributos.</em></p>",
+      "effects": {
+        "Reinforced Build": {
+          "name": "Estrutura Reforçada",
+          "description": "<p>+1 na Pontuação de Armadura enquanto o Atributo Calibrado for Força.</p>"
+        }
+      }
+    },
+    "Heavy Chrome Walking": {
+      "name": "Cromo Pesado Ambulante",
+      "description": "<p>Uma vez por descanso longo, quando você marca um Espaço de Armadura, pode ativar o seu reforço de corpo inteiro até a cena terminar ou você sofrer dano Severo. Enquanto esta feature estiver ativa:</p><ul><li>Quando acertar uma rolagem de ataque Corpo a Corpo, pode somar o dado do Atributo Calibrado à rolagem de dano.</li><li>Ganhe +3 nos seus limiares de dano.</li><li>Quando tiver sucesso numa Rolagem de Força ou ataque com arma contra um alvo dentro do alcance Corpo a Corpo, pode empurrá-lo até o alcance Próximo e deixá-lo temporariamente <em>Vulnerável</em>.</li></ul>",
+      "actions": {
+        "Heavy Chrome Walking": {
+          "name": "Cromo Pesado Ambulante"
+        }
+      },
+      "effects": {
+        "Heavy Chrome Walking": {
+          "name": "Cromo Pesado Ambulante",
+          "description": "<p>Reforço de corpo inteiro ativo até a cena terminar ou você sofrer dano Severo: +3 nos limiares de dano; em ataques Corpo a Corpo, some o dado do Atributo Calibrado ao dano; ao ter sucesso numa Rolagem de Força ou ataque contra um alvo Corpo a Corpo, pode empurrá-lo até o alcance Próximo e deixá-lo temporariamente Vulnerável.</p>"
+        }
+      }
+    },
+    "Everybody Owes Somebody": {
+      "name": "Todo Mundo Deve a Alguém",
+      "description": "<p>Uma vez por descanso longo, pergunte ao mestre quem na cena pode ser comprado, pressionado ou virado. A sua primeira Rolagem de Presença ou carta de Influência contra essa pessoa tem vantagem.</p><p>Num sucesso, escolha duas opções de <em>Termos de Engajamento</em> em vez de uma.</p>",
+      "actions": {
+        "Everybody Owes Somebody": {
+          "name": "Todo Mundo Deve a Alguém"
+        }
+      }
+    },
+    "Called Shot": {
+      "name": "Tiro Anunciado",
+      "description": "<p>Quando você faz um ataque com arma contra o alvo marcado, pode marcar 1 Estresse antes da rolagem para ganhar +2 na rolagem de ataque.</p><p>Se o ataque acertar e causar qualquer dano, aumente o Dado de Cadeia de Abate em um passo, mesmo que o ataque não tenha causado dano Maior ou Severo.</p>",
+      "actions": {
+        "Called Shot": {
+          "name": "Tiro Anunciado"
+        }
+      }
+    },
+    "Break the Line": {
+      "name": "Romper a Linha",
+      "description": "<p>Uma vez por descanso longo, quando você entra no centro de uma luta perigosa, escolha qualquer número de adversários dentro do alcance Próximo. Cada adversário escolhido faz uma Rolagem de Reação (16).</p><p>Em uma falha, ele é empurrado até o alcance Próximo e fica temporariamente <em>Vulnerável</em>.</p><p>Em um sucesso, marca 1 Estresse.</p>",
+      "actions": {
+        "Break the Line": {
+          "name": "Romper a Linha"
+        }
+      },
+      "effects": {
+        "Break the Line": {
+          "name": "Romper a Linha",
+          "description": "<p>Empurrado até o alcance Próximo e temporariamente Vulnerável.</p>"
+        }
+      }
+    },
+    "Titan Frame": {
+      "name": "Titan Frame",
+      "description": "<p><em>Jogue de Titan Frame se você quiser virar uma montanha de cromo pesado e força industrial que se recusa a sair do lugar a menos que você permita.</em></p>\n<p><strong>Build Sugerida:</strong> Força +2, Agilidade +1, Instinto +1, Acuidade 0, Presença 0, Conhecimento −1. Equipamento recomendado: Martelo de Arrombamento (primária, duas mãos) + Colete Balístico — Força calibrada para o Estrutura Reforçada.</p>"
+    },
+    "No Witnesses": {
+      "name": "Sem Testemunhas",
+      "description": "<p>Quando você derrota ou incapacita um alvo com um ataque feito enquanto estava Escondido, pode ficar Escondido de novo imediatamente e se mover para um ponto dentro do alcance Muito Próximo.</p>",
+      "actions": {
+        "No Witnesses": {
+          "name": "Sem Testemunhas"
+        }
+      },
+      "effects": {
+        "No Witnesses": {
+          "name": "Sem Testemunhas",
+          "description": "<p>Escondido de novo pelo Sem Testemunhas.</p>"
+        }
+      }
+    },
+    "Living Brand": {
+      "name": "Marca Viva",
+      "description": "<p>Uma vez por descanso longo, você pode assumir totalmente a sua reputação até a cena terminar ou você sofrer dano Severo. Enquanto esta feature estiver ativa, na primeira vez em cada Holofote em que você tiver sucesso numa Rolagem de Presença ou com uma carta de Influência, escolha uma:</p><ul><li>Um aliado que possa te ver ou ouvir ganha 1 Esperança.</li><li>Um adversário que possa te ver ou ouvir marca 1 Estresse.</li><li>Você limpa 1 Estresse.</li></ul>",
+      "actions": {
+        "Living Brand": {
+          "name": "Marca Viva"
+        }
+      },
+      "effects": {
+        "Living Brand": {
+          "name": "Marca Viva",
+          "description": "<p>Reputação assumida até a cena terminar ou você sofrer dano Severo. Na primeira vez em cada Holofote que tiver sucesso numa Rolagem de Presença ou carta de Influência: um aliado ganha 1 Esperança, um adversário marca 1 Estresse, ou você limpa 1 Estresse.</p>"
+        }
+      }
+    },
+    "No Way Back": {
+      "name": "Sem Volta",
+      "description": "<p>Uma vez por descanso longo, quando você entra numa luta perigosa, ajuste o Dado de Cadeia de Abate para d10.</p><p>Até a cena terminar ou você sofrer dano Severo, o Dado de Cadeia de Abate não volta ao início quando você falha numa rolagem de ataque.</p><p>Enquanto esta feature estiver ativa, você não pode se afastar voluntariamente de todos os adversários, a menos que um aliado esteja em perigo imediato.</p>",
+      "actions": {
+        "No Way Back": {
+          "name": "Sem Volta"
+        }
+      },
+      "effects": {
+        "No Way Back": {
+          "name": "Sem Volta",
+          "description": "<p>Dado de Cadeia de Abate em d10; até a cena terminar ou você sofrer dano Severo, ele não volta ao início quando você falha num ataque. Você não pode se afastar voluntariamente de todos os adversários, a menos que um aliado esteja em perigo imediato.</p>"
+        }
+      }
+    },
+    "Remote Hands": {
+      "name": "Mãos Remotas",
+      "description": "<p>Você pode usar Gambiarra por meio do drone como se estivesse tocando o alvo. Depois de usar <strong>Impulso</strong> ou <strong>Remendo</strong>, o drone pode se mover imediatamente dentro do alcance Próximo.</p>"
+    },
+    "Combat Triage": {
+      "name": "Triagem de Combate",
+      "description": "<p>Uma vez por descanso longo, quando uma cena perigosa começa ou quando um aliado dentro do alcance Distante marca um ou mais Pontos de Vida, você pode dar uma ordem de triagem. Escolha até três aliados dentro do alcance Distante que possam te ouvir, te ver ou receber o seu sinal. Cada aliado escolhido pode se mover imediatamente dentro do alcance Muito Próximo e depois escolher uma:</p><ul><li>Limpar 1 Ponto de Vida e 1 Estresse.</li><li>Limpar uma condição física temporária.</li><li>Ganhar +2 na próxima rolagem.</li></ul>",
+      "actions": {
+        "Combat Triage": {
+          "name": "Triagem de Combate"
+        }
+      }
+    },
+    "Opening Strike": {
+      "name": "Golpe de Abertura",
+      "description": "<p>Uma vez por Holofote, quando você causa dano a um alvo enquanto está <em>Escondido</em> dele ou enquanto ele está <em>Vulnerável</em>, some à rolagem de dano uma quantidade de d6 igual ao seu Tier.</p><p><em>Na ficha: a ação rola os d6 do seu Tier para somar ao dano.</em></p>",
+      "actions": {
+        "Opening Strike": {
+          "name": "Golpe de Abertura"
+        }
+      }
+    },
+    "Exploit Payload": {
+      "name": "Pacote de Exploração",
+      "description": "<p>Quando você aplica Exploração em uma criatura, drone, veículo ou sistema conectado, você pode marcar 1 Estresse para tornar o alvo temporariamente Vulnerável.</p>",
+      "actions": {
+        "Exploit Payload": {
+          "name": "Pacote de Exploração"
+        }
+      },
+      "effects": {
+        "Exploit Payload": {
+          "name": "Pacote de Exploração"
+        }
+      }
+    },
+    "Rapid Response": {
+      "name": "Resposta Rápida",
+      "description": "<p>Quando um aliado dentro do alcance Próximo marca um ou mais Pontos de Vida, você pode marcar 1 Estresse para se mover imediatamente até o alcance Corpo a Corpo dele. Na próxima vez que usar Medicina de Emergência nesse aliado antes de a cena terminar, você rola com vantagem.</p>",
+      "actions": {
+        "Rapid Response": {
+          "name": "Resposta Rápida"
+        }
+      }
+    },
+    "Now You See Me": {
+      "name": "Agora Você Me Vê",
+      "description": "<p>Uma vez por cena, quando um ataque contra você erra ou tem desvantagem, você pode ganhar 1 Disfarce.</p>",
+      "actions": {
+        "Now You See Me": {
+          "name": "Agora Você Me Vê"
+        }
+      }
+    },
+    "Drone Network": {
+      "name": "Rede de Drones",
+      "description": "<p>Uma vez por descanso longo, espalhe uma rede de drones até a cena terminar ou você sofrer dano Severo. Enquanto ativa:</p><ul><li>Seu drone pode operar dentro do alcance Muito Distante.</li><li>O Gambiarra usado por meio dele pode aplicar dois efeitos.</li><li>Quando um aliado dentro do alcance Próximo dele sofrer dano, marque 1 Estresse para reduzir esse dano em <strong>1d8</strong>.</li></ul>",
+      "actions": {
+        "Drone Network": {
+          "name": "Rede de Drones"
+        },
+        "Reduzir Dano (Drone Network)": {
+          "name": "Reduzir Dano (Rede de Drones)"
+        }
+      },
+      "effects": {
+        "Drone Network": {
+          "name": "Rede de Drones",
+          "description": "<p>Rede de drones ativa até a cena terminar ou você sofrer dano Severo: o drone opera dentro do alcance Muito Distante, o Gambiarra usado por meio dele aplica dois efeitos, e você pode marcar 1 Estresse para reduzir em 1d8 o dano de um aliado dentro do alcance Próximo do drone.</p>"
+        }
+      }
+    },
+    "Bad Ground": {
+      "name": "Terreno Ruim",
+      "description": "<p>Uma vez por descanso, quando um adversário dentro da sua Rota Mapeada se move dentro do alcance Próximo ou mais longe, você pode descrever como o terreno se vira contra ele. Ele faz uma Rolagem de Reação (15).</p><p>Em uma falha, o adversário fica temporariamente <em>Imobilizado</em>, ou um veículo fica Danificado, e ele marca 1 Estresse. Em um sucesso, ele marca 1 Estresse.</p>",
+      "actions": {
+        "Bad Ground": {
+          "name": "Terreno Ruim"
+        }
+      },
+      "effects": {
+        "Bad Ground": {
+          "name": "Terreno Ruim",
+          "description": "<p>O terreno se virou contra ele: marcou 1 Estresse e ficou temporariamente Imobilizado.</p>"
+        }
+      }
+    },
+    "Perfect Ambush": {
+      "name": "Emboscada Perfeita",
+      "description": "<p>Uma vez por descanso longo, quando você acerta um ataque contra um alvo de quem está <em>Escondido</em>, não role os dados de dano da arma. Em vez disso, use o maior valor possível desses dados.</p><p>Se o alvo sobreviver ao ataque, ele fica permanentemente <em>Vulnerável</em>.</p>",
+      "actions": {
+        "Perfect Ambush": {
+          "name": "Emboscada Perfeita"
+        }
+      },
+      "effects": {
+        "Perfect Ambush": {
+          "name": "Emboscada Perfeita",
+          "description": "<p>Sobreviveu a um Emboscada Perfeita e ficou permanentemente Vulnerável.</p>"
+        }
+      }
+    },
+    "Hard to Break": {
+      "name": "Difícil de Quebrar",
+      "description": "<p>Uma vez por descanso, quando você fosse marcar um ou mais Pontos de Vida, pode marcar 1 Estresse para reduzir a gravidade em um limiar.</p>",
+      "actions": {
+        "Hard to Break": {
+          "name": "Difícil de Quebrar"
+        }
+      }
+    },
+    "Reflex Suite": {
+      "name": "Reflex Suite",
+      "description": "<p><em>Jogue de Reflex Suite se você quiser se mover mais rápido que o tempo de reação humano e transformar o seu sistema nervoso numa arma.</em></p>\n<p><strong>Build Sugerida:</strong> Agilidade +2, Acuidade +1, Instinto +1, Força 0, Presença 0, Conhecimento −1. Equipamento recomendado: Submetralhadora Compacta (primária, uma mão) + Faca de Combate (secundária) + Jaqueta de Sintcouro — Evasão alta e Agilidade calibrada.</p>"
+    },
+    "Ghost Route": {
+      "name": "Rota Fantasma",
+      "description": "<p>Quando você se move enquanto está <em>Escondido</em>, pode se mover dentro do alcance Distante em vez do Próximo.</p><p>Se você começar esse movimento dentro do alcance Muito Próximo de um aliado, pode levá-lo junto. Esse aliado não fica Escondido, a menos que já estivesse.</p>"
+    },
+    "Phantom": {
+      "name": "Phantom",
+      "description": "<p><em>Jogue de Phantom se você quiser passar por espaços vigiados, se reposicionar por pontos cegos, tirar aliados do perigo e desaparecer antes que o inimigo consiga te prender.</em></p>\n<p><em>(A lista de subclasses do PDF chama esta de \"Deep Disfarce\", mas a seção dela se chama Phantom.)</em></p>\n<p><strong>Build Sugerida:</strong> Agilidade +2, Acuidade +1, Instinto +1, Presença 0, Conhecimento 0, Força −1. Equipamento recomendado: Submetralhadora Compacta (primária, uma mão) + Faca de Combate (secundária) + Jaqueta de Sintcouro — mobilidade e Evasão alta.</p>"
+    },
+    "Accelerated Loop": {
+      "name": "Ciclo Acelerado",
+      "description": "<p>Uma vez por descanso longo, você pode levar o seu reflexware à aceleração total. Até a cena terminar ou você sofrer dano Severo, na primeira vez em cada Holofote que você usar <em>Cromo Integrado</em> numa Rolagem de Agilidade ou Acuidade bem-sucedida, pode limpar 1 Estresse ou se mover imediatamente dentro do alcance Muito Próximo.</p>",
+      "actions": {
+        "Accelerated Loop": {
+          "name": "Ciclo Acelerado"
+        }
+      },
+      "effects": {
+        "Accelerated Loop": {
+          "name": "Ciclo Acelerado",
+          "description": "<p>Reflexware em aceleração total até a cena terminar ou você sofrer dano Severo. Na primeira vez em cada Holofote que usar Cromo Integrado numa Rolagem de Agilidade ou Acuidade bem-sucedida, limpe 1 Estresse ou mova-se dentro do alcance Muito Próximo.</p>"
+        }
+      }
+    },
+    "Crowd Control": {
+      "name": "Controle de Multidão",
+      "description": "<p>Quando você acerta um ataque com arma ou uma carta de Égide, escolha um adversário dentro do alcance Próximo. Até o seu próximo Holofote, esse adversário não pode se aproximar voluntariamente de um aliado, objetivo ou posição que você escolher, a menos que primeiro marque 1 Estresse.</p><p>Se o alvo já estiver dentro do alcance Muito Próximo do aliado, objetivo ou posição protegida, ele precisa se afastar imediatamente até o alcance Próximo ou marcar 1 Estresse.</p>"
+    },
+    "Live Feed": {
+      "name": "Transmissão ao Vivo",
+      "description": "<p>Uma vez por descanso, quando você tem sucesso numa Rolagem de Presença ou usa uma carta de Influência enquanto é observado por uma multidão, gravado ou transmitido para um grupo, pode amplificar o momento.</p><p>Escolha qualquer número de criaturas dentro do alcance Próximo que possam te ver ou ouvir. Aliados limpam 1 Estresse. Adversários marcam 1 Estresse.</p>",
+      "actions": {
+        "Live Feed": {
+          "name": "Transmissão ao Vivo"
+        }
+      }
+    },
+    "Controlled Demolition": {
+      "name": "Demolição Controlada",
+      "description": "<p>Uma vez por descanso longo, quando você aciona uma carga, destrua, desmorone, abra ou desative o alvo dela para criar uma grande brecha, rota de fuga ou obstrução.</p><p>Adversários dentro do alcance Próximo fazem uma Rolagem de Reação (16). Em uma falha, sofrem 3d10 de dano físico e ficam temporariamente <em>Imobilizados</em>. Em um sucesso, sofrem metade do dano.</p><p><em>Na ficha: a ação rola os 3d10 e aplica Imobilizado nos alvos que falharem.</em></p>",
+      "actions": {
+        "Controlled Demolition": {
+          "name": "Demolição Controlada"
+        }
+      },
+      "effects": {
+        "Controlled Demolition": {
+          "name": "Demolição Controlada",
+          "description": "<p>Pego pela demolição controlada: temporariamente Imobilizado.</p>"
+        }
+      }
+    },
+    "Contacts Everywhere": {
+      "name": "Contatos em Todo Lugar",
+      "description": "<p>Uma vez por descanso, chame ajuda imediata de um contato. Descreva como ele intervém e escolha uma:</p><ul><li>Reduza em 1 os Pontos de Vida marcados por você ou por um aliado.</li><li>Ganhe +3 na sua próxima rolagem de ação.</li><li>Some 2d8 à sua próxima rolagem de dano.</li></ul><p><em>Na ficha: \"Rolar 2d8\" rola o dano extra da terceira opção.</em></p>",
+      "actions": {
+        "Contacts Everywhere": {
+          "name": "Contatos em Todo Lugar"
+        }
+      }
+    },
+    "Icon": {
+      "name": "Icon",
+      "description": "<p><em>Jogue de Icon se você quiser usar como arma a reputação, a performance, a fama, o medo, a propaganda e a percepção pública.</em></p>\n<p><strong>Build Sugerida:</strong> Presença +2, Agilidade +1, Acuidade +1, Instinto 0, Conhecimento 0, Força −1. Equipamento recomendado: Bastão de Choque (primária, uma mão) + Luva de Choque (secundária) + Traje Ícone de Rua — a reputação faz parte do figurino.</p>"
+    },
+    "Silent Killer": {
+      "name": "Silent Killer",
+      "description": "<p><em>Jogue de Silent Killer se você quiser eliminar alvos com precisão e terminar lutas antes que elas comecem.</em></p>\n<p><strong>Build Sugerida:</strong> Acuidade +2, Agilidade +1, Instinto +1, Presença 0, Conhecimento 0, Força −1. Equipamento recomendado: Monokatana (primária, uma mão) + Faca de Combate (secundária) + Jaqueta de Sintcouro — ataques de perto, saindo do Escondido.</p>"
+    },
+    "Public Persona": {
+      "name": "Persona Pública",
+      "description": "<p>Escolha o que o seu nome significa na rua:</p><ul><li><strong>Adorado:</strong> quando usa <em>Termos de Engajamento</em> para você ou um aliado limpar Estresse, esse alvo limpa 2 Estresse em vez de 1.</li><li><strong>Temido:</strong> quando usa <em>Termos de Engajamento</em> para fazer um alvo marcar Estresse, pode marcar 1 Estresse para deixá-lo temporariamente Vulnerável.</li><li><strong>Famoso:</strong> quando usa <em>Termos de Engajamento</em> para dar +2 numa rolagem, dê +4 em vez disso.</li></ul><p>Você pode trocar a sua Persona Pública quando faz um descanso longo, explicando como a sua imagem muda.</p><p><em>Na ficha: \"Escolher Persona Pública\" guarda a escolha, mostrada no selo do cabeçalho.</em></p>",
+      "actions": {
+        "Escolher Public Persona": {
+          "name": "Escolher Persona Pública"
+        }
+      },
+      "pick": {
+        "title": "Persona Pública",
+        "prompt": "Escolha o que o seu nome significa na rua (troca no descanso longo).",
+        "options": {
+          "beloved": "Adorado",
+          "feared": "Temido",
+          "famous": "Famoso"
+        }
+      }
+    },
+    "Hard Stop": {
+      "name": "Parada Brusca",
+      "description": "<p>Uma vez por descanso, quando um adversário dentro do alcance Próximo se move em direção a você ou a um aliado, force-o a fazer uma Rolagem de Reação (15).</p><p>Em uma falha, ele para de se mover e fica temporariamente <em>Imobilizado</em>.</p><p>Em um sucesso, ele marca 1 Estresse.</p>",
+      "actions": {
+        "Hard Stop": {
+          "name": "Parada Brusca"
+        }
+      },
+      "effects": {
+        "Hard Stop": {
+          "name": "Parada Brusca",
+          "description": "<p>Parou de se mover e está temporariamente Imobilizado.</p>"
+        }
+      }
+    },
+    "Fast Enough": {
+      "name": "Rápido o Bastante",
+      "description": "<p>Uma vez por descanso, quando um ataque contra você fosse acertar, pode marcar 1 Estresse para rolar um d6 e somar o resultado à sua Evasão contra esse ataque.</p>",
+      "actions": {
+        "Fast Enough": {
+          "name": "Rápido o Bastante"
+        }
+      }
+    },
+    "Unbreakable Frame": {
+      "name": "Estrutura Inquebrável",
+      "description": "<p>Uma vez por descanso longo, quando você marca um Espaço de Armadura, pode ativar o seu equipamento defensivo completo até a cena terminar ou você marcar o seu último Espaço de Armadura. Enquanto esta feature estiver ativa, quando marcar um Espaço de Armadura, escolha uma:</p><ul><li>Limpe 1 Estresse.</li><li>Force o atacante a marcar 1 Estresse.</li><li>Um aliado dentro do alcance Muito Próximo ganha +1 de Evasão até o seu próximo Holofote.</li></ul>",
+      "actions": {
+        "Unbreakable Frame": {
+          "name": "Estrutura Inquebrável"
+        }
+      },
+      "effects": {
+        "Unbreakable Frame": {
+          "name": "Estrutura Inquebrável",
+          "description": "<p>Equipamento defensivo completo ativo até a cena terminar ou você marcar o último Espaço de Armadura. Ao marcar um Espaço de Armadura, escolha: limpar 1 Estresse; forçar o atacante a marcar 1 Estresse; ou um aliado dentro do alcance Muito Próximo ganha +1 de Evasão até o seu próximo Holofote.</p>"
+        }
+      }
+    },
+    "Marked Target": {
+      "name": "Alvo Marcado",
+      "description": "<p>Uma vez por descanso, quando você causa dano a um alvo, pode marcá-lo como seu alvo prioritário até a cena terminar ou você marcar outro alvo desse jeito.</p><p>Quando rolar o Dado de Cadeia de Abate contra o alvo marcado, pode rolar o dado de novo e usar qualquer um dos resultados.</p>",
+      "actions": {
+        "Marked Target": {
+          "name": "Alvo Marcado"
+        }
+      },
+      "effects": {
+        "Marked Target": {
+          "name": "Alvo Marcado",
+          "description": "<p>Alvo prioritário do Deadeye até a cena terminar ou outro alvo ser marcado. Ao rolar o Dado de Cadeia de Abate contra ele, o Deadeye pode rolar de novo e usar qualquer resultado.</p>"
+        }
+      }
+    },
+    "Signature Vehicle": {
+      "name": "Veículo de Assinatura",
+      "description": "<p>Você tem um veículo pessoal. Ao operá-lo, pode usar Agilidade em vez do atributo indicado.</p><p>Uma vez por cena, impeça o seu Veículo de Assinatura de ficar <strong>Danificado</strong> ou <strong>Inutilizado</strong>. Você pode designar um novo Veículo de Assinatura durante um descanso.</p>"
+    },
+    "Zonebreaker": {
+      "name": "Zonebreaker",
+      "description": "<p><em>Jogue de Zonebreaker se você quiser dominar o terreno, transformar ruínas em armas e deixar o próprio campo de batalha perigoso.</em></p>\n<p><strong>Build Sugerida:</strong> Instinto +2, Agilidade +1, Força +1, Acuidade 0, Conhecimento 0, Presença −1. Equipamento recomendado: Submetralhadora Compacta (primária, uma mão) + Drone Tático (secundária, de Instinto) + Colete Balístico — ficar dentro da Rota Mapeada e segurar a posição.</p>"
+    },
+    "Dead Zone": {
+      "name": "Zona Morta",
+      "description": "<p>Uma vez por descanso longo, quando você cria uma Rota Mapeada, pode transformá-la numa <strong>Zona Morta</strong> até a cena terminar ou você sofrer dano Severo. Dentro da sua Zona Morta:</p><ul><li>Adversários que se movem dentro do alcance Muito Próximo de você marcam 1 Estresse.</li><li>Adversários tratam a área inteira como terreno difícil.</li><li>Quando você causa dano a um adversário na Zona Morta, some 1d8 de dano físico à rolagem de dano.</li></ul>",
+      "actions": {
+        "Dead Zone": {
+          "name": "Zona Morta"
+        },
+        "Rolar Dead Zone": {
+          "name": "Rolar Zona Morta"
+        }
+      },
+      "effects": {
+        "Dead Zone": {
+          "name": "Zona Morta",
+          "description": "<p>Zona Morta ativa até a cena terminar ou você sofrer dano Severo: adversários que se movem dentro do alcance Muito Próximo de você marcam 1 Estresse; adversários tratam a área como terreno difícil; ao causar dano a um adversário na zona, some 1d8 de dano físico.</p>"
+        }
+      }
+    },
+    "Hard Crash": {
+      "name": "Colapso Total",
+      "description": "<p>Uma vez por descanso, quando você cria uma Brecha contra um alvo Explorado por você, você pode usar imediatamente essa Brecha sem gastá-la.</p>",
+      "actions": {
+        "Hard Crash": {
+          "name": "Colapso Total"
+        }
+      }
+    },
+    "Breach Momentum": {
+      "name": "Embalo de Invasão",
+      "description": "<p>Quando o seu Dado de Cadeia de Abate aumenta, ganhe +1 de Evasão até a sua próxima ação.</p>"
+    },
+    "Riotbreaker": {
+      "name": "Riotbreaker",
+      "description": "<p><em>Jogue de Riotbreaker se você quiser quebrar investidas, controlar o espaço, empurrar inimigos e transformar defesa em força.</em></p>\n<p><strong>Build Sugerida:</strong> Presença +2, Força +1, Instinto +1, Agilidade 0, Conhecimento 0, Acuidade −1. Equipamento recomendado: Bastão de Choque (primária, uma mão) + Broquel Antimotim (secundária) + Blindagem Antimotim — controle de perto com uma mão livre para o escudo.</p>"
+    },
+    "Net Diver": {
+      "name": "Net Diver",
+      "description": "<p><em>Jogue de Net Diver se você quiser entrar em redes hostis, controlar sistemas conectados e completar o trabalho de dentro da arquitetura digital.</em></p>\n<p><strong>Build Sugerida:</strong> Instinto +2, Finesse +1, Agilidade +1, Presença 0, Conhecimento 0, Força −1. Equipamento recomendado: Arco Inteligente (primária, duas mãos — sem arma secundária) + Jaqueta de Sintcouro — favorece manter-se móvel e cobrir aliados à distância enquanto usa o Mergulho Profundo.</p>"
+    },
+    "Outrider": {
+      "name": "Outrider",
+      "description": "<p><em>Jogue de Outrider se você quiser dominar veículos, liderar perseguições e sobreviver a estradas impossíveis.</em></p>\n<p><strong>Build Sugerida:</strong> Agilidade +2, Instinto +1, Acuidade +1, Força 0, Presença 0, Conhecimento −1. Equipamento recomendado: Carabina de Assalto (primária, duas mãos) + Jaqueta de Sintcouro — atirar de longe, de dentro do veículo.</p>"
+    },
+    "Companion Drone": {
+      "name": "Drone Companheiro",
+      "description": "<p>Você tem um pequeno drone ou máquina companheira que pode se mover de forma independente dentro do alcance Distante, carregar objetos pequenos, gravar, escanear e interagir com controles.</p><p>Você pode Ajudar um aliado dentro do alcance Próximo do drone, não importa onde você esteja. Se a rolagem dele envolver equipamento ou sistemas conectados, use um d8 como dado de Ajuda.</p><p>Quando o drone fosse sofrer dano, marque 1 Estresse para tirá-lo do perigo. Caso contrário, ele fica desativado até o seu próximo descanso.</p><p><em>Na ficha: \"Ajuda do Drone\" gasta 1 Esperança e rola o d8 de Ajuda; \"Proteger Drone\" marca 1 Estresse.</em></p>"
+    },
+    "Hard Entry": {
+      "name": "Entrada Forçada",
+      "description": "<p>Quando você ataca logo depois de se mover para o alcance Corpo a Corpo ou Muito Próximo do alvo, pode marcar 1 Estresse para somar o Dado de Cadeia de Abate à rolagem de dano mais uma vez.</p>",
+      "actions": {
+        "Hard Entry": {
+          "name": "Entrada Forçada"
+        }
+      }
+    },
+    "Mass Casualty Protocol": {
+      "name": "Protocolo de Vítimas em Massa",
+      "description": "<p>Uma vez por descanso, quando você usa Medicina de Emergência com sucesso, também pode tratar uma segunda criatura dentro do alcance Muito Próximo do alvo original.</p>",
+      "actions": {
+        "Mass Casualty Protocol": {
+          "name": "Protocolo de Vítimas em Massa"
+        }
+      }
+    },
+    "Bulwark": {
+      "name": "Bulwark",
+      "description": "<p><em>Jogue de Bulwark se você quiser se tornar armadura pesada, escudo anti-motim e a pessoa em quem os inimigos se arrependem de bater.</em></p>\n<p><strong>Build Sugerida:</strong> Força +2, Instinto +1, Presença +1, Agilidade 0, Conhecimento 0, Acuidade −1. Equipamento recomendado: Martelo de Arrombamento (primária, duas mãos) + Blindagem Antimotim — a armadura mais pesada do Tier 1, para aproveitar o Estrutura de Impacto.</p>"
+    }
+  }
+}

@@ -1,0 +1,284 @@
+{
+  "label": "Edgeheart: Armaduras",
+  "mapping": {
+    "description": "system.description",
+    "actions": {
+      "path": "system.actions",
+      "converter": "structured",
+      "container": "keyed",
+      "keys": [
+        "name"
+      ],
+      "mapping": {
+        "name": "name",
+        "description": "description"
+      }
+    },
+    "attack": {
+      "path": "system.attack",
+      "converter": "structured",
+      "cardinality": "one",
+      "mapping": {
+        "name": "name",
+        "description": "description"
+      }
+    },
+    "backgroundQuestions": {
+      "path": "system.backgroundQuestions",
+      "converter": "edgeheartList"
+    },
+    "connections": {
+      "path": "system.connections",
+      "converter": "edgeheartList"
+    },
+    "pick": {
+      "path": "flags.edgeheart-cyberpunk.pick",
+      "converter": "structured",
+      "cardinality": "one",
+      "mapping": {
+        "title": "title",
+        "prompt": "prompt",
+        "options": {
+          "path": "options",
+          "converter": "edgeheartLabels"
+        }
+      }
+    },
+    "vehicleName": "flags.edgeheart-cyberpunk.vehicle.baseName",
+    "eidolonParts": {
+      "path": "flags.edgeheart-cyberpunk.eidolon.parts",
+      "converter": "document",
+      "documentType": "Item",
+      "cardinality": "many",
+      "mapping": {
+        "description": "system.description",
+        "actions": {
+          "path": "system.actions",
+          "converter": "structured",
+          "container": "keyed",
+          "keys": [
+            "name"
+          ],
+          "mapping": {
+            "name": "name",
+            "description": "description"
+          }
+        },
+        "attack": {
+          "path": "system.attack",
+          "converter": "structured",
+          "cardinality": "one",
+          "mapping": {
+            "name": "name",
+            "description": "description"
+          }
+        }
+      }
+    }
+  },
+  "entries": {
+    "Corporate Aegis Suit": {
+      "name": "Traje Égide Corporativo",
+      "description": "<p><strong>Defesa Executiva:</strong> uma vez por descanso, quando você rola com Medo numa Rolagem de Reação, pode transformá-la numa rolagem com Esperança.</p>"
+    },
+    "Angel Skin Prototype": {
+      "name": "Protótipo Pele-de-Anjo",
+      "description": "<p><strong>Halo de Emergência:</strong> quando você fosse gastar 1 Esperança para ajudar um aliado ou usar uma feature defensiva, pode marcar um Espaço de Armadura em vez disso.</p>"
+    },
+    "Ghostweave Cloak": {
+      "name": "Manto de Trama Fantasma",
+      "description": "<p><strong>Sumido:</strong> quando você fica Escondido, também pode ficar invisível até se mover.</p>"
+    },
+    "Insulated Hazmat": {
+      "name": "Traje Hazmat Isolado",
+      "description": "<p><strong>Aterrado:</strong> quando você marca um Espaço de Armadura contra dano tecno, reduza a gravidade em um limiar adicional.</p>"
+    },
+    "Holo-Reactive Mantle": {
+      "name": "Manto Holorreativo",
+      "description": "<p><strong>Mutável:</strong> quando você é alvo de um ataque, marque um Espaço de Armadura para dar desvantagem à rolagem de ataque.</p>",
+      "actions": {
+        "Shift": {
+          "name": "Deslocar",
+          "description": "When you are targeted for an attack, you can mark an Armor Slot to give the attack roll against you disadvantage."
+        }
+      }
+    },
+    "Smartweave Coat": {
+      "name": "Casaco de Trama Inteligente",
+      "description": "<p><strong>Adaptável:</strong> quando você é alvo de um ataque, pode marcar um Espaço de Armadura para dar desvantagem à rolagem de ataque.</p>",
+      "actions": {
+        "Shift": {
+          "name": "Deslocar",
+          "description": "When you are targeted for an attack, you can mark an Armor Slot to give the attack roll against you disadvantage."
+        }
+      }
+    },
+    "Street Icon Fit": {
+      "name": "Traje Ícone de Rua",
+      "description": "<p><strong>Reconhecível:</strong> uma vez por cena, escolha uma criatura que já ouviu falar da sua reputação. Ganhe vantagem na sua primeira rolagem contra ela.</p>",
+      "effects": {
+        "Recognizable": {
+          "name": "Reconhecível",
+          "description": "<p><strong>Reconhecível:</strong> uma vez por cena, escolha uma criatura que já ouviu falar da sua reputação. Ganhe vantagem na sua primeira rolagem contra ela.</p>"
+        }
+      }
+    },
+    "Nullweave Armor": {
+      "name": "Armadura de Trama Nula",
+      "description": "<p><strong>Sinal Morto:</strong> você não pode ser alvo de sensores, drones ou sistemas remotos além do alcance Distante, a menos que já tenha sido detectado.</p>"
+    },
+    "Street Regalia": {
+      "name": "Regalia de Rua",
+      "description": "<p><strong>Cyberpunk Lendário:</strong> uma vez por cena, quando você fosse rolar com Medo numa rolagem, pode transformá-la numa rolagem com Esperança.</p>"
+    },
+    "Reputation Mantle": {
+      "name": "Manto da Reputação",
+      "description": "<p><strong>Nome de Peso:</strong> quando você rola com Esperança numa Rolagem de Presença, um aliado que possa te ver ou ouvir limpa 1 Estresse.</p>",
+      "actions": {
+        "Name Carries Weight": {
+          "name": "Nome de Peso"
+        }
+      }
+    },
+    "Reactive Mesh": {
+      "name": "Malha Reativa",
+      "description": "<p><strong>Retroalimentação:</strong> quando um adversário te causa dano dentro do alcance Corpo a Corpo, ele marca 1 Estresse.</p>",
+      "actions": {
+        "Feedback": {
+          "name": "Retroalimentação"
+        }
+      }
+    },
+    "Trauma Armor": {
+      "name": "Armadura de Trauma",
+      "description": "<p><strong>Suporte de Vida:</strong> uma vez por descanso curto, quando você fosse marcar o seu último Ponto de Vida, pode marcar 1 Estresse em vez disso.</p>",
+      "actions": {
+        "Impenetrable": {
+          "name": "Impenetrável",
+          "description": "Once per short rest, when you would mark your last Hit Point, you can instead mark a Stress."
+        }
+      }
+    },
+    "Light Exosuit": {
+      "name": "Exotraje Leve",
+      "description": "<p><strong>Estrutura Ágil:</strong> +1 de Evasão.</p>",
+      "effects": {
+        "Flexible": {
+          "name": "Flexível",
+          "description": "+1 to Evasion"
+        }
+      }
+    },
+    "Hazard Suit": {
+      "name": "Traje de Perigo",
+      "description": "<p><strong>Selado:</strong> você tem vantagem em rolagens para resistir a fumaça, veneno, gás, contaminação, doença ou exposição ambiental.</p>",
+      "effects": {
+        "Sealed": {
+          "name": "Selado",
+          "description": "<p><strong>Selado:</strong> você tem vantagem em rolagens para resistir a fumaça, veneno, gás, contaminação, doença ou exposição ambiental.</p>"
+        }
+      }
+    },
+    "Ballistic Vest": {
+      "name": "Colete Balístico",
+      "description": "<p><strong>Reforçado:</strong> quando você marca o seu último Espaço de Armadura, aumente os seus limiares de dano em +2 até limpar pelo menos 1 Espaço de Armadura.</p>",
+      "effects": {
+        "Reinforced": {
+          "name": "Reforçado",
+          "description": "When you mark your last Armor Slot, increase your damage thresholds by +2 until you clear at least 1 Armor Slot."
+        }
+      }
+    },
+    "Armored Bodysuit": {
+      "name": "Macacão Blindado",
+      "description": "<p><strong>Furtividade:</strong> ganhe +2 nas rolagens para ficar ou continuar Escondido.</p>",
+      "effects": {
+        "Stealth (+2 para ficar Escondido)": {
+          "name": "Furtividade (+2 para ficar Escondido)"
+        }
+      }
+    },
+    "Siege Exo-Frame": {
+      "name": "Exoesqueleto de Cerco",
+      "description": "<p><strong>Difícil:</strong> −1 em todos os atributos; <strong>Fortificado:</strong> quando você marca um Espaço de Armadura, reduza a gravidade em dois limiares em vez de um.</p>",
+      "effects": {
+        "Difficult": {
+          "name": "Difícil",
+          "description": "<p><strong>Difícil:</strong> −1 em todos os atributos; <strong>Fortificado:</strong> quando você marca um Espaço de Armadura, reduza a gravidade em dois limiares em vez de um.</p>"
+        },
+        "Fortified": {
+          "name": "Fortificado",
+          "description": "When you mark an Armor Slot, you reduce the severity of an attack by two thresholds instead of one."
+        }
+      }
+    },
+    "Celebrity Armorweave": {
+      "name": "Trama Blindada de Celebridade",
+      "description": "<p><strong>Altar do Holofote:</strong> uma vez por cena, você pode se tornar o centro das atenções. Até o seu próximo Holofote, os aliados têm vantagem em rolagens para se esconder, fugir ou agir sem serem notados.</p>"
+    },
+    "Exo-Riot Plating": {
+      "name": "Blindagem Exo-Antimotim",
+      "description": "<p><strong>Ancorado:</strong> você tem vantagem em rolagens para resistir a ser empurrado, derrubado, movido ou Imobilizado.</p>",
+      "effects": {
+        "Anchored": {
+          "name": "Ancorado",
+          "description": "<p><strong>Ancorado:</strong> você tem vantagem em rolagens para resistir a ser empurrado, derrubado, movido ou Imobilizado.</p>"
+        }
+      }
+    },
+    "Ceramite Plate": {
+      "name": "Placa de Ceramita",
+      "description": "<p><strong>Pesado:</strong> −1 de Evasão; <strong>Ceramita:</strong> antes de marcar o seu último Espaço de Armadura, role um d6. Num 5 ou mais, reduza a gravidade em um limiar sem marcar um Espaço de Armadura.</p>",
+      "effects": {
+        "Heavy": {
+          "name": "Pesado",
+          "description": "-1 to Evasion"
+        }
+      }
+    },
+    "Vagras Bulwark Harness": {
+      "name": "Arnês Baluarte Vagras",
+      "description": "<p><strong>Muito Pesado:</strong> −2 de Evasão; <strong>Barricada Ambulante:</strong> você conta como cobertura para os aliados dentro do alcance Muito Próximo. Quando um aliado dentro do alcance Muito Próximo é alvo de um ataque, você pode marcar um Espaço de Armadura para dar desvantagem a esse ataque.</p>",
+      "effects": {
+        "Very Heavy": {
+          "name": "Muito Pesado",
+          "description": "<p><strong>Muito Pesado:</strong> −2 de Evasão; <strong>Barricada Ambulante:</strong> você conta como cobertura para os aliados dentro do alcance Muito Próximo. Quando um aliado dentro do alcance Muito Próximo é alvo de um ataque, você pode marcar um Espaço de Armadura para dar desvantagem a esse ataque.</p>"
+        }
+      }
+    },
+    "Luxurious Coat": {
+      "name": "Casaco Luxuoso",
+      "description": "<p><strong>Primeira Impressão:</strong> uma vez por cena, escolha uma criatura. Ela precisa te tratar como alguém importante, perigoso, rico ou que vale a pena ouvir, até que se prove o contrário.</p>"
+    },
+    "Riot Shell": {
+      "name": "Blindagem Antimotim",
+      "description": "<p><strong>Pesado:</strong> −1 de Evasão; <strong>Apoio na Cobertura:</strong> marque um Espaço de Armadura para ganhar +2 de Evasão contra um ataque recebido.</p>",
+      "effects": {
+        "Heavy": {
+          "name": "Pesado",
+          "description": "-1 to Evasion"
+        }
+      }
+    },
+    "Synthleather Jacket": {
+      "name": "Jaqueta de Sintcouro",
+      "description": "<p><strong>Flexível:</strong> +1 de Evasão.</p>",
+      "effects": {
+        "Flexible": {
+          "name": "Flexível",
+          "description": "+1 to Evasion"
+        }
+      }
+    },
+    "Gang Colors Jacket": {
+      "name": "Jaqueta com as Cores da Gangue",
+      "description": "<p><strong>Reivindicado:</strong> você tem vantagem em rolagens para intimidar, negociar ou evitar ser desafiado em território de gangue, espaços criminosos ou ruas disputadas.</p>",
+      "effects": {
+        "Claimed": {
+          "name": "Reivindicado",
+          "description": "<p><strong>Reivindicado:</strong> você tem vantagem em rolagens para intimidar, negociar ou evitar ser desafiado em território de gangue, espaços criminosos ou ruas disputadas.</p>"
+        }
+      }
+    }
+  }
+}

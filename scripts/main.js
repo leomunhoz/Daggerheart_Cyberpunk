@@ -8,6 +8,7 @@
 const MODULE_ID = "edgeheart-cyberpunk";
 const PACK_SCOPE = MODULE_ID;
 
+// label: nome em português, usado na tradução do Babele (o module.json tem o nome em inglês).
 const PACKS = {
   classes: { name: "edgeheart-classes", label: "Edgeheart: Classes", type: "Item" },
   subclasses: { name: "edgeheart-subclasses", label: "Edgeheart: Subclasses", type: "Item" },
@@ -719,8 +720,8 @@ async function importLootAndConsumables() {
     }))
   });
   await RollTable.createDocuments([
-    table("Loot do Edgeheart", CPR("dlc/gear/fire-safe"), LOOT, "loot", "loot"),
-    table("Consumíveis do Edgeheart", CPR("gear/medtech_bag"), CONSUMABLES, "consumables", "consumable")
+    table(TABLE_NAMES.loot[0], CPR("dlc/gear/fire-safe"), LOOT, "loot", "loot"),
+    table(TABLE_NAMES.consumables[0], CPR("gear/medtech_bag"), CONSUMABLES, "consumables", "consumable")
   ], { pack: (await getOrCreatePack("rolltables")).collection, keepId: true });
 }
 
@@ -4092,7 +4093,7 @@ async function importEnvironments() {
         tier: e.tier, type: e.type, difficulty: e.difficulty, impulses: e.impulses, notes: "",
         description: e.description + (missing.length ? `<p><em>Também combina com: ${missing.join(", ")}.</em></p>` : ""),
         potentialAdversaries: known.length
-          ? { [foundry.utils.randomID()]: { label: "Adversários", adversaries: known.map(n => `Compendium.${adversaries.collection}.Actor.${adversaryId(n)}`) } }
+          ? { [foundry.utils.randomID()]: { label: "Adversaries", adversaries: known.map(n => `Compendium.${adversaries.collection}.Actor.${adversaryId(n)}`) } }
           : {},
         attribution: ATTRIBUTION
       },
@@ -4435,40 +4436,53 @@ async function importCyberware() {
 // O texto de cada página fica em journals/<pasta>/<arquivo>.html. Dentro dele, {{id:CHAVE}} vira o
 // stableId(CHAVE), para linkar itens importados: @UUID[Compendium.edgeheart-cyberpunk.edgeheart-classes.Item.{{id:runner:class}}]{Runner}.
 
+// Nomes: [inglês (base do compêndio), português (tradução do Babele)]; páginas: [inglês, português, arquivo].
 const JOURNALS = [
   {
-    key: "welcome", name: "Bem-vindo ao Edgeheart", folder: "welcome",
-    pages: [["O MÓDULO EDGEHEART", "01-modulo"], ["A FICHA EDGEHEART", "02-ficha"], ["CRÉDITOS", "03-creditos"]]
+    key: "welcome", name: ["Welcome to Edgeheart", "Bem-vindo ao Edgeheart"], folder: "welcome",
+    pages: [["THE EDGEHEART MODULE", "O MÓDULO EDGEHEART", "01-modulo"], ["THE EDGEHEART SHEET", "A FICHA EDGEHEART", "02-ficha"], ["CREDITS", "CRÉDITOS", "03-creditos"]]
   },
   {
-    key: "campaign-frame", name: "Edgeheart Campaign Frame", folder: "campaign-frame",
+    key: "campaign-frame", name: ["Edgeheart Campaign Frame", "Edgeheart: Campaign Frame"], folder: "campaign-frame",
     pages: [
-      ["EDGEHEART", "01-edgeheart"], ["VISÃO GERAL", "02-visao-geral"], ["A NEW DARK AGE", "03-nova-era"],
-      ["PRINCÍPIOS DO JOGADOR", "04-principios-jogador"], ["PRINCÍPIOS DO MESTRE", "05-principios-mestre"],
-      ["PERGUNTAS DE SESSÃO ZERO", "06-sessao-zero"]
+      ["EDGEHEART", "EDGEHEART", "01-edgeheart"], ["OVERVIEW", "VISÃO GERAL", "02-visao-geral"], ["A NEW DARK AGE", "UMA NOVA ERA DAS TREVAS", "03-nova-era"],
+      ["PLAYER PRINCIPLES", "PRINCÍPIOS DO JOGADOR", "04-principios-jogador"], ["GM PRINCIPLES", "PRINCÍPIOS DO MESTRE", "05-principios-mestre"],
+      ["SESSION ZERO QUESTIONS", "PERGUNTAS DE SESSÃO ZERO", "06-sessao-zero"]
     ]
   },
   {
-    key: "srd", name: "Edgeheart SRD", folder: "srd",
+    key: "srd", name: ["Edgeheart SRD", "Edgeheart SRD"], folder: "srd",
     pages: [
-      ["INTRODUÇÃO", "01-introducao"], ["A CREW E O EDGE", "02-crew"], ["CLASSES", "03-classes"],
-      ["TRAJETÓRIAS E AFILIAÇÕES", "04-trajetorias-afiliacoes"],
-      ["RUNNER", "10-runner"], ["INFILTRATOR", "11-infiltrator"], ["SOLO", "12-solo"], ["AUGMENTED", "13-augmented"],
-      ["TECH", "14-tech"], ["BROKER", "15-broker"], ["RECLAIMER", "16-reclaimer"], ["TRAUMA DOC", "17-trauma-doc"],
-      ["WARDEN", "18-warden"],
-      ["EQUIPAMENTO", "20-equipamento"], ["ARMAS PRIMÁRIAS", "21-armas-primarias"], ["ARMAS SECUNDÁRIAS", "22-armas-secundarias"],
-      ["ARMADURAS", "23-armaduras"], ["LOOT", "24-loot"], ["CONSUMÍVEIS", "25-consumiveis"], ["CYBERWARE", "26-cyberware"],
-      ["EIDOLONS", "30-eidolons"], ["EXEMPLOS DE EIDOLONS", "31-exemplos-eidolons"],
-      ["HUMANIDADE, CIBERPSICOSE E HACKING", "32-mecanicas"], ["VEÍCULOS", "33-veiculos"],
-      ["AMEAÇAS DA NEW DARK AGE", "40-ameacas"], ["AMBIENTES", "41-ambientes"],
-      ["ADVERSÁRIOS DE TIER 1", "42-adversarios-t1"], ["ADVERSÁRIOS DE TIER 2", "43-adversarios-t2"],
-      ["ADVERSÁRIOS DE TIER 3", "44-adversarios-t3"], ["ADVERSÁRIOS DE TIER 4", "45-adversarios-t4"],
-      ["COMPETÊNCIAS", "50-competencias"], ["NETWORK", "51-network"], ["ASSAULT", "52-assault"], ["CHROME", "53-chrome"],
-      ["SYSTEMS", "54-systems"], ["INFLUENCE", "55-influence"], ["GHOST", "56-ghost"], ["FRONTIER", "57-frontier"],
-      ["MEDTECH", "58-medtech"], ["AEGIS", "59-aegis"], ["REDLINE", "60-redline"], ["BLACKWALL", "61-blackwall"]
+      ["INTRODUCTION", "INTRODUÇÃO", "01-introducao"], ["THE CREW AND EDGE", "A EQUIPE E O ÍMPETO", "02-crew"], ["CLASSES", "CLASSES", "03-classes"],
+      ["LIFE PATHS AND AFFILIATIONS", "TRAJETÓRIAS E AFILIAÇÕES", "04-trajetorias-afiliacoes"],
+      ["RUNNER", "RUNNER", "10-runner"], ["INFILTRATOR", "INFILTRATOR", "11-infiltrator"], ["SOLO", "SOLO", "12-solo"], ["AUGMENTED", "AUGMENTED", "13-augmented"],
+      ["TECH", "TECH", "14-tech"], ["BROKER", "BROKER", "15-broker"], ["RECLAIMER", "RECLAIMER", "16-reclaimer"], ["TRAUMA DOC", "TRAUMA DOC", "17-trauma-doc"],
+      ["WARDEN", "WARDEN", "18-warden"],
+      ["EQUIPMENT", "EQUIPAMENTO", "20-equipamento"], ["PRIMARY WEAPONS", "ARMAS PRIMÁRIAS", "21-armas-primarias"], ["SECONDARY WEAPONS", "ARMAS SECUNDÁRIAS", "22-armas-secundarias"],
+      ["ARMOR", "ARMADURAS", "23-armaduras"], ["LOOT", "LOOT", "24-loot"], ["CONSUMABLES", "CONSUMÍVEIS", "25-consumiveis"], ["CYBERWARE", "CYBERWARE", "26-cyberware"],
+      ["EIDOLONS", "EIDOLONS", "30-eidolons"], ["EIDOLON EXAMPLES", "EXEMPLOS DE EIDOLONS", "31-exemplos-eidolons"],
+      ["HUMANITY, CYBERPSYCHOSIS AND HACKING", "HUMANIDADE, CIBERPSICOSE E HACKING", "32-mecanicas"], ["VEHICLES", "VEÍCULOS", "33-veiculos"],
+      ["THREATS OF THE NEW DARK AGE", "AMEAÇAS DA NOVA ERA DAS TREVAS", "40-ameacas"], ["ENVIRONMENTS", "AMBIENTES", "41-ambientes"],
+      ["TIER 1 ADVERSARIES", "ADVERSÁRIOS DE TIER 1", "42-adversarios-t1"], ["TIER 2 ADVERSARIES", "ADVERSÁRIOS DE TIER 2", "43-adversarios-t2"],
+      ["TIER 3 ADVERSARIES", "ADVERSÁRIOS DE TIER 3", "44-adversarios-t3"], ["TIER 4 ADVERSARIES", "ADVERSÁRIOS DE TIER 4", "45-adversarios-t4"],
+      ["COMPETENCIES", "COMPETÊNCIAS", "50-competencias"], ["NETWORK", "REDE", "51-network"], ["ASSAULT", "ASSALTO", "52-assault"], ["CHROME", "CROMO", "53-chrome"],
+      ["SYSTEMS", "SISTEMAS", "54-systems"], ["INFLUENCE", "INFLUÊNCIA", "55-influence"], ["GHOST", "FANTASMA", "56-ghost"], ["FRONTIER", "FRONTEIRA", "57-frontier"],
+      ["MEDTECH", "MEDTEC", "58-medtech"], ["AEGIS", "ÉGIDE", "59-aegis"], ["REDLINE", "LINHA VERMELHA", "60-redline"], ["BLACKWALL", "MURALHA NEGRA", "61-blackwall"]
     ]
   }
 ];
+
+// Tabelas de rolagem: [inglês, português].
+const TABLE_NAMES = { loot: ["Edgeheart Loot", "Loot do Edgeheart"], consumables: ["Edgeheart Consumables", "Consumíveis do Edgeheart"] };
+
+// Nomes que não estão no glossário, pelo nome com que o gerador cria o documento (inglês).
+function extraLocalizedNames() {
+  const names = new Map();
+  const add = ([en, pt]) => names.set(en, { en, pt });
+  for (const journal of JOURNALS) { add(journal.name); for (const [en, pt] of journal.pages) add([en, pt]); }
+  for (const pair of Object.values(TABLE_NAMES)) add(pair);
+  return names;
+}
 
 // Tabela da lista de cyberware gerada dos próprios itens (mesmo texto do compêndio, com link).
 function cyberwareTable() {
@@ -4502,7 +4516,7 @@ async function importJournals() {
   const entries = [];
   for (const journal of JOURNALS) {
     const pages = [];
-    for (const [index, [name, file]] of journal.pages.entries()) {
+    for (const [index, [name, , file]] of journal.pages.entries()) {
       const response = await fetch(`modules/${MODULE_ID}/journals/${journal.folder}/${file}.html`, { cache: "no-store" });
       if (!response.ok) { console.warn(`Edgeheart | Página de diário não encontrada: ${journal.folder}/${file}.html`); continue; }
       const content = (await response.text())
@@ -4514,7 +4528,7 @@ async function importJournals() {
         title: { show: true, level: 1 }, text: { format: 1, content }
       });
     }
-    if (pages.length) entries.push({ _id: stableId(`journal:${journal.key}`), name: journal.name, pages });
+    if (pages.length) entries.push({ _id: stableId(`journal:${journal.key}`), name: journal.name[0], pages });
   }
   await JournalEntry.createDocuments(entries, { pack: pack.collection, keepId: true });
 }
@@ -4613,6 +4627,11 @@ async function buildPacks() {
     ui.notifications.warn("Apenas o GM pode gerar os compêndios do Edgeheart.");
     return;
   }
+  // Com o Babele traduzindo, o gerador leria os documentos já em português e gravaria isso na base.
+  if (game.babele && game.i18n.lang !== "en") {
+    ui.notifications.error("Edgeheart: para gerar os compêndios, troque o idioma do Foundry para English (o Babele está traduzindo).");
+    return;
+  }
   ui.notifications.info("Edgeheart: gerando os compêndios do módulo...");
   const stampHook = Hooks.on("preCreateItem", doc => stampActionIds(doc));
   try {
@@ -4629,6 +4648,14 @@ async function buildPacks() {
   } finally {
     Hooks.off("preCreateItem", stampHook);
   }
+  // Base em inglês + babele/pt-BR (depois dos actionIds, que ficam com os nomes de origem).
+  const { localizePacks } = await import(`./edgeheart-localize.js?v=${Date.now()}`);
+  const { unknown } = await localizePacks({
+    packs: Object.values(PACKS).map(p => ({ collection: `${PACK_SCOPE}.${p.name}`, labelPt: p.label })),
+    extraNames: extraLocalizedNames(),
+    packFolders: { "Character Options": "Opções de Personagem", "Items": "Itens" }
+  });
+  if (unknown.length) ui.notifications.warn(`Edgeheart: ${unknown.length} nomes fora do glossário (veja o console).`);
   for (const key of Object.keys(PACKS)) await game.packs.get(`${PACK_SCOPE}.${PACKS[key].name}`)?.configure({ locked: true });
   ui.notifications.info("Edgeheart: compêndios gerados.");
   console.log("Edgeheart | Compêndios do módulo gerados.");

@@ -1,0 +1,626 @@
+{
+  "label": "Edgeheart: Armas",
+  "mapping": {
+    "description": "system.description",
+    "actions": {
+      "path": "system.actions",
+      "converter": "structured",
+      "container": "keyed",
+      "keys": [
+        "name"
+      ],
+      "mapping": {
+        "name": "name",
+        "description": "description"
+      }
+    },
+    "attack": {
+      "path": "system.attack",
+      "converter": "structured",
+      "cardinality": "one",
+      "mapping": {
+        "name": "name",
+        "description": "description"
+      }
+    },
+    "backgroundQuestions": {
+      "path": "system.backgroundQuestions",
+      "converter": "edgeheartList"
+    },
+    "connections": {
+      "path": "system.connections",
+      "converter": "edgeheartList"
+    },
+    "pick": {
+      "path": "flags.edgeheart-cyberpunk.pick",
+      "converter": "structured",
+      "cardinality": "one",
+      "mapping": {
+        "title": "title",
+        "prompt": "prompt",
+        "options": {
+          "path": "options",
+          "converter": "edgeheartLabels"
+        }
+      }
+    },
+    "vehicleName": "flags.edgeheart-cyberpunk.vehicle.baseName",
+    "eidolonParts": {
+      "path": "flags.edgeheart-cyberpunk.eidolon.parts",
+      "converter": "document",
+      "documentType": "Item",
+      "cardinality": "many",
+      "mapping": {
+        "description": "system.description",
+        "actions": {
+          "path": "system.actions",
+          "converter": "structured",
+          "container": "keyed",
+          "keys": [
+            "name"
+          ],
+          "mapping": {
+            "name": "name",
+            "description": "description"
+          }
+        },
+        "attack": {
+          "path": "system.attack",
+          "converter": "structured",
+          "cardinality": "one",
+          "mapping": {
+            "name": "name",
+            "description": "description"
+          }
+        }
+      }
+    }
+  },
+  "folders": {
+    "Primary Weapons": "Armas Primárias",
+    "Physical Weapons": "Armas Físicas",
+    "Tech Weapons": "Armas Tech",
+    "Secondary Weapons": "Armas Secundárias"
+  },
+  "entries": {
+    "Grapple Wire": {
+      "name": "Fio de Arpéu",
+      "description": "<p><strong>Fisgado:</strong> num ataque bem-sucedido, puxe o alvo até o alcance Corpo a Corpo ou puxe-se até o alcance Muito Próximo dele.</p>",
+      "actions": {
+        "Hook": {
+          "name": "Gancho",
+          "description": "On a successful attack, you can pull the target into Melee range."
+        }
+      }
+    },
+    "Stun Dart": {
+      "name": "Dardo Atordoante",
+      "description": "<p><strong>Sedativo:</strong> em dano Maior, o alvo tem desvantagem na próxima rolagem de ação.</p>"
+    },
+    "Watchdog Drone": {
+      "name": "Drone Cão de Guarda",
+      "description": "<p><strong>Perseguidor:</strong> numa rolagem com Esperança, o alvo não pode ficar Escondido nem ter vantagem antes da sua próxima ação.</p>"
+    },
+    "Mono-Katana": {
+      "name": "Monokatana",
+      "description": "<p><strong>Corte Limpo:</strong> quando você causa dano Maior, o alvo também marca 1 Estresse.</p>",
+      "actions": {
+        "Clean Cut": {
+          "name": "Corte Limpo"
+        }
+      }
+    },
+    "Phase Dagger": {
+      "name": "Adaga de Fase",
+      "description": "<p><strong>Fantasma Ímpeto:</strong> numa rolagem com Esperança, este ataque ignora cobertura física ou redução de dano.</p>"
+    },
+    "Smart Stormrifle": {
+      "name": "Fuzil Tempestade Inteligente",
+      "description": "<p><strong>Mira Automática:</strong> gaste até 3 Esperança e ataque essa mesma quantidade de alvos dentro do alcance. Role uma vez para cada alvo.</p>",
+      "actions": {
+        "Auto Aim": {
+          "name": "Mira Automática"
+        }
+      }
+    },
+    "Arc Knuckles": {
+      "name": "Soqueiras de Arco",
+      "description": "<p><strong>Choque:</strong> num ataque bem-sucedido, gaste 1 Esperança para deixar o alvo temporariamente Vulnerável.</p>",
+      "actions": {
+        "Jolt": {
+          "name": "Choque"
+        }
+      },
+      "effects": {
+        "Jolt": {
+          "name": "Choque"
+        }
+      }
+    },
+    "Drone Spear": {
+      "name": "Lança-Drone",
+      "description": "<p><strong>Voo de Retorno:</strong> depois de atacar, esta arma volta para você e você pode se reposicionar imediatamente dentro do alcance Muito Próximo.</p>"
+    },
+    "Holdout Pistol": {
+      "name": "Pistola de Bolso",
+      "description": "<p><strong>Saque Rápido:</strong> você não marca Estresse para equipar esta arma em perigo.</p>"
+    },
+    "Siege Shotgun": {
+      "name": "Escopeta de Cerco",
+      "description": "<p><strong>Limpa-Salas:</strong> em dano Maior ou Severo, todos os adversários dentro do alcance Próximo precisam se afastar de você e ficam temporariamente Vulneráveis.</p>",
+      "actions": {
+        "Room Clearer": {
+          "name": "Limpa-Salas"
+        }
+      },
+      "effects": {
+        "Room Clearer": {
+          "name": "Limpa-Salas"
+        }
+      }
+    },
+    "Shock Glove": {
+      "name": "Luva de Choque",
+      "description": "<p><strong>Arco de Toque:</strong> numa rolagem com Esperança, o alvo marca 1 Estresse.</p>",
+      "actions": {
+        "Touch Arc": {
+          "name": "Arco de Toque"
+        }
+      }
+    },
+    "Heavy Pistol": {
+      "name": "Pistola Pesada",
+      "description": "<p><strong>Munição Pesada:</strong> em dano Maior, some +1 de Proficiência à rolagem de dano.</p>",
+      "actions": {
+        "Heavy Round (+1 Proficiência)": {
+          "name": "Munição Pesada (+1 Proficiência)"
+        }
+      }
+    },
+    "Rail Rifle": {
+      "name": "Fuzil de Trilho",
+      "description": "<p><strong>Soco de Trilho:</strong> em dano Maior ou Severo, ignore qualquer redução de dano.</p>"
+    },
+    "Paired Techblades": {
+      "name": "Tecnolâminas Gêmeas",
+      "description": "<p><strong>Corte Fluido:</strong> num ataque bem-sucedido com Esperança, outro adversário dentro do alcance Corpo a Corpo sofre metade do dano causado, ou você ganha +1 de Evasão contra o próximo ataque que te tiver como alvo.</p>"
+    },
+    "Blackwall Emitter": {
+      "name": "Emissor da Muralha Negra",
+      "description": "<p><strong>Estática Vermelha:</strong> numa rolagem com Medo, você pode somar +1 de Proficiência à rolagem de dano e depois marcar 1 Estresse.</p>",
+      "actions": {
+        "Red Static (+1 Proficiência)": {
+          "name": "Estática Vermelha (+1 Proficiência)"
+        }
+      }
+    },
+    "Gravity Maul": {
+      "name": "Marreta Gravitacional",
+      "description": "<p><strong>Cratera:</strong> num ataque bem-sucedido, todos os alvos dentro do alcance Muito Próximo do alvo marcam 1 Estresse.</p>",
+      "actions": {
+        "Crater": {
+          "name": "Cratera"
+        }
+      }
+    },
+    "Counter-ICE Shard": {
+      "name": "Fragmento Contra-GELO",
+      "description": "<p><strong>Ricochete:</strong> quando você rola com Medo neste ataque, pode rolar de novo o Dado de Medo ou ganhar 1 Esperança.</p>"
+    },
+    "Breach Hammer": {
+      "name": "Martelo de Arrombamento",
+      "description": "<p><strong>Brecha:</strong> num ataque bem-sucedido contra um objeto, porta, barricada, cobertura ou veículo, some +1 de Proficiência.</p>",
+      "actions": {
+        "Breach (+1 Proficiência)": {
+          "name": "Brecha (+1 Proficiência)"
+        }
+      }
+    },
+    "Singularity Charge": {
+      "name": "Carga de Singularidade",
+      "description": "<p><strong>Implodir:</strong> em dano Maior ou Severo, todos os alvos dentro do alcance Muito Próximo do alvo são puxados para o alcance Corpo a Corpo dele e sofrem metade do dano.</p>"
+    },
+    "Smartbow": {
+      "name": "Arco Inteligente",
+      "description": "<p><strong>Sacar:</strong> se você não se moveu durante o seu Holofote antes de atacar, ganhe +2 na rolagem de ataque.</p>",
+      "effects": {
+        "Draw (+2 no ataque)": {
+          "name": "Sacar (+2 no ataque)"
+        }
+      }
+    },
+    "Flash Charge": {
+      "name": "Carga de Clarão",
+      "description": "<p><strong>Ataque pelas Costas:</strong> marque 1 Estresse para deixar todos os alvos dentro do alcance Muito Próximo do alvo temporariamente Vulneráveis até agirem.</p>",
+      "actions": {
+        "Blindside": {
+          "name": "Ataque pelas Costas"
+        }
+      },
+      "effects": {
+        "Blindside": {
+          "name": "Ataque pelas Costas"
+        }
+      }
+    },
+    "Assassin Drone": {
+      "name": "Drone Assassino",
+      "description": "<p><strong>Morte Silenciosa:</strong> se você estiver Escondido ao atacar, some 1d8 à rolagem de dano.</p>",
+      "actions": {
+        "Silent Kill": {
+          "name": "Morte Silenciosa"
+        }
+      }
+    },
+    "Military Rifle": {
+      "name": "Fuzil Militar",
+      "description": "<p><strong>Mirar:</strong> marque 1 Estresse para atacar um alvo até o alcance Muito Distante com vantagem.</p>",
+      "actions": {
+        "Aim Down": {
+          "name": "Mirar"
+        }
+      }
+    },
+    "Compact SMG": {
+      "name": "Submetralhadora Compacta",
+      "description": "<p><strong>Rajada:</strong> marque 1 Estresse para ter como alvo outra criatura dentro do alcance Muito Próximo do alvo original.</p>",
+      "actions": {
+        "Spray": {
+          "name": "Rajada"
+        }
+      }
+    },
+    "Vibroblade": {
+      "name": "Vibrolâmina",
+      "description": "<p><strong>Vibrating Ímpeto:</strong> quando você tira 1 num dado de dano, trate como 6.</p>",
+      "effects": {
+        "Self Correcting": {
+          "name": "Autocorretivo",
+          "description": "When you roll a 1 on a damage die, it deals 6 damage instead."
+        }
+      }
+    },
+    "Neural Spike": {
+      "name": "Espinho Neural",
+      "description": "<p><strong>Ciclo de Dor:</strong> em dano Maior ou Severo, o alvo marca 1 Estresse.</p>",
+      "actions": {
+        "Pain Loop": {
+          "name": "Ciclo de Dor"
+        }
+      }
+    },
+    "Black ICE Projector": {
+      "name": "Projetor de GELO Negro",
+      "description": "<p><strong>Mordida no Sistema:</strong> numa rolagem com Esperança, o alvo fica temporariamente Degradado e rola um d12 em vez de um d20 nas rolagens de ataque.</p>",
+      "actions": {
+        "Degraded": {
+          "name": "Degradado"
+        }
+      },
+      "effects": {
+        "Degraded": {
+          "name": "Degradado"
+        }
+      }
+    },
+    "Neural Lance": {
+      "name": "Lança Neural",
+      "description": "<p><strong>Pico Mental:</strong> em dano Maior ou Severo, o alvo não pode ter como alvo ninguém além do alcance Muito Próximo até a sua próxima ação.</p>"
+    },
+    "Hand Cannon": {
+      "name": "Canhão de Mão",
+      "description": "<p><strong>Tiro de Reação:</strong> quando um adversário dentro do alcance Próximo falha num ataque contra você, você pode fazer uma rolagem de ataque de reação contra ele.</p>"
+    },
+    "Pulse Halberd": {
+      "name": "Alabarda de Pulso",
+      "description": "<p><strong>Arco de Alcance:</strong> numa rolagem com Esperança, outro alvo em linha dentro do alcance marca 1 Estresse.</p>",
+      "actions": {
+        "Reach Arc": {
+          "name": "Arco de Alcance"
+        }
+      }
+    },
+    "Riot Shotgun": {
+      "name": "Escopeta Antimotim",
+      "description": "<p><strong>Dispersor de Multidão:</strong> em dano Maior, todos os adversários dentro do alcance Muito Próximo do alvo precisam se afastar ou marcar 1 Estresse.</p>",
+      "actions": {
+        "Crowd Breaker": {
+          "name": "Dispersor de Multidão"
+        }
+      }
+    },
+    "Tower Shield Rig": {
+      "name": "Kit de Escudo Torre",
+      "description": "<p><strong>Barreira:</strong> +2 na Pontuação de Armadura; −1 de Evasão.</p>",
+      "effects": {
+        "Barrier": {
+          "name": "Barreira",
+          "description": "<p><strong>Barreira:</strong> +2 na Pontuação de Armadura; −1 de Evasão.</p>"
+        }
+      }
+    },
+    "Micro-Net Launcher": {
+      "name": "Lançador de Microrrede",
+      "description": "<p><strong>Rede:</strong> num ataque bem-sucedido, não cause dano para deixar o alvo temporariamente Imobilizado.</p>",
+      "actions": {
+        "Net": {
+          "name": "Rede"
+        }
+      },
+      "effects": {
+        "Net": {
+          "name": "Rede"
+        }
+      }
+    },
+    "Smoke Popper": {
+      "name": "Lança-Fumaça",
+      "description": "<p><strong>Fumaça:</strong> marque 1 Estresse para soltar fumaça dentro do alcance Muito Próximo e ficar Escondido enquanto estiver dentro da cortina.</p>",
+      "actions": {
+        "Smoke": {
+          "name": "Fumaça"
+        }
+      },
+      "effects": {
+        "Smoke": {
+          "name": "Fumaça"
+        }
+      }
+    },
+    "Riot Buckler": {
+      "name": "Broquel Antimotim",
+      "description": "<p><strong>Guarda:</strong> +1 na Pontuação de Armadura.</p>",
+      "effects": {
+        "Protective": {
+          "name": "Protetor",
+          "description": "Add the item's Tier to your Armor Score"
+        }
+      }
+    },
+    "Synaptic Needle": {
+      "name": "Agulha Sináptica",
+      "description": "<p><strong>Colapso Neural:</strong> em dano Severo, o alvo tem desvantagem em todas as rolagens até o mestre gastar 1 Medo para limpar essa condição.</p>",
+      "actions": {
+        "Neural Crash": {
+          "name": "Colapso Neural"
+        }
+      },
+      "effects": {
+        "Neural Crash": {
+          "name": "Colapso Neural"
+        }
+      }
+    },
+    "Smart Pistol Rig": {
+      "name": "Kit de Pistola Inteligente",
+      "description": "<p><strong>Assistência de Mira:</strong> ao errar, você pode gastar 1 Esperança para rolar de novo o Dado de Esperança ou de Medo.</p>",
+      "actions": {
+        "Target Assist": {
+          "name": "Assistência de Mira"
+        }
+      }
+    },
+    "Arc Caster": {
+      "name": "Lançador de Arco",
+      "description": "<p><strong>Sinal em Cadeia:</strong> num ataque bem-sucedido com Esperança, cause metade do dano a outro alvo conectado dentro do alcance Próximo.</p>"
+    },
+    "Bastion Shield": {
+      "name": "Escudo Bastião",
+      "description": "<p><strong>Bulwark:</strong> +2 na Pontuação de Armadura; quando um aliado dentro do alcance Muito Próximo marca PV, você pode marcar um Espaço de Armadura para reduzir a gravidade em um limiar.</p>",
+      "effects": {
+        "Bulwark": {
+          "description": "<p><strong>Bulwark:</strong> +2 na Pontuação de Armadura; quando um aliado dentro do alcance Muito Próximo marca PV, você pode marcar um Espaço de Armadura para reduzir a gravidade em um limiar.</p>"
+        }
+      }
+    },
+    "Scrap Launcher": {
+      "name": "Lançador de Sucata",
+      "description": "<p><strong>Tiro de Sucata:</strong> numa rolagem com Medo, o alvo sofre 1d6 de dano e a arma emperra até você marcar 1 Estresse para destravá-la.</p>",
+      "actions": {
+        "Junkshot": {
+          "name": "Tiro de Sucata"
+        }
+      }
+    },
+    "Street Shotgun": {
+      "name": "Escopeta de Rua",
+      "description": "<p><strong>Dispersão:</strong> num ataque bem-sucedido, outro alvo dentro do alcance Muito Próximo do alvo marca 1 Estresse.</p>",
+      "actions": {
+        "Scatter": {
+          "name": "Dispersão"
+        }
+      }
+    },
+    "Runner Whip": {
+      "name": "Chicote de Runner",
+      "description": "<p><strong>Campo de Açoite:</strong> num ataque bem-sucedido, puxe o alvo até o alcance Corpo a Corpo ou empurre-o até o alcance Próximo, e crie uma Brecha contra ele.</p>"
+    },
+    "Heavy Nailgun": {
+      "name": "Pregadeira Pesada",
+      "description": "<p><strong>Empalar:</strong> em dano Severo, o alvo fica temporariamente Imobilizado.</p>",
+      "actions": {
+        "Impale": {
+          "name": "Empalar"
+        }
+      },
+      "effects": {
+        "Impale": {
+          "name": "Empalar"
+        }
+      }
+    },
+    "Shock Baton": {
+      "name": "Bastão de Choque",
+      "description": "<p><strong>Pulso de Choque:</strong> num ataque bem-sucedido, o alvo tem desvantagem na próxima Rolagem de Reação que fizer.</p>"
+    },
+    "Assault Carbine": {
+      "name": "Carabina de Assalto",
+      "description": "<p><strong>Fogo Controlado:</strong> numa rolagem com Esperança, ganhe +1 na próxima rolagem de ataque dentro da cena.</p>",
+      "effects": {
+        "Controlled Fire (+1 no ataque)": {
+          "name": "Fogo Controlado (+1 no ataque)"
+        }
+      }
+    },
+    "Mono-Knife": {
+      "name": "Monofaca",
+      "description": "<p><strong>Serrilhado:</strong> quando você tira 1 num dado de dano, ele causa 6 de dano.</p>",
+      "effects": {
+        "Self Correcting": {
+          "name": "Autocorretivo",
+          "description": "When you roll a 1 on a damage die, it deals 6 damage instead."
+        }
+      }
+    },
+    "Hunter-Seeker Drone": {
+      "name": "Drone Caçador",
+      "description": "<p><strong>Marcado:</strong> num ataque bem-sucedido, o próximo ataque contra o alvo ganha +2.</p>"
+    },
+    "Impact Shield": {
+      "name": "Escudo de Impacto",
+      "description": "<p><strong>Protetor:</strong> +1 na Pontuação de Armadura; quando você marca um Espaço de Armadura, pode empurrar um atacante Corpo a Corpo até o alcance Próximo.</p>",
+      "effects": {
+        "Protective": {
+          "name": "Protetor",
+          "description": "<p><strong>Protetor:</strong> +1 na Pontuação de Armadura; quando você marca um Espaço de Armadura, pode empurrar um atacante Corpo a Corpo até o alcance Próximo.</p>"
+        }
+      }
+    },
+    "Signal Jammer": {
+      "name": "Bloqueador de Sinal",
+      "description": "<p><strong>Embaralhar:</strong> num ataque bem-sucedido, o alvo não pode se beneficiar de sensores ou suporte remoto até a sua próxima ação.</p>"
+    },
+    "Kinetic Tonfa": {
+      "name": "Tonfa Cinética",
+      "description": "<p><strong>Contrapeso:</strong> quando um adversário te ataca, você pode marcar 1 Estresse para ganhar +2 de Evasão contra esse ataque. Se o ataque errar, o atacante marca 1 Estresse.</p>",
+      "actions": {
+        "Counterweight": {
+          "name": "Contrapeso"
+        }
+      }
+    },
+    "Executive Sidearm": {
+      "name": "Pistola Executiva",
+      "description": "<p><strong>Confiável:</strong> +1 nas rolagens de ataque.</p>",
+      "effects": {
+        "Reliable": {
+          "name": "Confiável",
+          "description": "+1 to attack rolls"
+        }
+      }
+    },
+    "Sonic Cutter": {
+      "name": "Cortador Sônico",
+      "description": "<p><strong>Ressonância:</strong> num ataque bem-sucedido, gaste 1 Esperança para deixar o alvo temporariamente Vulnerável.</p>",
+      "actions": {
+        "Resonance": {
+          "name": "Ressonância"
+        }
+      },
+      "effects": {
+        "Resonance": {
+          "name": "Ressonância"
+        }
+      }
+    },
+    "Stormblade": {
+      "name": "Lâmina Tempestade",
+      "description": "<p><strong>Corte Relâmpago:</strong> num ataque bem-sucedido com Esperança, teleporte-se dentro do alcance Próximo e fique Escondido até a sua próxima ação.</p>",
+      "actions": {
+        "Blink Cut": {
+          "name": "Corte Relâmpago"
+        }
+      },
+      "effects": {
+        "Blink Cut": {
+          "name": "Corte Relâmpago"
+        }
+      }
+    },
+    "Prototype Railcannon": {
+      "name": "Canhão de Trilho Protótipo",
+      "description": "<p><strong>Rompe-Linhas:</strong> este ataque tem como alvo todos os adversários em linha dentro do alcance.</p>",
+      "actions": {
+        "Long": {
+          "name": "Longo",
+          "description": "This weapon's attack targets all adversaries in a line within range."
+        }
+      }
+    },
+    "Combat Knife": {
+      "name": "Faca de Combate",
+      "description": "<p><strong>Pareado:</strong> +2 no dano da arma primária contra alvos dentro do alcance Corpo a Corpo.</p>",
+      "effects": {
+        "Paired": {
+          "name": "Pareado",
+          "description": "Add this Secondary Weapon's tier + 1 to your primary weapon against targets within Melee range"
+        }
+      }
+    },
+    "Tactical Drone": {
+      "name": "Drone Tático",
+      "description": "<p><strong>Observador:</strong> gaste 1 Esperança para dar +2 ao seu próximo ataque com a arma primária.</p>",
+      "actions": {
+        "Spotter": {
+          "name": "Observador"
+        }
+      }
+    },
+    "Molecular Razor": {
+      "name": "Navalha Molecular",
+      "description": "<p><strong>Corte Perfeito:</strong> em dano Severo, o alvo marca 1 Ponto de Vida adicional.</p>",
+      "actions": {
+        "Deadly": {
+          "name": "Mortal",
+          "description": "When you deal Severe damage, the target must mark an additional HP."
+        }
+      }
+    },
+    "Steel-Whip Guillotine": {
+      "name": "Guilhotina Chicote-de-Aço",
+      "description": "<p><strong>Decepar:</strong> quando você tira o valor máximo em qualquer dado de dano, o alvo marca 1 Estresse.</p>",
+      "actions": {
+        "Sever": {
+          "name": "Decepar"
+        }
+      }
+    },
+    "Blackbox Injector": {
+      "name": "Injetor Caixa-Preta",
+      "description": "<p><strong>Exploração:</strong> numa rolagem com Esperança, crie uma Brecha contra o alvo.</p>"
+    },
+    "Plasma Carbine": {
+      "name": "Carabina de Plasma",
+      "description": "<p><strong>Superaquecer:</strong> marque 1 Estresse antes de atacar para somar 1d6 de dano tecno. Num sucesso com Esperança, o alvo fica temporariamente Superaquecido e sofre 2d6 de dano tecno extra quando agir.</p>",
+      "actions": {
+        "Overheat": {
+          "name": "Superaquecer"
+        },
+        "Dano de Overheated": {
+          "name": "Dano de Superaquecido"
+        }
+      }
+    },
+    "Auto-Shotgun": {
+      "name": "Escopeta Automática",
+      "description": "<p><strong>Cano Duplo:</strong> role o dano duas vezes e fique com o maior resultado.</p>"
+    },
+    "Gravity Chain": {
+      "name": "Corrente Gravitacional",
+      "description": "<p><strong>Linha de Arrasto:</strong> num ataque bem-sucedido, mova o alvo para qualquer lugar dentro do alcance Próximo da posição atual dele.</p>"
+    },
+    "Concussion Pistol": {
+      "name": "Pistola de Concussão",
+      "description": "<p><strong>Repulsão:</strong> num ataque bem-sucedido, empurre o alvo até o alcance Próximo. Se ele colidir com algo, também marca 1 Estresse.</p>"
+    },
+    "Singularity Hammer": {
+      "name": "Martelo de Singularidade",
+      "description": "<p><strong>Ponto de Colapso:</strong> num ataque bem-sucedido, gaste 2 Esperança para puxar todos os alvos dentro do alcance Muito Próximo do alvo para o alcance Corpo a Corpo dele e causar metade do dano a esses alvos.</p>",
+      "actions": {
+        "Collapse Point": {
+          "name": "Ponto de Colapso"
+        }
+      }
+    }
+  }
+}

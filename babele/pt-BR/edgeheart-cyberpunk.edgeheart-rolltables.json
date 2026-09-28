@@ -1,0 +1,13 @@
+{
+  "label": "Edgeheart: Tabelas",
+  "entries": {
+    "Edgeheart Loot": {
+      "name": "Loot do Edgeheart",
+      "description": "<p>Role conforme a raridade: <strong>Comum</strong> 1d10, <strong>Incomum</strong> 1d10 ou 2d10, <strong>Raro</strong> 2d10 ou 3d10, <strong>Lendário</strong> 3d10 ou 4d10 (mude a fórmula da tabela ou role e escolha o resultado).</p>"
+    },
+    "Edgeheart Consumables": {
+      "name": "Consumíveis do Edgeheart",
+      "description": "<p>Role conforme a raridade: <strong>Comum</strong> 1d10, <strong>Incomum</strong> 1d10 ou 2d10, <strong>Raro</strong> 2d10 ou 3d10, <strong>Lendário</strong> 3d10 ou 4d10 (mude a fórmula da tabela ou role e escolha o resultado).</p>"
+    }
+  }
+}

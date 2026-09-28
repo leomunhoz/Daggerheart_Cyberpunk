@@ -1,0 +1,148 @@
+{
+  "label": "Edgeheart: Afiliações",
+  "mapping": {
+    "description": "system.description",
+    "actions": {
+      "path": "system.actions",
+      "converter": "structured",
+      "container": "keyed",
+      "keys": [
+        "name"
+      ],
+      "mapping": {
+        "name": "name",
+        "description": "description"
+      }
+    },
+    "attack": {
+      "path": "system.attack",
+      "converter": "structured",
+      "cardinality": "one",
+      "mapping": {
+        "name": "name",
+        "description": "description"
+      }
+    },
+    "backgroundQuestions": {
+      "path": "system.backgroundQuestions",
+      "converter": "edgeheartList"
+    },
+    "connections": {
+      "path": "system.connections",
+      "converter": "edgeheartList"
+    },
+    "pick": {
+      "path": "flags.edgeheart-cyberpunk.pick",
+      "converter": "structured",
+      "cardinality": "one",
+      "mapping": {
+        "title": "title",
+        "prompt": "prompt",
+        "options": {
+          "path": "options",
+          "converter": "edgeheartLabels"
+        }
+      }
+    },
+    "vehicleName": "flags.edgeheart-cyberpunk.vehicle.baseName",
+    "eidolonParts": {
+      "path": "flags.edgeheart-cyberpunk.eidolon.parts",
+      "converter": "document",
+      "documentType": "Item",
+      "cardinality": "many",
+      "mapping": {
+        "description": "system.description",
+        "actions": {
+          "path": "system.actions",
+          "converter": "structured",
+          "container": "keyed",
+          "keys": [
+            "name"
+          ],
+          "mapping": {
+            "name": "name",
+            "description": "description"
+          }
+        },
+        "attack": {
+          "path": "system.attack",
+          "converter": "structured",
+          "cardinality": "one",
+          "mapping": {
+            "name": "name",
+            "description": "description"
+          }
+        }
+      }
+    }
+  },
+  "folders": {
+    "Affiliation Features": "Talentos de Afiliação"
+  },
+  "entries": {
+    "Nomad Convoy": {
+      "name": "Comboio Nômade",
+      "description": "<p>Você está conectado a um comboio, clã de estrada, ou rota do ermo.</p>"
+    },
+    "Data Cult": {
+      "name": "Culto de Dados",
+      "description": "<p>Você está conectado a místicos digitais, garimpeiros da Velha Rede, obcecados pela Muralha Negra, arquivistas desonestos, profetas de sinal, ou pessoas que acreditam que a máquina é assombrada.</p>"
+    },
+    "Found Family": {
+      "name": "Família Encontrada",
+      "description": "<p>Uma vez por sessão, você pode gastar 1 Esperança para usar o Talento de Afiliação de um aliado. Quando fizer isso, seu aliado ganha 1 Esperança.</p>"
+    },
+    "Street Wise": {
+      "name": "Sagacidade de Rua",
+      "description": "<p>Você tem vantagem em rolagens para negociar com criminosos, detectar mentiras, reconhecer sinais de gangue, ou achar um lugar seguro para se esconder em território criminoso.</p>"
+    },
+    "Chillax": {
+      "name": "Relaxa",
+      "description": "<p>Durante um descanso curto, você ou um aliado pode re-rolar um dado usado em uma ação de recuperação, reparo, ou tempo livre relacionada a cyberware.</p>"
+    },
+    "Unbound": {
+      "name": "Sem Amarras",
+      "description": "<p>Uma vez por sessão, quando você faz uma rolagem de ação com Medo, você pode trocá-la por uma rolagem com Esperança.</p>"
+    },
+    "Gang-Tied": {
+      "name": "Ligado a uma Gangue",
+      "description": "<p>Você está conectado a uma gangue, família de rua, ou poder local violento.</p>"
+    },
+    "Law of the Road": {
+      "name": "Lei da Estrada",
+      "description": "<p>Registre três regras, códigos, ou protocolos que seu comboio gravou em você. Uma vez por descanso, quando você descreve como está incorporando um desses princípios através da sua ação atual, você pode rolar um d20 como seu Dado de Esperança.</p>"
+    },
+    "Corporate Asset": {
+      "name": "Ativo Corporativo",
+      "description": "<p>Você está conectado a uma corporação como funcionário, mercenário patrocinado, ou ex-membro interno.</p>"
+    },
+    "Mercenary Network": {
+      "name": "Rede de Mercenários",
+      "description": "<p>Você está conectado a uma companhia mercenária, quadro de trabalhos, ou rede profissional de armas de aluguel.</p>"
+    },
+    "Know the Deal": {
+      "name": "Conhece o Jogo",
+      "description": "<p>Você tem um sexto sentido para lidar com as incertezas da sua profissão. Quando você rola com Medo, coloque um marcador nesta Afiliação. Você pode guardar um número de marcadores igual ao seu nível. Antes de fazer uma rolagem de ação, você pode gastar qualquer número desses marcadores para ganhar um bônus de +1 na rolagem para cada marcador gasto. No fim de cada sessão, limpe todos os marcadores não usados.</p>"
+    },
+    "Fixer Network": {
+      "name": "Rede de Intermediários",
+      "description": "<p>Você está conectado a vendedores de informação, intermediários de trabalhos, e pessoas que conhecem alguém que conhece alguém.</p>"
+    },
+    "Forbidden Pattern": {
+      "name": "Padrão Proibido",
+      "description": "<p>Sua conexão com dados corrompidos, sinais de IA desonesta, resíduo da Muralha Negra, sinais impossíveis, ou tecnologia perdida pode ter alterado sua percepção da realidade. Você pode gastar 2 Esperança para re-rolar seu Dado de Medo.</p>"
+    },
+    "Resistance Cell": {
+      "name": "Célula de Resistência",
+      "description": "<p>Você está conectado a rebeldes, organizadores trabalhistas, ou células anticorporativas.</p>"
+    },
+    "Elite Privilege": {
+      "name": "Privilégio de Elite",
+      "description": "<p>Você tem vantagem em rolagens para se relacionar com funcionários corporativos, se passar por autorizado, ou usar a reputação da sua empresa para conseguir o que quer.</p>"
+    },
+    "Black Clinic": {
+      "name": "Clínica Clandestina",
+      "description": "<p>Você está conectado a um médico de rua, clínica ilegal, ou anel médico clandestino de cyberware.</p>"
+    }
+  }
+}
