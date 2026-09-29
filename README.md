@@ -37,13 +37,27 @@ Os nomes de classes e subclasses ficam no original do PDF nas duas línguas.
 
 ## Instalação
 
-**Pelo Foundry (com atualização automática):** em *Add-on Modules → Install Module*, cole no campo *Manifest URL*:
+Há duas maneiras:
+
+### 1. Pelo Foundry, com o link do manifesto (recomendado)
+
+Em *Add-on Modules → Install Module*, cole no campo *Manifest URL*:
 
 ```
 https://github.com/leomunhoz/Daggerheart_Cyberpunk/releases/latest/download/module.json
 ```
 
-**Manual:** baixe o `module.zip` da [última release](https://github.com/leomunhoz/Daggerheart_Cyberpunk/releases/latest) e descompacte em `Data/modules/edgeheart-cyberpunk`.
+O Foundry baixa e instala sozinho, e avisa quando houver versão nova.
+
+### 2. Manual, baixando o zip
+
+Baixe o arquivo pelo link direto:
+
+```
+https://github.com/leomunhoz/Daggerheart_Cyberpunk/releases/latest/download/module.zip
+```
+
+Descompacte em `Data/modules/edgeheart-cyberpunk` (a pasta tem que ter esse nome) e reinicie o Foundry. Nesse modo, cada atualização é feita baixando o zip de novo. Todas as versões ficam na [página de releases](https://github.com/leomunhoz/Daggerheart_Cyberpunk/releases).
 
 ## Como usar
 
@@ -67,4 +81,6 @@ Conteúdo original do Edgeheart: **AllenDGray14**. Daggerheart é marca da Darri
 
 ## English
 
-**Edgeheart — Cyberpunk Homebrew** brings the Edgeheart cyberpunk campaign frame by AllenDGray14 to the Daggerheart system on Foundry VTT v14: 9 classes, 11 Competencies, 60 cyberware, Eidolons, vehicles, 39 adversaries, 16 environments, the Edgeheart and Crew sheets, and the full SRD in journals. The compendiums are in English (the original PDF text); Brazilian Portuguese is available through Babele. Install it with the manifest URL above. Nothing in the Daggerheart system is modified.
+**Edgeheart — Cyberpunk Homebrew** brings the Edgeheart cyberpunk campaign frame by AllenDGray14 to the Daggerheart system on Foundry VTT v14: 9 classes, 11 Competencies, 60 cyberware, Eidolons, vehicles, 39 adversaries, 16 environments, the Edgeheart and Crew sheets, and the full SRD in journals. The compendiums are in English (the original PDF text); Brazilian Portuguese is available through Babele. Nothing in the Daggerheart system is modified.
+
+**Install:** paste `https://github.com/leomunhoz/Daggerheart_Cyberpunk/releases/latest/download/module.json` in Foundry's *Install Module → Manifest URL*, or download `https://github.com/leomunhoz/Daggerheart_Cyberpunk/releases/latest/download/module.zip` and extract it to `Data/modules/edgeheart-cyberpunk`.
