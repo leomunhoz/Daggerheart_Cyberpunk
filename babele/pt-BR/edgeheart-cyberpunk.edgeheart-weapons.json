@@ -536,6 +536,9 @@
       "actions": {
         "Junkshot": {
           "name": "Tiro de Sucata"
+        },
+        "Unjam": {
+          "name": "Destravar"
         }
       },
       "attack": {

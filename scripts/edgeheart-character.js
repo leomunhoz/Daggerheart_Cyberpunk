@@ -10,7 +10,7 @@
 
 const MODULE_ID = "edgeheart-cyberpunk";
 const SHEET_ID = `${MODULE_ID}.EdgeheartCharacterSheet`;
-const SOCKET = `module.${MODULE_ID}`;
+const QUERY = `${MODULE_ID}.character`;
 const HUMANITY_STEPS = [4, 6, 8, 10, 12];
 const PSYCHO_IMG = `modules/${MODULE_ID}/assets/cpr/status/beserker_addiction.svg`;
 const COMPETENCIES = {
@@ -518,12 +518,18 @@ async function chat(actor, content) {
 }
 
 // Ações que mexem num ator que o usuário não controla (ex: jogador estabilizando outro
-// personagem) são repassadas ao mestre pelo socket do módulo.
+// personagem) são pedidas ao mestre ativo por uma consulta do Foundry (User#query), que espera a
+// resposta: se o mestre não responder, o jogador é avisado em vez de o clique não fazer nada.
 async function asOwner(actor, action, payload) {
   if (actor.isOwner) return handlers[action](payload);
   const gm = game.users.activeGM;
   if (!gm) return ui.notifications.warn(t("Common.NoGM"));
-  game.socket.emit(SOCKET, { action, payload });
+  try {
+    return await gm.query(QUERY, { action, payload }, { timeout: 15000 });
+  } catch (err) {
+    console.warn("Edgeheart | O mestre não respondeu:", err);
+    ui.notifications.warn(t("Common.GMNoResponse", { name: gm.name }));
+  }
 }
 
 const handlers = {
@@ -1089,6 +1095,8 @@ Hooks.once("init", () => {
   game.settings.register(MODULE_ID, "levelupApplied", { scope: "world", config: false, type: Boolean, default: false });
 
   foundry.applications.handlebars.loadTemplates([`modules/${MODULE_ID}/templates/chrome-tab.hbs`]);
+  // Pedidos de jogadores ao mestre (ver asOwner).
+  CONFIG.queries[QUERY] = async ({ action, payload }) => { await handlers[action]?.(payload); return true; };
 });
 
 Hooks.once("setup", () => {
@@ -1110,10 +1118,6 @@ Hooks.on("daggerheart.postDualityRollConfiguration", (roll) => {
 
 Hooks.once("ready", () => {
   EdgeheartLevelup.sync();
-  game.socket.on(SOCKET, async ({ action, payload }) => {
-    if (game.user !== game.users.activeGM) return;
-    await handlers[action]?.(payload);
-  });
 });
 
 Hooks.on("preCreateActor", (actor, data) => {

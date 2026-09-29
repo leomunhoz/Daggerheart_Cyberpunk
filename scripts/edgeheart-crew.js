@@ -11,7 +11,7 @@
 
 const MODULE_ID = "edgeheart-cyberpunk";
 const SHEET_ID = `${MODULE_ID}.EdgeheartCrewSheet`;
-const SOCKET = `module.${MODULE_ID}`;
+const QUERY = `${MODULE_ID}.crew`;
 const EXPERIENCE_ID = "edgeheartCrew";
 const MAX_EDGE = 3;
 
@@ -300,18 +300,29 @@ const CARD_ACTIONS = {
   }
 };
 
+// Pedido ao mestre ativo por uma consulta do Foundry (User#query): espera a resposta e avisa o jogador
+// se o mestre não responder, em vez de o clique não fazer nada.
+async function askGM(action, payload) {
+  const gm = game.users.activeGM;
+  if (!gm) return ui.notifications.warn(t("Common.NoGM"));
+  try {
+    return await gm.query(QUERY, { action, payload }, { timeout: 15000 });
+  } catch (err) {
+    console.warn("Edgeheart | O mestre não respondeu:", err);
+    ui.notifications.warn(t("Common.GMNoResponse", { name: gm.name }));
+  }
+}
+
 // Aplica em atores que o usuário pode não controlar: direto se for dono de todos, senão pelo mestre.
 async function relay(action, payload, actors) {
   if (actors.every(a => a.isOwner)) return handlers[action](payload);
-  if (!game.users.activeGM) return ui.notifications.warn(t("Common.NoGM"));
-  game.socket.emit(SOCKET, { action, payload });
+  return askGM(action, payload);
 }
 
-// Mudanças no ator da Crew feitas por quem não é dono dela vão para o mestre pelo socket do módulo.
+// Mudanças no ator da Crew feitas por quem não é dono dela vão para o mestre.
 async function asOwner(actor, action, payload) {
   if (actor.isOwner) return handlers[action](payload);
-  if (!game.users.activeGM) return ui.notifications.warn(t("Common.NoGM"));
-  game.socket.emit(SOCKET, { action, payload });
+  return askGM(action, payload);
 }
 
 const handlers = {
@@ -423,6 +434,8 @@ function defineSheet() {
 
 Hooks.once("init", () => {
   foundry.applications.handlebars.loadTemplates([`modules/${MODULE_ID}/templates/crew-tab.hbs`]);
+  // Pedidos de jogadores ao mestre (ver askGM).
+  CONFIG.queries[QUERY] = async ({ action, payload }) => { await handlers[action]?.(payload); return true; };
 });
 
 Hooks.once("setup", () => {
@@ -432,10 +445,6 @@ Hooks.once("setup", () => {
 });
 
 Hooks.once("ready", () => {
-  game.socket.on(SOCKET, async ({ action, payload }) => {
-    if (game.user !== game.users.activeGM) return;
-    await handlers[action]?.(payload);
-  });
   game.modules.get(MODULE_ID).api = { ...(game.modules.get(MODULE_ID).api ?? {}), Crew };
   if (game.user.isActiveGM) {
     for (const actor of game.actors.filter(a => Crew.isCrew(a))) Crew.syncReputation(actor);
@@ -481,7 +490,7 @@ Hooks.on("renderChatMessageHTML", (message, html) => {
         if (done && button.dataset.ehOnce) {
           const payload = { messageId: message.id, buttonId: id };
           if (message.isOwner) await handlers.crewMarkCard(payload);
-          else game.socket.emit(SOCKET, { action: "crewMarkCard", payload });
+          else await askGM("crewMarkCard", payload);
           return;
         }
       } finally {

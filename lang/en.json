@@ -13,6 +13,7 @@
     },
     "Common": {
       "NoGM": "No GM is connected to apply this.",
+      "GMNoResponse": "The GM ({name}) did not respond. Ask them to keep the Foundry window open and try again.",
       "SelectHelperToken": "Select the token of the ally who will spend the Hope.",
       "NotOwner": "You don't control {name}."
     },

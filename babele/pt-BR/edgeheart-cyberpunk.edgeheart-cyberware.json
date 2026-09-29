@@ -167,7 +167,12 @@
         },
         "Hephaestus Reconstruction Engine": {
           "name": "Motor de Reconstrução Hephaestus",
-          "description": "<p>Quando você rola com Esperança usando uma carta de Sistemas, ganhe 1 Carga de Forja (máximo 3). Gaste 1 Carga para somar +1d6 a uma rolagem envolvendo maquinário, conserto ou fabricação. Gaste 3 Cargas para consertar um veículo Danificado, limpar 1 Espaço de Armadura de um Eidolon ou criar uma grande peça de cobertura temporária.</p>"
+          "description": "<p>Quando você rola com Esperança usando uma carta de Sistemas, ganhe 1 Carga de Forja (máximo 3). Gaste 1 Carga para somar +1d6 a uma rolagem envolvendo maquinário, conserto ou fabricação. Gaste 3 Cargas para consertar um veículo Danificado, limpar 1 Espaço de Armadura de um Eidolon ou criar uma grande peça de cobertura temporária.</p>",
+          "actions": {
+            "Spend Forge Charge (+1d6)": {
+              "name": "Gastar Carga de Forja (+1d6)"
+            }
+          }
         },
         "Frame: Hephaestus Forge-Saint": {
           "name": "Estrutura: Hephaestus Forge-Saint",
@@ -840,7 +845,12 @@
     },
     "Neural Archive": {
       "name": "Arquivo Neural",
-      "description": "<p><strong>Cyberware 42</strong> · Tier 3 · <strong>Custo Cibernético 2</strong></p><p>Ganhe uma nova Experiência com +2 ou some +1 a uma de suas Experiências. Uma vez por descanso, quando usar essa Experiência, você pode re-rolar seu Dado de Medo.</p>"
+      "description": "<p><strong>Cyberware 42</strong> · Tier 3 · <strong>Custo Cibernético 2</strong></p><p>Ganhe uma nova Experiência com +2 ou some +1 a uma de suas Experiências. Uma vez por descanso, quando usar essa Experiência, você pode re-rolar seu Dado de Medo.</p>",
+      "actions": {
+        "Reroll Fear Die": {
+          "name": "Re-rolar Dado de Medo"
+        }
+      }
     },
     "Reflex Ghostware": {
       "name": "Ghostware Reflexo",
@@ -948,7 +958,12 @@
         },
         "Ares Redline Kernel": {
           "name": "Kernel Linha Vermelha Ares",
-          "description": "<p>Quando você rola com Esperança usando uma carta de Linha Vermelha, ganhe 1 Carga de Calor (máximo 3). Antes de uma rolagem de dano, gaste Cargas para somar +1d6 por Carga. Se gastar 3 Cargas, você pode fazer imediatamente um ataque com arma como reação e depois marcar 2 de Estresse.</p>"
+          "description": "<p>Quando você rola com Esperança usando uma carta de Linha Vermelha, ganhe 1 Carga de Calor (máximo 3). Antes de uma rolagem de dano, gaste Cargas para somar +1d6 por Carga. Se gastar 3 Cargas, você pode fazer imediatamente um ataque com arma como reação e depois marcar 2 de Estresse.</p>",
+          "actions": {
+            "Spend Heat Charges (+1d6 each)": {
+              "name": "Gastar Cargas de Calor (+1d6 cada)"
+            }
+          }
         },
         "Frame: Ronin Ares-Tyrant": {
           "name": "Estrutura: Ronin Ares-Tyrant",
@@ -1046,7 +1061,12 @@
     },
     "Subdermal Comms": {
       "name": "Comunicador Subdérmico",
-      "description": "<p><strong>Cyberware 12</strong> · Tier 1 · <strong>Custo Cibernético 0</strong></p><p>Você pode se comunicar em silêncio com aliados conectados dentro do alcance Muito Distante. Gaste 1 Esperança para fazer isso através de um distrito da cidade, se houver uma rede disponível.</p>"
+      "description": "<p><strong>Cyberware 12</strong> · Tier 1 · <strong>Custo Cibernético 0</strong></p><p>Você pode se comunicar em silêncio com aliados conectados dentro do alcance Muito Distante. Gaste 1 Esperança para fazer isso através de um distrito da cidade, se houver uma rede disponível.</p>",
+      "actions": {
+        "District Range": {
+          "name": "Alcance de Distrito"
+        }
+      }
     },
     "Blackwall Co-Processor": {
       "name": "Coprocessador da Muralha Negra",
@@ -1068,10 +1088,21 @@
     },
     "Metamorphic Chassis": {
       "name": "Chassi Metamórfico",
-      "description": "<p><strong>Cyberware 54</strong> · Tier 4 · <strong>Custo Cibernético 4</strong></p><p>Quando terminar um descanso longo, escolha Evasão, Armadura ou Limiares. Até seu próximo descanso longo, ganhe um destes: +1 de Evasão, +1 na Pontuação de Armadura ou +4 nos limiares de dano (ajuste manual). Uma vez por descanso longo, quando você gastar Esperança ou marcar Estresse para usar uma feature, você não gasta nem marca.</p>",
+      "description": "<p><strong>Cyberware 54</strong> · Tier 4 · <strong>Custo Cibernético 4</strong></p><p>Quando terminar um descanso longo, escolha Evasão, Armadura ou Limiares. Até seu próximo descanso longo, ganhe um destes: +1 de Evasão, +1 na Pontuação de Armadura ou +4 nos limiares de dano (ligue o efeito da opção escolhida neste cyberware). Uma vez por descanso longo, quando você gastar Esperança ou marcar Estresse para usar uma feature, você não gasta nem marca.</p>",
       "actions": {
         "Don't Spend Hope/Stress": {
           "name": "Não gastar Esperança/Estresse"
+        }
+      },
+      "effects": {
+        "Metamorphic Chassis: +1 Evasion": {
+          "name": "Chassi Metamórfico: +1 de Evasão"
+        },
+        "Metamorphic Chassis: +1 Armor Score": {
+          "name": "Chassi Metamórfico: +1 de Armadura"
+        },
+        "Metamorphic Chassis: +4 Thresholds": {
+          "name": "Chassi Metamórfico: +4 nos Limiares"
         }
       }
     }

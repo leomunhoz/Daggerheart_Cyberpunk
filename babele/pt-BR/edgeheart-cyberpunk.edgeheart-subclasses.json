@@ -199,6 +199,9 @@
       "name": "Explosivo Plantado",
       "description": "<p>Quando você pode tocar um objeto, superfície ou máquina, marque 1 Estresse para plantar uma carga. Acione-a mais tarde na cena para escolher uma:</p><ul><li><strong>Brecha:</strong> abra, quebre ou desmorone o alvo.</li><li><strong>Desativar:</strong> trave, tranque ou desligue o alvo até ser consertado.</li><li><strong>Interromper:</strong> um adversário dentro do alcance Muito Próximo marca 1 Estresse e fica temporariamente <em>Vulnerável</em>.</li></ul><p>Você pode ter uma carga ativa por vez.</p>",
       "actions": {
+        "Plant Charge": {
+          "name": "Plantar Carga"
+        },
         "Trigger: Disrupt": {
           "name": "Acionar: Interromper"
         }

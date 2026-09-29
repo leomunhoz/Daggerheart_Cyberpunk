@@ -1,5 +1,16 @@
 # Changelog
 
+## v1.31.0
+Correções de uma bateria de testes completa: as 18 subclasses criadas e levadas do nível 1 ao 10 pelas janelas do sistema, com todas as ações usadas em combate; os 60 cyberwares instalados e desinstalados; os 10 Eidolons mobilizados até o Disabled; Redline, Blackwall, Humanidade, Ciberpsicose e a Ficha da Crew; e tudo de novo como jogador.
+- **Fearmask** (Ghost): "Steal Fear" quebrava, igual à Night Terror oficial que ela copia (cobra um contador que a carta não tem). Agora o custo é o Medo roubado do mestre, 1 por alvo Horrified, e o dano rola 1d6 por Medo.
+- **Riot Lieutenant › Point-Blank Blast**: a cópia do Skull Splitter oficial perdia o marcador da feature, e as duas ações quebravam. As features copiadas de adversários oficiais agora trazem o contador junto.
+- **Cargas que não gastavam**: Daemon Army › Daemon Defends, Hephaestus Reconstruction Engine e Ares Redline Kernel davam erro ao gastar Cargas/fichas do próprio item.
+- **Chassi Metamórfico**: as três opções (+1 Evasão, +1 Armadura, +4 Limiares) viraram efeitos para ligar no próprio cyberware, em vez de ajuste manual.
+- **Pedidos do jogador ao mestre** (Estabilizar e os botões da Crew) agora esperam a resposta e avisam o jogador se o mestre não responder, em vez de o clique não fazer nada.
+- **Nomes em inglês**: 28 nomes de ações que tinham ficado em português na base em inglês (ex.: "Rolagem de Interface (13)" → "Interface Roll (13)").
+- Drain Signal e Siphon Strike (Redline) apontavam para um ícone que não existe.
+- **Arte das armas:** as 64 armas ganharam arte própria (do módulo Edgeheart de Dan Weaver), no lugar dos ícones genéricos.
+
 ## v1.30.2
 - **Imagens mais leves:** retratos e tokens dos adversários e as artes das cartas de Competência passaram de PNG para WebP, com a mesma aparência e o fundo transparente. As 89 imagens caíram de 25 MB para 4,6 MB, o que deixa o download do módulo menor e o carregamento mais rápido para os jogadores.
 

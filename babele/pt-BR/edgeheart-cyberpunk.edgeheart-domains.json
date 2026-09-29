@@ -330,6 +330,11 @@
     "Relic Edge": {
       "name": "Gume de Relíquia",
       "description": "<p>Gaste 1 Esperança para carregar a sua arma com uma rotina de combate da Muralha Negra até o seu próximo descanso. Quando atacar com essa arma, use o seu atributo de Interface em vez do atributo que ela normalmente pede. Em um sucesso, role uma quantidade de d8 igual ao Medo atual do mestre, até o seu nível, e cause esse dano tecno enquanto o cyberware, o sistema nervoso ou a interface de armadura do alvo é aberto por código corrompido. Se tiver sucesso com Medo, o alvo também marca 1 Estresse.</p>",
+      "actions": {
+        "Routine Damage": {
+          "name": "Dano da Rotina"
+        }
+      },
       "effects": {
         "Relic Edge": {
           "name": "Gume de Relíquia",
@@ -560,6 +565,9 @@
       "actions": {
         "Interface Roll": {
           "name": "Rolagem de Interface"
+        },
+        "Implant (1 HP)": {
+          "name": "Implantar (1 PV)"
         },
         "Disadvantage on the Roll (1 Hope)": {
           "name": "Desvantagem na Rolagem (1 Esperança)"
@@ -799,6 +807,9 @@
       "name": "Estimulante Compartilhado de Emergência",
       "description": "<p>Uma vez por descanso, marque 1 PV para inundar cada aliado dentro do alcance Próximo com drogas de combate, estabilizadores de trauma, estimulantes de emergência ou supressores de dor. Cada aliado afetado limpa 1 PV ou 1 Estresse. Você pode marcar 1 Estresse para esses aliados limparem um de cada.</p>",
       "actions": {
+        "Allies Clear 1 HP": {
+          "name": "Aliados Limpam 1 PV"
+        },
         "Allies Clear 1 Stress": {
           "name": "Aliados Limpam 1 Estresse"
         },
@@ -947,6 +958,9 @@
         },
         "Damage (Hope)": {
           "name": "Dano (Esperança)"
+        },
+        "Damage (Fear)": {
+          "name": "Dano (Medo)"
         }
       },
       "effects": {
@@ -999,6 +1013,11 @@
     "Corrupted Shell": {
       "name": "Casca Corrompida",
       "description": "<p>Você deixa a Muralha Negra reescrever parcialmente o seu corpo, armadura, implantes e sistema nervoso. Enquanto esta carta estiver ativa no seu loadout:</p><ul><li><p>Para cada 2 de Estresse marcados, aumente os seus limiares em +1.</p></li><li><p>Sempre que tiver sucesso com Medo numa rolagem de ação, pode gastar 1 Esperança para limpar um Espaço de Armadura.</p></li></ul>",
+      "actions": {
+        "Clear Armor (Success with Fear)": {
+          "name": "Limpar Armadura (Sucesso com Medo)"
+        }
+      },
       "effects": {
         "Corrupted Shell": {
           "name": "Casca Corrompida"
@@ -1121,6 +1140,11 @@
     "Ghost Fog": {
       "name": "Névoa Fantasma",
       "description": "<p>Faça uma Rolagem de Interface (13). Em um sucesso, gaste 1 Esperança para inundar a área ao seu redor com névoa fantasma: estática de sensor, névoa de chaff, luz corrompida, imagens residuais digitais ou projeções invasivas de mapeamento de rota. Você e quaisquer alvos dentro do alcance Próximo ficam momentaneamente incorpóreos para sistemas de segurança e barreiras automatizadas, podendo atravessar uma passagem selada que tenha um desvio físico ou digital plausível. O protocolo dura até vocês atravessarem a barreira.</p>",
+      "actions": {
+        "Interface Roll (13)": {
+          "name": "Rolagem de Interface (13)"
+        }
+      },
       "effects": {
         "Ghost Fog": {
           "name": "Névoa Fantasma",
@@ -1278,6 +1302,9 @@
         },
         "Interface Roll": {
           "name": "Rolagem de Interface"
+        },
+        "Target's Attack (Interface)": {
+          "name": "Ataque do Alvo (Interface)"
         }
       }
     },
@@ -1390,6 +1417,9 @@
       "name": "Manifestação da Muralha Negra",
       "description": "<p>Faça uma Rolagem de Interface (13). Em um sucesso, você força um fragmento da Muralha Negra a se manifestar entre dois pontos dentro do alcance Distante, como um muro digital corrompido transbordando para o espaço físico. Ele não aparece como um muro sólido, e sim como uma fratura violenta de estática, código hostil e corrupção de IA expressa pelo ambiente ao redor. Dura até você marcar o seu próximo PV. Qualquer criatura dentro do muro quando ele aparece, ou que passa por ele, marca 2 de Estresse e precisa ter sucesso numa Rolagem de Reação (16) ou fica Imobilizada.</p>",
       "actions": {
+        "Interface Roll (13)": {
+          "name": "Rolagem de Interface (13)"
+        },
         "Failed Reaction (16): Restrained": {
           "name": "Falhou na Reação (16): Imobilizado"
         }
@@ -1563,6 +1593,9 @@
         },
         "Mark Stress": {
           "name": "Marcar Estresse"
+        },
+        "Spotlight Damage": {
+          "name": "Dano no Holofote"
         }
       },
       "effects": {
@@ -1611,6 +1644,9 @@
       "name": "Chip de Último Recurso",
       "description": "<p>Marque 1 Ponto de Vida para criar um chip de último recurso, patch de override de emergência, chave de adrenalina, gatilho de sobrevivência ou ficha de biofeedback ilegal alimentada pelos seus próprios sistemas instáveis. Quem carregar ganha o seguinte benefício:</p><ul><li><p>Sempre que fosse marcar 2 ou mais PV, pode gastar 1 Esperança para reduzir em 1 os PV marcados.</p></li></ul><p>O chip queima se você não tiver PV marcados ou usar este protocolo de novo.</p>",
       "actions": {
+        "Make the Chip (1 HP)": {
+          "name": "Criar o Chip (1 PV)"
+        },
         "Reduce 1 Marked HP (1 Hope)": {
           "name": "Reduzir 1 PV Marcado (1 Esperança)"
         }
@@ -1730,6 +1766,9 @@
         },
         "Mark Stress": {
           "name": "Marcar Estresse"
+        },
+        "Interface Roll (13)": {
+          "name": "Rolagem de Interface (13)"
         }
       }
     },
@@ -1773,6 +1812,11 @@
     "Adrenaline Stack": {
       "name": "Pilha de Adrenalina",
       "description": "<p>Os seus sistemas Linha Vermelha se infiltraram na sua corrente sanguínea, aprimorando o corpo em momentos de urgência. Quando você rola com vantagem, usa um d8 em vez de um d6 como dado de vantagem, se tiver 1 ou mais PV marcados. Depois de fazer uma Rolagem de Força, Agilidade ou Acuidade, pode marcar 1 PV para rolar 1d8 e somar ao resultado.</p>",
+      "actions": {
+        "+1d8 (1 HP)": {
+          "name": "+1d8 (1 PV)"
+        }
+      },
       "effects": {
         "Adrenaline Stack (d8 advantage)": {
           "name": "Pilha de Adrenalina (d8 de vantagem)"
@@ -1801,6 +1845,12 @@
       "name": "Exército de Daemons",
       "description": "<p>Faça uma Rolagem de Interface (14). Uma vez por descanso, em um sucesso, marque 1 Estresse para liberar oito fragmentos de IA daemon dentro do alcance Próximo, que se movem com você. Coloque um d8 nesta carta com o 8 para cima, representando o tamanho do seu exército de daemons. Sempre que causar dano a um alvo dentro do alcance Próximo, você pode diminuir esse valor em 1 para causar 1d8 de dano tecno adicional. Quando sofrer dano, pode diminuir o valor em 1 para reduzir o dano em 1d8. Cada vez que o dado diminui, um daemon age por você e depois desaparece. Quando o valor do dado cairia abaixo de 1, devolva esta carta ao cofre.</p>",
       "actions": {
+        "Interface Roll (14)": {
+          "name": "Rolagem de Interface (14)"
+        },
+        "Daemon Attacks (+1d8)": {
+          "name": "Daemon Ataca (+1d8)"
+        },
         "Daemon Defends (−1d8 damage)": {
           "name": "Daemon Defende (−1d8 de dano)"
         }
@@ -1933,6 +1983,9 @@
       "actions": {
         "Prevent 1 Fear (2 Stress)": {
           "name": "Impedir 1 Medo (2 Estresse)"
+        },
+        "Fear Bonus": {
+          "name": "Bônus pelo Medo"
         }
       }
     },
@@ -2031,6 +2084,9 @@
         },
         "Clear 2 HP": {
           "name": "Limpar 2 PV"
+        },
+        "Clear 3 HP (Fear)": {
+          "name": "Limpar 3 PV (Medo)"
         }
       }
     },
@@ -2290,6 +2346,9 @@
       "actions": {
         "Clear 1 Stress": {
           "name": "Limpar 1 Estresse"
+        },
+        "Take 1 Fear from the GM": {
+          "name": "Tirar 1 Medo do Mestre"
         }
       }
     },
@@ -2394,6 +2453,9 @@
         },
         "Spend Tokens (+1 Evasion each)": {
           "name": "Gastar Marcadores (+1 Evasão cada)"
+        },
+        "Interface Roll (10)": {
+          "name": "Rolagem de Interface (10)"
         }
       }
     },
@@ -2403,6 +2465,9 @@
       "actions": {
         "Interface Roll": {
           "name": "Rolagem de Interface"
+        },
+        "Mark HP: Target Marks Double": {
+          "name": "Marcar PV: Alvo Marca o Dobro"
         }
       }
     },
@@ -2513,6 +2578,12 @@
       "name": "Detonação Linha Vermelha",
       "description": "<p>Faça uma Rolagem de Interface (12). Em um sucesso, marque 1 PV enquanto força os seus sistemas Linha Vermelha além dos limites seguros, despejando calor excedente, sobrecarga neural, feedback de agressão ou saída instável de cyberware num ponto dentro do alcance Distante. Um pulso violento de distorção térmica, choque de pressão, grito de sensor ou resíduo de overclock enche a área dentro do alcance Muito Próximo desse ponto. Cada alvo na área marca 1 PV. Num sucesso com Esperança, cada alvo marca 2 PV.</p>",
       "actions": {
+        "Interface Roll (12)": {
+          "name": "Rolagem de Interface (12)"
+        },
+        "Each Target Marks 1 HP": {
+          "name": "Cada Alvo Marca 1 PV"
+        },
         "Each Target Marks 2 HP (Hope)": {
           "name": "Cada Alvo Marca 2 PV (Esperança)"
         }
@@ -2766,6 +2837,9 @@
         },
         "Allies Mark 1 Stress": {
           "name": "Aliados Marcam 1 Estresse"
+        },
+        "Allies Clear 1 HP": {
+          "name": "Aliados Limpam 1 PV"
         }
       }
     },

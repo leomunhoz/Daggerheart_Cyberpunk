@@ -1,5 +1,33 @@
 {
     "_names":  {
+                   "Plantar Carga":  "Plant Charge",
+                   "Dano da Rotina":  "Routine Damage",
+                   "Dano (Medo)":  "Damage (Fear)",
+                   "Limpar Armadura (Sucesso com Medo)":  "Clear Armor (Success with Fear)",
+                   "Rolagem de Interface (10)":  "Interface Roll (10)",
+                   "Rolagem de Interface (12)":  "Interface Roll (12)",
+                   "Rolagem de Interface (13)":  "Interface Roll (13)",
+                   "Rolagem de Interface (14)":  "Interface Roll (14)",
+                   "Ataque do Alvo (Interface)":  "Target's Attack (Interface)",
+                   "Dano no Holofote":  "Spotlight Damage",
+                   "Bônus pelo Medo":  "Fear Bonus",
+                   "Limpar 3 PV (Medo)":  "Clear 3 HP (Fear)",
+                   "Tirar 1 Medo do Mestre":  "Take 1 Fear from the GM",
+                   "Marcar PV: Alvo Marca o Dobro":  "Mark HP: Target Marks Double",
+                   "Gastar Carga de Forja (+1d6)":  "Spend Forge Charge (+1d6)",
+                   "Re-rolar Dado de Medo":  "Reroll Fear Die",
+                   "Gastar Cargas de Calor (+1d6 cada)":  "Spend Heat Charges (+1d6 each)",
+                   "Alcance de Distrito":  "District Range",
+                   "Ataque Escondido (+1d8)":  "Hidden Attack (+1d8)",
+                   "Implantar (1 PV)":  "Implant (1 HP)",
+                   "Aliados Limpam 1 PV":  "Allies Clear 1 HP",
+                   "Criar o Chip (1 PV)":  "Make the Chip (1 HP)",
+                   "+1d8 (1 PV)":  "+1d8 (1 HP)",
+                   "Daemon Ataca (+1d8)":  "Daemon Attacks (+1d8)",
+                   "Cada Alvo Marca 1 PV":  "Each Target Marks 1 HP",
+                   "Destravar":  "Unjam",
+                   "Ataque sem Cobertura (+1d10)":  "Attack Without Cover (+1d10)",
+                   "Ataque contra o Alvo (+1d8)":  "Attack Against the Target (+1d8)",
                    "Ataque":  "Attack",
                    "Calibrar Atributo":  "Calibrate Trait",
                    "Ganhar Cover":  "Gain Cover",
@@ -381,7 +409,12 @@
                                                            "description":  "\u003cp\u003e\u003cstrong\u003eCyberware 53\u003c/strong\u003e \u0026middot; Tier 4 \u0026middot; \u003cstrong\u003eCyber Cost 4\u003c/strong\u003e\u003c/p\u003e\u003cp\u003eYou can’t be detected by mundane cameras, drones, or sensors beyond Close range unless you attack, speak loudly, or the GM spends a Fear.\u003c/p\u003e"
                                                        },
                                 "Metamorphic Chassis":  {
-                                                            "description":  "\u003cp\u003e\u003cstrong\u003eCyberware 54\u003c/strong\u003e \u0026middot; Tier 4 \u0026middot; \u003cstrong\u003eCyber Cost 4\u003c/strong\u003e\u003c/p\u003e\u003cp\u003eWhen you finish a long rest, choose Evasion, Armor, or Thresholds. Until your next long rest, gain one of the following: +1 Evasion, +1 Armor Score, or +4 damage thresholds. Once per long rest, when you spend Hope or mark Stress to use a feature, you don’t spend or mark it.\u003c/p\u003e"
+                                                            "effects":  {
+                                                                            "Chassi Metamórfico: +1 de Evasão":  { "name":  "Metamorphic Chassis: +1 Evasion" },
+                                                                            "Chassi Metamórfico: +1 de Armadura":  { "name":  "Metamorphic Chassis: +1 Armor Score" },
+                                                                            "Chassi Metamórfico: +4 nos Limiares":  { "name":  "Metamorphic Chassis: +4 Thresholds" }
+                                                                        },
+                                                            "description":  "\u003cp\u003e\u003cstrong\u003eCyberware 54\u003c/strong\u003e \u0026middot; Tier 4 \u0026middot; \u003cstrong\u003eCyber Cost 4\u003c/strong\u003e\u003c/p\u003e\u003cp\u003eWhen you finish a long rest, choose Evasion, Armor, or Thresholds. Until your next long rest, gain one of the following: +1 Evasion, +1 Armor Score, or +4 damage thresholds (turn on the matching effect of this cyberware). Once per long rest, when you spend Hope or mark Stress to use a feature, you don’t spend or mark it.\u003c/p\u003e"
                                                         },
                                 "Neural Crown of Command":  {
                                                                 "description":  "\u003cp\u003e\u003cstrong\u003eCyberware 55\u003c/strong\u003e \u0026middot; Tier 4 \u0026middot; \u003cstrong\u003eCyber Cost 3\u003c/strong\u003e\u003c/p\u003e\u003cp\u003eWhen you roll with Hope using an Influence card or in a social context, gain 1 Leverage Charge, max 3. Before a roll using your Presence or Influence card, spend any Charges to add +1 per charge to the roll. If you succeed, a target also marks the same number of Stress and one ally who can hear you clears the same number of Stress for every charge spent.\u003c/p\u003e"

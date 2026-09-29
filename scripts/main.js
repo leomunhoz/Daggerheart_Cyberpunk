@@ -126,7 +126,9 @@ function featureAction({
       ...(dice ? { type: "attack", roll: diceSetRoll(dice), damage: { main: null, resources: {} }, save: { trait: null, difficulty: null, damageMod: "none" } } : { type: "effect" }),
       _id: id, systemPath: "actions", description,
       chatDisplay: true, actionType,
-      cost: costs.map(c => ({ scalable: false, key: c.key, value: c.value, step: null, consumeOnSuccess: false, itemId: null })),
+      // Custo "resource" = contador do próprio item: o sistema só o reconhece com itemId preenchido (as cartas
+      // oficiais usam o _id delas; qualquer valor serve, o alvo é sempre o item da ação).
+      cost: costs.map(c => ({ scalable: false, key: c.key, value: c.value, step: null, consumeOnSuccess: false, itemId: c.key === "resource" ? "self" : null })),
       uses: uses
         ? { value: null, max: String(uses.max), recovery: uses.recovery, consumeOnSuccess: !!uses.onSuccess }
         : { value: null, max: null, recovery: null, consumeOnSuccess: false },
@@ -274,7 +276,8 @@ function buildAttackAction({ name, trait, range, damageStr, burden, img }) {
 // item. As outras ganham ações/efeitos no padrão do sistema (alvo marca Estresse, Vulnerável, custo) ou
 // ficam só com o texto quando dependem da narrativa.
 
-const gearCost = (key, value, extra = {}) => ({ scalable: false, key, value, step: null, consumeOnSuccess: false, itemId: null, ...extra });
+// Custo "resource" (contador do próprio item) precisa de itemId preenchido para o sistema reconhecê-lo (ver featureAction).
+const gearCost = (key, value, extra = {}) => ({ scalable: false, key, value, step: null, consumeOnSuccess: false, itemId: key === "resource" ? "self" : null, ...extra });
 const gearChange = (key, value) => ({ key, type: "add", value, priority: null, phase: "initial" });
 // Pontuação de Armadura dada por arma (mesmo formato da feature oficial Protective).
 const gearArmor = value => ({ type: "armor", value: { max: String(value), current: 0, damageThresholds: null, interaction: "none" }, priority: 20, phase: "initial" });
@@ -483,6 +486,14 @@ async function applyOfficialFeatures(docs, list, key) {
   }
 }
 
+// Arte de itens em assets/art/<pasta>: { slug do nome: caminho }.
+async function gearArt(dir) {
+  const base = `modules/${MODULE_ID}/assets/art/${dir}`;
+  const FP = foundry.applications.apps.FilePicker.implementation;
+  const files = (await FP.browse("data", base).catch(() => ({ files: [] }))).files;
+  return Object.fromEntries(files.map(f => [decodeURIComponent(f.split("/").pop()).replace(/\.webp$/, ""), `${base}/${decodeURIComponent(f.split("/").pop())}`]));
+}
+
 async function importWeaponsAndArmor() {
   const weaponsPack = await getOrCreatePack("weapons");
   const armorsPack = await getOrCreatePack("armors");
@@ -501,15 +512,19 @@ async function importWeaponsAndArmor() {
     folders.armor[tier] = await makeFolder(armorsPack, `Tier ${tier}`);
   }
 
+  // Arte própria de cada arma (assets/art/weapons/<nome-em-slug>.webp); sem arquivo, fica o ícone do CPR.
+  const weaponArt = await gearArt("weapons");
+  const withArt = w => weaponArt[artSlug(w.name)] ? { ...w, img: weaponArt[artSlug(w.name)] } : w;
+  const primary = PRIMARY_WEAPONS.map(withArt), secondary = SECONDARY_WEAPONS.map(withArt);
   const weaponData = [
-    ...PRIMARY_WEAPONS.map(w => ({ ...buildWeaponData(w, false), folder: folders[/tech/i.test(w.damage) ? "magical" : "physical"][w.tier].id })),
-    ...SECONDARY_WEAPONS.map(w => ({ ...buildWeaponData(w, true), folder: folders.secondary[w.tier].id }))
+    ...primary.map(w => ({ ...buildWeaponData(w, false), folder: folders[/tech/i.test(w.damage) ? "magical" : "physical"][w.tier].id })),
+    ...secondary.map(w => ({ ...buildWeaponData(w, true), folder: folders.secondary[w.tier].id }))
   ];
   const armorData = ARMORS.map(a => ({ ...buildArmorData(a), folder: folders.armor[a.tier].id }));
 
   const createdWeapons = await Item.createDocuments(weaponData, { pack: weaponsPack.collection, keepId: true });
   const createdArmor = await Item.createDocuments(armorData, { pack: armorsPack.collection, keepId: true });
-  await applyOfficialFeatures(createdWeapons, [...PRIMARY_WEAPONS, ...SECONDARY_WEAPONS], "weaponFeatures");
+  await applyOfficialFeatures(createdWeapons, [...primary, ...secondary], "weaponFeatures");
   await applyOfficialFeatures(createdArmor, ARMORS, "armorFeatures");
   return { weapons: createdWeapons, armor: createdArmor };
 }
@@ -2191,7 +2206,11 @@ const GHOST_CARDS = [
   { name: "Vanishing Dodge", img: CPR("cyberware/kerenzikov"), level: 7, recallCost: 1, type: "spell", clone: "Vanishing Dodge", description: "<p>Quando um ataque contra você que causaria dano físico falha, você pode gastar 1 Esperança para disparar uma explosão de fumaça, cintilação de pele fantasma, salto de fase, piscada de emergência ou deslocamento óptico.</p><p>Você fica Escondido e se move para um ponto dentro do alcance Próximo do atacante. Continua Escondido até a próxima vez que fizer uma rolagem de ação.</p>" },
   { name: "Shadowhunter", img: CPR("dlc/cyberware/kiroshi_monovision"), level: 8, recallCost: 2, type: "ability", clone: "Shadowhunter", description: "<p>Seus sistemas de combate, instintos e treinamento de assassinato funcionam melhor com pouca visibilidade.</p><p>Enquanto estiver envolto em penumbra, escuridão, fumaça, chuva forte, neblina densa, multidão ou interferência visual, você ganha +1 de Evasão e faz rolagens de ataque com vantagem.</p>" },
   { name: "Feedback Charge", img: CPR("cyberware/emp_threading"), level: 8, recallCost: 1, type: "spell", clone: "Spellcharge", description: "<p>Quando você sofre dano techno, coloque nesta carta marcadores iguais aos Pontos de Vida que marcou. Você pode guardar marcadores iguais ao seu atributo de Interface.</p><p>Quando acerta um ataque, pode gastar qualquer quantidade de marcadores para somar um d6 por marcador à rolagem de dano.</p>" },
-  { name: "Fearmask", img: CPR("blackice/src/hellhound"), level: 9, recallCost: 2, type: "spell", clone: "Night Terror", description: "<p>Uma vez por descanso longo, escolha quaisquer alvos dentro do alcance Muito Próximo para te perceberem como uma ameaça de pesadelo, assassino impossível, fantasma de sensor corrompido ou alucinação disparada pelo medo. Os alvos precisam ter sucesso numa Rolagem de Reação (16) ou ficam temporariamente <strong>Horrified</strong>. Enquanto Horrified, ficam Vulneráveis.</p><p>Roube do mestre uma quantidade de Medo igual ao número de alvos Horrified, até o total de Medo na reserva dele. Role uma quantidade de d6 igual ao Medo roubado e cause o total de dano a cada alvo Horrified. Descarte o Medo roubado.</p>" },
+  { name: "Fearmask", img: CPR("blackice/src/hellhound"), level: 9, recallCost: 2, type: "spell", clone: "Night Terror",
+    // A Night Terror oficial cobra "Steal Fear" de um contador que a carta não tem (a ação quebra). Aqui o custo é o
+    // Medo roubado: 1 por alvo Horrified, escalável, e o dano rola 1d6 por Medo (multiplicador "scale").
+    patch: c => Object.values(c.actions).filter(a => a.cost?.some(k => k.key === "resource")).forEach(a => { a.cost = [{ key: "fear", value: 1, scalable: true, step: 1, itemId: null, consumeOnSuccess: false }]; }),
+    description: "<p>Uma vez por descanso longo, escolha quaisquer alvos dentro do alcance Muito Próximo para te perceberem como uma ameaça de pesadelo, assassino impossível, fantasma de sensor corrompido ou alucinação disparada pelo medo. Os alvos precisam ter sucesso numa Rolagem de Reação (16) ou ficam temporariamente <strong>Horrified</strong>. Enquanto Horrified, ficam Vulneráveis.</p><p>Roube do mestre uma quantidade de Medo igual ao número de alvos Horrified, até o total de Medo na reserva dele. Role uma quantidade de d6 igual ao Medo roubado e cause o total de dano a cada alvo Horrified. Descarte o Medo roubado.</p>" },
   { name: "Studying the Victim", img: CPR("dlc/cyberware/kill_display"), level: 9, recallCost: 1, type: "ability", clone: "Twilight Toll", description: "<p>Escolha um alvo dentro do alcance Distante. Quando você tem sucesso numa rolagem de ação contra ele que não resulta em rolagem de dano, coloque um marcador nesta carta. Quando causar dano a esse alvo, gaste qualquer quantidade de marcadores para somar um d12 por marcador à rolagem de dano.</p><p>Você só pode manter Studying the Victim em uma criatura por vez. Quando escolher um novo alvo ou fizer um descanso, limpe os marcadores não usados.</p>" },
   { name: "Total Blackout", img: CPR("status/emp"), level: 10, recallCost: 2, type: "spell", clone: "Eclipse", description: "<p>Faça uma Rolagem de Interface (16). Uma vez por descanso longo, em um sucesso, mergulhe a área inteira dentro do alcance Distante em escuridão completa, apagão de sinal, saturação de fumaça, negação de sensores ou interferência que devora a luz, que só você e seus aliados conseguem atravessar com a vista.</p><p>Rolagens de ataque contra você ou um aliado dentro desse apagão têm desvantagem. Além disso, quando você ou um aliado tem sucesso com Esperança contra um adversário dentro do apagão, o alvo marca 1 Estresse.</p><p>O protocolo dura até o mestre gastar 1 Medo no turno dele para limpar o efeito ou você sofrer dano Severo.</p>" },
   { name: "Specter Mode", img: CPR("blackice/src/wisp"), level: 10, recallCost: 1, type: "spell", clone: "Specter of the Dark", description: "<p>Marque 1 Estresse para ficar <strong>Spectral</strong> até fazer uma ação contra outra criatura. Enquanto Spectral, seu corpo fica envolto em camuflagem ativa, chaff de sinal e software de movimento preditivo.</p><p>Você fica Escondido, não aciona câmeras ou alarmes comuns e não pode ser alvo direto de ataques físicos, a menos que uma criatura esteja dentro do alcance Corpo a Corpo ou o mestre gaste 1 Medo para te revelar.</p><p>Enquanto Spectral, você passa por câmeras, grades de laser e outras barreiras controladas pela segurança como se tivesse o acesso correto. Isso não permite atravessar paredes sólidas ou barreiras sem um ponto de entrada plausível. Outras criaturas ainda podem ver sinais breves da sua passagem.</p>" }
@@ -2531,7 +2550,7 @@ const BLACKWALL_CARDS = [
       addCardActions(c, withActionId(buildCardAction({ difficulty: 10, targetType: "self", name: "Rolagem de Interface (10)" })));
     } }),
   rb("Backlash Daemon", { img: CPR("default/default-demon"), clone: "Hideous Retribution" }),
-  rb("Drain Signal", { img: CPR("programs/vampire"), clone: "Siphon Essence",
+  rb("Drain Signal", { img: CPR("programs/poison_flatline"), clone: "Siphon Essence",
     actionNames: { "Spellcast Roll": "Rolagem de Interface", "With Fear": "_drop" },
     patch: c => {
       const a = cardAction(c, "Rolagem de Interface");
@@ -2723,7 +2742,7 @@ const REDLINE_CARDS = [
   rb("Redline-Synced", { img: CPR("status/surge"), domainTouched: 4,
     effects: [passiveEffect({ name: "Redline-Synced", img: CPR("status/surge"), changes: [rbChange("system.evasion", "floor(@system.resources.hitPoints.value / 3)")] })],
     actions: resourceCardAction({ name: "Ganhar 1 Esperança", heal: true, resources: { hope: 1 } }) }),
-  rb("Siphon Strike", { img: CPR("programs/vampire"), clone: "Vampiric Strike", source: "void",
+  rb("Siphon Strike", { img: CPR("programs/poison_flatline"), clone: "Vampiric Strike", source: "void",
     patch: c => {
       Object.values(c.actions).forEach(a => { a.name = "Limpar 1 PV"; a.cost = [HOPE(1)]; });
       addCardActions(c, resourceCardAction({ name: "Limpar 1 Estresse", heal: true, resources: { stress: 1 }, cost: [HOPE(1)] }));
@@ -3114,10 +3133,10 @@ function passiveEffect({ name, img, description = "", changes, disabled = false 
 const fxChange = (key, value, type = "add") => ({ key, type, value, priority: null, phase: "initial" });
 
 // Feature (item) de adversário ou ambiente. form: passive | action | reaction.
-function threatFeature({ name, img, form, description, actions = {}, effects = [], flags = {} }) {
+function threatFeature({ name, img, form, description, actions = {}, effects = [], flags = {}, resource = null }) {
   return {
     name, type: "feature", img,
-    system: { description, resource: null, actions: withDefaultActionImg(actions, img), attribution: ATTRIBUTION, gmNotes: "", featureForm: form, granter: null, actorResources: [] },
+    system: { description, resource, actions: withDefaultActionImg(actions, img), attribution: ATTRIBUTION, gmNotes: "", featureForm: form, granter: null, actorResources: [] },
     effects, flags
   };
 }
@@ -4024,8 +4043,9 @@ function cloneAdversaryFeature(f, adversary, officialAdversaries) {
     if (action.damage?.main?.groupAttack) action.damage.main.value = damagePart(adversary.attack.damage).value;
   }
   const effects = foundry.utils.deepClone(source._source.effects ?? []).map(e => ({ ...e, name: f.name, img: f.img, description: "", origin: null, _stats: undefined }));
-  // Flags do sistema (ex: hordeFeature, que identifica a feature Horde) vêm junto.
-  return { ...f, actions, effects, flags: foundry.utils.deepClone(source._source.flags ?? {}) };
+  // Flags do sistema (ex: hordeFeature, que identifica a feature Horde) vêm junto, e também o contador da
+  // feature (ex: o marcador do Skull Splitter), que as ações usam como custo.
+  return { ...f, actions, effects, flags: foundry.utils.deepClone(source._source.flags ?? {}), resource: foundry.utils.deepClone(source._source.system.resource ?? null) };
 }
 
 // ---------- Automação das features de adversários e ambientes ----------
@@ -4412,7 +4432,10 @@ const CYBERWARE = [
   { n: 51, name: "Blindagem Pele-de-Anjo", cost: 3, bonus: BONUS.armor(2), uses: { max: 1, recovery: "longRest" }, actionType: "reaction", img: CPR("cyberware/superchrome_covering"), text: "Ganhe +2 na Pontuação de Armadura. Uma vez por descanso longo, quando um aliado dentro do alcance Muito Próximo fosse marcar Pontos de Vida, você pode marcar um Espaço de Armadura para reduzir a gravidade em um limiar." },
   { n: 52, name: "Loop de Reflexo Clone", cost: 3, uses: { max: 1, recovery: "shortRest" }, img: CPR("dlc/cyberware/extra-joined-cyberarm"), text: "Uma vez por descanso, quando você rolar com Esperança num ataque, você pode repetir o ataque contra outro alvo dentro do alcance causando metade do dano." },
   { n: 53, name: "Fantasma na Suíte", cost: 4, img: CPR("dlc/cyberware/signal_jammer"), text: "Você não pode ser detectado por câmeras, drones ou sensores comuns além do alcance Próximo, a menos que ataque, fale alto ou o mestre gaste 1 Medo." },
-  { n: 54, name: "Chassi Metamórfico", cost: 4, uses: { max: 1, recovery: "longRest" }, actionName: "Não gastar Esperança/Estresse", img: CPR("dlc/cyberware/superchrome-faceplate"), text: "Quando terminar um descanso longo, escolha Evasão, Armadura ou Limiares. Até seu próximo descanso longo, ganhe um destes: +1 de Evasão, +1 na Pontuação de Armadura ou +4 nos limiares de dano (ajuste manual). Uma vez por descanso longo, quando você gastar Esperança ou marcar Estresse para usar uma feature, você não gasta nem marca." },
+  { n: 54, name: "Chassi Metamórfico", cost: 4, uses: { max: 1, recovery: "longRest" }, actionName: "Não gastar Esperança/Estresse", img: CPR("dlc/cyberware/superchrome-faceplate"),
+    // As três opções ficam como efeitos desligados; o jogador liga o escolhido no descanso longo (padrão do Opportunist oficial).
+    toggles: [["Chassi Metamórfico: +1 de Evasão", BONUS.evasion(1)], ["Chassi Metamórfico: +1 de Armadura", BONUS.armor(1)], ["Chassi Metamórfico: +4 nos Limiares", BONUS.thresholds(4)]],
+    text: "Quando terminar um descanso longo, escolha Evasão, Armadura ou Limiares. Até seu próximo descanso longo, ganhe um destes: +1 de Evasão, +1 na Pontuação de Armadura ou +4 nos limiares de dano (ligue o efeito da opção escolhida neste cyberware). Uma vez por descanso longo, quando você gastar Esperança ou marcar Estresse para usar uma feature, você não gasta nem marca." },
   { n: 55, name: "Coroa Neural de Comando", cost: 3, charges: { name: "Carga de Influence", max: 3 }, img: CPR("dlc/cyberware/poser_chip"), text: "Quando você rolar com Esperança usando uma carta de Influence ou em contexto social, ganhe 1 Carga de Influence (máximo 3). Antes de uma rolagem com Presença ou carta de Influence, gaste qualquer número de Cargas para somar +1 por Carga. Se tiver sucesso, um alvo também marca a mesma quantidade de Estresse e um aliado que possa te ouvir limpa a mesma quantidade de Estresse para cada Carga gasta." },
   { n: 56, name: "Equipamento de Órgão de Cerco", cost: 3, uses: { max: 1, recovery: "scene" }, img: CPR("cyberware/big_knucks"), text: "Seus ataques desarmados e de weaponware ignoram qualquer redução de dano. Uma vez por cena, quando você causar dano Maior ou Severo no alcance Corpo a Corpo, todos os adversários dentro do alcance Muito Próximo do alvo marcam 1 Estresse." },
   { n: 57, name: "Governador de Sobrecarga", cost: 4, uses: { max: 1, recovery: "longRest" }, img: CPR("upgrades/hardened_circuitry"), text: "Uma vez por descanso longo, depois de usar uma feature de Cyberware com limite (como uma vez por descanso), você pode imediatamente usar essa mesma feature de novo. Depois que ela se resolver, faça uma Rolagem de Humanidade: se o resultado for igual ou menor que sua Carga Cibernética, marque 2 Estresse ou o mestre ganha 3 Medo." },
@@ -4465,15 +4488,20 @@ function buildCyberwareItem(def, folderId) {
         ? { type: "simple", value: 0, max: String(def.charges.max), icon: def.img, recovery: "scene", progression: "increasing" }
         : null
     },
-    effects: def.bonus || def.choice === "trait" || def.choice === "experience"
-      ? [{
-          name: def.name, img: def.img, transfer: true, type: "base",
-          // Reforço de Atributo / Skillsoft: a chave definitiva é gravada na escolha ao instalar.
-          system: { changes: def.bonus ?? [], duration: { description: "" }, rangeDependence: null, stacking: null, targetDispositions: [], conditionals: [] },
-          duration: { value: null, units: "seconds", expiry: null, expired: false },
-          tint: "#ffffff", statuses: [], disabled: false
-        }]
-      : []
+    effects: [
+      ...(def.bonus || def.choice === "trait" || def.choice === "experience" ? [cyberEffect(def.name, def.img, def.bonus ?? [])] : []),
+      // Reforço de Atributo / Skillsoft: a chave definitiva é gravada na escolha ao instalar.
+      ...(def.toggles ?? []).map(([name, changes]) => cyberEffect(name, def.img, changes, true))
+    ]
+  };
+}
+
+function cyberEffect(name, img, changes, disabled = false) {
+  return {
+    name, img, transfer: true, type: "base",
+    system: { changes, duration: { description: "" }, rangeDependence: null, stacking: null, targetDispositions: [], conditionals: [] },
+    duration: { value: null, units: "seconds", expiry: null, expired: false },
+    tint: "#ffffff", statuses: [], disabled
   };
 }
 

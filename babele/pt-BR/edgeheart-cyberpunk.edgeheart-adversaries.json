@@ -595,6 +595,9 @@
           "actions": {
             "Prepared Position: Hidden": {
               "name": "Posição Preparada: Escondido"
+            },
+            "Hidden Attack (+1d8)": {
+              "name": "Ataque Escondido (+1d8)"
             }
           },
           "effects": {
@@ -1172,7 +1175,12 @@
       "items": {
         "Walking Arsenal": {
           "name": "Arsenal Ambulante",
-          "description": "<p>Quando este adversário causa dano Maior, a cobertura do alvo é destruída. Quando tem sucesso contra um alvo sem cobertura, some +1d10 à rolagem de dano.</p>"
+          "description": "<p>Quando este adversário causa dano Maior, a cobertura do alvo é destruída. Quando tem sucesso contra um alvo sem cobertura, some +1d10 à rolagem de dano.</p>",
+          "actions": {
+            "Attack Without Cover (+1d10)": {
+              "name": "Ataque sem Cobertura (+1d10)"
+            }
+          }
         },
         "Stabilizer Lock": {
           "name": "Trava do Estabilizador",
@@ -1377,6 +1385,9 @@
           "actions": {
             "Contract Target": {
               "name": "Alvo do Contrato"
+            },
+            "Attack Against the Target (+1d8)": {
+              "name": "Ataque contra o Alvo (+1d8)"
             }
           },
           "effects": {

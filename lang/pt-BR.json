@@ -13,6 +13,7 @@
     },
     "Common": {
       "NoGM": "Nenhum mestre conectado para aplicar isso.",
+      "GMNoResponse": "O mestre ({name}) não respondeu. Peça para ele deixar a janela do Foundry aberta e tente de novo.",
       "SelectHelperToken": "Selecione o token do aliado que vai gastar a Esperança.",
       "NotOwner": "Você não controla {name}."
     },
