@@ -2,7 +2,7 @@
   "id": "edgeheart-cyberpunk",
   "title": "Edgeheart - Cyberpunk Homebrew",
   "description": "Edgeheart, a cyberpunk campaign frame for Daggerheart (English, with Brazilian Portuguese through Babele): 9 classes and 18 subclasses, 11 Competencies, Life Paths, Affiliations, 60 cyberware, Eidolons, vehicles, weapons, armor, loot and consumables, 39 adversaries and 16 environments, the Edgeheart Sheet (Humanity, Cyber Load, Cyberpsychosis), the Crew Sheet (Reputation and Edge), and the full SRD in journals. / Campaign frame cyberpunk para Daggerheart, em inglês e português (pelo Babele).",
-  "version": "1.30.1",
+  "version": "1.30.2",
   "url": "https://github.com/leomunhoz/Daggerheart_Cyberpunk",
   "manifest": "https://github.com/leomunhoz/Daggerheart_Cyberpunk/releases/latest/download/module.json",
   "download": "https://github.com/leomunhoz/Daggerheart_Cyberpunk/releases/latest/download/module.zip",

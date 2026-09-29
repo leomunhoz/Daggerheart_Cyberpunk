@@ -144,7 +144,7 @@ function featureAction({
 
 const ICON_PNG = name => `modules/${MODULE_ID}/assets/icons/${name}.png`;
 // Arte das cartas de Competência, no padrão das oficiais (degradê na cor do domínio + sigilo branco).
-const CARD_ART = id => `modules/${MODULE_ID}/assets/art/competencies/${id}.png`;
+const CARD_ART = id => `modules/${MODULE_ID}/assets/art/competencies/${id}.webp`;
 // Pacote de ícones em assets/cpr (pastas do zip original). CPR("programs/shield") = .svg;
 // passe a extensão quando não for svg (ex.: CPR("classes/runner/class-icon.png")).
 const CPR = path => `modules/${MODULE_ID}/assets/cpr/${/\.\w+$/.test(path) ? path : `${path}.svg`}`;
@@ -4267,7 +4267,7 @@ function automateThreatFeature(owner, f, officialAdversaries) {
   return threatFeature(feature);
 }
 
-// Arte dos adversários (assets/art/adversaries/<nome-em-slug>.png e tokens/<nome-em-slug>.png, no padrão
+// Arte dos adversários (assets/art/adversaries/<nome-em-slug>.webp e tokens/<nome-em-slug>.webp, no padrão
 // retrato + token do Art for Daggerheart). Sem arte, o adversário fica com o ícone do pacote.
 const artSlug = name => name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 async function adversaryArt() {
@@ -4277,7 +4277,7 @@ async function adversaryArt() {
   const portraits = new Set(await list(base)), tokens = new Set(await list(`${base}/tokens`));
   const art = {};
   for (const a of ADVERSARIES) {
-    const file = `${artSlug(a.name)}.png`;
+    const file = `${artSlug(a.name)}.webp`;
     if (portraits.has(file)) art[a.name] = { portrait: `${base}/${file}`, token: tokens.has(file) ? `${base}/tokens/${file}` : `${base}/${file}` };
   }
   return art;

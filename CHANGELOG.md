@@ -1,5 +1,8 @@
 # Changelog
 
+## v1.30.2
+- **Imagens mais leves:** retratos e tokens dos adversários e as artes das cartas de Competência passaram de PNG para WebP, com a mesma aparência e o fundo transparente. As 89 imagens caíram de 25 MB para 4,6 MB, o que deixa o download do módulo menor e o carregamento mais rápido para os jogadores.
+
 ## v1.30.1
 - O módulo agora se chama **Edgeheart - Cyberpunk Homebrew**.
 - **Instalação por link:** o `module.json` tem os links de manifesto e download, e uma automação do GitHub monta o pacote a cada Release publicada. O link para instalar e atualizar pelo Foundry é `https://github.com/leomunhoz/Daggerheart_Cyberpunk/releases/latest/download/module.json` (funciona com o repositório público).
