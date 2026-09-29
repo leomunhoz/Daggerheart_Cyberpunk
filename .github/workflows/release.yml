@@ -1,0 +1,43 @@
+# Ao publicar uma Release no GitHub (tag no formato v1.30.0), monta o pacote de instalação do Foundry:
+# - module.json com a versão da tag e o "download" apontando para o zip desta release;
+# - module.zip com o módulo.
+# Os dois vão como arquivos da release. O link de instalação no Foundry é sempre o da última release:
+# https://github.com/leomunhoz/Daggerheart_Cyberpunk/releases/latest/download/module.json
+name: Release
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Versão e links da release no module.json
+        env:
+          TAG: ${{ github.event.release.tag_name }}
+          REPO: ${{ github.repository }}
+        run: |
+          VERSION="${TAG#v}"
+          jq --arg v "$VERSION" \
+             --arg manifest "https://github.com/$REPO/releases/latest/download/module.json" \
+             --arg download "https://github.com/$REPO/releases/download/$TAG/module.zip" \
+             '.version = $v | .manifest = $manifest | .download = $download' module.json > module.tmp.json
+          mv module.tmp.json module.json
+
+      - name: Montar o module.zip
+        run: |
+          zip -r -q module.zip module.json README.md CHANGELOG.md scripts styles templates lang packs assets babele data journals \
+            -x "packs/**/LOCK" "packs/**/LOG" "packs/**/LOG.old"
+
+      - name: Anexar à release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            module.json
+            module.zip

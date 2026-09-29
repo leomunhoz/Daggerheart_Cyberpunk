@@ -1,8 +1,11 @@
 {
   "id": "edgeheart-cyberpunk",
-  "title": "Edgeheart - Cyberpunk para Daggerheart (Núcleo)",
-  "description": "Campaign frame cyberpunk Edgeheart para o sistema Daggerheart, em português: 9 classes com 18 subclasses, 11 Competências com 21 cartas cada, Trajetórias, Afiliações, 60 cyberwares, armas, armaduras, loot e consumíveis com tabelas, veículos, Eidolons, a Ficha Edgeheart (Humanidade, Carga Cibernética e Ciberpsicose), a Ficha da Crew (Reputação e Edge) e diários com o PDF traduzido. Os compêndios já vêm prontos: é só ativar o módulo.",
-  "version": "1.30.0",
+  "title": "Edgeheart - Cyberpunk Homebrew",
+  "description": "Edgeheart, a cyberpunk campaign frame for Daggerheart (English, with Brazilian Portuguese through Babele): 9 classes and 18 subclasses, 11 Competencies, Life Paths, Affiliations, 60 cyberware, Eidolons, vehicles, weapons, armor, loot and consumables, 39 adversaries and 16 environments, the Edgeheart Sheet (Humanity, Cyber Load, Cyberpsychosis), the Crew Sheet (Reputation and Edge), and the full SRD in journals. / Campaign frame cyberpunk para Daggerheart, em inglês e português (pelo Babele).",
+  "version": "1.30.1",
+  "url": "https://github.com/leomunhoz/Daggerheart_Cyberpunk",
+  "manifest": "https://github.com/leomunhoz/Daggerheart_Cyberpunk/releases/latest/download/module.json",
+  "download": "https://github.com/leomunhoz/Daggerheart_Cyberpunk/releases/latest/download/module.zip",
   "compatibility": {
     "minimum": "14",
     "verified": "14.368"

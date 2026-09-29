@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.30.1
+- O módulo agora se chama **Edgeheart - Cyberpunk Homebrew**.
+- **Instalação por link:** o `module.json` tem os links de manifesto e download, e uma automação do GitHub monta o pacote a cada Release publicada. O link para instalar e atualizar pelo Foundry é `https://github.com/leomunhoz/Daggerheart_Cyberpunk/releases/latest/download/module.json` (funciona com o repositório público).
+
 ## v1.30.0
 - **Interface nas duas línguas:** todos os textos da Ficha Edgeheart (aba Chrome), da Ficha da Crew, das mensagens de chat, dos avisos, dos botões, das configurações e dos veículos saíram do código e foram para `lang/pt-BR.json` e `lang/en.json`. Cada jogador vê a interface no idioma do seu Foundry. Em português, os estados dos veículos e do Eidolon seguem o glossário (Danificado, Inutilizado), e o item de acesso se chama "Acessos Cibernéticos" (em inglês, "Cyber Access").
 - **Diário "Adversários Extras":** página nova no Edgeheart SRD com os 14 adversários fora do PDF, agrupados por facção, com o modelo oficial de cada um e um quadro de como montar um combate pelo orçamento de pontos do Daggerheart.
