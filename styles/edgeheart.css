@@ -131,6 +131,8 @@
   line-height: 18px;
   white-space: nowrap;
 }
+.edgeheart-sheet .eh-cw-delete { flex: 0 0 auto; padding: 0 2px; font-size: 12px; opacity: 0.55; cursor: pointer; }
+.edgeheart-sheet .eh-cw-delete:hover { opacity: 1; color: var(--eh-danger); }
 .edgeheart-sheet .eh-choose { flex: 0 0 auto; height: 20px; padding: 0 8px; font-size: 11px; line-height: 18px; border-color: #ffb020; }
 .edgeheart-sheet .eh-cost {
   flex: 0 0 auto;

@@ -725,7 +725,8 @@ async function importLootAndConsumables() {
   const lootPack = await getOrCreatePack("loot");
   await Item.createDocuments(loot, { pack: lootPack.collection, keepId: true });
   const vehicleFolder = await makeFolder(lootPack, "Veículos");
-  await Item.createDocuments(VEHICLES.map(v => ({ ...buildVehicleData(v), folder: vehicleFolder.id })), { pack: lootPack.collection, keepId: true });
+  const vehicleArt = await gearArt("vehicles");
+  await Item.createDocuments(VEHICLES.map(v => ({ ...buildVehicleData({ ...v, img: vehicleArt[artSlug(v.name)] ?? v.img }), folder: vehicleFolder.id })), { pack: lootPack.collection, keepId: true });
 
   // Tabelas no formato das oficiais (Core Set Items / Consumables): 1d10, o mestre rola mais dados
   // conforme a raridade (Comum 1d10, Incomum 1d10–2d10, Raro 2d10–3d10, Lendário 3d10–4d10).
@@ -2779,17 +2780,17 @@ const REDLINE_CARDS = [
 // Competências (domínios homebrew). Para adicionar uma, registre aqui com as cartas dela;
 // importDomainCards registra o domínio no Homebrew do sistema e cria as cartas.
 const COMPETENCIES = [
-  { id: "network", label: "Network", src: ICON_PNG("competency-network"), color: "#0a93b0", cardImg: CARD_ART("network"), cards: NETWORK_CARDS },
-  { id: "aegis", label: "Aegis", src: ICON_PNG("competency-aegis"), color: "#6a3fc0", cardImg: CARD_ART("aegis"), cards: AEGIS_CARDS },
-  { id: "assault", label: "Assault", src: ICON_PNG("competency-assault"), color: "#446600", cardImg: CARD_ART("assault"), cards: ASSAULT_CARDS },
-  { id: "ghost", label: "Ghost", src: ICON_PNG("competency-ghost"), color: "#c3b4ea", invertText: true, cardImg: CARD_ART("ghost"), cards: GHOST_CARDS },
-  { id: "chrome", label: "Chrome", src: ICON_PNG("competency-chrome"), color: "#a8e4f2", invertText: true, cardImg: CARD_ART("chrome"), cards: CHROME_CARDS },
-  { id: "systems", label: "Systems", src: ICON_PNG("competency-systems"), color: "#2f7fe0", cardImg: CARD_ART("systems"), cards: SYSTEMS_CARDS },
-  { id: "influence", label: "Influence", src: ICON_PNG("competency-influence"), color: "#b02f9e", cardImg: CARD_ART("influence"), cards: INFLUENCE_CARDS },
-  { id: "frontier", label: "Frontier", src: ICON_PNG("competency-frontier"), color: "#8a5a28", cardImg: CARD_ART("frontier"), cards: FRONTIER_CARDS },
-  { id: "medtech", label: "Medtech", src: ICON_PNG("competency-medtech"), color: "#35a845", cardImg: CARD_ART("medtech"), cards: MEDTECH_CARDS },
-  { id: "redline", label: "Redline", src: ICON_PNG("competency-redline"), color: "#5e0716", cardImg: CARD_ART("redline"), cards: REDLINE_CARDS },
-  { id: "blackwall", label: "Blackwall", src: ICON_PNG("competency-blackwall"), color: "#e0266e", cardImg: CARD_ART("blackwall"), cards: BLACKWALL_CARDS }
+  { id: "network", label: "Network", src: ICON_PNG("competency-network"), color: "#0098b8", cardImg: CARD_ART("network"), cards: NETWORK_CARDS },
+  { id: "aegis", label: "Aegis", src: ICON_PNG("competency-aegis"), color: "#b89a00", cardImg: CARD_ART("aegis"), cards: AEGIS_CARDS },
+  { id: "assault", label: "Assault", src: ICON_PNG("competency-assault"), color: "#4a3de0", cardImg: CARD_ART("assault"), cards: ASSAULT_CARDS },
+  { id: "ghost", label: "Ghost", src: ICON_PNG("competency-ghost"), color: "#8a64e0", cardImg: CARD_ART("ghost"), cards: GHOST_CARDS },
+  { id: "chrome", label: "Chrome", src: ICON_PNG("competency-chrome"), color: "#7d8c99", cardImg: CARD_ART("chrome"), cards: CHROME_CARDS },
+  { id: "systems", label: "Systems", src: ICON_PNG("competency-systems"), color: "#1f6fe0", cardImg: CARD_ART("systems"), cards: SYSTEMS_CARDS },
+  { id: "influence", label: "Influence", src: ICON_PNG("competency-influence"), color: "#d62d86", cardImg: CARD_ART("influence"), cards: INFLUENCE_CARDS },
+  { id: "frontier", label: "Frontier", src: ICON_PNG("competency-frontier"), color: "#d96f00", cardImg: CARD_ART("frontier"), cards: FRONTIER_CARDS },
+  { id: "medtech", label: "Medtech", src: ICON_PNG("competency-medtech"), color: "#00a868", cardImg: CARD_ART("medtech"), cards: MEDTECH_CARDS },
+  { id: "redline", label: "Redline", src: ICON_PNG("competency-redline"), color: "#c4102c", cardImg: CARD_ART("redline"), cards: REDLINE_CARDS },
+  { id: "blackwall", label: "Blackwall", src: ICON_PNG("competency-blackwall"), color: "#c21aa6", cardImg: CARD_ART("blackwall"), cards: BLACKWALL_CARDS }
 ];
 
 // A chave em system.actions precisa ser igual ao _id da ação: o sistema grava usos e outros
@@ -4333,13 +4334,15 @@ async function importEnvironments() {
   const adversaries = game.packs.get(`${PACK_SCOPE}.${PACKS.adversaries.name}`);
   const folders = {};
   for (const tier of [...new Set(ENVIRONMENTS.map(e => e.tier))].sort()) folders[tier] = await makeFolder(pack, `Tier ${tier}`, { type: "Actor" });
+  const art = await gearArt("environments");
   const data = ENVIRONMENTS.map(e => {
+    const img = art[artSlug(e.name)] ?? e.img;
     // Só entram os adversários que já existem no compêndio (os de Tiers ainda não feitos ficam no texto).
     const known = e.adversaries.filter(n => ADVERSARIES.some(a => a.name === n));
     const missing = e.adversaries.filter(n => !known.includes(n));
     return {
-      _id: environmentId(e.name), name: e.name, img: e.img, type: "environment", folder: folders[e.tier].id,
-      prototypeToken: { name: e.name, texture: { src: e.img } },
+      _id: environmentId(e.name), name: e.name, img, type: "environment", folder: folders[e.tier].id,
+      prototypeToken: { name: e.name, texture: { src: img } },
       system: {
         tier: e.tier, type: e.type, difficulty: e.difficulty, impulses: e.impulses, notes: "",
         description: e.description + (missing.length ? `<p><em>Também combina com: ${missing.join(", ")}.</em></p>` : ""),
@@ -4667,9 +4670,9 @@ function buildEidolonItem(e, folderId) {
   const weaponsText = e.weapons.map(w => `<li><strong>${w.name}:</strong> arma embutida de alcance ${RANGE_LABELS[w.range] ?? w.range}, ${w.damage.replace(" phy", " de dano físico").replace(" tech", " de dano techno")}. ${w.feature.split("|")[1]}</li>`).join("");
   const featuresText = e.features.map(f => `<li><strong>${f.name}:</strong> ${f.text}</li>`).join("");
   return {
-    _id: stableId(`eidolon:${e.name}`), name: e.name, type: "feature", img: CPR(e.img), folder: folderId,
+    _id: stableId(`eidolon:${e.name}`), name: e.name, type: "feature", img: e.art ?? CPR(e.img), folder: folderId,
     flags: { [MODULE_ID]: { cyberware: true, cyberCost: 0, eidolon: {
-      syncCost: e.syncCost, hp: e.hp, evasion: e.evasion, thresholds: e.thresholds, armor: e.armor, link: e.link,
+      syncCost: e.syncCost, hp: e.hp, evasion: e.evasion, thresholds: e.thresholds, armor: e.armor, link: e.link, token: e.token ?? null,
       bonded: false, hpMarked: 0, armorMarked: 0, disabled: false, parts: buildEidolonParts(e)
     } } },
     system: {
@@ -4687,7 +4690,9 @@ async function importCyberware() {
   }
   const data = CYBERWARE.map(def => buildCyberwareItem(def, folders[cyberTier(def.n)].id));
   const eidolonFolder = await makeFolder(pack, "Eidolons (Cyberware Especial)");
-  data.push(...EIDOLONS.map(e => buildEidolonItem(e, eidolonFolder.id)));
+  // Retrato (assets/art/eidolons/<slug>.webp) e token (tokens/<slug>.webp); sem arquivo, fica o ícone do CPR.
+  const art = await gearArt("eidolons"), tokens = await gearArt("eidolons/tokens");
+  data.push(...EIDOLONS.map(e => buildEidolonItem({ ...e, art: art[artSlug(e.name)], token: tokens[artSlug(e.name)] }, eidolonFolder.id)));
   await Item.createDocuments(data, { pack: pack.collection, keepId: true });
 }
 

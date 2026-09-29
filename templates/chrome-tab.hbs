@@ -69,7 +69,7 @@
                             </button>
                         {{/if}}
                         <button type="button" data-action="ehAdvanceHumanity" {{#unless canAdvance}}disabled{{/unless}}
-                            data-tooltip="{{#if advancedThisLevel}}{{localize "EDGEHEART.Chrome.AdvancedThisLevel"}}{{else}}{{localize "EDGEHEART.Chrome.AdvanceTooltip"}}{{/if}}">
+                            data-tooltip="{{#if lost}}{{localize "EDGEHEART.Chrome.RestoreTooltip"}}{{else if advancedThisLevel}}{{localize "EDGEHEART.Chrome.AdvancedThisLevel"}}{{else}}{{localize "EDGEHEART.Chrome.AdvanceTooltip"}}{{/if}}">
                             <i class="fa-solid fa-arrow-up"></i>
                         </button>
                         <button type="button" data-action="ehReduceHumanity" {{#unless canReduce}}disabled{{/unless}} data-tooltip="{{localize "EDGEHEART.Chrome.ReduceTooltip"}}">
@@ -100,6 +100,9 @@
                                     <button type="button" class="eh-choose" data-action="ehChooseCyberware" data-item-uuid="{{uuid}}" data-tooltip="{{localize "EDGEHEART.Chrome.ChoiceTooltip"}}">{{localize "EDGEHEART.Chrome.Choose"}}</button>
                                 {{/if}}
                                 <span class="eh-cost" data-tooltip="{{localize "EDGEHEART.Chrome.CostTooltip"}}">{{cost}}</span>
+                                {{#if @root.editable}}
+                                    <a class="eh-cw-delete" data-action="deleteDoc" data-item-uuid="{{uuid}}" data-tooltip="{{localize "EDGEHEART.Chrome.RemoveCyberware"}}"><i class="fa-solid fa-trash"></i></a>
+                                {{/if}}
                             </li>
                         {{/each}}
                     </ul>
@@ -136,6 +139,9 @@
                                             <button type="button" class="eh-primary" data-action="ehEidolonMobilize" data-item-uuid="{{uuid}}" {{#unless canMobilize}}disabled{{/unless}}><i class="fa-solid fa-plug-circle-bolt"></i> {{localize "EDGEHEART.Chrome.Mobilize"}}</button>
                                         {{/if}}
                                         <button type="button" data-action="ehEidolonRepair" data-item-uuid="{{uuid}}" data-tooltip="{{localize "EDGEHEART.Chrome.RepairTooltip"}}"><i class="fa-solid fa-screwdriver-wrench"></i></button>
+                                        {{#unless synced}}
+                                            <button type="button" data-action="deleteDoc" data-item-uuid="{{uuid}}" data-tooltip="{{localize "EDGEHEART.Chrome.RemoveEidolon"}}"><i class="fa-solid fa-trash"></i></button>
+                                        {{/unless}}
                                     </div>
                                 {{/if}}
                             </li>

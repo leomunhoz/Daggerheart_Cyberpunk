@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.32.0
+- **Ficha Edgeheart com tema cyberpunk:** preto e amarelo neon, cantos chanfrados, códigos "SYS://" nas seções, Esperança em chips e a Carga Cibernética com ícone de engrenagem. Glitches animados aparecem em rajadas curtas nas bordas, e o centro da ficha fica estável para leitura. Em **Ciberpsicose**, a ficha fica vermelha, a borda pulsa e os glitches ficam mais fortes e frequentes. Cada jogador escolhe nas configurações entre tema com glitch, tema sem animação ou o visual original do Daggerheart.
+- **Cartas de Competência em neon:** as 11 artes ganharam fundo escuro com grade e o sigilo aceso na cor de cada Competência (Assault agora é índigo). As pastas do compêndio e a faixa das cartas usam as mesmas cores.
+- **Arte nova** no padrão do módulo para os 8 veículos, os 10 Eidolons (retrato e token), o ambiente Eidolon Deployment Zone e as primeiras 8 armas.
+- **Remover cyberware** direto da aba Chrome (lixeira em cada linha; Shift+clique remove sem perguntar). Eidolons também, quando não estão sincronizados.
+- **O mestre pode trazer de volta** um personagem perdido para a Ciberpsicose: a seta de subir a Humanidade o devolve ao d4.
+
 ## v1.31.0
 Correções de uma bateria de testes completa: as 18 subclasses criadas e levadas do nível 1 ao 10 pelas janelas do sistema, com todas as ações usadas em combate; os 60 cyberwares instalados e desinstalados; os 10 Eidolons mobilizados até o Disabled; Redline, Blackwall, Humanidade, Ciberpsicose e a Ficha da Crew; e tudo de novo como jogador.
 - **Fearmask** (Ghost): "Steal Fear" quebrava, igual à Night Terror oficial que ela copia (cobra um contador que a carta não tem). Agora o custo é o Medo roubado do mestre, 1 por alvo Horrified, e o dano rola 1d6 por Medo.

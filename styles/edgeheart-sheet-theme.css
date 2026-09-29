@@ -1,0 +1,272 @@
+/* Edgeheart — tema cyberpunk da Ficha Edgeheart (amarelo/preto; vermelho em Ciberpsicose).
+ * Só vale para .edgeheart-sheet.eh-theme: a ficha oficial do Daggerheart não muda.
+ * A maior parte vem de trocar as variáveis de cor que a própria ficha do sistema usa. */
+@import url("https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@1,700&family=Rajdhani:wght@500;600;700&display=swap");
+
+.edgeheart-sheet.eh-theme {
+  --eh-y: #fcee0a;
+  --eh-y-rgb: 252 238 10;
+  --eh-hot: #ff2a4f;
+  --eh-hot-rgb: 255 42 79;
+  --eh-cyan: #19e3ff;
+  --eh-bg: #060709;
+  --eh-panel: #0c0e11;
+  --eh-text: #e8f1f2;
+  --eh-dim: #8d9aa0;
+
+  color-scheme: dark;
+  --golden: var(--eh-y);
+  --golden-10: rgb(var(--eh-y-rgb) / 0.06);
+  --golden-40: rgb(var(--eh-y-rgb) / 0.25);
+  --golden-60: rgb(var(--eh-y-rgb) / 0.4);
+  --golden-90: rgb(var(--eh-y-rgb) / 0.6);
+  --golden-bg: rgb(var(--eh-y-rgb) / 0.08);
+  --golden-secondary: var(--eh-y);
+  --golden-filter: brightness(0) saturate(100%) invert(93%) sepia(61%) saturate(2393%) hue-rotate(358deg) brightness(104%) contrast(98%);
+  --dark-blue: var(--eh-bg);
+  --dark-blue-10: rgb(6 7 9 / 0.06);
+  --dark-blue-40: rgb(6 7 9 / 0.25);
+  --dark-blue-50: rgb(6 7 9 / 0.31);
+  --dark-blue-60: rgb(6 7 9 / 0.38);
+  --dark-blue-90: rgb(6 7 9 / 0.56);
+  --dark-blue-c0: rgb(6 7 9 / 0.75);
+  --deep-black: #030304;
+  --beige: var(--eh-text);
+  --beige-15: rgb(232 241 242 / 0.08);
+  --beige-50: rgb(232 241 242 / 0.31);
+  --beige-80: rgb(232 241 242 / 0.5);
+  --red: var(--eh-hot);
+  --medium-red: var(--eh-hot);
+  --dh-trait-color-bg: var(--eh-panel);
+  --dh-trait-color-border: var(--eh-y);
+  --dh-window-button-color-bg: var(--eh-panel);
+  --dh-window-button-color-text: var(--eh-y);
+  --dh-button-color-bg: var(--eh-y);
+  --dh-button-color-text: #000;
+  --color-border: var(--eh-y);
+  --color-fieldset-border: var(--eh-y);
+  --color-text-emphatic: var(--eh-y);
+  --color-text-subtle: var(--eh-dim);
+  --color-text-primary: var(--eh-text);
+
+  font-family: "Rajdhani", Montserrat, sans-serif;
+  background: var(--eh-bg);
+  border: 1px solid var(--eh-y);
+  box-shadow: 0 0 0 1px #000, 0 0 22px rgb(var(--eh-y-rgb) / 0.22);
+}
+
+/* Vermelho da Ciberpsicose: as mesmas variáveis, outra cor. */
+.edgeheart-sheet.eh-theme.eh-psycho {
+  --eh-y: #ff1f3d;
+  --eh-y-rgb: 255 31 61;
+  --eh-hot: #ff5a6e;
+  --eh-hot-rgb: 255 90 110;
+  --eh-text: #ffe6e9;
+  --golden-filter: brightness(0) saturate(100%) invert(20%) sepia(93%) saturate(5000%) hue-rotate(344deg) brightness(104%) contrast(106%);
+  box-shadow: 0 0 0 1px #000, 0 0 28px rgb(var(--eh-y-rgb) / 0.45);
+}
+
+/* Fundo: preto com scanlines e grade bem leves. */
+.edgeheart-sheet.eh-theme .window-content {
+  background:
+    repeating-linear-gradient(0deg, rgb(255 255 255 / 0.018) 0 1px, transparent 1px 3px),
+    linear-gradient(90deg, rgb(var(--eh-y-rgb) / 0.035) 1px, transparent 1px) 0 0 / 28px 28px,
+    linear-gradient(0deg, rgb(var(--eh-y-rgb) / 0.035) 1px, transparent 1px) 0 0 / 28px 28px,
+    var(--eh-bg);
+}
+.edgeheart-sheet.eh-theme aside.character-sidebar-sheet {
+  background: linear-gradient(180deg, rgb(var(--eh-y-rgb) / 0.05), transparent 30%), var(--eh-panel);
+  border-right: 1px solid var(--eh-y);
+  box-shadow: inset -6px 0 12px -8px rgb(var(--eh-y-rgb) / 0.5);
+}
+.edgeheart-sheet.eh-theme .window-header .header-control {
+  border: 1px solid var(--eh-y);
+  color: var(--eh-y);
+  border-radius: 0;
+}
+
+/* Tipografia */
+.edgeheart-sheet.eh-theme h1.actor-name {
+  font-family: "Chakra Petch", "Rajdhani", sans-serif;
+  font-style: italic;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--eh-y);
+  letter-spacing: 0.5px;
+  text-shadow: 0 0 10px rgb(var(--eh-y-rgb) / 0.35);
+}
+.edgeheart-sheet.eh-theme .level-div .label,
+.edgeheart-sheet.eh-theme .level-div input { font-family: "Rajdhani", sans-serif; font-weight: 700; }
+.edgeheart-sheet.eh-theme :is(legend, .title, .status-label, .trait-name, .threshold-label, nav.tabs a) {
+  font-family: "Rajdhani", Montserrat, sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+}
+.edgeheart-sheet.eh-theme :is(.item-name, .item-labels, .experience-list) { font-family: "Rajdhani", Montserrat, sans-serif; font-weight: 600; }
+.edgeheart-sheet.eh-theme .title { text-transform: uppercase; color: var(--eh-y); }
+.edgeheart-sheet.eh-theme :is(h3, h4) { font-family: "Rajdhani", Montserrat, sans-serif; }
+.edgeheart-sheet.eh-theme .shortcut-items-section .title h3 {
+  color: var(--eh-y);
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: 1px;
+  text-shadow: 0 0 8px rgb(var(--eh-y-rgb) / 0.35);
+}
+
+/* Caixas: cantos chanfrados e um código "SYS://" em cada seção. */
+.edgeheart-sheet.eh-theme :is(.hope-section, .domains-section, .threshold-section, .status-value, .eh-header-badge, .tier-mark) {
+  border-radius: 0;
+  clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+}
+.edgeheart-sheet.eh-theme .features-sections { counter-reset: eh-sys; }
+.edgeheart-sheet.eh-theme fieldset.drop-section {
+  position: relative;
+  border-width: 1px;
+  border-radius: 0;
+  background: linear-gradient(180deg, rgb(var(--eh-y-rgb) / 0.045), transparent 60%);
+  counter-increment: eh-sys;
+}
+.edgeheart-sheet.eh-theme fieldset.drop-section::before {
+  content: "";
+  position: absolute;
+  top: -1px; left: -1px;
+  width: 14px; height: 14px;
+  border-top: 3px solid var(--eh-y);
+  border-left: 3px solid var(--eh-y);
+  pointer-events: none;
+}
+.edgeheart-sheet.eh-theme fieldset.drop-section::after {
+  content: "SYS://" counter(eh-sys, decimal-leading-zero);
+  position: absolute;
+  top: -9px; right: 10px;
+  padding: 0 4px;
+  background: var(--eh-bg);
+  color: var(--eh-y);
+  font: 600 10px/1 "Rajdhani", monospace;
+  letter-spacing: 1px;
+  opacity: 0.8;
+  pointer-events: none;
+}
+.edgeheart-sheet.eh-theme fieldset.drop-section > legend { text-transform: none; }
+
+/* Abas */
+.edgeheart-sheet.eh-theme nav.tabs a { color: var(--eh-text); }
+.edgeheart-sheet.eh-theme nav.tabs a.active {
+  color: #000;
+  background: var(--eh-y);
+  padding: 0 8px;
+  clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+  text-shadow: none;
+}
+
+/* Botões de ação das features: vermelhos, como na referência. */
+.edgeheart-sheet.eh-theme .item-buttons button {
+  background: var(--eh-hot);
+  border: none;
+  color: #fff;
+  border-radius: 0;
+  clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
+}
+.edgeheart-sheet.eh-theme .item-buttons button:hover { box-shadow: 0 0 10px rgb(var(--eh-hot-rgb) / 0.6); filter: brightness(1.15); }
+.edgeheart-sheet.eh-theme.eh-psycho .item-buttons button { background: #7a0014; }
+
+/* Esperança como chips: cheia acesa, vazia apagada. */
+.edgeheart-sheet.eh-theme .hope-section .hope-value i { font-weight: 900; font-size: 15px; }
+.edgeheart-sheet.eh-theme .hope-section .hope-value i::before { content: "\f2db"; }
+.edgeheart-sheet.eh-theme .hope-section .hope-value i.fa-diamond { color: var(--eh-y); text-shadow: 0 0 6px rgb(var(--eh-y-rgb) / 0.6); }
+.edgeheart-sheet.eh-theme .hope-section .hope-value i.fa-circle { color: var(--eh-dim); opacity: 0.35; }
+
+/* Rótulos amarelos (Evasion, HP...) com texto preto. */
+.edgeheart-sheet.eh-theme .status-label { color: #000; }
+.edgeheart-sheet.eh-theme .threshold-label { color: var(--eh-hot); }
+
+/* ---------- Decoração (criada pela ficha) ---------- */
+.edgeheart-sheet.eh-theme .eh-deco-id {
+  position: absolute;
+  top: 6px; left: 8px;
+  z-index: 2;
+  font: 600 10px/1.25 "Rajdhani", monospace;
+  letter-spacing: 1px;
+  color: var(--eh-y);
+  text-shadow: 0 0 4px #000;
+  pointer-events: none;
+  white-space: pre;
+}
+.edgeheart-sheet.eh-theme .eh-deco-id .eh-barcode { display: block; width: 58px; height: 12px; margin-top: 3px; }
+.edgeheart-sheet.eh-theme .eh-barcode {
+  background: repeating-linear-gradient(90deg, var(--eh-y) 0 1px, transparent 1px 3px, var(--eh-y) 3px 5px, transparent 5px 6px, var(--eh-y) 6px 7px, transparent 7px 9px);
+  opacity: 0.75;
+}
+.edgeheart-sheet.eh-theme .eh-deco-foot {
+  position: absolute;
+  right: 12px; bottom: 6px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font: 600 9px/1.2 "Rajdhani", monospace;
+  letter-spacing: 1px;
+  color: var(--eh-y);
+  opacity: 0.7;
+  pointer-events: none;
+  white-space: pre;
+}
+.edgeheart-sheet.eh-theme .eh-deco-foot .eh-barcode { width: 46px; height: 14px; }
+
+/* ---------- Glitch ---------- */
+.edgeheart-sheet.eh-theme .eh-glitch {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  overflow: hidden;
+  pointer-events: none;
+}
+.edgeheart-sheet.eh-theme .eh-glitch > i {
+  position: absolute;
+  display: block;
+  background: var(--c, var(--eh-y));
+  mix-blend-mode: screen;
+  opacity: 0;
+  animation: eh-g-flash var(--d, 180ms) steps(3, jump-none) forwards;
+}
+.edgeheart-sheet.eh-theme .eh-glitch > i.eh-g-band {
+  background:
+    linear-gradient(90deg, transparent, rgb(var(--eh-y-rgb) / 0.35) 20%, transparent 21%, transparent 60%, rgb(0 255 255 / 0.25) 61%, transparent 75%),
+    repeating-linear-gradient(90deg, rgb(255 255 255 / 0.12) 0 2px, transparent 2px 7px);
+  mix-blend-mode: normal;
+}
+@keyframes eh-g-flash {
+  0% { opacity: 0.9; transform: translateX(0); }
+  40% { opacity: 0.55; transform: translateX(var(--dx, 6px)); }
+  80% { opacity: 0.85; transform: translateX(calc(var(--dx, 6px) * -1)); }
+  100% { opacity: 0; transform: translateX(0); }
+}
+
+/* Título com separação RGB em rajadas curtas (a maior parte do ciclo fica parada). */
+.edgeheart-sheet.eh-theme.eh-fx h1.actor-name { animation: eh-title-rgb 7s infinite steps(1, end); }
+.edgeheart-sheet.eh-theme.eh-fx.eh-psycho h1.actor-name { animation-duration: 2.2s; }
+@keyframes eh-title-rgb {
+  0%, 91%, 100% { text-shadow: 0 0 10px rgb(var(--eh-y-rgb) / 0.35); transform: none; }
+  92% { text-shadow: -2px 0 #00f0ff, 2px 0 #ff003c; transform: translateX(2px) skewX(-6deg); }
+  94% { text-shadow: 3px 0 #00f0ff, -3px 0 #ff003c; transform: translateX(-3px); clip-path: inset(10% 0 45% 0); }
+  96% { text-shadow: -1px 0 #00f0ff, 1px 0 #ff003c; transform: translateX(1px); clip-path: none; }
+}
+
+/* Psicose: borda pulsando e brilho vermelho nas bordas. */
+.edgeheart-sheet.eh-theme.eh-fx.eh-psycho { animation: eh-psycho-pulse 1.6s infinite; }
+@keyframes eh-psycho-pulse {
+  0%, 100% { box-shadow: 0 0 0 1px #000, 0 0 18px rgb(var(--eh-y-rgb) / 0.35); }
+  50% { box-shadow: 0 0 0 1px #000, 0 0 34px rgb(var(--eh-y-rgb) / 0.7); }
+}
+.edgeheart-sheet.eh-theme.eh-fx.eh-psycho .eh-glitch::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 0 60px rgb(var(--eh-y-rgb) / 0.35);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .edgeheart-sheet.eh-theme .eh-glitch { display: none; }
+  .edgeheart-sheet.eh-theme.eh-fx h1.actor-name,
+  .edgeheart-sheet.eh-theme.eh-fx.eh-psycho { animation: none; }
+}

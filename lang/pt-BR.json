@@ -9,6 +9,13 @@
       "Levelup": {
         "Name": "Level Up do Edgeheart",
         "Hint": "Remove do Level Up as opções de PV, Estresse, Evasão, Atributos e Multiclasse (no Edgeheart elas vêm do Cyberware) e deixa Experiência e Carta extra serem escolhidas mais vezes. Vale para o mundo todo; ao desligar, o Level Up original do Daggerheart volta."
+      },
+      "SheetFx": {
+        "Name": "Visual da Ficha Edgeheart",
+        "Hint": "Tema cyberpunk da ficha (amarelo, e vermelho em Ciberpsicose). Com glitch animado, sem animação, ou o visual original do Daggerheart. Vale só para você.",
+        "full": "Tema com glitch animado",
+        "static": "Tema sem animação",
+        "off": "Visual original do Daggerheart"
       }
     },
     "Common": {
@@ -47,6 +54,7 @@
       "MaxDie": "O Dado de Humanidade já está no máximo (d12).",
       "AlreadyAdvanced": "O Dado de Humanidade já avançou neste nível.",
       "ChatAdvanced": "<p><strong>{name}</strong> avançou o Dado de Humanidade: d{from} → <strong>d{to}</strong>.</p>",
+      "ChatRestored": "<p>O mestre trouxe <strong>{name}</strong> de volta da Ciberpsicose: Dado de Humanidade <strong>d4</strong>.</p>",
       "ChatReduced": "<p><strong>{name}</strong> perdeu Humanidade{reason}: d{from} → <strong>d{to}</strong>.</p>",
       "ChatLost": "<h3>Movimento de Morte: Ciberpsicopata</h3><p><strong>{name}</strong> foi perdido para a Ciberpsicose{reason}. Escolha um:</p><ul><li>Você desaparece na cidade como uma lenda urbana violenta.</li><li>Sua equipe é forçada a te abater.</li><li>Você se consome num último ato de destruição, salvando alguém ou completando o trabalho a um custo terrível.</li></ul><p>Depois, crie um novo personagem.</p>",
       "NoteIntegratedChrome": "Integrated Chrome: Carga Cibernética tratada como 1 menor.",
@@ -74,6 +82,7 @@
       "SelectHelper": "Selecione o token (ou defina o personagem) do aliado que vai estabilizar.",
       "NoHope": "{name} não tem Esperança para gastar.",
       "OnlyGMEnd": "Só o mestre pode encerrar a Ciberpsicose sem estabilização.",
+      "OnlyGMRestore": "Só o mestre pode trazer de volta um personagem perdido para a Ciberpsicose.",
       "ChatGMEnded": "<p>O mestre encerrou a Ciberpsicose de <strong>{name}</strong>.</p>",
       "ReasonManual": "ajuste manual",
       "ReasonSheet": "Rolagem pedida na ficha",
@@ -171,6 +180,7 @@
       "RollHumanity": "Rolagem de Humanidade",
       "RollHumanityTooltip": "Role quando rolar com Medo com todo o Estresse marcado ou sem Esperança (automático nesta ficha), ou quando o mestre pedir",
       "AdvancedThisLevel": "Já avançou neste nível",
+      "RestoreTooltip": "Mestre: trazer o personagem de volta (Dado de Humanidade d4)",
       "AdvanceTooltip": "Avançar: vínculo significativo, objetivo importante, recuperar parte de si ou momento de esperança genuína (1x por nível)",
       "ReduceTooltip": "Reduzir o Dado de Humanidade um passo",
       "OpenCyberware": "Abrir o compêndio de Cyberware (arraste um item para a ficha para instalar)",
@@ -179,6 +189,8 @@
       "ChoiceTooltip": "Este cyberware pede uma escolha",
       "Choose": "Escolher",
       "CostTooltip": "Custo Cibernético",
+      "RemoveCyberware": "Remover cyberware (Shift+clique remove sem perguntar)",
+      "RemoveEidolon": "Remover Eidolon (Shift+clique remove sem perguntar)",
       "NoCyberware": "Nenhum cyberware. Clique em <i class=\"fa-solid fa-plus\"></i> e arraste um item para a ficha.",
       "SyncCostTooltip": "Custo de Sincronia somado na Carga Cibernética",
       "SyncCostCount": "+{cost} Carga",

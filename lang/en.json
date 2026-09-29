@@ -9,6 +9,13 @@
       "Levelup": {
         "Name": "Edgeheart Level Up",
         "Hint": "Removes the HP, Stress, Evasion, Trait, and Multiclass options from Level Up (in Edgeheart they come from Cyberware) and lets Experience and extra Card be picked more times. Applies to the whole world; turning it off restores the original Daggerheart Level Up."
+      },
+      "SheetFx": {
+        "Name": "Edgeheart Sheet Look",
+        "Hint": "Cyberpunk theme for the sheet (yellow, red during Cyberpsychosis). With animated glitches, without animation, or the original Daggerheart look. Applies only to you.",
+        "full": "Theme with animated glitches",
+        "static": "Theme without animation",
+        "off": "Original Daggerheart look"
       }
     },
     "Common": {
@@ -47,6 +54,7 @@
       "MaxDie": "The Humanity Die is already at its maximum (d12).",
       "AlreadyAdvanced": "The Humanity Die already advanced this level.",
       "ChatAdvanced": "<p><strong>{name}</strong> advanced their Humanity Die: d{from} → <strong>d{to}</strong>.</p>",
+      "ChatRestored": "<p>The GM brought <strong>{name}</strong> back from Cyberpsychosis: Humanity Die <strong>d4</strong>.</p>",
       "ChatReduced": "<p><strong>{name}</strong> lost Humanity{reason}: d{from} → <strong>d{to}</strong>.</p>",
       "ChatLost": "<h3>Death Move: Cyberpsycho</h3><p><strong>{name}</strong> has been lost to Cyberpsychosis{reason}. Choose one:</p><ul><li>You vanish into the city as a violent urban legend.</li><li>Your crew is forced to put you down.</li><li>You burn out in one final act of destruction, saving someone or completing the job at a terrible cost.</li></ul><p>Then, create a new character.</p>",
       "NoteIntegratedChrome": "Integrated Chrome: Cyber Load treated as 1 lower.",
@@ -74,6 +82,7 @@
       "SelectHelper": "Select the token (or set the character) of the ally who will stabilize.",
       "NoHope": "{name} has no Hope to spend.",
       "OnlyGMEnd": "Only the GM can end Cyberpsychosis without stabilization.",
+      "OnlyGMRestore": "Only the GM can bring back a character lost to Cyberpsychosis.",
       "ChatGMEnded": "<p>The GM ended <strong>{name}</strong>'s Cyberpsychosis.</p>",
       "ReasonManual": "manual adjustment",
       "ReasonSheet": "Roll requested from the sheet",
@@ -171,6 +180,7 @@
       "RollHumanity": "Humanity Roll",
       "RollHumanityTooltip": "Roll when you roll with Fear with all Stress marked or with no Hope (automatic on this sheet), or when the GM asks",
       "AdvancedThisLevel": "Already advanced this level",
+      "RestoreTooltip": "GM: bring the character back (Humanity Die d4)",
       "AdvanceTooltip": "Advance: a meaningful bond, an important goal, reclaiming part of yourself, or a moment of genuine hope (once per level)",
       "ReduceTooltip": "Reduce the Humanity Die one step",
       "OpenCyberware": "Open the Cyberware compendium (drag an item onto the sheet to install it)",
@@ -179,6 +189,8 @@
       "ChoiceTooltip": "This cyberware asks for a choice",
       "Choose": "Choose",
       "CostTooltip": "Cyber Cost",
+      "RemoveCyberware": "Remove cyberware (Shift+click removes without asking)",
+      "RemoveEidolon": "Remove Eidolon (Shift+click removes without asking)",
       "NoCyberware": "No cyberware. Click <i class=\"fa-solid fa-plus\"></i> and drag an item onto the sheet.",
       "SyncCostTooltip": "Sync Cost added to Cyber Load",
       "SyncCostCount": "+{cost} Load",

@@ -151,7 +151,8 @@ export const Humanity = {
     return {
       die,
       steps: HUMANITY_STEPS.map(faces => ({ faces, current: faces === die, below: faces < die })),
-      canAdvance: die < 12 && actor.getFlag(MODULE_ID, "humanityAdvancedAt") !== level,
+      // Perdido (abaixo de d4) só o mestre traz de volta, e pode fazer isso a qualquer momento.
+      canAdvance: this.isLost(actor) ? game.user.isGM : die < 12 && actor.getFlag(MODULE_ID, "humanityAdvancedAt") !== level,
       advancedThisLevel: actor.getFlag(MODULE_ID, "humanityAdvancedAt") === level,
       canReduce: !this.isLost(actor),
       load: this.cyberLoad(actor),
@@ -208,6 +209,13 @@ export const Humanity = {
   // "Você só pode avançar seu Dado de Humanidade uma vez por nível."
   async advance(actor) {
     const s = this.summary(actor);
+    // Personagem perdido: o mestre o traz de volta para o d4 (o passo logo acima de "perdido").
+    if (s.lost) {
+      if (!game.user.isGM) return ui.notifications.warn(t("Humanity.OnlyGMRestore"));
+      await actor.update({ [`flags.${MODULE_ID}.lost`]: false, [`flags.${MODULE_ID}.humanityDie`]: HUMANITY_STEPS[0] });
+      await chat(actor, t("Humanity.ChatRestored", { name: actor.name }));
+      return;
+    }
     if (!s.canAdvance) {
       ui.notifications.warn(t(s.die >= 12 ? "Humanity.MaxDie" : "Humanity.AlreadyAdvanced"));
       return;
@@ -545,6 +553,97 @@ function helperActor(exclude) {
   return controlled ?? (game.user.character !== exclude ? game.user.character : null);
 }
 
+// ---------- Visual da ficha (tema cyberpunk e glitch) ----------
+// Tudo é CSS em styles/edgeheart-sheet-theme.css, ligado pelas classes eh-theme (tema), eh-fx (animações)
+// e eh-psycho (Ciberpsicose). Aqui só entram as classes, a decoração e as rajadas de glitch em pontos
+// aleatórios perto das bordas; o centro da ficha fica limpo para leitura.
+const SheetFx = {
+  mode: () => game.settings.get(MODULE_ID, "sheetFx"),
+
+  apply(sheet) {
+    const el = sheet.element;
+    const mode = this.mode();
+    const psycho = Humanity.summary(sheet.document).cyberpsycho;
+    el.classList.toggle("eh-theme", mode !== "off");
+    el.classList.toggle("eh-fx", mode === "full");
+    el.classList.toggle("eh-psycho", mode !== "off" && psycho);
+    el.querySelectorAll(".eh-deco-id, .eh-deco-foot, .eh-glitch").forEach(n => n.remove());
+    this.stop(sheet);
+    if (mode === "off") return;
+    this.decorate(sheet);
+    if (mode === "full" && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) this.start(sheet, psycho);
+  },
+
+  decorate(sheet) {
+    const el = sheet.element;
+    const actor = sheet.document;
+    const tag = s => String(s ?? "").toUpperCase().replace(/\s+/g, "_").slice(0, 14);
+    const id = document.createElement("div");
+    id.className = "eh-deco-id";
+    id.textContent = `ID://${actor.id.slice(0, 4).toUpperCase()}-${actor.id.slice(-2).toUpperCase()}\nSYS://ONLINE\nUSR://${tag(actor.system.class?.value?.name ?? "RUNNER")}`;
+    id.insertAdjacentHTML("beforeend", `<span class="eh-barcode"></span>`);
+    el.querySelector(".portrait")?.append(id);
+    const foot = document.createElement("div");
+    foot.className = "eh-deco-foot";
+    foot.innerHTML = `<span class="eh-barcode"></span><span>CHAR://NODE\nSYS://${Humanity.summary(actor).cyberpsycho ? "BREACH" : "ONLINE"}</span>`;
+    el.querySelector(".window-content")?.append(foot);
+    const glitch = document.createElement("div");
+    glitch.className = "eh-glitch";
+    el.append(glitch);
+  },
+
+  // Uma rajada a cada ~1,5s (normal) ou ~0,3s (psicose), com 2–4 riscos perto das bordas.
+  start(sheet, psycho) {
+    const layer = sheet.element.querySelector(".eh-glitch");
+    if (!layer) return;
+    const burst = () => {
+      if (document.hidden || !layer.isConnected) return;
+      const { width: w, height: h } = layer.getBoundingClientRect();
+      const n = psycho ? 6 + Math.floor(Math.random() * 7) : 3 + Math.floor(Math.random() * 4);
+      for (let k = 0; k < n; k++) layer.append(this.spark(w, h, psycho));
+    };
+    const tick = () => {
+      burst();
+      const base = psycho ? 150 : 700;
+      sheet._ehFxTimer = setTimeout(tick, base + Math.random() * base);
+    };
+    sheet._ehFxTimer = setTimeout(tick, 400);
+  },
+
+  spark(w, h, psycho) {
+    const s = document.createElement("i");
+    const edge = Math.random();
+    const band = Math.random() < (psycho ? 0.45 : 0.2);
+    let len = band ? 60 + Math.random() * (psycho ? 360 : 180) : 12 + Math.random() * (psycho ? 180 : 90);
+    const thick = band ? 6 + Math.random() * (psycho ? 22 : 12) : 1 + Math.random() * (psycho ? 6 : 3);
+    // Esquerda, direita, topo ou base (um quarto cada), sempre perto da borda: o miolo fica legível.
+    const margin = psycho ? 0.14 : 0.1;
+    if (edge < 0.5) len = Math.min(len, w * (psycho ? 0.16 : 0.12));
+    let x, y;
+    if (edge < 0.25) { x = Math.random() * w * margin; y = Math.random() * h; }
+    else if (edge < 0.5) { x = w - Math.random() * w * margin - len; y = Math.random() * h; }
+    else if (edge < 0.75) { x = Math.random() * (w - len); y = Math.random() * h * margin * 0.5; }
+    else { x = Math.random() * (w - len); y = h - Math.random() * h * margin * 0.5 - thick; }
+    const colors = psycho ? ["#ff1f3d", "#ff5a6e", "#ffffff", "#19e3ff"] : ["var(--eh-y)", "var(--eh-y)", "#19e3ff", "#ff2a4f"];
+    s.className = band ? "eh-g-band" : "";
+    s.style.cssText = `left:${x}px;top:${y}px;width:${len}px;height:${thick}px;--c:${colors[Math.floor(Math.random() * colors.length)]};`
+      + `--d:${120 + Math.random() * (psycho ? 320 : 200)}ms;--dx:${(Math.random() * 2 - 1) * (psycho ? 28 : 8)}px`;
+    s.addEventListener("animationend", () => s.remove(), { once: true });
+    return s;
+  },
+
+  stop(sheet) {
+    clearTimeout(sheet._ehFxTimer);
+    sheet._ehFxTimer = null;
+  },
+
+  refreshAll() {
+    for (const app of foundry.applications.instances.values()) {
+      if (app.element?.classList.contains("edgeheart-sheet")) this.apply(app);
+    }
+  }
+};
+
 // ---------- Ficha ----------
 
 function defineSheet() {
@@ -605,6 +704,12 @@ function defineSheet() {
         this.document.setFlag(MODULE_ID, "edgeheart", true);
       }
       this.#renderHeaderBadge();
+      SheetFx.apply(this);
+    }
+
+    _onClose(options) {
+      SheetFx.stop(this);
+      super._onClose(options);
     }
 
     // Resumo compacto ao lado da Esperança, visível em qualquer aba. Contadores e dados que já aparecem
@@ -620,7 +725,7 @@ function defineSheet() {
       badge.dataset.action = "ehOpenChrome";
       const picks = Pick.items(this.document);
       badge.dataset.tooltip = [t("Humanity.Label"), t("Humanity.CyberLoad"), ...picks.map(i => i.getFlag(MODULE_ID, "pick").title)].join(" / ");
-      badge.innerHTML = `<i class="fa-solid fa-heart-pulse"></i> d${s.die} <span class="eh-sep">|</span> <i class="fa-solid fa-microchip"></i> ${s.load}`
+      badge.innerHTML = `<i class="fa-solid fa-heart-pulse"></i> d${s.die} <span class="eh-sep">|</span> <i class="fa-solid fa-gear"></i> ${s.load}`
         + picks.map(i => ` <span class="eh-sep">|</span> <i class="fa-solid ${i.getFlag(MODULE_ID, "pick").icon ?? "fa-list-check"}"></i> ${Pick.label(i)}`).join("")
         + (s.cyberpsycho ? ` <span class="eh-flag">${t("Humanity.Flag.psycho")}</span>` : "")
         + (s.lost ? ` <span class="eh-flag">${t("Humanity.Flag.lost")}</span>` : "");
@@ -982,7 +1087,8 @@ const Eidolon = {
       "system.resources.hitPoints.value": data.hpMarked ?? 0,
       [`flags.${MODULE_ID}.eidolonSync`]: { itemId: item.id, pilotHp, equipped, tokenImg: actor.prototypeToken.texture.src, overclock: false }
     });
-    await this.setTokens(actor, item.img);
+    // Token redondo do Eidolon (flag token); itens antigos sem ele usam a imagem do item.
+    await this.setTokens(actor, data.token ?? item.img);
     await queueAccessSync(actor);
     await chat(actor, t("Eidolon.ChatMobilized", { name: actor.name, item: item.name, cost: data.syncCost }));
   },
@@ -1090,6 +1196,13 @@ Hooks.once("init", () => {
     hint: "EDGEHEART.Settings.Levelup.Hint",
     scope: "world", config: true, type: Boolean, default: true,
     onChange: () => EdgeheartLevelup.sync()
+  });
+  game.settings.register(MODULE_ID, "sheetFx", {
+    name: "EDGEHEART.Settings.SheetFx.Name",
+    hint: "EDGEHEART.Settings.SheetFx.Hint",
+    scope: "client", config: true, type: String, default: "full",
+    choices: { full: "EDGEHEART.Settings.SheetFx.full", static: "EDGEHEART.Settings.SheetFx.static", off: "EDGEHEART.Settings.SheetFx.off" },
+    onChange: () => SheetFx.refreshAll()
   });
   game.settings.register(MODULE_ID, "levelTiersBackup", { scope: "world", config: false, type: Object, default: {} });
   game.settings.register(MODULE_ID, "levelupApplied", { scope: "world", config: false, type: Boolean, default: false });
