@@ -1,5 +1,21 @@
 # Changelog
 
+## v1.30.0
+- **Interface nas duas línguas:** todos os textos da Ficha Edgeheart (aba Chrome), da Ficha da Crew, das mensagens de chat, dos avisos, dos botões, das configurações e dos veículos saíram do código e foram para `lang/pt-BR.json` e `lang/en.json`. Cada jogador vê a interface no idioma do seu Foundry. Em português, os estados dos veículos e do Eidolon seguem o glossário (Danificado, Inutilizado), e o item de acesso se chama "Acessos Cibernéticos" (em inglês, "Cyber Access").
+- **Diário "Adversários Extras":** página nova no Edgeheart SRD com os 14 adversários fora do PDF, agrupados por facção, com o modelo oficial de cada um e um quadro de como montar um combate pelo orçamento de pontos do Daggerheart.
+- **Ambientes:** os adversários extras entram nos adversários possíveis dos ambientes que combinam com eles (Polícia na rua e na guerra de gangues, Ava Biodyne no cerco à clínica clandestina, daemons nos ambientes digitais de Tier 4).
+- **Aviso de risco ao instalar cyberware:** quando a chance de manter o controle na Rolagem de Humanidade cai abaixo de 50%, aparece um aviso com a Carga, o Dado de Humanidade e a chance.
+- A seção de Competências da aba Chrome explica o que fazer quando ainda está vazia.
+- Removido o código de migração dos compêndios antigos (versões até a 1.15, com a macro de importação), que não era mais usado.
+
+## v1.29.1
+- **Redline e Blackwall** ganharam sigilos próprios, no mesmo estilo das outras Competências, com ícone e arte de carta novos. Agora as 11 Competências seguem o mesmo padrão.
+- **Cores sem repetir:** cada Competência tem uma cor que não se confunde com as outras nem com os domínios oficiais (Network ciano, Aegis violeta, Assault verde militar, Ghost lavanda, Chrome prata-azulado, Systems azul, Influence magenta, Frontier marrom, Medtech verde, Redline vinho, Blackwall rosa-neon). Ghost e Chrome usam texto escuro no banner.
+- **Pastas do compêndio de cartas:** na cor da sua Competência, e os níveis em ordem numérica (o Nível 10 vinha logo depois do 1). O nome das pastas ganhou sombra para continuar legível nas cores claras.
+- **Cena de abertura:** na primeira vez que o GM abre um mundo com o módulo, a cena "Edgeheart" é criada e ativada, com a arte de abertura em 16:9 e o fundo do Foundry no mesmo roxo escuro da imagem. Se for apagada, não volta.
+- **Arte dos adversários:** os 25 com as versões novas sem fundo (Neon Claw Ganger e Sitil Security Guard com arte nova; o token da Sitil Security Guard agora é vermelho). Tokens enquadrados a partir do topo do personagem. 
+- **14 adversários novos (fora do PDF):** Polícia (City Patrol Officer, Patrol Sergeant, Riot Squad, Riot Lieutenant), Esquadrão Antipsicose (Operator e Commander), Chrome Maw (Scrapper, Gunner, Stalker), Ava Biodyne (Response Medic, Response Gunner, Security Specialist) e daemons (Blackwall Warden Daemon, Theoi Avatar). Cada um usa os números e as features de um adversário oficial da mesma função (Sellsword, Head Guard, Archer Squadron, Fire Titan, Cursed Merfolk, Fallen Warlord, Jagged Knife Lackey, Skeleton Archer, Panther, Entombed Necropriest, Centaur Warden, Elite Soldier, Vault Guardian Gaoler, Oracle of Doom), com a automação oficial e o texto relido para o cenário. O "Call the Squad" do Commander invoca dois Operators.
+
 ## v1.29.0
 - **Texto original em inglês:** a versão em inglês agora usa o texto do PDF em tudo: descrições, ações e efeitos dos itens, cyberware e Eidolons (com as peças), armas, armaduras, loot, consumíveis, veículos, cartas, classes, subclasses, Life Paths, Afiliações, adversários, ambientes e tabelas (`data/content-en.json`).
 - Os 51 diários também têm versão em inglês (`journals/en`), incluindo as tabelas, os statblocks, as páginas de classe e as de Competência.

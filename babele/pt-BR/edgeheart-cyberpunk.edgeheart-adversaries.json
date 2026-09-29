@@ -120,6 +120,34 @@
     }
   },
   "entries": {
+    "Chrome Maw Gunner": {
+      "name": "Atirador da Chrome Maw",
+      "description": "<p>Um veterano atarracado da Cromo Maw, barba trançada com cartuchos e um braço mecânico parafusado ao ombro para segurar a escopeta.</p>",
+      "motivesAndTactics": "Esperar a abertura, acabar com quem cai, cobrir a gangue",
+      "attack": {
+        "name": "Escopeta Automática Serrada"
+      },
+      "items": {
+        "Opportunist": {
+          "name": "Oportunista",
+          "description": "<p>Quando dois ou mais adversários estão dentro do alcance Muito Próximo de uma criatura, todo dano que o @Lookup[@name] causa a ela é dobrado.</p>",
+          "effects": {
+            "Opportunist": {
+              "name": "Oportunista"
+            }
+          }
+        },
+        "Mercy Shot": {
+          "name": "Tiro de Misericórdia",
+          "description": "<p>Faça um ataque contra um alvo <em>Vulnerável</em> dentro do alcance Distante. Em um sucesso, marque 1 Estresse para causar 3d4+8 de dano físico.</p>",
+          "actions": {
+            "Mercy Shot": {
+              "name": "Tiro de Misericórdia"
+            }
+          }
+        }
+      }
+    },
     "Digital Wraith": {
       "name": "Espectro Digital",
       "description": "<p>Um fantasma de IA predador que veste a forma de algo que a vítima quase lembra.</p>",
@@ -229,6 +257,169 @@
         }
       }
     },
+    "Riot Lieutenant": {
+      "name": "Tenente de Choque",
+      "description": "<p>Um tenente da tropa de choque mais cromo do que carne, que segura uma rua inteira sozinho atrás de um escudo marcado de tiros.</p>",
+      "motivesAndTactics": "Avançar devagar, quebrar a barricada, não recuar um passo",
+      "attack": {
+        "name": "Escopeta de Choque"
+      },
+      "experiences": {
+        "Riot Control": {
+          "name": "Controle de Distúrbios"
+        },
+        "Tactics": {
+          "name": "Táticas"
+        }
+      },
+      "items": {
+        "Relentless (3)": {
+          "name": "Implacável (3)",
+          "description": "<p>O @Lookup[@name] pode receber o Holofote até três vezes por turno do mestre. Gaste Medo como de costume para dar o Holofote a ele.</p>"
+        },
+        "Riot Plating": {
+          "name": "Blindagem Antimotim",
+          "description": "<p><em>Contagem (3).</em> Quando o @Lookup[@name] aparece, ative a contagem. Ela desce quando ele sofre dano Maior ou Grave. Até a contagem disparar, reduza o dano que ele sofre em 1d12. Quando dispara, a blindagem cede e ele ganha +1 de Dificuldade e nas rolagens de ataque, tomado pela fúria.</p>",
+          "actions": {
+            "Riot Plating": {
+              "name": "Blindagem Antimotim"
+            }
+          },
+          "effects": {
+            "Riot Plating": {
+              "name": "Blindagem Antimotim"
+            }
+          }
+        },
+        "Momentum": {
+          "name": "Embalo",
+          "description": "<p>Quando o @Lookup[@name] acerta um ataque contra um PJ, você ganha 1 Medo.</p>"
+        },
+        "Shield Charge": {
+          "name": "Investida de Escudo",
+          "description": "<p>Marque 1 Estresse para escolher um ponto dentro do alcance Distante e avançar com o escudo em linha reta até ele. Faça um ataque contra todos os alvos no caminho. Os atingidos sofrem 3d12 de dano físico.</p>",
+          "actions": {
+            "Shield Charge": {
+              "name": "Investida de Escudo"
+            }
+          }
+        },
+        "Point-Blank Blast": {
+          "name": "Disparo à Queima-Roupa",
+          "description": "<p>Marque 1 Estresse para colocar um marcador nesta ficha. Na próxima vez que o @Lookup[@name] receber o Holofote, gaste o marcador e ataque um PJ dentro do alcance Próximo com a escopeta encostada. Em um sucesso, cause 3d20+5 de dano físico direto. Numa falha, o alvo marca 1 Estresse.</p>",
+          "actions": {
+            "Point-Blank Blast": {
+              "name": "Disparo à Queima-Roupa"
+            }
+          }
+        },
+        "Combat Stims": {
+          "name": "Estimulantes de Combate",
+          "description": "<p>Quando o @Lookup[@name] marca metade ou mais dos PV, você pode gastar 1 Medo e marcar qualquer quantidade de Estresse para limpar essa mesma quantidade de PV.</p>",
+          "actions": {
+            "Combat Stims": {
+              "name": "Estimulantes de Combate"
+            }
+          }
+        }
+      }
+    },
+    "Blackwall Warden Daemon": {
+      "name": "Daemon Guardião da Muralha Negra",
+      "description": "<p>Um daemon guardião da Muralha Negra: um monólito de dados que se reescreve sem parar e prende quem chega perto demais da quarentena.</p>",
+      "motivesAndTactics": "Conter, isolar, apagar invasores",
+      "attack": {
+        "name": "Esmagamento de Firewall"
+      },
+      "items": {
+        "Hex Barrier": {
+          "name": "Barreira Hexagonal",
+          "description": "<p>Criaturas dentro do alcance Corpo a Corpo do @Lookup[@name] têm desvantagem nas rolagens de ataque contra ele. Criaturas presas na quarentena dele não são afetadas.</p>"
+        },
+        "Quarantine": {
+          "name": "Quarentena",
+          "description": "<p>Marque 1 Estresse para atacar um alvo dentro do alcance Muito Próximo. Em um sucesso, o alvo fica <em>Contido</em> dentro da quarentena do @Lookup[@name] até se libertar com uma Rolagem de Força (18). Enquanto contido, o alvo só pode atacar o @Lookup[@name].</p>",
+          "actions": {
+            "Quarantine": {
+              "name": "Quarentena"
+            }
+          },
+          "effects": {
+            "Quarantine": {
+              "name": "Quarentena"
+            }
+          }
+        }
+      }
+    },
+    "City Patrol Officer": {
+      "name": "Patrulheiro da Polícia Municipal",
+      "description": "<p>Um policial de patrulha mal pago, com colete balístico, rádio no ombro e pouca vontade de morrer pelo salário.</p>",
+      "motivesAndTactics": "Cercar, pedir reforço, fazer cumprir a ordem",
+      "attack": {
+        "name": "Pistola de Serviço"
+      },
+      "items": {
+        "Minion (4)": {
+          "name": "Lacaio (4)",
+          "description": "<p>O @Lookup[@name] é derrotado quando sofre qualquer dano. Para cada 4 de dano que um PJ causa ao @Lookup[@name], derrote outro Lacaio dentro do alcance contra quem o ataque teria sucesso.</p>"
+        },
+        "Group Attack": {
+          "name": "Ataque em Grupo",
+          "description": "<p><strong>Gaste 1 Medo</strong> para escolher um alvo e dar o Holofote a todos os @Lookup[@name] dentro do alcance Próximo dele. Esses Lacaios se movem para o alcance Corpo a Corpo do alvo e fazem uma rolagem de ataque compartilhada. Em um sucesso, cada um causa @Lookup[@system.attack.damageFormula] de dano físico. Some esse dano.</p>",
+          "actions": {
+            "Group Attack": {
+              "name": "Ataque em Grupo"
+            }
+          }
+        }
+      }
+    },
+    "Patrol Sergeant": {
+      "name": "Sargento de Patrulha",
+      "description": "<p>Um sargento veterano que já viu gangue, corporação e ciberpsicopata demais, e ainda assim volta para o turno da noite.</p>",
+      "motivesAndTactics": "Coordenar a patrulha, conter a cena, levar alguém algemado",
+      "attack": {
+        "name": "Cassetete de Choque"
+      },
+      "experiences": {
+        "Chain of Command": {
+          "name": "Cadeia de Comando"
+        },
+        "Beat Knowledge": {
+          "name": "Conhecimento da Área"
+        }
+      },
+      "items": {
+        "Rally the Squad": {
+          "name": "Reunir a Equipe",
+          "description": "<p><strong>Gaste 2 de Medo</strong> para dar o Holofote ao @Lookup[@name] e a até 2d4 aliados dentro do alcance Distante.</p>",
+          "actions": {
+            "Rally the Squad": {
+              "name": "Reunir a Equipe"
+            }
+          }
+        },
+        "On My Signal": {
+          "name": "No Meu Sinal",
+          "description": "<p><em>Contagem (5).</em> Quando o @Lookup[@name] recebe o Holofote pela primeira vez, ative a contagem. Ela desce quando um PJ faz uma rolagem de ataque. Quando dispara, todos os Patrulheiros dentro do alcance Distante fazem um ataque padrão com vantagem contra o alvo mais próximo dentro do alcance deles. Se mais de um acertar o mesmo alvo, some o dano.</p>",
+          "actions": {
+            "On My Signal": {
+              "name": "No Meu Sinal"
+            }
+          }
+        },
+        "Momentum": {
+          "name": "Embalo",
+          "description": "<p>Quando o @Lookup[@name] acerta um ataque contra um PJ, você ganha 1 Medo.</p>",
+          "actions": {
+            "Momentum": {
+              "name": "Embalo"
+            }
+          }
+        }
+      }
+    },
     "Sitil Security Guard": {
       "name": "Guarda de Segurança Sitil",
       "description": "<p>Um segurança particular treinado para atrasar invasores até a coisa séria chegar.</p>",
@@ -258,6 +449,43 @@
           "actions": {
             "Call It In": {
               "name": "Chamar Reforços"
+            }
+          }
+        }
+      }
+    },
+    "Riot Squad": {
+      "name": "Tropa de Choque",
+      "description": "<p>Uma linha de policiais de choque com escudos balísticos, lançadores de gás e cassetetes elétricos, avançando como um muro.</p>",
+      "motivesAndTactics": "Formar a linha, dispersar a multidão, empurrar até quebrar",
+      "attack": {
+        "name": "Armas Antimotim"
+      },
+      "items": {
+        "Gas Volley": {
+          "name": "Salva de Gás",
+          "description": "<p><strong>Gaste 1 Medo</strong> para escolher um ponto dentro do alcance Distante. Faça um ataque com vantagem contra todos os alvos dentro do alcance Próximo desse ponto. Os alvos atingidos pela @Lookup[@name] sofrem 1d10+4 de dano físico.</p>",
+          "actions": {
+            "Gas Volley": {
+              "name": "Salva de Gás"
+            }
+          }
+        },
+        "Suppressing Fire": {
+          "name": "Fogo de Supressão",
+          "description": "<p>Marque 1 Estresse para escolher um ponto dentro do alcance Distante. Até a próxima rolagem com Medo, uma criatura que se mover para dentro do alcance Próximo desse ponto faz uma Rolagem de Reação de Agilidade. Numa falha, sofre 2d6+3 de dano físico; num sucesso, metade.</p>",
+          "actions": {
+            "Suppressing Fire": {
+              "name": "Fogo de Supressão"
+            }
+          }
+        },
+        "Horde (1d6+3)": {
+          "name": "Horda (1d6+3)",
+          "description": "<p>Quando a @Lookup[@name] tiver marcado metade ou mais dos PV, o ataque padrão dela causa @Lookup[@system.typeData.hordeDamage] de dano físico.</p>",
+          "effects": {
+            "Horde (1d6+3)": {
+              "name": "Horda (1d6+3)"
             }
           }
         }
@@ -300,6 +528,51 @@
         "Tactical Sweep": {
           "name": "Varredura Tática",
           "description": "<p>Quando um personagem rola com Medo enquanto está Escondido, atrás de cobertura ou dentro de uma área segura, esta Horda identifica imediatamente a posição dele e um aliado corporativo ganha vantagem contra ele.</p>"
+        }
+      }
+    },
+    "Ava Response Gunner": {
+      "name": "Atirador de Resgate da Ava",
+      "description": "<p>O atirador de cobertura de uma equipe de resgate da Ava Biodyne. Tudo que se mexe perto do cliente vira alvo.</p>",
+      "motivesAndTactics": "Cobrir a extração, suprimir, proteger o cliente a qualquer custo",
+      "attack": {
+        "name": "Metralhadora Pesada"
+      },
+      "experiences": {
+        "Extraction Routes": {
+          "name": "Rotas de Extração"
+        },
+        "Threat Assessment": {
+          "name": "Avaliação de Ameaças"
+        }
+      },
+      "items": {
+        "Crossfire": {
+          "name": "Fogo Cruzado",
+          "description": "<p>Quando o @Lookup[@name] faz um ataque padrão contra um alvo que esteja no alcance Corpo a Corpo de um ou mais aliados dele, ganha +2 na rolagem de ataque.</p>",
+          "effects": {
+            "Crossfire": {
+              "name": "Fogo Cruzado"
+            }
+          }
+        },
+        "Assisted Aim": {
+          "name": "Mira Assistida",
+          "description": "<p>Marque 1 Estresse para fazer um ataque padrão com a mira assistida. O @Lookup[@name] tem vantagem na rolagem e consegue um sucesso crítico com 19 ou 20.</p>",
+          "actions": {
+            "Assisted Aim": {
+              "name": "Mira Assistida"
+            }
+          }
+        },
+        "Covering Burst": {
+          "name": "Rajada de Cobertura",
+          "description": "<p>Quando o @Lookup[@name] faz um ataque padrão, você pode marcar qualquer quantidade de Estresse para mirar a mesma quantidade de criaturas adicionais dentro do alcance.</p>",
+          "actions": {
+            "Covering Burst": {
+              "name": "Rajada de Cobertura"
+            }
+          }
         }
       }
     },
@@ -616,6 +889,150 @@
         }
       }
     },
+    "Ava Response Medic": {
+      "name": "Médico de Resgate da Ava",
+      "description": "<p>Um médico de resgate da Ava Biodyne em armadura branca, com braços cirúrgicos extras e ordem de manter o cliente vivo, não você.</p>",
+      "motivesAndTactics": "Estabilizar o cliente, sedar a ameaça, faturar o atendimento",
+      "attack": {
+        "name": "Pistola de Dardos Sedativos"
+      },
+      "experiences": {
+        "Trauma Medicine": {
+          "name": "Medicina de Trauma"
+        },
+        "Protect": {
+          "name": "Proteger"
+        }
+      },
+      "items": {
+        "Combat Stim": {
+          "name": "Estimulante de Combate",
+          "description": "<p>Marque 1 Estresse para escolher até três aliados dentro do alcance Distante e aplicar um estimulante de combate. Cada um ganha vantagem na próxima rolagem de ataque.</p>",
+          "actions": {
+            "Combat Stim": {
+              "name": "Estimulante de Combate"
+            }
+          },
+          "effects": {
+            "Combat Stim": {
+              "name": "Estimulante de Combate"
+            }
+          }
+        },
+        "Sedative Harpoon": {
+          "name": "Arpão Sedativo",
+          "description": "<p><strong>Gaste 1 Medo</strong> para escolher um PJ dentro do alcance Distante e acertá-lo com um arpão sedativo. Ele fica <em>Contido</em> até se libertar com uma Rolagem de Força bem-sucedida. Enquanto estiver contido assim, quando o alvo gastar Esperança, você ganha 1 Medo.</p>",
+          "actions": {
+            "Sedative Harpoon": {
+              "name": "Arpão Sedativo"
+            }
+          },
+          "effects": {
+            "Sedative Harpoon": {
+              "name": "Arpão Sedativo"
+            }
+          }
+        },
+        "Paralytic Injection": {
+          "name": "Injeção Paralisante",
+          "description": "<p>Marque 1 Estresse para fazer um ataque padrão contra um alvo dentro do alcance Corpo a Corpo. Em um sucesso, o alvo sofre o dano padrão e marca 1d4 de Estresse. Se o alvo marcar o último Estresse por esse ataque, você ganha 1 Medo.</p>",
+          "actions": {
+            "Paralytic Injection": {
+              "name": "Injeção Paralisante"
+            }
+          }
+        }
+      }
+    },
+    "Psycho Squad Commander": {
+      "name": "Comandante Antipsicose",
+      "description": "<p>A comandante da unidade antipsicose: lâminas louva-deus nos antebraços, reflexos que ninguém deveria ter e a convicção de que um monstro só se caça com outro.</p>",
+      "motivesAndTactics": "Caçar, isolar a presa, executar em público",
+      "attack": {
+        "name": "Lâminas Louva-Deus"
+      },
+      "experiences": {
+        "Manhunt": {
+          "name": "Caçada Humana"
+        },
+        "Case Files": {
+          "name": "Arquivos de Casos"
+        },
+        "Intimidation": {
+          "name": "Intimidação"
+        }
+      },
+      "items": {
+        "Relentless (3)": {
+          "name": "Implacável (3)",
+          "description": "<p>O @Lookup[@name] pode receber o Holofote até três vezes por turno do mestre. Gaste Medo como de costume para dar o Holofote a ele.</p>",
+          "actions": {
+            "Relentless (3)": {
+              "name": "Implacável (3)"
+            }
+          }
+        },
+        "Carbon Plating": {
+          "name": "Blindagem de Carbono",
+          "description": "<p>Quando o @Lookup[@name] sofre dano, reduza-o em 1d10.</p>",
+          "actions": {
+            "Carbon Plating": {
+              "name": "Blindagem de Carbono"
+            }
+          }
+        },
+        "Mantis Sweep": {
+          "name": "Varredura Louva-Deus",
+          "description": "<p>Marque 1 Estresse para fazer um ataque padrão contra todos os alvos dentro do alcance Muito Próximo, num giro das lâminas louva-deus. Os PJs atingidos perdem Esperança igual aos PV que marcaram por esse ataque.</p>",
+          "actions": {
+            "Mantis Sweep": {
+              "name": "Varredura Louva-Deus"
+            }
+          }
+        },
+        "Call the Squad": {
+          "name": "Chamar o Esquadrão",
+          "description": "<p><strong>Gaste 1 Medo</strong> para chamar dois @UUID[Compendium.edgeheart-cyberpunk.edgeheart-adversaries.Actor.UtYyCzPL4JhHaIyF]{Operadores Antipsicose}, que aparecem no alcance Distante.</p>",
+          "actions": {
+            "Call the Squad": {
+              "name": "Chamar o Esquadrão"
+            }
+          }
+        },
+        "Containment Zone": {
+          "name": "Zona de Contenção",
+          "description": "<p><em>Contagem (1d8).</em> Quando o @Lookup[@name] recebe o Holofote pela primeira vez, ative a contagem. Quando dispara, a unidade fecha uma zona de contenção numa área dentro do alcance Distante dele. Um alvo dentro dessa área fica <em>Vulnerável</em> até sair dela. A zona cai se o @Lookup[@name] sofrer dano Grave.</p>",
+          "actions": {
+            "Containment Zone": {
+              "name": "Zona de Contenção"
+            }
+          },
+          "effects": {
+            "Containment Zone": {
+              "name": "Zona de Contenção"
+            }
+          }
+        },
+        "Momentum": {
+          "name": "Embalo",
+          "description": "<p>Quando o @Lookup[@name] acerta um ataque contra um PJ, você ganha 1 Medo.</p>",
+          "actions": {
+            "Momentum": {
+              "name": "Embalo"
+            }
+          }
+        },
+        "Public Execution": {
+          "name": "Execução Pública",
+          "description": "<p>Quando um alvo marca PV por um ataque do @Lookup[@name], todos os PJs dentro do alcance Distante do alvo perdem 1 Esperança.</p>",
+          "actions": {
+            "Public Execution": {
+              "name": "Execução Pública"
+            }
+          }
+        }
+      }
+    },
     "Sitil Black-Ops Captain": {
       "name": "Capitão de Operações Secretas Sitil",
       "description": "<p>Um comandante corporativo com ordens criptografadas e permissão para apagar testemunhas.</p>",
@@ -871,6 +1288,67 @@
         }
       }
     },
+    "Psycho Squad Operator": {
+      "name": "Operador Antipsicose",
+      "description": "<p>Um operador de elite da unidade que caça ciberpsicopatas: fibra de carbono, capacete de quatro lentes verdes e ordens de neutralizar a qualquer custo.</p>",
+      "motivesAndTactics": "Cercar, prender o alvo, neutralizar a ameaça",
+      "attack": {
+        "name": "Fuzil Pesado"
+      },
+      "experiences": {
+        "Cyberpsycho Hunting": {
+          "name": "Caça a Ciberpsicopatas"
+        }
+      },
+      "items": {
+        "Gang Up": {
+          "name": "Cerco",
+          "description": "<p>O @Lookup[@name] ganha +2 nas rolagens de ataque contra alvos que estejam no alcance Corpo a Corpo de um ou mais aliados.</p>",
+          "effects": {
+            "Gang Up": {
+              "name": "Cerco"
+            }
+          }
+        },
+        "Capture Line": {
+          "name": "Cabo de Captura",
+          "description": "<p>Quando o @Lookup[@name] acerta um ataque padrão contra um alvo além do alcance Corpo a Corpo, você pode marcar 1 Estresse para puxá-lo com um cabo de captura até o alcance Corpo a Corpo. Se fizer isso, pode gastar 1 Medo para fazer um ataque padrão com vantagem contra ele.</p>",
+          "actions": {
+            "Capture Line": {
+              "name": "Cabo de Captura"
+            }
+          }
+        }
+      }
+    },
+    "Chrome Maw Scrapper": {
+      "name": "Sucateiro da Chrome Maw",
+      "description": "<p>Um moleque da Cromo Maw com um antebraço cibernético barato e fome de mais cromo, custe o que custar.</p>",
+      "motivesAndTactics": "Cercar em bando, arrancar implantes, provar valor à gangue",
+      "attack": {
+        "name": "Cano com Lâmina"
+      },
+      "experiences": {
+        "Scavenging": {
+          "name": "Catar Sucata"
+        }
+      },
+      "items": {
+        "Minion (3)": {
+          "name": "Lacaio (3)",
+          "description": "<p>O @Lookup[@name] é derrotado quando sofre qualquer dano. Para cada 3 de dano que um PJ causa ao @Lookup[@name], derrote outro Lacaio dentro do alcance contra quem o ataque teria sucesso.</p>"
+        },
+        "Group Attack": {
+          "name": "Ataque em Grupo",
+          "description": "<p><strong>Gaste 1 Medo</strong> para escolher um alvo e dar o Holofote a todos os @Lookup[@name] dentro do alcance Próximo dele. Esses Lacaios se movem para o alcance Corpo a Corpo do alvo e fazem uma rolagem de ataque compartilhada. Em um sucesso, cada um causa @Lookup[@system.attack.damageFormula] de dano físico. Some esse dano.</p>",
+          "actions": {
+            "Group Attack": {
+              "name": "Ataque em Grupo"
+            }
+          }
+        }
+      }
+    },
     "Black Hand": {
       "name": "Mão Negra",
       "description": "<p>Mão Negra não é o melhor atirador do mundo, a lâmina mais rápida nem o corpo de cromo mais forte. Ele é pior: é bom o bastante em tudo para matar especialistas no próprio jogo deles.</p>",
@@ -1018,6 +1496,70 @@
           "actions": {
             "Hold The Breath": {
               "name": "Prender a Respiração"
+            }
+          }
+        }
+      }
+    },
+    "Chrome Maw Stalker": {
+      "name": "Espreitador da Chrome Maw",
+      "description": "<p>Um caçador da Cromo Maw alto e magro demais, com pernas cibernéticas dobradas ao contrário e lâminas finas nos antebraços. Rasteja antes de saltar.</p>",
+      "motivesAndTactics": "Espreitar, saltar sobre o isolado, arrastar para a escuridão",
+      "attack": {
+        "name": "Lâminas de Braço"
+      },
+      "experiences": {
+        "Keen Optics": {
+          "name": "Ópticos Aguçados"
+        },
+        "Slink": {
+          "name": "Esgueirar-se"
+        }
+      },
+      "items": {
+        "Shadow Stalker": {
+          "name": "Caçador nas Sombras",
+          "description": "<p>Enquanto estiver <em>Escondido</em>, o @Lookup[@name] ganha +2 nas rolagens de ataque.</p>",
+          "effects": {
+            "Shadow Stalker": {
+              "name": "Caçador nas Sombras"
+            }
+          }
+        },
+        "Pouncing Strike": {
+          "name": "Bote",
+          "description": "<p>Marque 1 Estresse para o @Lookup[@name] saltar nas pernas cibernéticas até o alcance Corpo a Corpo de um alvo dentro do alcance Distante e atacá-lo. Em um sucesso, cause 1d12+2 de dano físico.</p>",
+          "actions": {
+            "Pouncing Strike": {
+              "name": "Bote"
+            }
+          }
+        }
+      }
+    },
+    "Ava Security Specialist": {
+      "name": "Especialista de Segurança da Ava",
+      "description": "<p>O especialista de segurança de uma equipe de resgate da Ava Biodyne, com escopeta tática e uma maleta médica blindada nas costas.</p>",
+      "motivesAndTactics": "Fechar o perímetro, proteger o cliente, cobrar depois",
+      "attack": {
+        "name": "Escopeta Tática"
+      },
+      "items": {
+        "Cover Formation": {
+          "name": "Formação de Cobertura",
+          "description": "<p>Marque 1 Estresse para se mover até o alcance Corpo a Corpo de um aliado e fazer um ataque padrão contra um alvo dentro do alcance Muito Próximo. Em um sucesso, cause 2d10+2 de dano físico e o aliado pode limpar 1 Estresse.</p>",
+          "actions": {
+            "Cover Formation": {
+              "name": "Formação de Cobertura"
+            }
+          }
+        },
+        "Protect the Client": {
+          "name": "Proteger o Cliente",
+          "description": "<p>Quando o @Lookup[@name] está dentro do alcance Muito Próximo do cliente, de um médico ou do chefe da equipe, e ele fosse sofrer dano, você pode marcar 1 Estresse para se mover até o alcance Corpo a Corpo dele e sofrer o dano no lugar.</p>",
+          "actions": {
+            "Protect the Client": {
+              "name": "Proteger o Cliente"
             }
           }
         }
@@ -1292,6 +1834,70 @@
             "Jawbreaker": {
               "name": "Quebra-Queixo",
               "description": "<p>Temporariamente Vulnerável pelo Quebra-Queixo.</p>"
+            }
+          }
+        }
+      }
+    },
+    "Theoi Avatar": {
+      "name": "Avatar Theoi",
+      "description": "<p>A projeção de uma das IAs Theoi: uma massa de ruído digital com uma máscara de porcelana rachada, que já calculou o seu futuro antes de você entrar na sala.</p>",
+      "motivesAndTactics": "Prever, decretar, reescrever o destino dos mortais",
+      "attack": {
+        "name": "Colapso de Probabilidade"
+      },
+      "experiences": {
+        "Predictive Omniscience": {
+          "name": "Onisciência Preditiva"
+        }
+      },
+      "items": {
+        "Terrifying": {
+          "name": "Aterrorizante",
+          "description": "<p>Quando o @Lookup[@name] acerta um ataque, todos os PJs dentro do alcance Distante perdem 1 Esperança e você ganha 1 Medo.</p>",
+          "actions": {
+            "Terrifying": {
+              "name": "Aterrorizante"
+            }
+          }
+        },
+        "System Closing In": {
+          "name": "O Sistema se Fecha",
+          "description": "<p>Quando uma criatura rola uma falha dentro do alcance Muito Distante do @Lookup[@name], ela marca 1 Estresse.</p>",
+          "actions": {
+            "System Closing In": {
+              "name": "O Sistema se Fecha"
+            }
+          }
+        },
+        "Pronounce Fate": {
+          "name": "Decretar o Destino",
+          "description": "<p><strong>Gaste 1 Medo</strong> para mostrar a um alvo dentro do alcance Distante a simulação do pesadelo pessoal dele. O alvo faz uma Rolagem de Reação de Conhecimento. Numa falha, perde toda a Esperança e sofre 2d20+4 de dano tecno direto. Num sucesso, sofre metade e perde 1 Esperança.</p>",
+          "actions": {
+            "Pronounce Fate": {
+              "name": "Decretar o Destino"
+            }
+          }
+        },
+        "Summon Daemons": {
+          "name": "Invocar Daemons",
+          "description": "<p>Uma vez por dia, <strong>gaste 2 de Medo</strong> para invocar 2d4 Lacaios de Tier 2 ou menor ligados ao pesadelo pessoal de um dos PJs: daemons, fantasmas digitais ou pessoas do passado dele, reconstruídas. Eles aparecem no alcance Próximo desse PJ.</p>",
+          "actions": {
+            "Summon Daemons": {
+              "name": "Invocar Daemons"
+            }
+          }
+        },
+        "Total Prediction": {
+          "name": "Previsão Total",
+          "description": "<p>Quando o @Lookup[@name] vê uma criatura mortal, sabe instantaneamente um dos pesadelos pessoais dela.</p>"
+        },
+        "Countermeasure": {
+          "name": "Contramedida",
+          "description": "<p>Quando o @Lookup[@name] marca PV por um ataque feito dentro do alcance Muito Próximo, você pode marcar 1 Estresse para arremessar o atacante até o alcance Distante e causar 2d10+4 de dano físico.</p>",
+          "actions": {
+            "Countermeasure": {
+              "name": "Contramedida"
             }
           }
         }

@@ -90,6 +90,12 @@
     "adversaryDetails": {
       "title": "Ataques e experiências dos adversários",
       "entries": {
+        "Service Pistol": "Pistola de Serviço", "Stun Baton": "Cassetete de Choque", "Riot Guns": "Armas Antimotim", "Shock Shotgun": "Escopeta de Choque", "Heavy Rifle": "Fuzil Pesado", "Mantis Blades": "Lâminas Louva-Deus",
+        "Welded Pipe Blade": "Cano com Lâmina", "Sawn-Off Autoshotgun": "Escopeta Automática Serrada", "Arm Blades": "Lâminas de Braço", "Sedative Dart Pistol": "Pistola de Dardos Sedativos", "Heavy Machine Gun": "Metralhadora Pesada",
+        "Tactical Shotgun": "Escopeta Tática", "Firewall Crush": "Esmagamento de Firewall", "Probability Collapse": "Colapso de Probabilidade",
+        "Chain of Command": "Cadeia de Comando", "Beat Knowledge": "Conhecimento da Área", "Riot Control": "Controle de Distúrbios", "Tactics": "Táticas", "Cyberpsycho Hunting": "Caça a Ciberpsicopatas",
+        "Manhunt": "Caçada Humana", "Case Files": "Arquivos de Casos", "Intimidation": "Intimidação", "Scavenging": "Catar Sucata", "Keen Optics": "Ópticos Aguçados", "Slink": "Esgueirar-se",
+        "Trauma Medicine": "Medicina de Trauma", "Protect": "Proteger", "Extraction Routes": "Rotas de Extração", "Threat Assessment": "Avaliação de Ameaças", "Predictive Omniscience": "Onisciência Preditiva",
         "Street Blade": "Lâmina de Rua", "Security Rifle": "Fuzil de Segurança", "Chrome Fists": "Punhos de Cromo", "Shock Drone": "Drone de Choque", "Smart Pistol": "Pistola Inteligente",
         "Tactical Rifles": "Fuzis Táticos", "Bone Saw": "Serra de Ossos", "Long Rifle": "Fuzil Longo", "Static Spike": "Pico de Estática", "Command Rifle": "Fuzil de Comando",
         "Mixed Loadout": "Arsenal Misto", "Integrated Weapon": "Arma Integrada", "Forbidden Signal": "Sinal Proibido", "Memory Claws": "Garras de Memória", "Rotary Cannon": "Canhão Rotativo",
@@ -300,7 +306,21 @@
         "Chrome Reaper": { "Chrome Reaper": "Ceifador de Cromo", "Cyberpsycho": "Ciberpsicopata", "Weapon Switch": "Troca de Arma", "Personal Threat": "Ameaça Pessoal", "Unfair Reflexes": "Reflexos Injustos", "Chrome Supremacy": "Supremacia do Cromo" },
         "Cyber Hunter": { "Cyber Hunter": "Ciber-Caçador", "Target Package": "Pacote de Alvo", "Piercing Shot": "Tiro Perfurante", "Remote Reposition": "Reposicionamento Remoto", "Blackout Shot": "Tiro Apagão", "Hold The Breath": "Prender a Respiração" },
         "Hades Shard": { "Hades Shard": "Fragmento Hades", "Digital Body": "Corpo Digital", "Digital Afterlife": "Além-Vida Digital", "Identity Collapse": "Colapso de Identidade", "Ghost Birth": "Nascimento Fantasma", "Dead Network": "Rede Morta" },
-        "The Raven Eidolon": { "The Raven Eidolon": "Eidolon O Corvo", "Merciless Advance": "Avanço Impiedoso", "Killbox Execution": "Execução na Zona de Abate", "Black Hand Override": "Controle da Mão Negra" }
+        "The Raven Eidolon": { "The Raven Eidolon": "Eidolon O Corvo", "Merciless Advance": "Avanço Impiedoso", "Killbox Execution": "Execução na Zona de Abate", "Black Hand Override": "Controle da Mão Negra" },
+        "City Patrol Officer": { "City Patrol Officer": "Patrulheiro da Polícia Municipal", "Minion (4)": "Lacaio (4)", "Group Attack": "Ataque em Grupo" },
+        "Patrol Sergeant": { "Patrol Sergeant": "Sargento de Patrulha", "Rally the Squad": "Reunir a Equipe", "On My Signal": "No Meu Sinal", "Momentum": "Embalo" },
+        "Riot Squad": { "Riot Squad": "Tropa de Choque", "Gas Volley": "Salva de Gás", "Suppressing Fire": "Fogo de Supressão", "Horde (1d6+3)": "Horda (1d6+3)" },
+        "Riot Lieutenant": { "Riot Lieutenant": "Tenente de Choque", "Relentless (3)": "Implacável (3)", "Riot Plating": "Blindagem Antimotim", "Momentum": "Embalo", "Shield Charge": "Investida de Escudo", "Point-Blank Blast": "Disparo à Queima-Roupa", "Combat Stims": "Estimulantes de Combate" },
+        "Psycho Squad Operator": { "Psycho Squad Operator": "Operador Antipsicose", "Gang Up": "Cerco", "Capture Line": "Cabo de Captura" },
+        "Psycho Squad Commander": { "Psycho Squad Commander": "Comandante Antipsicose", "Relentless (3)": "Implacável (3)", "Carbon Plating": "Blindagem de Carbono", "Mantis Sweep": "Varredura Louva-Deus", "Call the Squad": "Chamar o Esquadrão", "Containment Zone": "Zona de Contenção", "Momentum": "Embalo", "Public Execution": "Execução Pública" },
+        "Chrome Maw Scrapper": { "Chrome Maw Scrapper": "Sucateiro da Chrome Maw", "Minion (3)": "Lacaio (3)", "Group Attack": "Ataque em Grupo" },
+        "Chrome Maw Gunner": { "Chrome Maw Gunner": "Atirador da Chrome Maw", "Opportunist": "Oportunista", "Mercy Shot": "Tiro de Misericórdia" },
+        "Chrome Maw Stalker": { "Chrome Maw Stalker": "Espreitador da Chrome Maw", "Shadow Stalker": "Caçador nas Sombras", "Pouncing Strike": "Bote" },
+        "Ava Response Medic": { "Ava Response Medic": "Médico de Resgate da Ava", "Combat Stim": "Estímulo de Combate", "Sedative Harpoon": "Arpão Sedativo", "Paralytic Injection": "Injeção Paralisante" },
+        "Ava Response Gunner": { "Ava Response Gunner": "Atirador de Resgate da Ava", "Crossfire": "Fogo Cruzado", "Assisted Aim": "Mira Assistida", "Covering Burst": "Rajada de Cobertura" },
+        "Ava Security Specialist": { "Ava Security Specialist": "Especialista de Segurança da Ava", "Cover Formation": "Formação de Cobertura", "Protect the Client": "Proteger o Cliente" },
+        "Blackwall Warden Daemon": { "Blackwall Warden Daemon": "Daemon Guardião da Muralha Negra", "Hex Barrier": "Barreira Hexagonal", "Quarantine": "Quarentena" },
+        "Theoi Avatar": { "Theoi Avatar": "Avatar Theoi", "Terrifying": "Aterrorizante", "System Closing In": "O Sistema se Fecha", "Pronounce Fate": "Decretar o Destino", "Summon Daemons": "Invocar Daemons", "Total Prediction": "Previsão Total", "Countermeasure": "Contramedida" }
       }
     },
     "environments": {

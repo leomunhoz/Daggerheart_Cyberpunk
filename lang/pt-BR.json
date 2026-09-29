@@ -1,5 +1,299 @@
 {
   "EDGEHEART": {
-    "ModuleName": "Edgeheart - Cyberpunk para Daggerheart"
+    "ModuleName": "Edgeheart - Cyberpunk para Daggerheart",
+    "Settings": {
+      "DefaultSheet": {
+        "Name": "Atores novos usam as fichas do Edgeheart",
+        "Hint": "Ao criar um Personagem, ele já nasce com a Ficha Edgeheart (Humanidade, Carga Cibernética, Ciberpsicose); ao criar um Grupo, ele nasce com a Ficha da Crew (Reputação, Edge e Movimentos de Edge). Atores existentes podem trocar de ficha pelo ícone de configuração da ficha."
+      },
+      "Levelup": {
+        "Name": "Level Up do Edgeheart",
+        "Hint": "Remove do Level Up as opções de PV, Estresse, Evasão, Atributos e Multiclasse (no Edgeheart elas vêm do Cyberware) e deixa Experiência e Carta extra serem escolhidas mais vezes. Vale para o mundo todo; ao desligar, o Level Up original do Daggerheart volta."
+      }
+    },
+    "Common": {
+      "NoGM": "Nenhum mestre conectado para aplicar isso.",
+      "SelectHelperToken": "Selecione o token do aliado que vai gastar a Esperança.",
+      "NotOwner": "Você não controla {name}."
+    },
+    "Access": {
+      "full": "Acesso Total",
+      "half": "Meio Acesso",
+      "card": "Acesso de Carta",
+      "CardCount": "Acesso de Carta ({count})",
+      "Short": { "full": "Total", "half": "Meio", "one": "{count} carta", "many": "{count} cartas" },
+      "SourceClass": "Classe",
+      "SourceMulticlass": "Multiclasse",
+      "Tooltip": "{access} · até nível {level} · {sources}",
+      "Issue": {
+        "NoAccess": "sem acesso a {competency}",
+        "LevelTooHigh": "nível {level} acima do permitido ({limit}) pelo {access}",
+        "TooManyCards": "mais cartas de {competency} do que Acessos de Carta ({count})"
+      },
+      "Blocked": {
+        "Multiclass": "O personagem já tem uma multiclasse; os acessos cibernéticos ficam só como referência.",
+        "Levelup": "Com a automação de Level Up desligada, o sistema pede o domínio da multiclasse numa janela; os acessos ficam só como referência.",
+        "Missing": "Ainda sem cartas no módulo: {list}."
+      },
+      "ItemName": "Acessos Cibernéticos",
+      "ItemDescription": "<p>Competências liberadas por cyberware (Edgeheart). Mantido automaticamente pelo módulo; não dá PV, Evasão nem features.</p>"
+    },
+    "Humanity": {
+      "Label": "Humanidade",
+      "CyberLoad": "Carga Cibernética",
+      "State": { "stable": "Estável", "psycho": "Ciberpsicose", "lost": "Perdido" },
+      "Flag": { "psycho": "CIBERPSICOSE", "lost": "PERDIDO" },
+      "MaxDie": "O Dado de Humanidade já está no máximo (d12).",
+      "AlreadyAdvanced": "O Dado de Humanidade já avançou neste nível.",
+      "ChatAdvanced": "<p><strong>{name}</strong> avançou o Dado de Humanidade: d{from} → <strong>d{to}</strong>.</p>",
+      "ChatReduced": "<p><strong>{name}</strong> perdeu Humanidade{reason}: d{from} → <strong>d{to}</strong>.</p>",
+      "ChatLost": "<h3>Movimento de Morte: Ciberpsicopata</h3><p><strong>{name}</strong> foi perdido para a Ciberpsicose{reason}. Escolha um:</p><ul><li>Você desaparece na cidade como uma lenda urbana violenta.</li><li>Sua equipe é forçada a te abater.</li><li>Você se consome num último ato de destruição, salvando alguém ou completando o trabalho a um custo terrível.</li></ul><p>Depois, crie um novo personagem.</p>",
+      "NoteIntegratedChrome": "Integrated Chrome: Carga Cibernética tratada como 1 menor.",
+      "NoteAnchor": "Âncora de Humanidade: rolou duas vezes e usou o maior.",
+      "NoteBuffer": "Buffer Cortical: marcou 1 Estresse para +1.",
+      "BufferTitle": "Buffer Cortical",
+      "BufferPrompt": "<p>Rolagem de Humanidade: <strong>{total}</strong> contra Carga <strong>{load}</strong>. Marcar 1 Estresse para somar +1 e manter o controle?</p>",
+      "Outcome": {
+        "PsychoEnds": "A Ciberpsicose termina.",
+        "PsychoContinues": "A Ciberpsicose continua.",
+        "InControl": "Mantém o controle.",
+        "StillPsycho": "Continua em Ciberpsicose.",
+        "EntersPsycho": "Entra em CIBERPSICOSE."
+      },
+      "RollTitle": "Rolagem de Humanidade",
+      "StabilizeTitle": "Estabilização",
+      "StabilizeBy": "Estabilização por {name}",
+      "RollLine": "d{die} = {math}<strong>{total}</strong> contra Carga Cibernética <strong>{load}</strong>",
+      "EffectName": "Ciberpsicose",
+      "EffectDescription": "<p>Você não rola o Dado de Esperança: use só o Dado de Medo como d20 + atributo; a rolagem é sempre com Medo. Features que exigiriam marcar Estresse podem ser usadas sem marcar Estresse.</p><p>Um aliado dentro do alcance Próximo pode gastar 1 Esperança para te estabilizar (role a Humanidade de novo). Se a cena terminar em Ciberpsicose, reduza seu Dado de Humanidade.</p>",
+      "EffectDuration": "Até ser estabilizado ou o fim da cena",
+      "ChatPsycho": "<h3>CIBERPSICOSE</h3><p><strong>{name}</strong> perdeu o controle. Rolagens usam só o Dado de Medo (d20) e são sempre com Medo; features que marcariam Estresse não marcam.</p>",
+      "StabilizeButton": "Estabilizar (aliado gasta 1 Esperança)",
+      "NotPsycho": "{name} não está em Ciberpsicose.",
+      "SelectHelper": "Selecione o token (ou defina o personagem) do aliado que vai estabilizar.",
+      "NoHope": "{name} não tem Esperança para gastar.",
+      "OnlyGMEnd": "Só o mestre pode encerrar a Ciberpsicose sem estabilização.",
+      "ChatGMEnded": "<p>O mestre encerrou a Ciberpsicose de <strong>{name}</strong>.</p>",
+      "ReasonManual": "ajuste manual",
+      "ReasonSheet": "Rolagem pedida na ficha",
+      "ReasonFearStress": "Rolou com Medo com todo o Estresse marcado.",
+      "ReasonFearHope": "Rolou com Medo sem Esperança.",
+      "ReasonScenePsycho": "terminou a cena em Ciberpsicose",
+      "ReasonHardDisconnect": "Hard Disconnect de {item}",
+      "LoadWarning": "{name}: com Carga Cibernética {load} e Humanidade d{die}, a chance de manter o controle numa Rolagem de Humanidade agora é de {chance}%."
+    },
+    "Levelup": {
+      "Applied": "Edgeheart: Level Up do Edgeheart aplicado neste mundo (sem PV, Estresse, Evasão, Atributos e Multiclasse). Dá para desligar nas configurações do módulo.",
+      "Restored": "Edgeheart: Level Up original do Daggerheart restaurado neste mundo."
+    },
+    "Cyberware": {
+      "ChooseTrait": "escolha o atributo",
+      "Trait": "Atributo",
+      "ChooseExperience": "escolha a Experiência",
+      "Experience": "Experiência",
+      "NewExperience": "Nova Experiência (+2)",
+      "NewExperienceName": "Nome da nova Experiência",
+      "NewExperiencePlaceholder": "só se escolher Nova",
+      "NeuralArchiveDefault": "Arquivo Neural",
+      "NoExperiences": "{name} não tem Experiências para escolher.",
+      "ChooseCompetency": "escolha a Competência",
+      "Competency": "Competência",
+      "AccessLevel": "Acesso",
+      "Cost": { "card": "Custo 1: Acesso de Carta", "half": "Custo 2: Meio Acesso", "full": "Custo 3: Acesso Total" },
+      "HalfAccessTo": "Meio Acesso a",
+      "Pending": "{name}: escolha pendente. Faça pela aba Chrome da Ficha Edgeheart.",
+      "PackMissing": "Compêndio de Cyberware não encontrado. Confira se o módulo Edgeheart está ativo."
+    },
+    "Sheet": {
+      "Label": "Ficha Edgeheart",
+      "CrewLabel": "Ficha da Crew",
+      "NewCharacter": "Novo Personagem Edgeheart",
+      "NewCharacterName": "Novo Mercenário",
+      "SubclassSuggestion": "Sugestão da subclasse {name}"
+    },
+    "KillChain": {
+      "EffectDescription": "<p>O Kill Chain Die está acima de d4. No fim da cena ele volta a d4.</p>",
+      "EffectDuration": "Até o fim da cena",
+      "RollFlavor": "Kill Chain Die ({faces}): some ao dano",
+      "Max": "O Kill Chain Die já está no máximo (d20).",
+      "ChatStep": "<p><strong>{name}</strong>: Kill Chain Die {from} → <strong>{to}</strong>.</p>",
+      "ChatReset": "<p><strong>{name}</strong>: Kill Chain Die volta a <strong>d4</strong>{reason}.</p>",
+      "ReasonSceneEnd": "fim da cena"
+    },
+    "Cover": {
+      "NoFeature": "{action}: o personagem não tem a feature Cover Work.",
+      "NotEnough": "{action} precisa de {need} Cover (você tem {have}).",
+      "Max": "O Cover já está no máximo ({max})."
+    },
+    "Pick": {
+      "Prompt": "Escolha: {title}.",
+      "ChatChose": "<p><strong>{name}</strong> escolheu <strong>{option}</strong> ({title}).</p>"
+    },
+    "Eidolon": {
+      "UnbondedTitle": "Sincronizar sem Soul Bond",
+      "UnbondedPrompt": "<p><strong>{name}</strong> não tem Soul Bond com <strong>{item}</strong>. Marcar 2 Estresse e rolar o Dado de Humanidade? Se o resultado for igual ou menor que a Carga Cibernética total (com o Custo de Sincronia), a sincronização falha.</p>",
+      "UnbondedRollTitle": "Sincronização sem Soul Bond",
+      "UnbondedLine": "d{die} = <strong>{total}</strong> contra Carga Cibernética total <strong>{load}</strong> (com o Custo de Sincronia de {item})",
+      "SyncOk": "A sincronização funciona.",
+      "SyncFail": "A sincronização falha (ou o mestre introduz uma consequência grave).",
+      "AlreadySynced": "{name} já está sincronizado com um Eidolon.",
+      "IsDisabled": "{item} está Inutilizado: conserte antes de mobilizar.",
+      "EffectName": "Eidolon: {item}",
+      "EffectDescription": "<p>Sincronizado com o Eidolon: PV, Evasão, Limiares, Armadura e armas são os da estrutura.</p>",
+      "ChatMobilized": "<p><strong>{name}</strong> mobilizou <strong>{item}</strong>. Custo de Sincronia <strong>+{cost}</strong> na Carga Cibernética enquanto sincronizado.</p>",
+      "ChatUnsynced": "<p><strong>{name}</strong> dessincronizou.</p>",
+      "ChatUnsyncedFrom": "<p><strong>{name}</strong> dessincronizou de <strong>{item}</strong>.</p>",
+      "ChatRepaired": "<p><strong>{item}</strong> foi consertado: PV e Espaços de Armadura limpos.</p>",
+      "DisabledTitle": "{item} está Inutilizado",
+      "DisabledPrompt": "<p><strong>{item}</strong> marcou o último Ponto de Vida e ficou <strong>Inutilizado</strong>: não pode se mover, atacar nem usar features até ser consertado ou reativado. Escolha uma:</p><ul><li><strong>Stay Inside:</strong> continue dentro da estrutura, protegido do perigo externo imediato.</li><li><strong>Hard Disconnect:</strong> dessincronize à força: marque 2 Estresse e faça a Rolagem de Humanidade.</li><li><strong>Emergency Overclock:</strong> reative em Overclock: você marca os PV no lugar do Eidolon e 1 PV no fim de cada ação sua.</li></ul>",
+      "ChatOverclock": "<p><strong>{item}</strong> reativado em <strong>Emergency Overclock</strong>: os PV agora são de {name}, e cada ação marca 1 PV.</p>",
+      "ChatStayInside": "<p><strong>{name}</strong> fica dentro de <strong>{item}</strong> (Inutilizado): protegido do perigo externo imediato.</p>",
+      "DisabledWarn": "O Eidolon está Inutilizado: não pode atacar nem usar features até ser consertado ou reativado."
+    },
+    "Chrome": {
+      "HumanityDieTooltip": "Dado de Humanidade: d4 → d6 → d8 → d10 → d12",
+      "LoadTooltip": "Carga Cibernética: soma do Custo de todo o cyberware instalado",
+      "LoadModNote": " ({mod} de modificador temporário)",
+      "LoadModTooltip": "Modificador temporário de Carga (efeitos, Eidolon, etc.)",
+      "ControlTooltip": "Chance de manter o controle numa Rolagem de Humanidade agora (precisa tirar mais que {load} no d{die})",
+      "AnchorNote": ". Âncora de Humanidade: rola duas vezes e usa o maior",
+      "Control": "Controle",
+      "AnchorTooltip": "Âncora de Humanidade: rola duas vezes e usa o maior",
+      "BufferTooltip": "Buffer Cortical: pode marcar 1 Estresse para +1 na Rolagem de Humanidade",
+      "InPsycho": "Em Ciberpsicose",
+      "InPsychoText": "Rola só o Dado de Medo (d20), sempre com Medo · features que pedem Estresse não marcam · se a cena terminar assim, a Humanidade cai um passo.",
+      "LostTitle": "Perdido para a Ciberpsicose",
+      "LostText": "Movimento de Morte: Cyberpsycho.",
+      "Stabilize": "Estabilizar",
+      "StabilizeTooltip": "Um aliado dentro do alcance Próximo gasta 1 Esperança: selecione o token dele e clique",
+      "EndPsychoTooltip": "Encerrar a Ciberpsicose (mestre)",
+      "RollHumanity": "Rolagem de Humanidade",
+      "RollHumanityTooltip": "Role quando rolar com Medo com todo o Estresse marcado ou sem Esperança (automático nesta ficha), ou quando o mestre pedir",
+      "AdvancedThisLevel": "Já avançou neste nível",
+      "AdvanceTooltip": "Avançar: vínculo significativo, objetivo importante, recuperar parte de si ou momento de esperança genuína (1x por nível)",
+      "ReduceTooltip": "Reduzir o Dado de Humanidade um passo",
+      "OpenCyberware": "Abrir o compêndio de Cyberware (arraste um item para a ficha para instalar)",
+      "Tier": "Tier",
+      "WeaponwareTooltip": "Weaponware: conta como arma sempre equipada",
+      "ChoiceTooltip": "Este cyberware pede uma escolha",
+      "Choose": "Escolher",
+      "CostTooltip": "Custo Cibernético",
+      "NoCyberware": "Nenhum cyberware. Clique em <i class=\"fa-solid fa-plus\"></i> e arraste um item para a ficha.",
+      "SyncCostTooltip": "Custo de Sincronia somado na Carga Cibernética",
+      "SyncCostCount": "+{cost} Carga",
+      "EidolonStats": "Sincronia {sync} · PV {marked}/{hp} · Evasão {evasion} · Limiares {thresholds} · Armadura {armor}",
+      "Synced": "Sincronizado",
+      "Disabled": "Inutilizado",
+      "BondTooltip": "Soul Bond: sem ele, sincronizar marca 2 Estresse e pede Rolagem de Humanidade",
+      "Unsync": "Dessincronizar",
+      "Mobilize": "Mobilizar",
+      "RepairTooltip": "Consertar: limpa os PV e os Espaços de Armadura do Eidolon (durante um descanso, com ferramentas e peças)",
+      "Competencies": "Competências",
+      "NoCompetencies": "Nenhuma Competência ainda. A classe dá Acesso Total a uma; o cyberware pode liberar outras.",
+      "CardIssues": "Cartas fora do acesso",
+      "HowItWorks": "Como funciona",
+      "Help": {
+        "Humanity": "<strong>Humanidade:</strong> começa em d6. Avança uma vez por nível (vínculo significativo, objetivo importante, recuperar parte de si, momento de esperança).",
+        "Load": "<strong>Carga Cibernética:</strong> soma do Custo de todo o cyberware instalado.",
+        "Roll": "<strong>Rolagem de Humanidade:</strong> se o resultado for maior que a Carga, você mantém o controle; se for igual ou menor, entra em Ciberpsicose. É automática quando você rola com Medo com todo o Estresse marcado ou sem Esperança.",
+        "Psycho": "<strong>Ciberpsicose:</strong> rola só o Dado de Medo como d20, sempre com Medo; features que pedem Estresse não marcam. Um aliado pode gastar 1 Esperança para te estabilizar. Terminar a cena assim reduz a Humanidade; abaixo de d4 você está perdido.",
+        "Eidolons": "<strong>Eidolons:</strong> arraste um Eidolon do compêndio de Cyberware para a ficha e use Mobilizar. Enquanto sincronizado, PV, Evasão, Limiares, Armadura e armas são os da estrutura (as armas usam a sua Interface), o Custo de Sincronia soma na Carga e o Competency Link libera cartas. No último PV do Eidolon, escolha Stay Inside, Hard Disconnect ou Emergency Overclock.",
+        "Competencies": "<strong>Competências:</strong> a classe dá Acesso Total a uma; o cyberware pode dar Acesso de Carta, Meio Acesso (até metade do nível) ou Acesso Total."
+      }
+    },
+    "Crew": {
+      "Spend": "Gastar",
+      "Gain": "Ganhar",
+      "Announce": "Anunciar",
+      "EdgeGainsSummary": "Uma vez por cena, a Crew ganha 1 Edge quando…",
+      "EdgeMoves": "Movimentos de Edge",
+      "CrewAgrees": "Crew concorda",
+      "CrewAgreesTooltip": "Qualquer um pode gastar Edge, mas a Crew deve concordar",
+      "TierTooltip": "Tier da Crew: o maior Tier entre os membros",
+      "Reputation": "Reputação",
+      "ReputationTooltip": "Pelo que vocês são conhecidos? Vira a Experiência compartilhada de Reputação de cada membro (usar custa 1 Esperança, uma vez por cena).",
+      "Code": "Código",
+      "CodeTooltip": "Que regra a Crew se recusa a quebrar?",
+      "Fixer": "Fixer",
+      "FixerTooltip": "Quem encontra contratos e conecta vocês à cidade?",
+      "Base": "Base",
+      "BaseTooltip": "Onde vocês se encontram, consertam, discutem e se recuperam entre um trabalho e outro?",
+      "Help": {
+        "Members": "<strong>Membros:</strong> arraste os personagens para a aba de membros do Grupo.",
+        "Reputation": "<strong>Reputação:</strong> começa em +2 e sobe +1 a cada Tier novo da Crew. Aparece como Experiência na ficha de cada membro.",
+        "Assets": "<strong>Recursos da Crew:</strong> veículos, esconderijos, equipamento e recompensas ficam no Inventário do Grupo. Continuam com a Crew quando alguém sai.",
+        "NewCharacter": "<strong>Personagem novo:</strong> começa no nível mais baixo do Tier atual (Tier 1 → nível 1, Tier 2 → 2, Tier 3 → 5, Tier 4 → 8).",
+        "Buttons": "<strong>Botões no chat:</strong> Get Them Out aplica no aliado alvo; Back Me Up rola a reação do personagem selecionado; Hidden Cache põe 3 Suprimentos no Inventário; Sabotage Package tem o botão do mestre para restaurar (2 Medo); uma Rolagem em Dupla com Esperança oferece +1 Edge.",
+        "AllIn": "<strong>All In:</strong> abre a Rolagem em Dupla sem custo de Esperança; quando ela termina, quem rolou limpa 1 Estresse."
+      },
+      "Move": {
+        "teamwork": "Na primeira vez em cada cena em que um personagem <strong>Ajuda um Aliado</strong>, o dado de vantagem dele é um <strong>d8</strong> em vez de um d6. Quando um personagem começa uma <strong>Rolagem de Ação em Equipe</strong>, os personagens podem dividir a Esperança gasta.",
+        "backMeUp": "Quando um membro da Crew falha numa rolagem de ação, outro membro pode intervir: move-se para dentro do alcance Próximo e faz uma rolagem de reação relevante, descrevendo como salva a situação. Em um sucesso, a rolagem original vira um <strong>sucesso com Medo</strong>.",
+        "getThemOut": "Quando um membro da Crew dentro do alcance Próximo fosse marcar Pontos de Vida, ficar <em>Vulnerável</em> ou <em>Imobilizado</em>, outro personagem se move para dentro do alcance Muito Próximo dele. Reduza em 1 os PV marcados ou limpe uma condição temporária. Depois, mova os dois dentro do alcance Próximo em direção a cobertura, veículo, saída ou posição mais segura.",
+        "planB": "Revele um plano de contingência plausível que a Crew preparou para o Contrato.",
+        "allIn": "Dois membros da Crew fazem uma <strong>Rolagem em Dupla</strong> sem gastar Esperança, mesmo que já tenham feito uma nesta sessão. Depois, cada personagem que participou limpa 1 Estresse."
+      },
+      "Option": {
+        "hiddenCache": "Ganhe três marcadores de Suprimento. Gaste um para produzir um consumível, arma ou ferramenta comum.",
+        "insideAccess": "Crie uma Breach contra a rede local ou o sistema de segurança. A próxima rolagem feita para explorá-la ganha +4.",
+        "sabotagePackage": "Desative um sistema conectado até o mestre gastar 2 Medo para restaurá-lo.",
+        "escapeVector": "Estabeleça uma rota de extração dentro do alcance Distante. O grupo pode sair da cena sem outra rolagem."
+      },
+      "Gains": {
+        "tagTeam": "Uma Rolagem em Dupla tem sucesso com Esperança.",
+        "protect": "Um personagem marca PV, Estresse ou aceita uma consequência séria para proteger outro membro da Crew.",
+        "crewFirst": "Um personagem coloca a Crew acima da própria segurança ou recompensa.",
+        "cooperation": "A Crew completa uma parte importante do Contrato por meio de cooperação."
+      },
+      "Supplies": {
+        "Name": "Suprimento",
+        "Description": "<p>Marcador de Suprimento do Plan B (Hidden Cache). Gaste um para produzir um consumível, arma ou ferramenta comum.</p>",
+        "Action": "Usar Suprimento",
+        "ActionDescription": "<p>Produza um consumível, arma ou ferramenta comum.</p>",
+        "Added": "3 Suprimentos no Inventário da Crew."
+      },
+      "NotEnoughEdge": "{move} custa {cost} Edge; a Crew tem {edge}.",
+      "ConfirmTitle": "{move}: {cost} Edge",
+      "ConfirmPrompt": "<p>A Crew concorda em gastar <strong>{cost} Edge</strong> em <strong>{move}</strong>{option}?</p>",
+      "ChooseContingency": "{move}: escolha a contingência",
+      "Button": {
+        "reduceHp": "Reduzir 1 PV marcado",
+        "clearCondition": "Limpar Vulnerável/Imobilizado",
+        "targetTooltip": "Aplica ao aliado alvo (ou ao token selecionado)",
+        "reactionRoll": "Rolagem de Reação",
+        "reactionTooltip": "Rola a reação do personagem selecionado (ou do seu personagem)",
+        "restoreSystem": "Restaurar o sistema (2 Medo)",
+        "gainEdge": "+1 Edge",
+        "onceTooltip": "Uma vez por cena"
+      },
+      "TraitTitle": "Back Me Up: atributo da reação",
+      "TraitPrompt": "<p>Com que atributo o personagem salva a situação?</p>",
+      "TargetAlly": "Marque como alvo (ou selecione) o aliado que está sendo tirado dali.",
+      "ReducedHp": "Get Them Out: {names} reduz 1 PV marcado.",
+      "ClearedCondition": "Get Them Out: condição temporária limpa em {names}.",
+      "SelectSaver": "Selecione o token do personagem que vai salvar a situação.",
+      "RestoreCost": "Restaurar o sistema custa 2 Medo; você tem {fear}.",
+      "MaxEdge": "A Crew já está com 3 Edge.",
+      "ReputationName": "Crew: {reputation}",
+      "ReputationDescription": "Reputação da Crew {crew}. Uma vez por cena, gaste 1 Esperança para somá-la a uma rolagem adequada.",
+      "NamesJoin": " e ",
+      "AllInChat": "<p><i class=\"fa-solid fa-fire\"></i> <strong>All In:</strong> {names} limpam 1 Estresse.</p>",
+      "EdgeGainChat": "<p>Rolagem em Dupla com Esperança: a Crew pode ganhar 1 Edge (uma vez por cena).</p>"
+    },
+    "Vehicle": {
+      "damaged": "Danificado",
+      "disabled": "Inutilizado",
+      "IsDisabled": "{name} está Inutilizado: não se move nem pode ser usado até ser consertado.",
+      "IsDamaged": "{name} está Danificado: a Característica não pode ser usada até ser consertado.",
+      "ChatDamaged": "<p><strong>{name}</strong> ficou <strong>Danificado</strong>. A Característica para de funcionar e as rolagens para dirigir sofrem −2.</p>",
+      "ChatDisabled": "<p><strong>{name}</strong> ficou <strong>Inutilizado</strong>. Não se move nem pode ser usado até ser consertado.</p>"
+    },
+    "Build": {
+      "OnlyGM": "Apenas o GM pode gerar os compêndios do Edgeheart.",
+      "NeedEnglish": "Edgeheart: para gerar os compêndios, troque o idioma do Foundry para English (o Babele está traduzindo).",
+      "Started": "Edgeheart: gerando os compêndios do módulo...",
+      "Unknown": "Edgeheart: {count} nomes fora do glossário (veja o console).",
+      "Done": "Edgeheart: compêndios gerados."
+    }
   }
 }

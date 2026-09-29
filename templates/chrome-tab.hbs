@@ -4,34 +4,34 @@
 
             {{!-- ESTADO: Humanidade, Carga e Ciberpsicose num bloco só --}}
             <fieldset class="eh-card eh-state-{{state}}">
-                <legend><i class="fa-solid fa-heart-pulse"></i> Humanidade</legend>
+                <legend><i class="fa-solid fa-heart-pulse"></i> {{localize "EDGEHEART.Humanity.Label"}}</legend>
 
                 <div class="eh-status">
-                    <div class="eh-stat" data-tooltip="Dado de Humanidade: d4 → d6 → d8 → d10 → d12">
+                    <div class="eh-stat" data-tooltip="{{localize "EDGEHEART.Chrome.HumanityDieTooltip"}}">
                         <span class="eh-stat-value">d{{die}}</span>
-                        <span class="eh-stat-label">Humanidade</span>
+                        <span class="eh-stat-label">{{localize "EDGEHEART.Humanity.Label"}}</span>
                         <span class="eh-pips">
                             {{#each steps}}<span class="eh-pip {{#if current}}current{{/if}} {{#if below}}below{{/if}}" data-tooltip="d{{faces}}"></span>{{/each}}
                         </span>
                     </div>
 
-                    <div class="eh-stat" data-tooltip="Carga Cibernética: soma do Custo de todo o cyberware instalado{{#if loadMod}} ({{loadMod}} de modificador temporário){{/if}}">
+                    <div class="eh-stat" data-tooltip="{{localize "EDGEHEART.Chrome.LoadTooltip"}}{{#if loadMod}}{{localize "EDGEHEART.Chrome.LoadModNote" mod=loadMod}}{{/if}}">
                         <span class="eh-stat-value">{{load}}</span>
-                        <span class="eh-stat-label">Carga Cibernética</span>
+                        <span class="eh-stat-label">{{localize "EDGEHEART.Humanity.CyberLoad"}}</span>
                         {{#if @root.editable}}
-                            <label class="eh-mod" data-tooltip="Modificador temporário de Carga (efeitos, Eidolon, etc.)">
+                            <label class="eh-mod" data-tooltip="{{localize "EDGEHEART.Chrome.LoadModTooltip"}}">
                                 <i class="fa-solid fa-plus-minus"></i>
                                 <input type="number" name="flags.edgeheart-cyberpunk.cyberLoadMod" value="{{loadMod}}" step="1">
                             </label>
                         {{/if}}
                     </div>
 
-                    <div class="eh-stat" data-tooltip="Chance de manter o controle numa Rolagem de Humanidade agora (precisa tirar mais que {{load}} no d{{die}}){{#if anchor}}. Âncora de Humanidade: rola duas vezes e usa o maior{{/if}}">
+                    <div class="eh-stat" data-tooltip="{{localize "EDGEHEART.Chrome.ControlTooltip" load=load die=die}}{{#if anchor}}{{localize "EDGEHEART.Chrome.AnchorNote"}}{{/if}}">
                         <span class="eh-stat-value eh-risk-{{risk}}">{{controlChance}}%</span>
-                        <span class="eh-stat-label">Controle</span>
+                        <span class="eh-stat-label">{{localize "EDGEHEART.Chrome.Control"}}</span>
                         <span class="eh-mods">
-                            {{#if anchor}}<i class="fa-solid fa-anchor" data-tooltip="Âncora de Humanidade: rola duas vezes e usa o maior"></i>{{/if}}
-                            {{#if buffer}}<i class="fa-solid fa-shield-halved" data-tooltip="Buffer Cortical: pode marcar 1 Estresse para +1 na Rolagem de Humanidade"></i>{{/if}}
+                            {{#if anchor}}<i class="fa-solid fa-anchor" data-tooltip="{{localize "EDGEHEART.Chrome.AnchorTooltip"}}"></i>{{/if}}
+                            {{#if buffer}}<i class="fa-solid fa-shield-halved" data-tooltip="{{localize "EDGEHEART.Chrome.BufferTooltip"}}"></i>{{/if}}
                         </span>
                     </div>
 
@@ -42,37 +42,37 @@
 
                 {{#if cyberpsycho}}
                     <div class="eh-alert eh-alert-psycho">
-                        <strong><i class="fa-solid fa-brain"></i> Em Ciberpsicose</strong>
-                        <span>Rola só o Dado de Medo (d20), sempre com Medo · features que pedem Estresse não marcam · se a cena terminar assim, a Humanidade cai um passo.</span>
+                        <strong><i class="fa-solid fa-brain"></i> {{localize "EDGEHEART.Chrome.InPsycho"}}</strong>
+                        <span>{{localize "EDGEHEART.Chrome.InPsychoText"}}</span>
                     </div>
                 {{/if}}
                 {{#if lost}}
                     <div class="eh-alert eh-alert-psycho">
-                        <strong><i class="fa-solid fa-skull"></i> Perdido para a Ciberpsicose</strong>
-                        <span>Movimento de Morte: Cyberpsycho.</span>
+                        <strong><i class="fa-solid fa-skull"></i> {{localize "EDGEHEART.Chrome.LostTitle"}}</strong>
+                        <span>{{localize "EDGEHEART.Chrome.LostText"}}</span>
                     </div>
                 {{/if}}
 
                 {{#if @root.editable}}
                     <div class="eh-actions">
                         {{#if cyberpsycho}}
-                            <button type="button" class="eh-primary" data-action="ehStabilize" data-tooltip="Um aliado dentro do alcance Próximo gasta 1 Esperança: selecione o token dele e clique">
-                                <i class="fa-solid fa-hand-holding-heart"></i> Estabilizar
+                            <button type="button" class="eh-primary" data-action="ehStabilize" data-tooltip="{{localize "EDGEHEART.Chrome.StabilizeTooltip"}}">
+                                <i class="fa-solid fa-hand-holding-heart"></i> {{localize "EDGEHEART.Chrome.Stabilize"}}
                             </button>
                             {{#if @root.isGM}}
-                                <button type="button" data-action="ehEndCyberpsychosis" data-tooltip="Encerrar a Ciberpsicose (mestre)"><i class="fa-solid fa-power-off"></i></button>
+                                <button type="button" data-action="ehEndCyberpsychosis" data-tooltip="{{localize "EDGEHEART.Chrome.EndPsychoTooltip"}}"><i class="fa-solid fa-power-off"></i></button>
                             {{/if}}
                         {{else}}
                             <button type="button" class="eh-primary" data-action="ehRollHumanity" {{#if lost}}disabled{{/if}}
-                                data-tooltip="Role quando rolar com Medo com todo o Estresse marcado ou sem Esperança (automático nesta ficha), ou quando o mestre pedir">
-                                <i class="fa-solid fa-dice"></i> Rolagem de Humanidade
+                                data-tooltip="{{localize "EDGEHEART.Chrome.RollHumanityTooltip"}}">
+                                <i class="fa-solid fa-dice"></i> {{localize "EDGEHEART.Chrome.RollHumanity"}}
                             </button>
                         {{/if}}
                         <button type="button" data-action="ehAdvanceHumanity" {{#unless canAdvance}}disabled{{/unless}}
-                            data-tooltip="{{#if advancedThisLevel}}Já avançou neste nível{{else}}Avançar: vínculo significativo, objetivo importante, recuperar parte de si ou momento de esperança genuína (1x por nível){{/if}}">
+                            data-tooltip="{{#if advancedThisLevel}}{{localize "EDGEHEART.Chrome.AdvancedThisLevel"}}{{else}}{{localize "EDGEHEART.Chrome.AdvanceTooltip"}}{{/if}}">
                             <i class="fa-solid fa-arrow-up"></i>
                         </button>
-                        <button type="button" data-action="ehReduceHumanity" {{#unless canReduce}}disabled{{/unless}} data-tooltip="Reduzir o Dado de Humanidade um passo">
+                        <button type="button" data-action="ehReduceHumanity" {{#unless canReduce}}disabled{{/unless}} data-tooltip="{{localize "EDGEHEART.Chrome.ReduceTooltip"}}">
                             <i class="fa-solid fa-arrow-down"></i>
                         </button>
                     </div>
@@ -83,7 +83,7 @@
             <fieldset class="eh-card">
                 <legend>
                     <i class="fa-solid fa-microchip"></i> Cyberware <span class="eh-count">{{cyberCount}}</span>
-                    <a class="eh-legend-action" data-action="ehOpenCyberware" data-tooltip="Abrir o compêndio de Cyberware (arraste um item para a ficha para instalar)"><i class="fa-solid fa-plus"></i></a>
+                    <a class="eh-legend-action" data-action="ehOpenCyberware" data-tooltip="{{localize "EDGEHEART.Chrome.OpenCyberware"}}"><i class="fa-solid fa-plus"></i></a>
                 </legend>
                 {{#if cyberware.length}}
                     <ul class="eh-cyberware">
@@ -92,50 +92,50 @@
                                 <img src="{{img}}" alt="">
                                 <a class="eh-cw-name" data-action="editDoc" data-item-uuid="{{uuid}}">{{name}}</a>
                                 <span class="eh-chips">
-                                    <span class="eh-chip" data-tooltip="Tier">T{{tier}}</span>
-                                    {{#if weapon}}<span class="eh-chip" data-tooltip="Weaponware: conta como arma sempre equipada"><i class="fa-solid fa-gun"></i></span>{{/if}}
+                                    <span class="eh-chip" data-tooltip="{{localize "EDGEHEART.Chrome.Tier"}}">T{{tier}}</span>
+                                    {{#if weapon}}<span class="eh-chip" data-tooltip="{{localize "EDGEHEART.Chrome.WeaponwareTooltip"}}"><i class="fa-solid fa-gun"></i></span>{{/if}}
                                     {{#if access}}<span class="eh-chip" data-tooltip="{{access}}"><i class="fa-solid fa-network-wired"></i></span>{{/if}}
                                 </span>
                                 {{#if pending}}
-                                    <button type="button" class="eh-choose" data-action="ehChooseCyberware" data-item-uuid="{{uuid}}" data-tooltip="Este cyberware pede uma escolha">Escolher</button>
+                                    <button type="button" class="eh-choose" data-action="ehChooseCyberware" data-item-uuid="{{uuid}}" data-tooltip="{{localize "EDGEHEART.Chrome.ChoiceTooltip"}}">{{localize "EDGEHEART.Chrome.Choose"}}</button>
                                 {{/if}}
-                                <span class="eh-cost" data-tooltip="Custo Cibernético">{{cost}}</span>
+                                <span class="eh-cost" data-tooltip="{{localize "EDGEHEART.Chrome.CostTooltip"}}">{{cost}}</span>
                             </li>
                         {{/each}}
                     </ul>
                 {{else}}
-                    <p class="eh-empty">Nenhum cyberware. Clique em <i class="fa-solid fa-plus"></i> e arraste um item para a ficha.</p>
+                    <p class="eh-empty">{{{localize "EDGEHEART.Chrome.NoCyberware"}}}</p>
                 {{/if}}
             </fieldset>
 
             {{!-- EIDOLONS (Cyberware Especial) --}}
             {{#if eidolons.length}}
                 <fieldset class="eh-card eh-eidolons">
-                    <legend><i class="fa-solid fa-robot"></i> Eidolons{{#if syncCost}} <span class="eh-count" data-tooltip="Custo de Sincronia somado na Carga Cibernética">+{{syncCost}} Carga</span>{{/if}}</legend>
+                    <legend><i class="fa-solid fa-robot"></i> Eidolons{{#if syncCost}} <span class="eh-count" data-tooltip="{{localize "EDGEHEART.Chrome.SyncCostTooltip"}}">{{localize "EDGEHEART.Chrome.SyncCostCount" cost=syncCost}}</span>{{/if}}</legend>
                     <ul class="eh-eidolon-list">
                         {{#each eidolons}}
                             <li class="{{#if synced}}synced{{/if}} {{#if disabled}}disabled{{/if}}">
                                 <img src="{{img}}" alt="">
                                 <div class="eh-eidolon-info">
                                     <a class="eh-cw-name" data-action="editDoc" data-item-uuid="{{uuid}}">{{name}}</a>
-                                    <span class="eh-eidolon-stats">Sincronia {{syncCost}} · PV {{hpMarked}}/{{hp}} · Evasão {{evasion}} · Limiares {{thresholds}} · Armadura {{armor}}</span>
+                                    <span class="eh-eidolon-stats">{{localize "EDGEHEART.Chrome.EidolonStats" sync=syncCost marked=hpMarked hp=hp evasion=evasion thresholds=thresholds armor=armor}}</span>
                                     <span class="eh-eidolon-stats">{{link}}</span>
                                     <span class="eh-chips">
-                                        {{#if synced}}<span class="eh-pill eh-pill-stable">{{#if overclock}}Overclock{{else}}Sincronizado{{/if}}</span>{{/if}}
-                                        {{#if disabled}}<span class="eh-pill eh-pill-psycho">Disabled</span>{{/if}}
+                                        {{#if synced}}<span class="eh-pill eh-pill-stable">{{#if overclock}}Overclock{{else}}{{localize "EDGEHEART.Chrome.Synced"}}{{/if}}</span>{{/if}}
+                                        {{#if disabled}}<span class="eh-pill eh-pill-psycho">{{localize "EDGEHEART.Chrome.Disabled"}}</span>{{/if}}
                                     </span>
                                 </div>
                                 {{#if @root.editable}}
                                     <div class="eh-eidolon-actions">
-                                        <label class="eh-bond" data-tooltip="Soul Bond: sem ele, sincronizar marca 2 Estresse e pede Rolagem de Humanidade">
+                                        <label class="eh-bond" data-tooltip="{{localize "EDGEHEART.Chrome.BondTooltip"}}">
                                             <input type="checkbox" data-action="ehEidolonBond" data-item-uuid="{{uuid}}" {{#if bonded}}checked{{/if}}> Soul Bond
                                         </label>
                                         {{#if synced}}
-                                            <button type="button" data-action="ehEidolonUnsync"><i class="fa-solid fa-plug-circle-xmark"></i> Dessincronizar</button>
+                                            <button type="button" data-action="ehEidolonUnsync"><i class="fa-solid fa-plug-circle-xmark"></i> {{localize "EDGEHEART.Chrome.Unsync"}}</button>
                                         {{else}}
-                                            <button type="button" class="eh-primary" data-action="ehEidolonMobilize" data-item-uuid="{{uuid}}" {{#unless canMobilize}}disabled{{/unless}}><i class="fa-solid fa-plug-circle-bolt"></i> Mobilizar</button>
+                                            <button type="button" class="eh-primary" data-action="ehEidolonMobilize" data-item-uuid="{{uuid}}" {{#unless canMobilize}}disabled{{/unless}}><i class="fa-solid fa-plug-circle-bolt"></i> {{localize "EDGEHEART.Chrome.Mobilize"}}</button>
                                         {{/if}}
-                                        <button type="button" data-action="ehEidolonRepair" data-item-uuid="{{uuid}}" data-tooltip="Consertar: limpa os PV e os Espaços de Armadura do Eidolon (durante um descanso, com ferramentas e peças)"><i class="fa-solid fa-screwdriver-wrench"></i></button>
+                                        <button type="button" data-action="ehEidolonRepair" data-item-uuid="{{uuid}}" data-tooltip="{{localize "EDGEHEART.Chrome.RepairTooltip"}}"><i class="fa-solid fa-screwdriver-wrench"></i></button>
                                     </div>
                                 {{/if}}
                             </li>
@@ -145,18 +145,22 @@
             {{/if}}
             {{!-- COMPETÊNCIAS --}}
             <fieldset class="eh-card">
-                <legend><i class="fa-solid fa-network-wired"></i> Competências</legend>
-                <div class="eh-access">
-                    {{#each access}}
-                        <span class="eh-access-chip eh-access-{{kind}}" data-tooltip="{{tooltip}}">{{label}} <em>{{short}}</em></span>
-                    {{/each}}
-                </div>
+                <legend><i class="fa-solid fa-network-wired"></i> {{localize "EDGEHEART.Chrome.Competencies"}}</legend>
+                {{#if access.length}}
+                    <div class="eh-access">
+                        {{#each access}}
+                            <span class="eh-access-chip eh-access-{{kind}}" data-tooltip="{{tooltip}}">{{label}} <em>{{short}}</em></span>
+                        {{/each}}
+                    </div>
+                {{else}}
+                    <p class="eh-empty">{{localize "EDGEHEART.Chrome.NoCompetencies"}}</p>
+                {{/if}}
                 {{#if accessNote}}
                     <div class="eh-alert eh-alert-warn"><i class="fa-solid fa-circle-info"></i> {{accessNote}}</div>
                 {{/if}}
                 {{#if cardIssues.length}}
                     <div class="eh-alert eh-alert-warn">
-                        <strong><i class="fa-solid fa-triangle-exclamation"></i> Cartas fora do acesso</strong>
+                        <strong><i class="fa-solid fa-triangle-exclamation"></i> {{localize "EDGEHEART.Chrome.CardIssues"}}</strong>
                         {{#each cardIssues}}
                             <span><a data-action="editDoc" data-item-uuid="{{uuid}}">{{name}}</a>: {{problem}}</span>
                         {{/each}}
@@ -165,14 +169,14 @@
             </fieldset>
 
             <details class="eh-help">
-                <summary><i class="fa-solid fa-circle-question"></i> Como funciona</summary>
+                <summary><i class="fa-solid fa-circle-question"></i> {{localize "EDGEHEART.Chrome.HowItWorks"}}</summary>
                 <ul>
-                    <li><strong>Humanidade:</strong> começa em d6. Avança uma vez por nível (vínculo significativo, objetivo importante, recuperar parte de si, momento de esperança).</li>
-                    <li><strong>Carga Cibernética:</strong> soma do Custo de todo o cyberware instalado.</li>
-                    <li><strong>Rolagem de Humanidade:</strong> se o resultado for maior que a Carga, você mantém o controle; se for igual ou menor, entra em Ciberpsicose. É automática quando você rola com Medo com todo o Estresse marcado ou sem Esperança.</li>
-                    <li><strong>Ciberpsicose:</strong> rola só o Dado de Medo como d20, sempre com Medo; features que pedem Estresse não marcam. Um aliado pode gastar 1 Esperança para te estabilizar. Terminar a cena assim reduz a Humanidade; abaixo de d4 você está perdido.</li>
-                    <li><strong>Eidolons:</strong> arraste um Eidolon do compêndio de Cyberware para a ficha e use Mobilizar. Enquanto sincronizado, PV, Evasão, Limiares, Armadura e armas são os da estrutura (as armas usam a sua Interface), o Custo de Sincronia soma na Carga e o Competency Link libera cartas. No último PV do Eidolon, escolha Stay Inside, Hard Disconnect ou Emergency Overclock.</li>
-                    <li><strong>Competências:</strong> a classe dá Acesso Total a uma; o cyberware pode dar Acesso de Carta, Meio Acesso (até metade do nível) ou Acesso Total.</li>
+                    <li>{{{localize "EDGEHEART.Chrome.Help.Humanity"}}}</li>
+                    <li>{{{localize "EDGEHEART.Chrome.Help.Load"}}}</li>
+                    <li>{{{localize "EDGEHEART.Chrome.Help.Roll"}}}</li>
+                    <li>{{{localize "EDGEHEART.Chrome.Help.Psycho"}}}</li>
+                    <li>{{{localize "EDGEHEART.Chrome.Help.Eidolons"}}}</li>
+                    <li>{{{localize "EDGEHEART.Chrome.Help.Competencies"}}}</li>
                 </ul>
             </details>
         {{/with}}

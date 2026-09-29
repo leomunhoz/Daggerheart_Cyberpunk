@@ -17,8 +17,11 @@ const COMPETENCIES = {
   network: "Network", assault: "Assault", chrome: "Chrome", systems: "Systems", influence: "Influence",
   ghost: "Ghost", frontier: "Frontier", medtech: "Medtech", aegis: "Aegis", redline: "Redline", blackwall: "Blackwall"
 };
-const ACCESS = { full: "Acesso Total", half: "Meio Acesso", card: "Acesso de Carta" };
-const TRAITS = { agility: "Agilidade", strength: "Força", finesse: "Acuidade", instinct: "Instinto", presence: "Presença", knowledge: "Conhecimento" };
+// Textos da interface ficam em lang/*.json (EDGEHEART.*).
+const t = (key, data) => data ? game.i18n.format(`EDGEHEART.${key}`, data) : game.i18n.localize(`EDGEHEART.${key}`);
+const accessLabel = level => t(`Access.${level}`);
+const TRAIT_KEYS = ["agility", "strength", "finesse", "instinct", "presence", "knowledge"];
+const traitLabel = key => game.i18n.localize(`DAGGERHEART.CONFIG.Traits.${key}.name`);
 
 // Acha uma ação pelo nome na língua de origem: usa o _id guardado pelo gerador (flags.actionIds), então
 // funciona mesmo com uma tradução (Babele) trocando os nomes. Itens antigos, sem a tabela, caem no nome.
@@ -73,9 +76,9 @@ export const Humanity = {
       else entry.cards += 1;
       entry.sources.push(source);
     };
-    for (const d of actor.system.class?.value?.system?.domains ?? []) add(d, "full", "Classe");
+    for (const d of actor.system.class?.value?.system?.domains ?? []) add(d, "full", t("Access.SourceClass"));
     const multiclass = actor.items.find(i => i.type === "class" && i.system.isMulticlass && !i.getFlag(MODULE_ID, "cyberAccess"));
-    for (const d of multiclass?.system.domains ?? []) add(d, "half", "Multiclasse");
+    for (const d of multiclass?.system.domains ?? []) add(d, "half", t("Access.SourceMulticlass"));
     for (const item of this.cyberware(actor)) {
       const a = item.getFlag(MODULE_ID, "access");
       if (a?.competency && a?.level) add(a.competency, a.level, item.name);
@@ -88,7 +91,7 @@ export const Humanity = {
       ...e,
       kind: e.full ? "full" : e.half ? "half" : "card",
       label: e.label,
-      kindLabel: e.full ? ACCESS.full : e.half ? ACCESS.half : `${ACCESS.card} (${e.cards})`,
+      kindLabel: e.full ? accessLabel("full") : e.half ? accessLabel("half") : t("Access.CardCount", { count: e.cards }),
       maxLevel: e.full ? level : e.half ? Math.ceil(level / 2) : level
     }));
   },
@@ -105,14 +108,14 @@ export const Humanity = {
       const a = access[domain];
       const label = COMPETENCIES[domain] ?? domain;
       if (!a) {
-        cards.forEach(c => issues.push({ uuid: c.uuid, name: c.name, problem: `sem acesso a ${label}` }));
+        cards.forEach(c => issues.push({ uuid: c.uuid, name: c.name, problem: t("Access.Issue.NoAccess", { competency: label }) }));
         continue;
       }
       const limit = a.kind === "card" ? level : a.maxLevel;
       cards.filter(c => c.system.level > limit)
-        .forEach(c => issues.push({ uuid: c.uuid, name: c.name, problem: `nível ${c.system.level} acima do permitido (${limit}) pelo ${a.kindLabel}` }));
+        .forEach(c => issues.push({ uuid: c.uuid, name: c.name, problem: t("Access.Issue.LevelTooHigh", { level: c.system.level, limit, access: a.kindLabel }) }));
       if (a.kind === "card" && cards.length > a.cards) {
-        cards.slice(a.cards).forEach(c => issues.push({ uuid: c.uuid, name: c.name, problem: `mais cartas de ${label} do que Acessos de Carta (${a.cards})` }));
+        cards.slice(a.cards).forEach(c => issues.push({ uuid: c.uuid, name: c.name, problem: t("Access.Issue.TooManyCards", { competency: label, count: a.cards }) }));
       }
     }
     return issues;
@@ -160,7 +163,7 @@ export const Humanity = {
         return {
           uuid: i.uuid, name: i.name, img: i.img,
           cost: Number(i.getFlag(MODULE_ID, "cyberCost") ?? 0), tier: i.getFlag(MODULE_ID, "tier"),
-          access: a ? `${ACCESS[a.level]}: ${COMPETENCIES[a.competency] ?? a.competency}` : null,
+          access: a ? `${accessLabel(a.level)}: ${COMPETENCIES[a.competency] ?? a.competency}` : null,
           pending: !!i.getFlag(MODULE_ID, "choice") && !i.getFlag(MODULE_ID, "chosen"),
           weapon: i.type === "weapon"
         };
@@ -186,16 +189,17 @@ export const Humanity = {
   view(actor) {
     const s = this.summary(actor);
     const risk = s.controlChance >= 70 ? "ok" : s.controlChance >= 40 ? "warn" : "bad";
+    const state = s.lost ? "lost" : s.cyberpsycho ? "psycho" : "stable";
     return {
       ...s,
       risk,
-      state: s.lost ? "lost" : s.cyberpsycho ? "psycho" : "stable",
-      stateLabel: s.lost ? "Perdido" : s.cyberpsycho ? "Ciberpsicose" : "Estável",
+      state,
+      stateLabel: t(`Humanity.State.${state}`),
       cyberCount: s.cyberware.length,
       access: s.access.map(a => ({
         ...a,
-        short: a.full ? "Total" : a.half ? "Meio" : `${a.cards} carta${a.cards > 1 ? "s" : ""}`,
-        tooltip: `${a.kindLabel} · até nível ${a.maxLevel} · ${a.sources.join(", ")}`
+        short: a.full ? t("Access.Short.full") : a.half ? t("Access.Short.half") : t(`Access.Short.${a.cards > 1 ? "many" : "one"}`, { count: a.cards }),
+        tooltip: t("Access.Tooltip", { access: a.kindLabel, level: a.maxLevel, sources: a.sources.join(", ") })
       })),
       hasProblems: s.cardIssues.length > 0 || !!s.accessNote
     };
@@ -205,7 +209,7 @@ export const Humanity = {
   async advance(actor) {
     const s = this.summary(actor);
     if (!s.canAdvance) {
-      ui.notifications.warn(s.die >= 12 ? "O Dado de Humanidade já está no máximo (d12)." : "O Dado de Humanidade já avançou neste nível.");
+      ui.notifications.warn(t(s.die >= 12 ? "Humanity.MaxDie" : "Humanity.AlreadyAdvanced"));
       return;
     }
     const next = HUMANITY_STEPS[HUMANITY_STEPS.indexOf(s.die) + 1];
@@ -213,7 +217,7 @@ export const Humanity = {
       [`flags.${MODULE_ID}.humanityDie`]: next,
       [`flags.${MODULE_ID}.humanityAdvancedAt`]: actor.system.levelData.level.current
     });
-    await chat(actor, `<p><strong>${actor.name}</strong> avançou o Dado de Humanidade: d${s.die} → <strong>d${next}</strong>.</p>`);
+    await chat(actor, t("Humanity.ChatAdvanced", { name: actor.name, from: s.die, to: next }));
   },
 
   // Reduz um passo. Abaixo de d4 o personagem está perdido (Movimento de Morte: Ciberpsicopata).
@@ -223,20 +227,12 @@ export const Humanity = {
     if (index <= 0) return this.lose(actor, reason);
     const next = HUMANITY_STEPS[index - 1];
     await actor.setFlag(MODULE_ID, "humanityDie", next);
-    await chat(actor, `<p><strong>${actor.name}</strong> perdeu Humanidade${reason ? ` (${reason})` : ""}: d${die} → <strong>d${next}</strong>.</p>`);
+    await chat(actor, t("Humanity.ChatReduced", { name: actor.name, reason: reason ? ` (${reason})` : "", from: die, to: next }));
   },
 
   async lose(actor, reason = "") {
     await actor.setFlag(MODULE_ID, "lost", true);
-    await chat(actor, `
-      <h3>Movimento de Morte: Ciberpsicopata</h3>
-      <p><strong>${actor.name}</strong> foi perdido para a Ciberpsicose${reason ? ` (${reason})` : ""}. Escolha um:</p>
-      <ul>
-        <li>Você desaparece na cidade como uma lenda urbana violenta.</li>
-        <li>Sua equipe é forçada a te abater.</li>
-        <li>Você se consome num último ato de destruição, salvando alguém ou completando o trabalho a um custo terrível.</li>
-      </ul>
-      <p>Depois, crie um novo personagem.</p>`);
+    await chat(actor, t("Humanity.ChatLost", { name: actor.name, reason: reason ? ` (${reason})` : "" }));
   },
 
   // Rolagem de Humanidade: resultado > Carga Cibernética = mantém o controle.
@@ -249,34 +245,35 @@ export const Humanity = {
     const roll = await new Roll(anchor ? `2d${die}kh` : `1d${die}`).evaluate();
     let total = roll.total;
     const notes = [];
-    if (load < this.cyberLoad(actor)) notes.push("Integrated Chrome: Carga Cibernética tratada como 1 menor.");
-    if (anchor) notes.push("Âncora de Humanidade: rolou duas vezes e usou o maior.");
+    if (load < this.cyberLoad(actor)) notes.push(t("Humanity.NoteIntegratedChrome"));
+    if (anchor) notes.push(t("Humanity.NoteAnchor"));
     // Buffer Cortical (cyberware 37): marcar 1 Estresse para +1, oferecido só quando muda o resultado.
     const { stress } = actor.system.resources;
     if (total <= load && total + 1 > load && this.hasHumanityMod(actor, "buffer") && stress.value < stress.max) {
       const useBuffer = await foundry.applications.api.DialogV2.confirm({
-        window: { title: "Buffer Cortical" },
-        content: `<p>Rolagem de Humanidade: <strong>${total}</strong> contra Carga <strong>${load}</strong>. Marcar 1 Estresse para somar +1 e manter o controle?</p>`
+        window: { title: t("Humanity.BufferTitle") },
+        content: t("Humanity.BufferPrompt", { total, load })
       });
       if (useBuffer) {
         await actor.update({ "system.resources.stress.value": stress.value + 1 });
         total += 1;
-        notes.push("Buffer Cortical: marcou 1 Estresse para +1.");
+        notes.push(t("Humanity.NoteBuffer"));
       }
     }
     const inControl = total > load;
     const wasPsycho = this.isCyberpsycho(actor);
 
     let outcome;
-    if (stabilize) outcome = inControl ? "A Ciberpsicose termina." : "A Ciberpsicose continua.";
-    else if (inControl) outcome = "Mantém o controle.";
-    else outcome = wasPsycho ? "Continua em Ciberpsicose." : "Entra em CIBERPSICOSE.";
+    if (stabilize) outcome = t(inControl ? "Humanity.Outcome.PsychoEnds" : "Humanity.Outcome.PsychoContinues");
+    else if (inControl) outcome = t("Humanity.Outcome.InControl");
+    else outcome = t(wasPsycho ? "Humanity.Outcome.StillPsycho" : "Humanity.Outcome.EntersPsycho");
 
-    const title = stabilize ? `Estabilização${helper ? ` por ${helper.name}` : ""}` : "Rolagem de Humanidade";
+    const title = stabilize ? (helper ? t("Humanity.StabilizeBy", { name: helper.name }) : t("Humanity.StabilizeTitle")) : t("Humanity.RollTitle");
+    const math = total !== roll.total ? `${roll.total} + ${total - roll.total} = ` : "";
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor }),
       flavor: `<div class="eh-chat"><h3>${title}</h3>${reason ? `<p><em>${reason}</em></p>` : ""}
-        <p>d${die} = ${total !== roll.total ? `${roll.total} + ${total - roll.total} = ` : ""}<strong>${total}</strong> contra Carga Cibernética <strong>${load}</strong></p>
+        <p>${t("Humanity.RollLine", { die, math, total, load })}</p>
         ${notes.map(n => `<p><em>${n}</em></p>`).join("")}
         <p class="eh-outcome ${inControl ? "eh-ok" : "eh-bad"}">${outcome}</p></div>`
     });
@@ -291,20 +288,18 @@ export const Humanity = {
     // Duração "cena": o refresh de cena do Daggerheart remove o efeito, e o hook de
     // deleteActiveEffect abaixo aplica "terminou a cena em Ciberpsicose: reduza a Humanidade".
     await actor.createEmbeddedDocuments("ActiveEffect", [{
-      name: "Ciberpsicose", img: PSYCHO_IMG, type: "base",
-      description: "<p>Você não rola o Dado de Esperança: use só o Dado de Medo como d20 + atributo; a rolagem é sempre com Medo. Features que exigiriam marcar Estresse podem ser usadas sem marcar Estresse.</p><p>Um aliado dentro do alcance Próximo pode gastar 1 Esperança para te estabilizar (role a Humanidade de novo). Se a cena terminar em Ciberpsicose, reduza seu Dado de Humanidade.</p>",
+      name: t("Humanity.EffectName"), img: PSYCHO_IMG, type: "base",
+      description: t("Humanity.EffectDescription"),
       system: {
         changes: [{ key: "system.rules.dualityRoll.defaultFearDice", type: "override", value: 20, priority: null, phase: "initial" }],
-        duration: { description: "Até ser estabilizado ou o fim da cena", type: "scene" },
+        duration: { description: t("Humanity.EffectDuration"), type: "scene" },
         rangeDependence: null, stacking: null, targetDispositions: [], conditionals: []
       },
       flags: { [MODULE_ID]: { cyberpsychosis: true } }
     }]);
-    await chat(actor, `
-      <h3>CIBERPSICOSE</h3>
-      <p><strong>${actor.name}</strong> perdeu o controle. Rolagens usam só o Dado de Medo (d20) e são sempre com Medo; features que marcariam Estresse não marcam.</p>
+    await chat(actor, `${t("Humanity.ChatPsycho", { name: actor.name })}
       <button type="button" data-eh-action="stabilize" data-actor-uuid="${actor.uuid}">
-        <i class="fa-solid fa-hand-holding-heart"></i> Estabilizar (aliado gasta 1 Esperança)
+        <i class="fa-solid fa-hand-holding-heart"></i> ${t("Humanity.StabilizeButton")}
       </button>`);
   },
 
@@ -316,9 +311,9 @@ export const Humanity = {
 
   // Um aliado (dono do personagem ajudante) gasta 1 Esperança e o personagem rola a Humanidade de novo.
   async stabilize(actor, helper) {
-    if (!this.isCyberpsycho(actor)) return ui.notifications.info(`${actor.name} não está em Ciberpsicose.`);
-    if (!helper || helper === actor) return ui.notifications.warn("Selecione o token (ou defina o personagem) do aliado que vai estabilizar.");
-    if ((helper.system.resources.hope?.value ?? 0) < 1) return ui.notifications.warn(`${helper.name} não tem Esperança para gastar.`);
+    if (!this.isCyberpsycho(actor)) return ui.notifications.info(t("Humanity.NotPsycho", { name: actor.name }));
+    if (!helper || helper === actor) return ui.notifications.warn(t("Humanity.SelectHelper"));
+    if ((helper.system.resources.hope?.value ?? 0) < 1) return ui.notifications.warn(t("Humanity.NoHope", { name: helper.name }));
     await helper.update({ "system.resources.hope.value": helper.system.resources.hope.value - 1 });
     return this.roll(actor, { stabilize: true, helper });
   }
@@ -352,11 +347,11 @@ const AccessClass = {
   // Por que o acesso não virou item de classe (mostrado na aba Chrome).
   blockedReason(actor) {
     if (!Humanity.cyberware(actor).some(i => i.getFlag(MODULE_ID, "access")) && !Eidolon.synced(actor)) return null;
-    if (this.realMulticlass(actor)) return "O personagem já tem uma multiclasse; os acessos cibernéticos ficam só como referência.";
-    if (!game.system.settings.automation.levelupAuto) return "Com a automação de Level Up desligada, o sistema pede o domínio da multiclasse numa janela; os acessos ficam só como referência.";
+    if (this.realMulticlass(actor)) return t("Access.Blocked.Multiclass");
+    if (!game.system.settings.automation.levelupAuto) return t("Access.Blocked.Levelup");
     const missing = Humanity.cyberware(actor).map(i => i.getFlag(MODULE_ID, "access")?.competency)
       .filter(d => d && !CONFIG.DH.DOMAIN.allDomains()[d]);
-    if (missing.length) return `Ainda sem cartas no módulo: ${[...new Set(missing)].map(d => COMPETENCIES[d] ?? d).join(", ")}.`;
+    if (missing.length) return t("Access.Blocked.Missing", { list: [...new Set(missing)].map(d => COMPETENCIES[d] ?? d).join(", ") });
     return null;
   },
 
@@ -371,9 +366,9 @@ const AccessClass = {
     if (current) await current.delete();
     if (blocked || !wanted.length || !actor.system.class?.value) return;
     await actor.createEmbeddedDocuments("Item", [{
-      name: "Acessos Cibernéticos", type: "class", img: `modules/${MODULE_ID}/assets/cpr/cyberware/interface_plugs.svg`,
+      name: t("Access.ItemName"), type: "class", img: `modules/${MODULE_ID}/assets/cpr/cyberware/interface_plugs.svg`,
       system: {
-        description: "<p>Competências liberadas por cyberware (Edgeheart). Mantido automaticamente pelo módulo; não dá PV, Evasão nem features.</p>",
+        description: t("Access.ItemDescription"),
         domains: wanted, isMulticlass: true, hitPoints: 0, evasion: 0, features: [], classItems: []
       },
       flags: { [MODULE_ID]: { cyberAccess: true } }
@@ -416,7 +411,7 @@ const EdgeheartLevelup = {
     await game.settings.set(MODULE_ID, "levelTiersBackup", original);
     await game.settings.set(CONFIG.DH.id, this.key, this.build(original));
     await game.settings.set(MODULE_ID, "levelupApplied", true);
-    ui.notifications.info("Edgeheart: Level Up do Edgeheart aplicado neste mundo (sem PV, Estresse, Evasão, Atributos e Multiclasse). Dá para desligar nas configurações do módulo.");
+    ui.notifications.info(t("Levelup.Applied"));
   },
 
   async restore() {
@@ -424,7 +419,7 @@ const EdgeheartLevelup = {
     const original = game.settings.get(MODULE_ID, "levelTiersBackup");
     if (original?.tiers) await game.settings.set(CONFIG.DH.id, this.key, original);
     await game.settings.set(MODULE_ID, "levelupApplied", false);
-    ui.notifications.info("Edgeheart: Level Up original do Daggerheart restaurado neste mundo.");
+    ui.notifications.info(t("Levelup.Restored"));
   },
 
   async sync() {
@@ -447,26 +442,27 @@ const Cyberware = {
       foundry.applications.api.DialogV2.input({ window: { title: `${baseName}: ${title}` }, content, rejectClose: false });
 
     if (choice === "trait") {
-      const r = await ask("escolha o atributo", `<label>Atributo ${select("trait", TRAITS)}</label>`);
+      const traits = Object.fromEntries(TRAIT_KEYS.map(k => [k, traitLabel(k)]));
+      const r = await ask(t("Cyberware.ChooseTrait"), `<label>${t("Cyberware.Trait")} ${select("trait", traits)}</label>`);
       if (!r) return this.pending(item);
       await this.setBonus(item, `system.traits.${r.trait}.value`, 1);
-      return this.done(item, `${baseName} (${TRAITS[r.trait]})`);
+      return this.done(item, `${baseName} (${traits[r.trait]})`);
     }
 
     if (choice === "experience" || choice === "neuralArchive") {
       const experiences = Object.fromEntries(Object.entries(actor.system.experiences ?? {}).map(([id, e]) => [id, `${e.name} (+${e.value})`]));
-      const options = choice === "neuralArchive" ? { new: "Nova Experiência (+2)", ...experiences } : experiences;
+      const options = choice === "neuralArchive" ? { new: t("Cyberware.NewExperience"), ...experiences } : experiences;
       if (!Object.keys(options).length) {
-        ui.notifications.warn(`${actor.name} não tem Experiências para escolher.`);
+        ui.notifications.warn(t("Cyberware.NoExperiences", { name: actor.name }));
         return this.pending(item);
       }
-      const content = `<label>Experiência ${select("experience", options)}</label>`
-        + (choice === "neuralArchive" ? `<label>Nome da nova Experiência <input type="text" name="newName" placeholder="só se escolher Nova"></label>` : "");
-      const r = await ask("escolha a Experiência", content);
+      const content = `<label>${t("Cyberware.Experience")} ${select("experience", options)}</label>`
+        + (choice === "neuralArchive" ? `<label>${t("Cyberware.NewExperienceName")} <input type="text" name="newName" placeholder="${t("Cyberware.NewExperiencePlaceholder")}"></label>` : "");
+      const r = await ask(t("Cyberware.ChooseExperience"), content);
       if (!r) return this.pending(item);
       if (r.experience === "new") {
         const id = foundry.utils.randomID();
-        const name = r.newName?.trim() || "Arquivo Neural";
+        const name = r.newName?.trim() || t("Cyberware.NeuralArchiveDefault");
         await actor.update({ [`system.experiences.${id}`]: { name, value: 2, core: false } });
         await item.setFlag(MODULE_ID, "linkedExperience", id);
         return this.done(item, `${baseName} (${name})`);
@@ -478,19 +474,19 @@ const Cyberware = {
 
     if (choice === "competency") {
       const competencies = Object.fromEntries(Object.entries(COMPETENCIES).filter(([id]) => !["redline", "blackwall"].includes(id)));
-      const r = await ask("escolha a Competência",
-        `<label>Competência ${select("competency", competencies)}</label>`
-        + `<label>Acesso ${select("level", { card: "Custo 1: Acesso de Carta", half: "Custo 2: Meio Acesso", full: "Custo 3: Acesso Total" })}</label>`);
+      const r = await ask(t("Cyberware.ChooseCompetency"),
+        `<label>${t("Cyberware.Competency")} ${select("competency", competencies)}</label>`
+        + `<label>${t("Cyberware.AccessLevel")} ${select("level", { card: t("Cyberware.Cost.card"), half: t("Cyberware.Cost.half"), full: t("Cyberware.Cost.full") })}</label>`);
       if (!r) return this.pending(item);
       await item.update({
         [`flags.${MODULE_ID}.access`]: { competency: r.competency, level: r.level },
         [`flags.${MODULE_ID}.cyberCost`]: { card: 1, half: 2, full: 3 }[r.level]
       });
-      return this.done(item, `${baseName} (${COMPETENCIES[r.competency]}, ${ACCESS[r.level]})`);
+      return this.done(item, `${baseName} (${COMPETENCIES[r.competency]}, ${accessLabel(r.level)})`);
     }
 
     if (choice === "tacticalMesh") {
-      const r = await ask("escolha a Competência", `<label>Meio Acesso a ${select("competency", { aegis: COMPETENCIES.aegis, influence: COMPETENCIES.influence })}</label>`);
+      const r = await ask(t("Cyberware.ChooseCompetency"), `<label>${t("Cyberware.HalfAccessTo")} ${select("competency", { aegis: COMPETENCIES.aegis, influence: COMPETENCIES.influence })}</label>`);
       if (!r) return this.pending(item);
       await item.setFlag(MODULE_ID, "access", { competency: r.competency, level: "half" });
       return this.done(item, `${baseName} (${COMPETENCIES[r.competency]})`);
@@ -513,7 +509,7 @@ const Cyberware = {
   },
 
   pending(item) {
-    ui.notifications.warn(`${item.name}: escolha pendente. Faça pela aba Chrome da Ficha Edgeheart.`);
+    ui.notifications.warn(t("Cyberware.Pending", { name: item.name }));
   }
 };
 
@@ -526,7 +522,7 @@ async function chat(actor, content) {
 async function asOwner(actor, action, payload) {
   if (actor.isOwner) return handlers[action](payload);
   const gm = game.users.activeGM;
-  if (!gm) return ui.notifications.warn("Nenhum mestre conectado para aplicar isso.");
+  if (!gm) return ui.notifications.warn(t("Common.NoGM"));
   game.socket.emit(SOCKET, { action, payload });
 }
 
@@ -617,37 +613,37 @@ function defineSheet() {
       badge.className = `eh-header-badge${s.cyberpsycho ? " eh-psycho" : ""}${s.lost ? " eh-lost" : ""}`;
       badge.dataset.action = "ehOpenChrome";
       const picks = Pick.items(this.document);
-      badge.dataset.tooltip = ["Humanidade", "Carga Cibernética", ...picks.map(i => i.getFlag(MODULE_ID, "pick").title)].join(" / ");
+      badge.dataset.tooltip = [t("Humanity.Label"), t("Humanity.CyberLoad"), ...picks.map(i => i.getFlag(MODULE_ID, "pick").title)].join(" / ");
       badge.innerHTML = `<i class="fa-solid fa-heart-pulse"></i> d${s.die} <span class="eh-sep">|</span> <i class="fa-solid fa-microchip"></i> ${s.load}`
         + picks.map(i => ` <span class="eh-sep">|</span> <i class="fa-solid ${i.getFlag(MODULE_ID, "pick").icon ?? "fa-list-check"}"></i> ${Pick.label(i)}`).join("")
-        + (s.cyberpsycho ? ` <span class="eh-flag">CIBERPSICOSE</span>` : "")
-        + (s.lost ? ` <span class="eh-flag">PERDIDO</span>` : "");
+        + (s.cyberpsycho ? ` <span class="eh-flag">${t("Humanity.Flag.psycho")}</span>` : "")
+        + (s.lost ? ` <span class="eh-flag">${t("Humanity.Flag.lost")}</span>` : "");
       anchor.after(badge);
     }
 
     static async #advanceHumanity() { await Humanity.advance(this.document); }
 
-    static async #reduceHumanity() { await Humanity.reduce(this.document, "ajuste manual"); }
+    static async #reduceHumanity() { await Humanity.reduce(this.document, t("Humanity.ReasonManual")); }
 
-    static async #rollHumanity() { await Humanity.roll(this.document, { reason: "Rolagem pedida na ficha" }); }
+    static async #rollHumanity() { await Humanity.roll(this.document, { reason: t("Humanity.ReasonSheet") }); }
 
     static async #stabilize() {
       const helper = helperActor(this.document);
-      if (!helper) return ui.notifications.warn("Selecione o token do aliado que vai gastar a Esperança.");
+      if (!helper) return ui.notifications.warn(t("Common.SelectHelperToken"));
       await asOwner(this.document, "stabilize", { actorUuid: this.document.uuid, helperUuid: helper.uuid });
     }
 
     static async #endCyberpsychosis() {
-      if (!game.user.isGM) return ui.notifications.warn("Só o mestre pode encerrar a Ciberpsicose sem estabilização.");
+      if (!game.user.isGM) return ui.notifications.warn(t("Humanity.OnlyGMEnd"));
       await Humanity.end(this.document, { resolved: true });
-      await chat(this.document, `<p>O mestre encerrou a Ciberpsicose de <strong>${this.document.name}</strong>.</p>`);
+      await chat(this.document, t("Humanity.ChatGMEnded", { name: this.document.name }));
     }
 
     static #openChrome() { this.changeTab("chrome", "primary"); }
 
     static #openCyberware() {
       const pack = game.packs.get(`${MODULE_ID}.edgeheart-cyberware`);
-      if (!pack) return ui.notifications.warn("Compêndio de Cyberware não encontrado. Confira se o módulo Edgeheart está ativo.");
+      if (!pack) return ui.notifications.warn(t("Cyberware.PackMissing"));
       pack.render(true);
     }
 
@@ -701,8 +697,8 @@ const KillChain = {
     } else if (!timer) {
       await actor.createEmbeddedDocuments("ActiveEffect", [{
         name: "Kill Chain", img: item.img, type: "base",
-        description: "<p>O Kill Chain Die está acima de d4. No fim da cena ele volta a d4.</p>",
-        system: { changes: [], duration: { description: "Até o fim da cena", type: "scene" }, rangeDependence: null, stacking: null, targetDispositions: [], conditionals: [] },
+        description: t("KillChain.EffectDescription"),
+        system: { changes: [], duration: { description: t("KillChain.EffectDuration"), type: "scene" }, rangeDependence: null, stacking: null, targetDispositions: [], conditionals: [] },
         flags: { [MODULE_ID]: { killChainTimer: true } }
       }]);
     }
@@ -711,22 +707,22 @@ const KillChain = {
   async roll(item) {
     const faces = this.faces(item);
     const roll = await new Roll(`1${faces}`).evaluate();
-    await roll.toMessage({ speaker: ChatMessage.getSpeaker({ actor: item.parent }), flavor: `Kill Chain Die (${faces}) — some ao dano` });
+    await roll.toMessage({ speaker: ChatMessage.getSpeaker({ actor: item.parent }), flavor: t("KillChain.RollFlavor", { faces }) });
     await item.update({ "system.resource.value": roll.total });
   },
 
   async step(item) {
     const faces = this.faces(item);
     const next = KILL_CHAIN_STEPS[Math.min(KILL_CHAIN_STEPS.indexOf(faces) + 1, KILL_CHAIN_STEPS.length - 1)];
-    if (next === faces) return ui.notifications.info("O Kill Chain Die já está no máximo (d20).");
+    if (next === faces) return ui.notifications.info(t("KillChain.Max"));
     await this.set(item, next);
-    await chat(item.parent, `<p><strong>${item.parent.name}</strong>: Kill Chain Die ${faces} → <strong>${next}</strong>.</p>`);
+    await chat(item.parent, t("KillChain.ChatStep", { name: item.parent.name, from: faces, to: next }));
   },
 
   async reset(item, reason = "") {
     if (this.faces(item) === "d4" && !item.system.resource?.value) return;
     await this.set(item, "d4");
-    await chat(item.parent, `<p><strong>${item.parent.name}</strong>: Kill Chain Die volta a <strong>d4</strong>${reason ? ` (${reason})` : ""}.</p>`);
+    await chat(item.parent, t("KillChain.ChatReset", { name: item.parent.name, reason: reason ? ` (${reason})` : "" }));
   }
 };
 
@@ -760,16 +756,16 @@ const Cover = {
     if (!delta) return true;
     const item = this.feature(action.actor);
     if (!item) {
-      ui.notifications.warn(`${action.name}: o personagem não tem a feature Cover Work.`);
+      ui.notifications.warn(t("Cover.NoFeature", { action: action.name }));
       return false;
     }
     const value = this.value(item);
     if (delta < 0 && value < -delta) {
-      ui.notifications.warn(`${action.name} precisa de ${-delta} Cover (você tem ${value}).`);
+      ui.notifications.warn(t("Cover.NotEnough", { action: action.name, need: -delta, have: value }));
       return false;
     }
     if (delta > 0 && value >= this.max(item)) {
-      ui.notifications.info(`O Cover já está no máximo (${this.max(item)}).`);
+      ui.notifications.info(t("Cover.Max", { max: this.max(item) }));
       return false;
     }
     return true;
@@ -829,14 +825,14 @@ const Pick = {
     const current = this.value(item);
     const value = await foundry.applications.api.DialogV2.wait({
       window: { title: pick.title },
-      content: `<p>${pick.prompt ?? `Escolha: ${pick.title}.`}</p>`,
+      content: `<p>${pick.prompt ?? t("Pick.Prompt", { title: pick.title })}</p>`,
       buttons: Object.entries(pick.options).map(([action, label]) => ({ action, label, default: action === current })),
       rejectClose: false
     });
     if (!value) return;
     await item.setFlag(MODULE_ID, "picked", value);
     if (item.getFlag(MODULE_ID, "integratedChrome")) await IntegratedChrome.syncReinforcedBuild(actor);
-    await chat(actor, `<p><strong>${actor.name}</strong> escolheu <strong>${pick.options[value]}</strong> (${pick.title}).</p>`);
+    await chat(actor, t("Pick.ChatChose", { name: actor.name, option: pick.options[value], title: pick.title }));
   }
 };
 
@@ -910,7 +906,7 @@ const Eidolon = {
       return {
         uuid: i.uuid, name: i.name, img: i.img, syncCost: d.syncCost, hp: d.hp, evasion: d.evasion, armor: d.armor,
         thresholds: d.thresholds.join("/"), bonded: d.bonded, disabled: d.disabled, hpMarked: synced && !s.overclock ? actor.system.resources.hitPoints.value : d.hpMarked,
-        link: `${ACCESS[d.link.level]}: ${d.link.competencies.map(c => COMPETENCIES[c] ?? c).join(", ")}`,
+        link: `${accessLabel(d.link.level)}: ${d.link.competencies.map(c => COMPETENCIES[c] ?? c).join(", ")}`,
         synced, overclock: synced && !!s.overclock, canMobilize: !s && !d.disabled
       };
     });
@@ -924,8 +920,8 @@ const Eidolon = {
   // Rolagem de Humanidade de sincronização (sem Soul Bond ou Hard Disconnect usa a do sistema da ficha).
   async unbondedSync(actor, data, item) {
     const ok = await foundry.applications.api.DialogV2.confirm({
-      window: { title: "Sincronizar sem Soul Bond" },
-      content: `<p><strong>${actor.name}</strong> não tem Soul Bond com <strong>${item.name}</strong>. Marcar 2 Estresse e rolar o Dado de Humanidade? Se o resultado for igual ou menor que a Carga Cibernética total (com o Custo de Sincronia), a sincronização falha.</p>`
+      window: { title: t("Eidolon.UnbondedTitle") },
+      content: t("Eidolon.UnbondedPrompt", { name: actor.name, item: item.name })
     });
     if (!ok) return false;
     const stress = actor.system.resources.stress;
@@ -936,15 +932,15 @@ const Eidolon = {
     const success = roll.total > load;
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor }),
-      flavor: `<div class="eh-chat"><h3>Sincronização sem Soul Bond</h3><p>d${die} = <strong>${roll.total}</strong> contra Carga Cibernética total <strong>${load}</strong> (com o Custo de Sincronia de ${item.name})</p><p class="eh-outcome ${success ? "eh-ok" : "eh-bad"}">${success ? "A sincronização funciona." : "A sincronização falha (ou o mestre introduz uma consequência grave)."}</p></div>`
+      flavor: `<div class="eh-chat"><h3>${t("Eidolon.UnbondedRollTitle")}</h3><p>${t("Eidolon.UnbondedLine", { die, total: roll.total, load, item: item.name })}</p><p class="eh-outcome ${success ? "eh-ok" : "eh-bad"}">${t(success ? "Eidolon.SyncOk" : "Eidolon.SyncFail")}</p></div>`
     });
     return success;
   },
 
   async mobilize(actor, item) {
-    if (this.state(actor)) return ui.notifications.warn(`${actor.name} já está sincronizado com um Eidolon.`);
+    if (this.state(actor)) return ui.notifications.warn(t("Eidolon.AlreadySynced", { name: actor.name }));
     const data = item.getFlag(MODULE_ID, "eidolon");
-    if (data.disabled) return ui.notifications.warn(`${item.name} está Disabled: conserte antes de mobilizar.`);
+    if (data.disabled) return ui.notifications.warn(t("Eidolon.IsDisabled", { item: item.name }));
     if (!data.bonded && !(await this.unbondedSync(actor, data, item))) return;
 
     const level = actor.system.levelData?.level?.current ?? 1;
@@ -965,8 +961,8 @@ const Eidolon = {
     });
     await actor.createEmbeddedDocuments("Item", parts);
     await actor.createEmbeddedDocuments("ActiveEffect", [{
-      name: `Eidolon: ${item.name}`, img: item.img, type: "base",
-      description: "<p>Sincronizado com o Eidolon: PV, Evasão, Limiares, Armadura e armas são os da estrutura.</p>",
+      name: t("Eidolon.EffectName", { item: item.name }), img: item.img, type: "base",
+      description: t("Eidolon.EffectDescription"),
       flags: { [MODULE_ID]: { eidolonEffect: true } },
       system: {
         changes: [
@@ -982,7 +978,7 @@ const Eidolon = {
     });
     await this.setTokens(actor, item.img);
     await queueAccessSync(actor);
-    await chat(actor, `<p><strong>${actor.name}</strong> mobilizou <strong>${item.name}</strong>. Custo de Sincronia <strong>+${data.syncCost}</strong> na Carga Cibernética enquanto sincronizado.</p>`);
+    await chat(actor, t("Eidolon.ChatMobilized", { name: actor.name, item: item.name, cost: data.syncCost }));
   },
 
   async unsync(actor, { quiet = false } = {}) {
@@ -1009,12 +1005,12 @@ const Eidolon = {
     await actor.update({ "system.resources.hitPoints.value": pilotHp, [`flags.${MODULE_ID}.eidolonSync`]: new foundry.data.operators.ForcedDeletion() });
     await this.setTokens(actor, s.tokenImg);
     await queueAccessSync(actor);
-    if (!quiet) await chat(actor, `<p><strong>${actor.name}</strong> dessincronizou${item ? ` de <strong>${item.name}</strong>` : ""}.</p>`);
+    if (!quiet) await chat(actor, item ? t("Eidolon.ChatUnsyncedFrom", { name: actor.name, item: item.name }) : t("Eidolon.ChatUnsynced", { name: actor.name }));
   },
 
   async repair(item) {
     await item.update({ [`flags.${MODULE_ID}.eidolon.hpMarked`]: 0, [`flags.${MODULE_ID}.eidolon.armorMarked`]: 0, [`flags.${MODULE_ID}.eidolon.disabled`]: false });
-    await chat(item.parent, `<p><strong>${item.name}</strong> foi consertado: PV e Espaços de Armadura limpos.</p>`);
+    await chat(item.parent, t("Eidolon.ChatRepaired", { item: item.name }));
   },
 
   // Último PV do Eidolon marcado: as três escolhas do PDF.
@@ -1023,27 +1019,24 @@ const Eidolon = {
     if (!item) return;
     await item.setFlag(MODULE_ID, "eidolon.disabled", true);
     const choice = await foundry.applications.api.DialogV2.wait({
-      window: { title: `${item.name} está Disabled` },
-      content: `<p><strong>${item.name}</strong> marcou o último Ponto de Vida e ficou <strong>Disabled</strong>: não pode se mover, atacar nem usar features até ser consertado ou reativado. Escolha uma:</p>
-        <ul><li><strong>Stay Inside:</strong> continue dentro da estrutura, protegido do perigo externo imediato.</li>
-        <li><strong>Hard Disconnect:</strong> dessincronize à força: marque 2 Estresse e faça a Rolagem de Humanidade.</li>
-        <li><strong>Emergency Overclock:</strong> reative em Overclock: você marca os PV no lugar do Eidolon e 1 PV no fim de cada ação sua.</li></ul>`,
+      window: { title: t("Eidolon.DisabledTitle", { item: item.name }) },
+      content: t("Eidolon.DisabledPrompt", { item: item.name }),
       buttons: [{ action: "stay", label: "Stay Inside" }, { action: "disconnect", label: "Hard Disconnect" }, { action: "overclock", label: "Emergency Overclock" }],
       rejectClose: false
     });
     if (choice === "disconnect") {
       const stress = actor.system.resources.stress;
       await actor.update({ "system.resources.stress.value": Math.min(stress.max, stress.value + 2) });
-      await Humanity.roll(actor, { reason: `Hard Disconnect de ${item.name}` });
+      await Humanity.roll(actor, { reason: t("Humanity.ReasonHardDisconnect", { item: item.name }) });
       await this.unsync(actor);
     } else if (choice === "overclock") {
       const s = this.state(actor);
       const effect = this.effect(actor);
       if (effect) await effect.update({ "system.changes": effect.system.changes.filter(c => c.key !== "system.resources.hitPoints.max") });
       await actor.update({ "system.resources.hitPoints.value": s.pilotHp, [`flags.${MODULE_ID}.eidolonSync.overclock`]: true });
-      await chat(actor, `<p><strong>${item.name}</strong> reativado em <strong>Emergency Overclock</strong>: os PV agora são de ${actor.name}, e cada ação marca 1 PV.</p>`);
+      await chat(actor, t("Eidolon.ChatOverclock", { item: item.name, name: actor.name }));
     } else {
-      await chat(actor, `<p><strong>${actor.name}</strong> fica dentro de <strong>${item.name}</strong> (Disabled): protegido do perigo externo imediato.</p>`);
+      await chat(actor, t("Eidolon.ChatStayInside", { name: actor.name, item: item.name }));
     }
   }
 };
@@ -1066,7 +1059,7 @@ Hooks.on("daggerheart.preUseAction", (action) => {
   const s = Eidolon.state(actor);
   if (!s || s.overclock || !action.item?.getFlag(MODULE_ID, "eidolonPart")) return;
   if (Eidolon.synced(actor)?.getFlag(MODULE_ID, "eidolon").disabled) {
-    ui.notifications.warn("O Eidolon está Disabled: não pode atacar nem usar features até ser consertado ou reativado.");
+    ui.notifications.warn(t("Eidolon.DisabledWarn"));
     return false;
   }
 });
@@ -1081,14 +1074,14 @@ Hooks.on("daggerheart.postUseAction", async (action) => {
 
 Hooks.once("init", () => {
   game.settings.register(MODULE_ID, "defaultSheet", {
-    name: "Atores novos usam as fichas do Edgeheart",
-    hint: "Ao criar um Personagem, ele já nasce com a Ficha Edgeheart (Humanidade, Carga Cibernética, Ciberpsicose); ao criar um Grupo, ele nasce com a Ficha da Crew (Reputação, Edge e Movimentos de Edge). Atores existentes podem trocar de ficha pelo ícone de configuração da ficha.",
+    name: "EDGEHEART.Settings.DefaultSheet.Name",
+    hint: "EDGEHEART.Settings.DefaultSheet.Hint",
     scope: "world", config: true, type: Boolean, default: true
   });
 
   game.settings.register(MODULE_ID, "edgeheartLevelup", {
-    name: "Level Up do Edgeheart",
-    hint: "Remove do Level Up as opções de PV, Estresse, Evasão, Atributos e Multiclasse (no Edgeheart elas vêm do Cyberware) e deixa Experiência e Carta extra serem escolhidas mais vezes. Vale para o mundo todo; ao desligar, o Level Up original do Daggerheart volta.",
+    name: "EDGEHEART.Settings.Levelup.Name",
+    hint: "EDGEHEART.Settings.Levelup.Hint",
     scope: "world", config: true, type: Boolean, default: true,
     onChange: () => EdgeheartLevelup.sync()
   });
@@ -1101,7 +1094,7 @@ Hooks.once("init", () => {
 Hooks.once("setup", () => {
   const Sheet = defineSheet();
   foundry.documents.collections.Actors.registerSheet(MODULE_ID, Sheet, {
-    types: ["character"], label: "Ficha Edgeheart", makeDefault: false
+    types: ["character"], label: "EDGEHEART.Sheet.Label", makeDefault: false
   });
 });
 
@@ -1190,7 +1183,7 @@ Hooks.on("createItem", (item, options, userId) => {
 Hooks.on("deleteActiveEffect", async (effect, options, userId) => {
   if (userId !== game.user.id || !effect.getFlag(MODULE_ID, "killChainTimer") || options?.[MODULE_ID]?.killChainReset) return;
   const item = KillChain.feature(effect.parent);
-  if (item) await KillChain.reset(item, "fim da cena");
+  if (item) await KillChain.reset(item, t("KillChain.ReasonSceneEnd"));
 });
 
 // "Faça uma Rolagem de Humanidade quando rolar com Medo com todo o Estresse marcado ou sem Esperança."
@@ -1202,7 +1195,7 @@ Hooks.on("daggerheart.postRollDuality", (config) => {
   const stressFull = stress.value >= stress.max;
   const noHope = (hope?.value ?? 0) <= 0;
   if (!stressFull && !noHope) return;
-  const reason = `Rolou com Medo ${stressFull ? "com todo o Estresse marcado" : "sem Esperança"}.`;
+  const reason = t(stressFull ? "Humanity.ReasonFearStress" : "Humanity.ReasonFearHope");
   // Depois da mensagem da rolagem original, para o chat ficar na ordem certa.
   setTimeout(() => Humanity.roll(actor, { reason }), 800);
 });
@@ -1213,7 +1206,7 @@ Hooks.on("deleteActiveEffect", async (effect, options, userId) => {
   if (userId !== game.user.id || !effect.getFlag(MODULE_ID, "cyberpsychosis")) return;
   if (options?.[MODULE_ID]?.resolved) return;
   const actor = effect.parent;
-  if (actor instanceof Actor) await Humanity.reduce(actor, "terminou a cena em Ciberpsicose");
+  if (actor instanceof Actor) await Humanity.reduce(actor, t("Humanity.ReasonScenePsycho"));
 });
 
 // Instalação de cyberware (item arrastado para o personagem): escolhas do PDF e weaponware
@@ -1227,6 +1220,11 @@ Hooks.on("createItem", async (item, options, userId) => {
   }
   if (item.getFlag(MODULE_ID, "choice") && !item.getFlag(MODULE_ID, "chosen")) await Cyberware.choose(item);
   if (item.getFlag(MODULE_ID, "access") || item.getFlag(MODULE_ID, "choice")) queueAccessSync(actor);
+  // Aviso de risco: a Carga passou do ponto em que a Rolagem de Humanidade costuma falhar.
+  if (Humanity.isEdgeheart(actor)) {
+    const s = Humanity.summary(actor);
+    if (s.controlChance < 50) ui.notifications.warn(t("Humanity.LoadWarning", { name: actor.name, load: s.load, die: s.die, chance: s.controlChance }));
+  }
 });
 
 // Uma sincronização por vez por personagem (instalar + escolher disparam atualizações seguidas).
@@ -1263,8 +1261,8 @@ Hooks.on("renderChatMessageHTML", (message, html) => {
       const actor = await fromUuid(button.dataset.actorUuid);
       if (!actor) return;
       const helper = helperActor(actor);
-      if (!helper) return ui.notifications.warn("Selecione o token do aliado que vai gastar a Esperança.");
-      if (!helper.isOwner) return ui.notifications.warn(`Você não controla ${helper.name}.`);
+      if (!helper) return ui.notifications.warn(t("Common.SelectHelperToken"));
+      if (!helper.isOwner) return ui.notifications.warn(t("Common.NotOwner", { name: helper.name }));
       await asOwner(actor, "stabilize", { actorUuid: actor.uuid, helperUuid: helper.uuid });
     });
   });
@@ -1276,10 +1274,10 @@ Hooks.on("renderActorDirectory", (app, html) => {
   const button = document.createElement("button");
   button.type = "button";
   button.className = "eh-new-character";
-  button.innerHTML = `<i class="fa-solid fa-microchip"></i> Novo Personagem Edgeheart`;
+  button.innerHTML = `<i class="fa-solid fa-microchip"></i> ${t("Sheet.NewCharacter")}`;
   button.addEventListener("click", async () => {
     await Actor.create({
-      name: "Novo Mercenário", type: "character",
+      name: t("Sheet.NewCharacterName"), type: "character",
       flags: { core: { sheetClass: SHEET_ID }, [MODULE_ID]: { edgeheart: true } }
     }, { renderSheet: true });
   });
@@ -1329,7 +1327,7 @@ Hooks.on("renderDhCharacterCreation", (app) => {
       const label = game.i18n.localize(`DAGGERHEART.CONFIG.Traits.${key}.short`);
       return `<div class="suggested-trait-container">${label} ${value > 0 ? `+${value}` : value}</div>`;
     }).join("");
-    list.dataset.tooltip = `Sugestão da subclasse ${app.setup.subclass.name}`;
+    list.dataset.tooltip = t("Sheet.SubclassSuggestion", { name: app.setup.subclass.name });
   }
   const button = app.element.querySelector('[data-action="useSuggestedTraits"]');
   if (!button || button.dataset.ehSubclass) return;

@@ -37,9 +37,10 @@ async function getOrCreatePack(key) {
 
 // ---------- Pastas dentro dos compêndios (organização) ----------
 
-async function makeFolder(pack, name, { parent = null, color = "#6f2dbd", type = "Item" } = {}) {
+// sorting "m" (manual) ordena as subpastas pelo campo sort, em vez do nome.
+async function makeFolder(pack, name, { parent = null, color = "#6f2dbd", type = "Item", sorting = "a", sort = 0 } = {}) {
   const doc = await Folder.create(
-    { name, type, color, folder: parent, sorting: "a" },
+    { name, type, color, folder: parent, sorting, sort },
     { pack: pack.collection }
   );
   return doc;
@@ -141,7 +142,6 @@ function featureAction({
 
 // ---------- Ícones customizados do módulo (classe / life paths / affiliations) ----------
 
-const ICON = name => `modules/${MODULE_ID}/assets/icons/${name}.svg`;
 const ICON_PNG = name => `modules/${MODULE_ID}/assets/icons/${name}.png`;
 // Arte das cartas de Competência, no padrão das oficiais (degradê na cor do domínio + sigilo branco).
 const CARD_ART = id => `modules/${MODULE_ID}/assets/art/competencies/${id}.png`;
@@ -2760,17 +2760,17 @@ const REDLINE_CARDS = [
 // Competências (domínios homebrew). Para adicionar uma, registre aqui com as cartas dela;
 // importDomainCards registra o domínio no Homebrew do sistema e cria as cartas.
 const COMPETENCIES = [
-  { id: "network", label: "Network", src: ICON_PNG("competency-network"), color: "#0f6f80", cardImg: CARD_ART("network"), cards: NETWORK_CARDS },
-  { id: "aegis", label: "Aegis", src: ICON_PNG("competency-aegis"), color: "#9a6b1e", cardImg: CARD_ART("aegis"), cards: AEGIS_CARDS },
-  { id: "assault", label: "Assault", src: ICON_PNG("competency-assault"), color: "#b3361a", cardImg: CARD_ART("assault"), cards: ASSAULT_CARDS },
-  { id: "ghost", label: "Ghost", src: ICON_PNG("competency-ghost"), color: "#2b2f3a", cardImg: CARD_ART("ghost"), cards: GHOST_CARDS },
-  { id: "chrome", label: "Chrome", src: ICON_PNG("competency-chrome"), color: "#a4a9a8", invertText: true, cardImg: CARD_ART("chrome"), cards: CHROME_CARDS },
-  { id: "systems", label: "Systems", src: ICON_PNG("competency-systems"), color: "#2d4f8a", cardImg: CARD_ART("systems"), cards: SYSTEMS_CARDS },
-  { id: "influence", label: "Influence", src: ICON_PNG("competency-influence"), color: "#8f2d72", cardImg: CARD_ART("influence"), cards: INFLUENCE_CARDS },
-  { id: "frontier", label: "Frontier", src: ICON_PNG("competency-frontier"), color: "#7a5a2c", cardImg: CARD_ART("frontier"), cards: FRONTIER_CARDS },
-  { id: "medtech", label: "Medtech", src: ICON_PNG("competency-medtech"), color: "#1f7a55", cardImg: CARD_ART("medtech"), cards: MEDTECH_CARDS },
-  { id: "redline", label: "Redline", src: ICON("competency-redline"), color: "#9e0f2a", cardImg: CARD_ART("redline"), cards: REDLINE_CARDS },
-  { id: "blackwall", label: "Blackwall", src: ICON("competency-blackwall"), color: "#2a2448", cardImg: CARD_ART("blackwall"), cards: BLACKWALL_CARDS }
+  { id: "network", label: "Network", src: ICON_PNG("competency-network"), color: "#0a93b0", cardImg: CARD_ART("network"), cards: NETWORK_CARDS },
+  { id: "aegis", label: "Aegis", src: ICON_PNG("competency-aegis"), color: "#6a3fc0", cardImg: CARD_ART("aegis"), cards: AEGIS_CARDS },
+  { id: "assault", label: "Assault", src: ICON_PNG("competency-assault"), color: "#446600", cardImg: CARD_ART("assault"), cards: ASSAULT_CARDS },
+  { id: "ghost", label: "Ghost", src: ICON_PNG("competency-ghost"), color: "#c3b4ea", invertText: true, cardImg: CARD_ART("ghost"), cards: GHOST_CARDS },
+  { id: "chrome", label: "Chrome", src: ICON_PNG("competency-chrome"), color: "#a8e4f2", invertText: true, cardImg: CARD_ART("chrome"), cards: CHROME_CARDS },
+  { id: "systems", label: "Systems", src: ICON_PNG("competency-systems"), color: "#2f7fe0", cardImg: CARD_ART("systems"), cards: SYSTEMS_CARDS },
+  { id: "influence", label: "Influence", src: ICON_PNG("competency-influence"), color: "#b02f9e", cardImg: CARD_ART("influence"), cards: INFLUENCE_CARDS },
+  { id: "frontier", label: "Frontier", src: ICON_PNG("competency-frontier"), color: "#8a5a28", cardImg: CARD_ART("frontier"), cards: FRONTIER_CARDS },
+  { id: "medtech", label: "Medtech", src: ICON_PNG("competency-medtech"), color: "#35a845", cardImg: CARD_ART("medtech"), cards: MEDTECH_CARDS },
+  { id: "redline", label: "Redline", src: ICON_PNG("competency-redline"), color: "#5e0716", cardImg: CARD_ART("redline"), cards: REDLINE_CARDS },
+  { id: "blackwall", label: "Blackwall", src: ICON_PNG("competency-blackwall"), color: "#e0266e", cardImg: CARD_ART("blackwall"), cards: BLACKWALL_CARDS }
 ];
 
 // A chave em system.actions precisa ser igual ao _id da ação: o sistema grava usos e outros
@@ -2806,10 +2806,11 @@ async function importDomainCards() {
   const voidCards = (await fetch(`modules/${MODULE_ID}/data/void-blood.json`).then(r => r.json()).catch(() => ({ cards: [] }))).cards
     .map(v => ({ name: v.name, _source: { system: { actions: v.actions, resource: v.resource, domainTouched: v.domainTouched }, effects: v.effects } }));
   for (const competency of COMPETENCIES) {
-    const top = await makeFolder(pack, competency.label);
+    // Pastas na cor da Competência; os níveis em ordem numérica (senão "Nível 10" vem logo depois do 1).
+    const top = await makeFolder(pack, competency.label, { color: competency.color, sorting: "m" });
     const levelFolders = {};
     for (const level of [...new Set(competency.cards.map(c => c.level))].sort((a, b) => a - b)) {
-      levelFolders[level] = await makeFolder(pack, `Nível ${level}`, { parent: top.id });
+      levelFolders[level] = await makeFolder(pack, `Nível ${level}`, { parent: top.id, color: competency.color, sort: level * 1000 });
     }
     const data = competency.cards.map(card => {
       let c = card;
@@ -3575,6 +3576,229 @@ const ADVERSARIES = [
         description: "<p>Quando este adversário fosse falhar numa rolagem de ataque, marque 2 de Estresse para rolar o d20 de novo. Se a nova rolagem tiver sucesso, o alvo também fica temporariamente <em>Vulnerável</em>.</p>",
         actions: adversaryAction({ name: "Black Hand Override", img: CPR("blackice/src/raven"), actionType: "reaction", stress: 2 }) }
     ]
+  },
+  // ---------- Adversários extras (fora do PDF) ----------
+  // Números e features vêm de um adversário oficial da mesma função (indicado em cada um), com o texto
+  // relido para o cenário. As features "clone" copiam ações e efeitos do original.
+  // Polícia da cidade e Esquadrão Antipsicose
+  { // Sellsword
+    tier: 1, name: "City Patrol Officer", type: "minion", img: CPR("weapons/mediumPistol"),
+    description: "<p>Um policial de patrulha mal pago, com colete balístico, rádio no ombro e pouca vontade de morrer pelo salário.</p>",
+    motives: "Cercar, pedir reforço, fazer cumprir a ordem",
+    difficulty: 10, thresholds: [0, 0], hp: 1, stress: 1, experiences: {},
+    attack: { name: "Service Pistol", range: "Close", bonus: 3, damage: "3 fís" },
+    features: [
+      { name: "Minion (4)", form: "passive", img: CPR("status/knockout"), clone: { adversary: "Sellsword", feature: "Minion (4)" },
+        description: "<p>O @Lookup[@name] é derrotado quando sofre qualquer dano. Para cada 4 de dano que um PJ causa ao @Lookup[@name], derrote outro Minion dentro do alcance contra quem o ataque teria sucesso.</p>" },
+      { name: "Group Attack", form: "action", img: CPR("weapons/mediumPistol"), clone: { adversary: "Sellsword", feature: "Group Attack" },
+        description: "<p><strong>Gaste 1 Medo</strong> para escolher um alvo e dar o Holofote a todos os @Lookup[@name] dentro do alcance Próximo dele. Esses Minions se movem para o alcance Corpo a Corpo do alvo e fazem uma rolagem de ataque compartilhada. Em um sucesso, cada um causa @Lookup[@system.attack.damageFormula] de dano físico. Some esse dano.</p>" }
+    ]
+  },
+  { // Head Guard
+    tier: 1, name: "Patrol Sergeant", type: "leader", img: CPR("gear/radio_communicator"),
+    description: "<p>Um sargento veterano que já viu gangue, corporação e ciberpsicopata demais, e ainda assim volta para o turno da noite.</p>",
+    motives: "Coordenar a patrulha, conter a cena, levar alguém algemado",
+    difficulty: 15, thresholds: [7, 13], hp: 7, stress: 3, experiences: { "Chain of Command": 2, "Beat Knowledge": 2 },
+    attack: { name: "Stun Baton", range: "Melee", bonus: 4, damage: "1d10+4 fís" },
+    features: [
+      { name: "Rally the Squad", form: "action", img: CPR("gear/radio_communicator"), clone: { adversary: "Head Guard", feature: "Rally Guards" },
+        description: "<p><strong>Gaste 2 de Medo</strong> para dar o Holofote ao @Lookup[@name] e a até 2d4 aliados dentro do alcance Distante.</p>" },
+      { name: "On My Signal", form: "reaction", img: CPR("status/readied_action"), clone: { adversary: "Head Guard", feature: "On My Signal" },
+        description: "<p><em>Contagem (5).</em> Quando o @Lookup[@name] recebe o Holofote pela primeira vez, ative a contagem. Ela desce quando um PJ faz uma rolagem de ataque. Quando dispara, todos os Patrulheiros dentro do alcance Distante fazem um ataque padrão com vantagem contra o alvo mais próximo dentro do alcance deles. Se mais de um acertar o mesmo alvo, some o dano.</p>" },
+      { name: "Momentum", form: "reaction", img: CPR("status/surge"), clone: { adversary: "Head Guard", feature: "Momentum" },
+        description: "<p>Quando o @Lookup[@name] acerta um ataque contra um PJ, você ganha 1 Medo.</p>" }
+    ]
+  },
+  { // Archer Squadron
+    tier: 2, name: "Riot Squad", type: "horde", horde: { damage: "1d6+3" }, img: CPR("armor/bullet_proof_shield"),
+    description: "<p>Uma linha de policiais de choque com escudos balísticos, lançadores de gás e cassetetes elétricos, avançando como um muro.</p>",
+    motives: "Formar a linha, dispersar a multidão, empurrar até quebrar",
+    difficulty: 13, thresholds: [8, 16], hp: 4, stress: 3, experiences: {},
+    attack: { name: "Riot Guns", range: "Far", bonus: 0, damage: "2d6+3 fís" },
+    features: [
+      { name: "Gas Volley", form: "action", img: CPR("ammo/grenade_teargas"), clone: { adversary: "Archer Squadron", feature: "Focused Volley" },
+        description: "<p><strong>Gaste 1 Medo</strong> para escolher um ponto dentro do alcance Distante. Faça um ataque com vantagem contra todos os alvos dentro do alcance Próximo desse ponto. Os alvos atingidos pela @Lookup[@name] sofrem 1d10+4 de dano físico.</p>" },
+      { name: "Suppressing Fire", form: "action", img: CPR("ammo/shotgun_slug_rubber"), clone: { adversary: "Archer Squadron", feature: "Supressing Fire" },
+        description: "<p>Marque 1 Estresse para escolher um ponto dentro do alcance Distante. Até a próxima rolagem com Medo, uma criatura que se mover para dentro do alcance Próximo desse ponto faz uma Rolagem de Reação de Agilidade. Numa falha, sofre 2d6+3 de dano físico; num sucesso, metade.</p>" },
+      { name: "Horde (1d6+3)", form: "passive", img: CPR("armor/kevlar_head"), clone: { adversary: "Archer Squadron", feature: "Horde" },
+        description: "<p>Quando a @Lookup[@name] tiver marcado metade ou mais dos PV, o ataque padrão dela causa @Lookup[@system.typeData.hordeDamage] de dano físico.</p>" }
+    ]
+  },
+  { // Fire Titan
+    tier: 3, name: "Riot Lieutenant", type: "solo", img: CPR("armor/heavy-armorjack_head"),
+    description: "<p>Um tenente da tropa de choque mais cromo do que carne, que segura uma rua inteira sozinho atrás de um escudo marcado de tiros.</p>",
+    motives: "Avançar devagar, quebrar a barricada, não recuar um passo",
+    difficulty: 18, thresholds: [19, 35], hp: 10, stress: 5, experiences: { "Riot Control": 5, "Tactics": 3 },
+    attack: { name: "Shock Shotgun", range: "Close", bonus: 3, damage: "3d12+4 fís" },
+    features: [
+      { name: "Relentless (3)", form: "passive", img: CPR("status/boost"), clone: { adversary: "Fire Titan", feature: "Relentless (3)" },
+        description: "<p>O @Lookup[@name] pode receber o Holofote até três vezes por turno do mestre. Gaste Medo como de costume para dar o Holofote a ele.</p>" },
+      { name: "Riot Plating", form: "passive", img: CPR("armor/heavy-armorjack_body"), clone: { adversary: "Fire Titan", feature: "Masterwork Armor" },
+        description: "<p><em>Contagem (3).</em> Quando o @Lookup[@name] aparece, ative a contagem. Ela desce quando ele sofre dano Maior ou Grave. Até a contagem disparar, reduza o dano que ele sofre em 1d12. Quando dispara, a blindagem cede e ele ganha +1 de Dificuldade e nas rolagens de ataque, tomado pela fúria.</p>" },
+      { name: "Momentum", form: "passive", img: CPR("status/surge"), clone: { adversary: "Fire Titan", feature: "Momentum" },
+        description: "<p>Quando o @Lookup[@name] acerta um ataque contra um PJ, você ganha 1 Medo.</p>" },
+      { name: "Shield Charge", form: "action", img: CPR("armor/bullet_proof_shield"), clone: { adversary: "Fire Titan", feature: "Hurl Rock" },
+        description: "<p>Marque 1 Estresse para escolher um ponto dentro do alcance Distante e avançar com o escudo em linha reta até ele. Faça um ataque contra todos os alvos no caminho. Os atingidos sofrem 3d12 de dano físico.</p>" },
+      { name: "Point-Blank Blast", form: "action", img: CPR("weapons/Shotgun_excellent"), clone: { adversary: "Fire Titan", feature: "Skull Splitter" },
+        description: "<p>Marque 1 Estresse para colocar um marcador nesta ficha. Na próxima vez que o @Lookup[@name] receber o Holofote, gaste o marcador e ataque um PJ dentro do alcance Próximo com a escopeta encostada. Em um sucesso, cause 3d20+5 de dano físico direto. Numa falha, o alvo marca 1 Estresse.</p>" },
+      { name: "Combat Stims", form: "reaction", img: CPR("status/stim"), clone: { adversary: "Fire Titan", feature: "Blazing Heart" },
+        description: "<p>Quando o @Lookup[@name] marca metade ou mais dos PV, você pode gastar 1 Medo e marcar qualquer quantidade de Estresse para limpar essa mesma quantidade de PV.</p>" }
+    ]
+  },
+  { // Cursed Merfolk
+    tier: 3, name: "Psycho Squad Operator", type: "standard", img: CPR("armor/metalgear_head"),
+    description: "<p>Um operador de elite da unidade que caça ciberpsicopatas: fibra de carbono, capacete de quatro lentes verdes e ordens de neutralizar a qualquer custo.</p>",
+    motives: "Cercar, prender o alvo, neutralizar a ameaça",
+    difficulty: 16, thresholds: [18, 35], hp: 5, stress: 4, experiences: { "Cyberpsycho Hunting": 3 },
+    attack: { name: "Heavy Rifle", range: "Far", bonus: 3, damage: "3d6 fís" },
+    features: [
+      { name: "Gang Up", form: "passive", img: CPR("status/human_shield"), clone: { adversary: "Cursed Merfolk", feature: "Gang Up" },
+        description: "<p>O @Lookup[@name] ganha +2 nas rolagens de ataque contra alvos que estejam no alcance Corpo a Corpo de um ou mais aliados.</p>" },
+      { name: "Capture Line", form: "reaction", img: CPR("gear/grapple_gun"), clone: { adversary: "Cursed Merfolk", feature: "\"Get Over Here!\"" },
+        description: "<p>Quando o @Lookup[@name] acerta um ataque padrão contra um alvo além do alcance Corpo a Corpo, você pode marcar 1 Estresse para puxá-lo com um cabo de captura até o alcance Corpo a Corpo. Se fizer isso, pode gastar 1 Medo para fazer um ataque padrão com vantagem contra ele.</p>" }
+    ]
+  },
+  { // Fallen Warlord: Undefeated Champion
+    tier: 4, name: "Psycho Squad Commander", type: "solo", img: CPR("cyberware/wolvers"),
+    description: "<p>A comandante da unidade antipsicose: lâminas louva-deus nos antebraços, reflexos que ninguém deveria ter e a convicção de que um monstro só se caça com outro.</p>",
+    motives: "Caçar, isolar a presa, executar em público",
+    difficulty: 18, thresholds: [35, 58], hp: 11, stress: 5, experiences: { "Manhunt": 3, "Case Files": 2, "Intimidation": 3 },
+    attack: { name: "Mantis Blades", range: "Very Close", bonus: 8, damage: "4d12+13 fís" },
+    features: [
+      { name: "Relentless (3)", form: "passive", img: CPR("status/boost"), clone: { adversary: "Fallen Warlord: Undefeated Champion", feature: "Relentless (3)" },
+        description: "<p>O @Lookup[@name] pode receber o Holofote até três vezes por turno do mestre. Gaste Medo como de costume para dar o Holofote a ele.</p>" },
+      { name: "Carbon Plating", form: "passive", img: CPR("armor/metalgear_body"), clone: { adversary: "Fallen Warlord: Undefeated Champion", feature: "Faltering Armor" },
+        description: "<p>Quando o @Lookup[@name] sofre dano, reduza-o em 1d10.</p>" },
+      { name: "Mantis Sweep", form: "action", img: CPR("cyberware/wolvers"), clone: { adversary: "Fallen Warlord: Undefeated Champion", feature: "Shattering Strike" },
+        description: "<p>Marque 1 Estresse para fazer um ataque padrão contra todos os alvos dentro do alcance Muito Próximo, num giro das lâminas louva-deus. Os PJs atingidos perdem Esperança igual aos PV que marcaram por esse ataque.</p>" },
+      { name: "Call the Squad", form: "action", img: CPR("gear/radio_communicator"),
+        description: "<p><strong>Gaste 1 Medo</strong> para chamar dois @UUID[Compendium.edgeheart-cyberpunk.edgeheart-adversaries.Actor." + stableId("adversary:Psycho Squad Operator") + "]{Operadores Antipsicose}, que aparecem no alcance Distante.</p>" },
+      { name: "Containment Zone", form: "reaction", img: CPR("status/suppressed"), clone: { adversary: "Fallen Warlord: Undefeated Champion", feature: "Circle of Defilement" },
+        description: "<p><em>Contagem (1d8).</em> Quando o @Lookup[@name] recebe o Holofote pela primeira vez, ative a contagem. Quando dispara, a unidade fecha uma zona de contenção numa área dentro do alcance Distante dele. Um alvo dentro dessa área fica <em>Vulnerável</em> até sair dela. A zona cai se o @Lookup[@name] sofrer dano Grave.</p>" },
+      { name: "Momentum", form: "reaction", img: CPR("status/surge"), clone: { adversary: "Fallen Warlord: Undefeated Champion", feature: "Momentum" },
+        description: "<p>Quando o @Lookup[@name] acerta um ataque contra um PJ, você ganha 1 Medo.</p>" },
+      { name: "Public Execution", form: "reaction", img: CPR("status/wounded_mortally"), clone: { adversary: "Fallen Warlord: Undefeated Champion", feature: "Doombringer" },
+        description: "<p>Quando um alvo marca PV por um ataque do @Lookup[@name], todos os PJs dentro do alcance Distante do alvo perdem 1 Esperança.</p>" }
+    ]
+  },
+  // Chrome Maw (o Bruiser está no Tier 1 do PDF)
+  { // Jagged Knife Lackey
+    tier: 1, name: "Chrome Maw Scrapper", type: "minion", img: CPR("weapons/LeadPipe_poor"),
+    description: "<p>Um moleque da Chrome Maw com um antebraço cibernético barato e fome de mais cromo, custe o que custar.</p>",
+    motives: "Cercar em bando, arrancar implantes, provar valor à gangue",
+    difficulty: 9, thresholds: [0, 0], hp: 1, stress: 1, experiences: { "Scavenging": 2 },
+    attack: { name: "Welded Pipe Blade", range: "Melee", bonus: -2, damage: "2 fís" },
+    features: [
+      { name: "Minion (3)", form: "passive", img: CPR("status/knockout"), clone: { adversary: "Jagged Knife Lackey", feature: "Minion (3)" },
+        description: "<p>O @Lookup[@name] é derrotado quando sofre qualquer dano. Para cada 3 de dano que um PJ causa ao @Lookup[@name], derrote outro Minion dentro do alcance contra quem o ataque teria sucesso.</p>" },
+      { name: "Group Attack", form: "action", img: CPR("weapons/LeadPipe_poor"), clone: { adversary: "Jagged Knife Lackey", feature: "Group Attack" },
+        description: "<p><strong>Gaste 1 Medo</strong> para escolher um alvo e dar o Holofote a todos os @Lookup[@name] dentro do alcance Próximo dele. Esses Minions se movem para o alcance Corpo a Corpo do alvo e fazem uma rolagem de ataque compartilhada. Em um sucesso, cada um causa @Lookup[@system.attack.damageFormula] de dano físico. Some esse dano.</p>" }
+    ]
+  },
+  { // Skeleton Archer
+    tier: 1, name: "Chrome Maw Gunner", type: "ranged", img: CPR("weapons/Shotgun_poor"),
+    description: "<p>Um veterano atarracado da Chrome Maw, barba trançada com cartuchos e um braço mecânico parafusado ao ombro para segurar a escopeta.</p>",
+    motives: "Esperar a abertura, acabar com quem cai, cobrir a gangue",
+    difficulty: 9, thresholds: [4, 7], hp: 3, stress: 2, experiences: {},
+    attack: { name: "Sawn-Off Autoshotgun", range: "Far", bonus: 2, damage: "1d8+1 fís" },
+    features: [
+      { name: "Opportunist", form: "passive", img: CPR("status/human_shield"), clone: { adversary: "Skeleton Archer", feature: "Opportunist" },
+        description: "<p>Quando dois ou mais adversários estão dentro do alcance Muito Próximo de uma criatura, todo dano que o @Lookup[@name] causa a ela é dobrado.</p>" },
+      { name: "Mercy Shot", form: "action", img: CPR("ammo/shotgun_slug_expansive"), clone: { adversary: "Skeleton Archer", feature: "Deadly Shot" },
+        description: "<p>Faça um ataque contra um alvo <em>Vulnerável</em> dentro do alcance Distante. Em um sucesso, marque 1 Estresse para causar 3d4+8 de dano físico.</p>" }
+    ]
+  },
+  { // Panther
+    tier: 1, name: "Chrome Maw Stalker", type: "skulk", img: CPR("cyberware/talon_foot"),
+    description: "<p>Um caçador da Chrome Maw alto e magro demais, com pernas cibernéticas dobradas ao contrário e lâminas finas nos antebraços. Rasteja antes de saltar.</p>",
+    motives: "Espreitar, saltar sobre o isolado, arrastar para a escuridão",
+    difficulty: 14, thresholds: [5, 10], hp: 4, stress: 3, experiences: { "Keen Optics": 3, "Slink": 3 },
+    attack: { name: "Arm Blades", range: "Melee", bonus: 2, damage: "1d8+1 fís" },
+    features: [
+      { name: "Shadow Stalker", form: "passive", img: CPR("status/hidden"), clone: { adversary: "Panther", feature: "Shadow Stalker" },
+        description: "<p>Enquanto estiver <em>Escondido</em>, o @Lookup[@name] ganha +2 nas rolagens de ataque.</p>" },
+      { name: "Pouncing Strike", form: "action", img: CPR("cyberware/jump_booster"), clone: { adversary: "Panther", feature: "Pouncing Strike" },
+        description: "<p>Marque 1 Estresse para o @Lookup[@name] saltar nas pernas cibernéticas até o alcance Corpo a Corpo de um alvo dentro do alcance Distante e atacá-lo. Em um sucesso, cause 1d12+2 de dano físico.</p>" }
+    ]
+  },
+  // Ava Biodyne (resposta médica armada)
+  { // Entombed Necropriest
+    tier: 2, name: "Ava Response Medic", type: "support", img: CPR("gear/medtech_bag"),
+    description: "<p>Um médico de resgate da Ava Biodyne em armadura branca, com braços cirúrgicos extras e ordem de manter o cliente vivo, não você.</p>",
+    motives: "Estabilizar o cliente, sedar a ameaça, faturar o atendimento",
+    difficulty: 13, thresholds: [8, 16], hp: 3, stress: 7, experiences: { "Trauma Medicine": 4, "Protect": 2 },
+    attack: { name: "Sedative Dart Pistol", range: "Far", bonus: 2, damage: "2d6+2 fís" },
+    features: [
+      { name: "Combat Stim", form: "action", img: CPR("gear/air_hypo"), clone: { adversary: "Entombed Necropriest", feature: "Invigorate" },
+        description: "<p>Marque 1 Estresse para escolher até três aliados dentro do alcance Distante e aplicar um estimulante de combate. Cada um ganha vantagem na próxima rolagem de ataque.</p>" },
+      { name: "Sedative Harpoon", form: "action", img: CPR("status/sedative"), clone: { adversary: "Entombed Necropriest", feature: "Last Grasp" },
+        description: "<p><strong>Gaste 1 Medo</strong> para escolher um PJ dentro do alcance Distante e acertá-lo com um arpão sedativo. Ele fica <em>Contido</em> até se libertar com uma Rolagem de Força bem-sucedida. Enquanto estiver contido assim, quando o alvo gastar Esperança, você ganha 1 Medo.</p>" },
+      { name: "Paralytic Injection", form: "action", img: CPR("gear/vial_poison"), clone: { adversary: "Entombed Necropriest", feature: "Chill Touch" },
+        description: "<p>Marque 1 Estresse para fazer um ataque padrão contra um alvo dentro do alcance Corpo a Corpo. Em um sucesso, o alvo sofre o dano padrão e marca 1d4 de Estresse. Se o alvo marcar o último Estresse por esse ataque, você ganha 1 Medo.</p>" }
+    ]
+  },
+  { // Centaur Warden
+    tier: 2, name: "Ava Response Gunner", type: "ranged", img: CPR("weapons/heavySMG"),
+    description: "<p>O atirador de cobertura de uma equipe de resgate da Ava Biodyne. Tudo que se mexe perto do cliente vira alvo.</p>",
+    motives: "Cobrir a extração, suprimir, proteger o cliente a qualquer custo",
+    difficulty: 14, thresholds: [10, 19], hp: 5, stress: 3, experiences: { "Extraction Routes": 2, "Threat Assessment": 2 },
+    attack: { name: "Heavy Machine Gun", range: "Far", bonus: 2, damage: "2d8+4 fís" },
+    features: [
+      { name: "Crossfire", form: "passive", img: CPR("status/human_shield"), clone: { adversary: "Centaur Warden", feature: "Flanking Maneuver" },
+        description: "<p>Quando o @Lookup[@name] faz um ataque padrão contra um alvo que esteja no alcance Corpo a Corpo de um ou mais aliados dele, ganha +2 na rolagem de ataque.</p>" },
+      { name: "Assisted Aim", form: "action", img: CPR("cyberware/targeting_scope"), clone: { adversary: "Centaur Warden", feature: "Eye of the Sage" },
+        description: "<p>Marque 1 Estresse para fazer um ataque padrão com a mira assistida. O @Lookup[@name] tem vantagem na rolagem e consegue um sucesso crítico com 19 ou 20.</p>" },
+      { name: "Covering Burst", form: "reaction", img: CPR("weapons/heavySMG_excellent"), clone: { adversary: "Centaur Warden", feature: "Quick Volley" },
+        description: "<p>Quando o @Lookup[@name] faz um ataque padrão, você pode marcar qualquer quantidade de Estresse para mirar a mesma quantidade de criaturas adicionais dentro do alcance.</p>" }
+    ]
+  },
+  { // Elite Soldier
+    tier: 2, name: "Ava Security Specialist", type: "standard", img: CPR("armor/medium-armorjack_body"),
+    description: "<p>O especialista de segurança de uma equipe de resgate da Ava Biodyne, com escopeta tática e uma maleta médica blindada nas costas.</p>",
+    motives: "Fechar o perímetro, proteger o cliente, cobrar depois",
+    difficulty: 15, thresholds: [9, 18], hp: 4, stress: 3, experiences: {},
+    attack: { name: "Tactical Shotgun", range: "Very Close", bonus: 1, damage: "2d8+4 fís" },
+    features: [
+      { name: "Cover Formation", form: "action", img: CPR("armor/bullet_proof_shield"), clone: { adversary: "Elite Soldier", feature: "Reinforce" },
+        description: "<p>Marque 1 Estresse para se mover até o alcance Corpo a Corpo de um aliado e fazer um ataque padrão contra um alvo dentro do alcance Muito Próximo. Em um sucesso, cause 2d10+2 de dano físico e o aliado pode limpar 1 Estresse.</p>" },
+      { name: "Protect the Client", form: "reaction", img: CPR("status/human_shield"), clone: { adversary: "Elite Soldier", feature: "Vassal's Loyalty" },
+        description: "<p>Quando o @Lookup[@name] está dentro do alcance Muito Próximo do cliente, de um médico ou do chefe da equipe, e ele fosse sofrer dano, você pode marcar 1 Estresse para se mover até o alcance Corpo a Corpo dele e sofrer o dano no lugar.</p>" }
+    ]
+  },
+  // Daemons de rede
+  { // Vault Guardian Gaoler
+    tier: 3, name: "Blackwall Warden Daemon", type: "support", img: CPR("blackice/src/giant"),
+    description: "<p>Um daemon guardião da Muralha Negra: um monólito de dados que se reescreve sem parar e prende quem chega perto demais da quarentena.</p>",
+    motives: "Conter, isolar, apagar invasores",
+    difficulty: 16, thresholds: [19, 33], hp: 5, stress: 3, experiences: {},
+    attack: { name: "Firewall Crush", range: "Very Close", bonus: 2, damage: "3d6+2 techno" },
+    features: [
+      { name: "Hex Barrier", form: "passive", img: CPR("programs/shield"), clone: { adversary: "Vault Guardian Gaoler", feature: "Blocking Shield" },
+        description: "<p>Criaturas dentro do alcance Corpo a Corpo do @Lookup[@name] têm desvantagem nas rolagens de ataque contra ele. Criaturas presas na quarentena dele não são afetadas.</p>" },
+      { name: "Quarantine", form: "action", img: CPR("programs/superglue"), clone: { adversary: "Vault Guardian Gaoler", feature: "Lock Up" },
+        description: "<p>Marque 1 Estresse para atacar um alvo dentro do alcance Muito Próximo. Em um sucesso, o alvo fica <em>Contido</em> dentro da quarentena do @Lookup[@name] até se libertar com uma Rolagem de Força (18). Enquanto contido, o alvo só pode atacar o @Lookup[@name].</p>" }
+    ]
+  },
+  { // Oracle of Doom
+    tier: 4, name: "Theoi Avatar", type: "solo", img: CPR("blackice/src/liche"),
+    description: "<p>A projeção de uma das IAs Theoi: uma massa de ruído digital com uma máscara de porcelana rachada, que já calculou o seu futuro antes de você entrar na sala.</p>",
+    motives: "Prever, decretar, reescrever o destino dos mortais",
+    difficulty: 20, thresholds: [38, 68], hp: 11, stress: 10, experiences: { "Predictive Omniscience": 4 },
+    attack: { name: "Probability Collapse", range: "Far", bonus: 8, damage: "4d8+9 techno" },
+    features: [
+      { name: "Terrifying", form: "passive", img: CPR("status/deathtrance"), clone: { adversary: "Oracle of Doom", feature: "Terrifying" },
+        description: "<p>Quando o @Lookup[@name] acerta um ataque, todos os PJs dentro do alcance Distante perdem 1 Esperança e você ganha 1 Medo.</p>" },
+      { name: "System Closing In", form: "passive", img: CPR("status/netrunning"), clone: { adversary: "Oracle of Doom", feature: "Walls Closing In" },
+        description: "<p>Quando uma criatura rola uma falha dentro do alcance Muito Distante do @Lookup[@name], ela marca 1 Estresse.</p>" },
+      { name: "Pronounce Fate", form: "action", img: CPR("programs/nervescrub"), clone: { adversary: "Oracle of Doom", feature: "Pronounce Fate" },
+        description: "<p><strong>Gaste 1 Medo</strong> para mostrar a um alvo dentro do alcance Distante a simulação do pesadelo pessoal dele. O alvo faz uma Rolagem de Reação de Conhecimento. Numa falha, perde toda a Esperança e sofre 2d20+4 de dano techno direto. Num sucesso, sofre metade e perde 1 Esperança.</p>" },
+      { name: "Summon Daemons", form: "action", img: CPR("programs/imp"), clone: { adversary: "Oracle of Doom", feature: "Summon Tormentors" },
+        description: "<p>Uma vez por dia, <strong>gaste 2 de Medo</strong> para invocar 2d4 Minions de Tier 2 ou menor ligados ao pesadelo pessoal de um dos PJs: daemons, fantasmas digitais ou pessoas do passado dele, reconstruídas. Eles aparecem no alcance Próximo desse PJ.</p>" },
+      { name: "Total Prediction", form: "reaction", img: CPR("cyberware/sensor_array"), clone: { adversary: "Oracle of Doom", feature: "Ominous Knowledge" },
+        description: "<p>Quando o @Lookup[@name] vê uma criatura mortal, sabe instantaneamente um dos pesadelos pessoais dela.</p>" },
+      { name: "Countermeasure", form: "reaction", img: CPR("programs/hellbolt"), clone: { adversary: "Oracle of Doom", feature: "Vengeful Fate" },
+        description: "<p>Quando o @Lookup[@name] marca PV por um ataque feito dentro do alcance Muito Próximo, você pode marcar 1 Estresse para arremessar o atacante até o alcance Distante e causar 2d10+4 de dano físico.</p>" }
+    ]
   }
 ];
 
@@ -3584,7 +3808,7 @@ const ENVIRONMENTS = [
     tier: 1, name: "Neon Night Market", type: "social", img: CPR("dlc/gear/drink_master_5000"),
     description: "<p>Um mercado lotado de barracas de comida, vendedores de cromo, moda falsificada, olheiros de gangue e tecnologia ilegal.</p>",
     impulses: "Tentar, expor, vender, esconder o perigo", difficulty: 10,
-    adversaries: ["Neon Claw Ganger", "Tiger Choir Cutter", "Pocket Drone Handler", "Rookie Edgerunner"],
+    adversaries: ["Neon Claw Ganger", "Tiger Choir Cutter", "Pocket Drone Handler", "Rookie Edgerunner", "City Patrol Officer", "Chrome Maw Scrapper"],
     features: [
       { name: "Crowded Flow", form: "passive", description: "<p>Personagens têm vantagem em rolagens para se esconder na multidão, mas desvantagem em rolagens para notar ameaças além do alcance Próximo.</p><p><em>Quem está observando da multidão?</em></p>" },
       { name: "Black-Market Offer", form: "action", description: "<p>Apresente um item útil, uma pista de cyberware ou um contato, com um custo.</p><p><em>O que o vendedor realmente quer?</em></p>" },
@@ -3595,7 +3819,7 @@ const ENVIRONMENTS = [
     tier: 1, name: "Low-Sec Data Office", type: "exploration", img: CPR("gear/computer"),
     description: "<p>Um escritório corporativo barato, cheio de travas de crachá, paredes de vidro, funcionários cansados e câmeras demais.</p>",
     impulses: "Atrasar, documentar, alertar a segurança", difficulty: 11,
-    adversaries: ["Sitil Security Guard", "Pocket Drone Handler", "Rookie Edgerunner"],
+    adversaries: ["Sitil Security Guard", "Pocket Drone Handler", "Rookie Edgerunner", "City Patrol Officer", "Patrol Sergeant"],
     features: [
       { name: "Badge Logic", form: "passive", description: "<p>Personagens podem fazer uma Rolagem de Interface para criar uma Breach contra portas, câmeras ou elevadores. Numa rolagem com Medo, a segurança começa a fazer perguntas.</p><p><em>De quem é o crachá que ainda funciona aqui?</em></p>" },
       { name: "Camera Sweep", form: "action", description: "<p>Escolha um personagem numa área exposta. Ele marca 1 Estresse ou fica gravado e rastreável.</p><p><em>Quem revisa as gravações?</em></p>" },
@@ -3606,7 +3830,7 @@ const ENVIRONMENTS = [
     tier: 1, name: "Megablock Stairwell", type: "traversal", img: CPR("status/falling"),
     description: "<p>Um labirinto vertical de escadas de emergência, canos vazando, andares trancados e vizinhos que sabem quando fechar a porta.</p>",
     impulses: "Dividir, ecoar, atrasar a fuga", difficulty: 11,
-    adversaries: ["Neon Claw Ganger", "Chrome Maw Bruiser", "Tiger Choir Cutter"],
+    adversaries: ["Neon Claw Ganger", "Chrome Maw Bruiser", "Tiger Choir Cutter", "Chrome Maw Scrapper", "Chrome Maw Stalker", "Chrome Maw Gunner"],
     features: [
       { name: "Bad Angles", form: "passive", description: "<p>Ataques à distância além do alcance Muito Próximo têm desvantagem, a menos que o atacante controle uma posição mais alta.</p><p><em>Quem tem a posição alta?</em></p>" },
       { name: "Door Slams Open", form: "action", description: "<p>Introduza civis, vigias de gangue, seguranças ou uma nova rota por um apartamento.</p><p><em>Quem mora atrás desta porta?</em></p>" },
@@ -3617,7 +3841,7 @@ const ENVIRONMENTS = [
     tier: 1, name: "Street-Level Stakeout", type: "exploration", img: CPR("gear/binoculars"),
     description: "<p>Um trabalho silencioso de vigilância em que todo mundo está esperando o primeiro erro.</p>",
     impulses: "Observar, despistar, escalar de repente", difficulty: 10,
-    adversaries: ["Rookie Edgerunner", "Contract Sniper", "Sitil Security Guard"],
+    adversaries: ["Rookie Edgerunner", "Contract Sniper", "Sitil Security Guard", "City Patrol Officer", "Patrol Sergeant", "Chrome Maw Gunner"],
     features: [
       { name: "Eyes Everywhere", form: "passive", description: "<p>Personagens podem fazer Rolagens de Instinto ou Conhecimento para identificar observadores. Em um sucesso, ganham vantagem na próxima rolagem de furtividade ou contravigilância.</p><p><em>Quem vigia os vigias?</em></p>" },
       { name: "The Target Moves", form: "action", description: "<p>Mova o objetivo para um novo local dentro do alcance Distante.</p><p><em>Por que ele saiu mais cedo?</em></p>" },
@@ -3629,7 +3853,7 @@ const ENVIRONMENTS = [
     tier: 2, name: "Highway Kill Run", type: "traversal", img: CPR("vehicles/motorbike"),
     description: "<p>Uma perseguição em alta velocidade por estradas quebradas, drones de trânsito, postos de controle abandonados e veículos de emboscada.</p>",
     impulses: "Acelerar, separar veículos, transformar o trânsito em arma", difficulty: 14,
-    adversaries: ["Corporate Response Team", "Contract Sniper", "Blood Saint Duelist", "Cordon Eidolon"],
+    adversaries: ["Corporate Response Team", "Contract Sniper", "Blood Saint Duelist", "Cordon Eidolon", "Riot Squad"],
     features: [
       { name: "The Chase", form: "passive", description: "<p>Quando esta Travessia começa, coloque um Dado de Perseguição (d8) nesta carta com o 4 virado para cima. Quando um personagem faz uma ação ligada à perseguição, gire o dado conforme o resultado:</p><ul><li>Sucesso com Esperança: aumente o dado em 2.</li><li>Sucesso com Medo: aumente o dado em 1.</li><li>Falha com Esperança: diminua o dado em 1.</li><li>Falha com Medo: diminua o dado em 2.</li></ul><p>Se o dado chegar a 8, os personagens vencem a Highway Kill Run, seja escapando ou alcançando o alvo. Se chegar a 0, eles falham, sendo capturados ou deixando o alvo escapar.</p><p><em>Por que estamos perseguindo eles, afinal?</em></p>" },
       { name: "Vehicle Momentum", form: "passive", description: "<p>Quando um personagem tem sucesso com Esperança numa rolagem de veículo, pode se mover um alcance adicional ou criar uma abertura para um aliado.</p><p><em>Quem conhece melhor esta estrada?</em></p>" },
@@ -3676,7 +3900,7 @@ const ENVIRONMENTS = [
     tier: 2, name: "Black Clinic Under Siege", type: "event", img: CPR("gear/medtech_bag"),
     description: "<p>Uma clínica escondida cheia de cirurgias pela metade, remédios ilegais e pessoas valiosas demais para perder.</p>",
     impulses: "Estabilizar, entrar em pânico, proteger os indefesos", difficulty: 14,
-    adversaries: ["Black-Clinic Butcher", "Blood Saint Duelist", "Corporate Response Team"],
+    adversaries: ["Black-Clinic Butcher", "Blood Saint Duelist", "Corporate Response Team", "Ava Response Medic", "Ava Response Gunner", "Ava Security Specialist"],
     features: [
       { name: "Fragile Patients", form: "passive", description: "<p>Qualquer ataque que role com Medo corre o risco de ferir um paciente, danificar equipamento médico ou contaminar a sala de cirurgia.</p><p><em>Quem está na mesa?</em></p>" },
       { name: "Emergency Procedure", form: "action", description: "<p>Um personagem pode tentar uma Rolagem de Conhecimento ou Acuidade para estabilizar um paciente ou dispositivo. Em um sucesso, um aliado limpa 1 Estresse.</p><p><em>Que procedimento ilegal está pela metade?</em></p>" },
@@ -3699,7 +3923,7 @@ const ENVIRONMENTS = [
     tier: 3, name: "Gang War Block", type: "event", img: CPR("dlc/weapons/molotov-cocktail"),
     description: "<p>Um quarteirão preso numa guerra de gangues aberta, com carros em chamas, atiradores nos telhados e civis presos entre as cores.</p>",
     impulses: "Escalar, recrutar, punir a fraqueza", difficulty: 16,
-    adversaries: ["Blood Saint Duelist", "Chrome Maw Bruiser", "Rival Edgerunner Crew", "Contract Sniper"],
+    adversaries: ["Blood Saint Duelist", "Chrome Maw Bruiser", "Rival Edgerunner Crew", "Contract Sniper", "Riot Squad", "Riot Lieutenant", "Psycho Squad Operator"],
     features: [
       { name: "Crossfire", form: "passive", description: "<p>Quando uma criatura se move por terreno aberto, marca 1 Estresse ou faz uma Rolagem de Agilidade para evitar balas perdidas.</p><p><em>Quem está atirando lá de cima?</em></p>" },
       { name: "Claim the Block", form: "action", description: "<p>Uma força de gangue toma uma rua, telhado, loja ou veículo. Vira terreno perigoso até ser liberado.</p><p><em>De quem é o símbolo pintado ali?</em></p>" },
@@ -3723,7 +3947,7 @@ const ENVIRONMENTS = [
     tier: 4, name: "Digital Ghost Cathedral", type: "exploration", img: CPR("netrunning/Demon.png"),
     description: "<p>Um data center em ruínas onde IAs corrompidas falam por loops de oração, anúncios quebrados e fotos de famílias mortas.</p>",
     impulses: "Converter, revelar, corromper a memória", difficulty: 18,
-    adversaries: ["Signal Haunt", "Digital Wraith", "Data Cult Oracle", "Hades Shard"],
+    adversaries: ["Signal Haunt", "Digital Wraith", "Data Cult Oracle", "Hades Shard", "Theoi Avatar", "Blackwall Warden Daemon"],
     features: [
       { name: "Litany of Static", form: "passive", description: "<p>No início de uma cena, cada personagem com cyberware conectado marca 1 Estresse e ouve uma voz fazendo uma pergunta pessoal.</p><p><em>O que o Fantasma sabe?</em></p>" },
       { name: "Icon Becomes Monster", form: "action", description: "<p>Escolha uma tela, estátua, drone, veículo ou corpo. Ele ganha vida como uma ameaça temporária de Digital Ghost até ser destruído ou desconectado.</p><p><em>Que imagem ele veste?</em></p>" },
@@ -3736,7 +3960,7 @@ const ENVIRONMENTS = [
     tier: 4, name: "Dead Pantheon Breach", type: "event", img: CPR("netrunning/Balron.png"),
     description: "<p>Um lugar onde a Blackwall fica fina e sistemas derivados dos Theoi começam a sonhar em público.</p>",
     impulses: "Reescrever, possuir, revelar a verdade", difficulty: 21,
-    adversaries: ["Hades Shard", "Blackwall Seraph", "Digital Wraith", "Data Cult Oracle"],
+    adversaries: ["Hades Shard", "Blackwall Seraph", "Digital Wraith", "Data Cult Oracle", "Theoi Avatar", "Blackwall Warden Daemon"],
     features: [
       { name: "Reality Through Machines", form: "passive", description: "<p>Câmeras, implantes, drones, veículos e telas podem mostrar versões diferentes da mesma cena. Personagens precisam ter sucesso numa Rolagem de Instinto ou Conhecimento antes de confiar em informação digital.</p><p><em>Qual versão está mentindo?</em></p>" },
       { name: "Ghost Incursion", form: "action", description: "<p>Gere um Digital Ghost ou possua uma máquina conectada dentro do alcance Distante.</p><p><em>O que atravessou a brecha?</em></p>" },
@@ -3759,7 +3983,7 @@ const ENVIRONMENTS = [
     tier: 4, name: "Blackwall Storm Highway", type: "traversal", img: CPR("status/emp"),
     description: "<p>Uma rodovia em ruínas onde veículos correm através de relâmpagos, infraestrutura quebrada e clima de máquina corrompido.</p>",
     impulses: "Acelerar, corromper, dividir o comboio", difficulty: 20,
-    adversaries: ["Handler’s Hound", "Hades Shard", "Blackwall Seraph", "Contract Sniper"],
+    adversaries: ["Handler’s Hound", "Hades Shard", "Blackwall Seraph", "Contract Sniper", "Blackwall Warden Daemon"],
     features: [
       { name: "Machine Weather", form: "passive", description: "<p>Veículos e equipamento conectado falham com a tempestade. Em qualquer rolagem de veículo com Medo, o veículo fica Damaged, a menos que o motorista marque 1 Estresse.</p><p><em>Que sistema pisca primeiro?</em></p>" },
       { name: "Black Lightning", form: "action", description: "<p>Atinja um veículo, drone, Eidolon ou dispositivo conectado dentro do alcance Distante. Ele faz uma Rolagem de Reação ou sofre 4d8+6 de dano techno.</p><p><em>O que o relâmpago soletra?</em></p>",
@@ -3771,7 +3995,7 @@ const ENVIRONMENTS = [
     tier: 4, name: "Elite Contract Auction", type: "social", img: CPR("dlc/gear/savannah-eagle"),
     description: "<p>Um leilão secreto em que corporações, gangues, cultos digitais e lendas mercenárias dão lances por uma pessoa, arma, fragmento de IA ou chave de Eidolon.</p>",
     impulses: "Tentar, trair, expor identidades", difficulty: 20,
-    adversaries: ["Board Executive", "Chrome Reaper", "Data Cult Oracle", "Rival Edgerunner Crew"],
+    adversaries: ["Board Executive", "Chrome Reaper", "Data Cult Oracle", "Rival Edgerunner Crew", "Psycho Squad Commander"],
     features: [
       { name: "Everyone Wants It", form: "passive", description: "<p>Cada facção presente tem um objetivo diferente. Quando os personagens criam uma abertura, outra facção pode aproveitá-la.</p><p><em>Quem está dando lances com sangue em vez de créditos?</em></p>" },
       { name: "Raise the Price", form: "action", description: "<p>Revele um novo custo: refém, dívida, exposição pública, chave de cyberware, chantagem ou um lance rival.</p><p><em>Qual é o preço real?</em></p>" },
@@ -3978,6 +4202,8 @@ const THREAT_AUTOMATION = (() => {
     ...summonAction({ name: "Chamar 2 Sitil Security Guards", actionType: "reaction", stress: 1, summon: [{ name: "Sitil Security Guard", count: 2 }] }),
     ...summonAction({ name: "Chamar 2 Corporate Response Teams", actionType: "reaction", stress: 1, summon: [{ name: "Corporate Response Team", count: 2 }] })
   } });
+  // Endless Legions (Fallen Warlord) chama tropas oficiais; aqui a invocação aponta para os Operadores do módulo.
+  set("Psycho Squad Commander/Call the Squad", { actions: summonAction({ name: "Call the Squad", img: CPR("gear/radio_communicator"), fear: 1, summon: [{ name: "Psycho Squad Operator", count: 2 }] }) });
   set("Chrome Reaper/Chrome Supremacy", { actions: threatAction({ name: "Chrome Supremacy", actionType: "reaction", stress: 1, resources: { stress: 1 } }) });
   (() => {
     const alvo = marked("Alvo (Black Hand)", CPR("dlc/cyberware/kill_display"), "<p>Alvo de Black Hand até o fim da cena ou até outro personagem causar dano Maior a ele: os ataques de Black Hand contra este alvo causam +1d8 de dano.</p>");
@@ -4470,6 +4696,7 @@ const JOURNALS = [
       ["THREATS OF THE NEW DARK AGE", "AMEAÇAS DA NOVA ERA DAS TREVAS", "40-ameacas"], ["ENVIRONMENTS", "AMBIENTES", "41-ambientes"],
       ["TIER 1 ADVERSARIES", "ADVERSÁRIOS DE TIER 1", "42-adversarios-t1"], ["TIER 2 ADVERSARIES", "ADVERSÁRIOS DE TIER 2", "43-adversarios-t2"],
       ["TIER 3 ADVERSARIES", "ADVERSÁRIOS DE TIER 3", "44-adversarios-t3"], ["TIER 4 ADVERSARIES", "ADVERSÁRIOS DE TIER 4", "45-adversarios-t4"],
+      ["EXTRA ADVERSARIES", "ADVERSÁRIOS EXTRAS", "46-adversarios-extras"],
       ["COMPETENCIES", "COMPETÊNCIAS", "50-competencias"], ["NETWORK", "REDE", "51-network"], ["ASSAULT", "ASSALTO", "52-assault"], ["CHROME", "CROMO", "53-chrome"],
       ["SYSTEMS", "SISTEMAS", "54-systems"], ["INFLUENCE", "INFLUÊNCIA", "55-influence"], ["GHOST", "FANTASMA", "56-ghost"], ["FRONTIER", "FRONTEIRA", "57-frontier"],
       ["MEDTECH", "MEDTEC", "58-medtech"], ["AEGIS", "ÉGIDE", "59-aegis"], ["REDLINE", "LINHA VERMELHA", "60-redline"], ["BLACKWALL", "MURALHA NEGRA", "61-blackwall"]
@@ -4605,30 +4832,6 @@ async function clearPacks() {
   }
 }
 
-// Versões até a 1.15 criavam os compêndios e as pastas no mundo, pela macro "Importar Edgeheart
-// (Núcleo)". Com os compêndios dentro do módulo, esses ficam duplicados: o mestre é avisado uma
-// vez e pode apagá-los (personagens já criados não são afetados, os itens deles já estão na ficha).
-const LEGACY_MACRO = "Importar Edgeheart (Núcleo)";
-
-function legacyContent() {
-  return {
-    packs: game.packs.filter(p => p.metadata.packageType === "world" && Object.values(PACKS).some(d => d.name === p.metadata.name)),
-    folders: game.folders.filter(f => f.type === "Compendium" && f.getFlag(MODULE_ID, "packFolder")),
-    macros: game.macros.filter(m => m.name === LEGACY_MACRO && m.getFlag(MODULE_ID, "core"))
-  };
-}
-
-// As pastas antigas não são apagadas: têm os mesmos nomes das pastas do manifesto, e o Foundry as
-// reaproveita para os compêndios do módulo. Só perdem a marca de "pasta antiga".
-async function removeLegacyContent() {
-  const { packs, folders, macros } = legacyContent();
-  for (const pack of packs) await pack.deleteCompendium();
-  for (const folder of folders) await folder.unsetFlag(MODULE_ID, "packFolder");
-  if (macros.length) await Macro.deleteDocuments(macros.map(m => m.id));
-  await repairPackFolders();
-  return packs.length + macros.length;
-}
-
 // O Foundry distribui os compêndios nas pastas do manifesto (packFolders) uma vez por mundo. Se a
 // pasta de um compêndio do módulo foi apagada depois, ele fica apontando para uma pasta que não existe;
 // aqui a estrutura do manifesto é recriada e o compêndio volta para ela. Compêndios que o mestre moveu
@@ -4652,22 +4855,6 @@ async function repairPackFolders() {
   for (const def of mod.packFolders) await place(def, null);
 }
 
-async function offerLegacyCleanup() {
-  const { packs, folders, macros } = legacyContent();
-  if (!packs.length && !folders.length && !macros.length) return;
-  const remove = await foundry.applications.api.DialogV2.confirm({
-    window: { title: "Edgeheart: compêndios antigos" },
-    content: `<p>Os compêndios do Edgeheart agora vêm prontos dentro do módulo (pasta <strong>Edgeheart SRD</strong>). Este mundo ainda tem a versão antiga, criada pela macro de importação:</p>
-      <ul>${packs.map(p => `<li>${p.title}</li>`).join("")}${macros.length ? `<li>Macro "${LEGACY_MACRO}"</li>` : ""}</ul>
-      <p>Apagar a versão antiga? Personagens já criados não perdem nada: os itens deles já estão na ficha.</p>`,
-    rejectClose: false
-  });
-  if (remove) {
-    await removeLegacyContent();
-    ui.notifications.info("Edgeheart: compêndios antigos apagados.");
-  }
-}
-
 // Nome de cada ação (na língua de origem dos compêndios) → _id. As automações do módulo acham as ações
 // por essa tabela (isAction no edgeheart-character.js), então continuam funcionando mesmo quando uma
 // tradução (Babele) troca os nomes. Só é gravada aqui, no gerador, para as chaves ficarem no idioma original.
@@ -4680,18 +4867,22 @@ function stampActionIds(doc) {
   doc.updateSource({ [`flags.${MODULE_ID}.actionIds`]: ids });
 }
 
-// Gerador dos compêndios do módulo (ferramenta de desenvolvimento). Recria todo o conteúdo a partir// deste código e trava os compêndios de novo no final.
+// Textos da interface ficam em lang/*.json (EDGEHEART.*).
+const t = (key, data) => data ? game.i18n.format(`EDGEHEART.${key}`, data) : game.i18n.localize(`EDGEHEART.${key}`);
+
+// Gerador dos compêndios do módulo (ferramenta de desenvolvimento). Recria todo o conteúdo a partir
+// deste código e trava os compêndios de novo no final.
 async function buildPacks() {
   if (!game.user.isGM) {
-    ui.notifications.warn("Apenas o GM pode gerar os compêndios do Edgeheart.");
+    ui.notifications.warn(t("Build.OnlyGM"));
     return;
   }
   // Com o Babele traduzindo, o gerador leria os documentos já em português e gravaria isso na base.
   if (game.babele && game.i18n.lang !== "en") {
-    ui.notifications.error("Edgeheart: para gerar os compêndios, troque o idioma do Foundry para English (o Babele está traduzindo).");
+    ui.notifications.error(t("Build.NeedEnglish"));
     return;
   }
-  ui.notifications.info("Edgeheart: gerando os compêndios do módulo...");
+  ui.notifications.info(t("Build.Started"));
   const stampHook = Hooks.on("preCreateItem", doc => stampActionIds(doc));
   try {
     await clearPacks();
@@ -4715,20 +4906,51 @@ async function buildPacks() {
     packFolders: { "Character Options": "Opções de Personagem", "Items": "Itens" },
     journalEn: await loadJournalsEn()
   });
-  if (unknown.length) ui.notifications.warn(`Edgeheart: ${unknown.length} nomes fora do glossário (veja o console).`);
+  if (unknown.length) ui.notifications.warn(t("Build.Unknown", { count: unknown.length }));
   for (const key of Object.keys(PACKS)) await game.packs.get(`${PACK_SCOPE}.${PACKS[key].name}`)?.configure({ locked: true });
-  ui.notifications.info("Edgeheart: compêndios gerados.");
+  ui.notifications.info(t("Build.Done"));
   console.log("Edgeheart | Compêndios do módulo gerados.");
+}
+
+// Cena de abertura: criada e ativada uma única vez por mundo, na primeira vez que o GM abre o mundo com o
+// módulo ativo. Se o GM apagar a cena depois, ela não volta (a flag fica no setting do mundo).
+const START_SCENE = {
+  src: `modules/${MODULE_ID}/assets/art/scenes/edgeheart-start.jpg`,
+  width: 2230, height: 1254,
+  color: "#140e1f" // mesmo roxo das laterais da imagem, para não aparecer emenda em volta da cena
+};
+
+Hooks.once("init", () => {
+  game.settings.register(MODULE_ID, "startSceneCreated", { scope: "world", config: false, type: Boolean, default: false });
+});
+
+async function ensureStartScene() {
+  if (game.settings.get(MODULE_ID, "startSceneCreated")) return;
+  let scene = game.scenes.find(s => s.getFlag(MODULE_ID, "startScene"));
+  scene ??= await Scene.create({
+    name: "Edgeheart", width: START_SCENE.width, height: START_SCENE.height, padding: 0,
+    grid: { type: CONST.GRID_TYPES.GRIDLESS },
+    tokenVision: false,
+    fog: { mode: CONST.FOG_EXPLORATION_MODES.DISABLED },
+    initialLevel: Scene.metadata.defaultLevelId,
+    levels: [{
+      _id: Scene.metadata.defaultLevelId, name: "Edgeheart",
+      background: { src: START_SCENE.src, color: START_SCENE.color },
+      textures: { fit: "fill" }
+    }],
+    flags: { [MODULE_ID]: { startScene: true } }
+  });
+  await scene.activate();
+  await game.settings.set(MODULE_ID, "startSceneCreated", true);
 }
 
 Hooks.once("ready", () => {
   const mod = game.modules.get(MODULE_ID);
-  // importEdgeheartCore: nome antigo, mantido para a macro de versões anteriores.
-  if (mod) mod.api = { ...(mod.api ?? {}), buildPacks, importEdgeheartCore: buildPacks, removeLegacyContent, repairPackFolders };
+  if (mod) mod.api = { ...(mod.api ?? {}), buildPacks, repairPackFolders };
   if (game.user !== game.users.activeGM) return;
   // As Competências precisam estar no Homebrew do sistema para as cartas serem válidas; num mundo
   // novo isso acontece aqui, sem rodar nada. Nome/ícone também se atualizam entre versões.
   ensureHomebrewDomains();
   repairPackFolders();
-  offerLegacyCleanup();
+  ensureStartScene().catch(err => console.error("Edgeheart | Não foi possível criar a cena de abertura.", err));
 });

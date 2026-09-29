@@ -1,5 +1,299 @@
 {
   "EDGEHEART": {
-    "ModuleName": "Edgeheart - Cyberpunk for Daggerheart"
+    "ModuleName": "Edgeheart - Cyberpunk for Daggerheart",
+    "Settings": {
+      "DefaultSheet": {
+        "Name": "New actors use the Edgeheart sheets",
+        "Hint": "A new Character starts with the Edgeheart Sheet (Humanity, Cyber Load, Cyberpsychosis); a new Party starts with the Crew Sheet (Reputation, Edge, and Edge Moves). Existing actors can switch sheets from the sheet configuration icon."
+      },
+      "Levelup": {
+        "Name": "Edgeheart Level Up",
+        "Hint": "Removes the HP, Stress, Evasion, Trait, and Multiclass options from Level Up (in Edgeheart they come from Cyberware) and lets Experience and extra Card be picked more times. Applies to the whole world; turning it off restores the original Daggerheart Level Up."
+      }
+    },
+    "Common": {
+      "NoGM": "No GM is connected to apply this.",
+      "SelectHelperToken": "Select the token of the ally who will spend the Hope.",
+      "NotOwner": "You don't control {name}."
+    },
+    "Access": {
+      "full": "Full Access",
+      "half": "Half Access",
+      "card": "Card Access",
+      "CardCount": "Card Access ({count})",
+      "Short": { "full": "Full", "half": "Half", "one": "{count} card", "many": "{count} cards" },
+      "SourceClass": "Class",
+      "SourceMulticlass": "Multiclass",
+      "Tooltip": "{access} · up to level {level} · {sources}",
+      "Issue": {
+        "NoAccess": "no access to {competency}",
+        "LevelTooHigh": "level {level} is above the {limit} allowed by {access}",
+        "TooManyCards": "more {competency} cards than Card Accesses ({count})"
+      },
+      "Blocked": {
+        "Multiclass": "This character already has a multiclass; cyber accesses are shown for reference only.",
+        "Levelup": "With Level Up automation off, the system asks for the multiclass domain in a window; cyber accesses are shown for reference only.",
+        "Missing": "No cards in the module yet: {list}."
+      },
+      "ItemName": "Cyber Access",
+      "ItemDescription": "<p>Competencies unlocked by cyberware (Edgeheart). Kept automatically by the module; it grants no HP, Evasion, or features.</p>"
+    },
+    "Humanity": {
+      "Label": "Humanity",
+      "CyberLoad": "Cyber Load",
+      "State": { "stable": "Stable", "psycho": "Cyberpsychosis", "lost": "Lost" },
+      "Flag": { "psycho": "CYBERPSYCHOSIS", "lost": "LOST" },
+      "MaxDie": "The Humanity Die is already at its maximum (d12).",
+      "AlreadyAdvanced": "The Humanity Die already advanced this level.",
+      "ChatAdvanced": "<p><strong>{name}</strong> advanced their Humanity Die: d{from} → <strong>d{to}</strong>.</p>",
+      "ChatReduced": "<p><strong>{name}</strong> lost Humanity{reason}: d{from} → <strong>d{to}</strong>.</p>",
+      "ChatLost": "<h3>Death Move: Cyberpsycho</h3><p><strong>{name}</strong> has been lost to Cyberpsychosis{reason}. Choose one:</p><ul><li>You vanish into the city as a violent urban legend.</li><li>Your crew is forced to put you down.</li><li>You burn out in one final act of destruction, saving someone or completing the job at a terrible cost.</li></ul><p>Then, create a new character.</p>",
+      "NoteIntegratedChrome": "Integrated Chrome: Cyber Load treated as 1 lower.",
+      "NoteAnchor": "Humanity Anchor: rolled twice and kept the higher.",
+      "NoteBuffer": "Cortical Buffer: marked 1 Stress for +1.",
+      "BufferTitle": "Cortical Buffer",
+      "BufferPrompt": "<p>Humanity Roll: <strong>{total}</strong> vs Load <strong>{load}</strong>. Mark 1 Stress to add +1 and stay in control?</p>",
+      "Outcome": {
+        "PsychoEnds": "The Cyberpsychosis ends.",
+        "PsychoContinues": "The Cyberpsychosis continues.",
+        "InControl": "Stays in control.",
+        "StillPsycho": "Still in Cyberpsychosis.",
+        "EntersPsycho": "Enters CYBERPSYCHOSIS."
+      },
+      "RollTitle": "Humanity Roll",
+      "StabilizeTitle": "Stabilization",
+      "StabilizeBy": "Stabilization by {name}",
+      "RollLine": "d{die} = {math}<strong>{total}</strong> vs Cyber Load <strong>{load}</strong>",
+      "EffectName": "Cyberpsychosis",
+      "EffectDescription": "<p>You don't roll the Hope Die: use only the Fear Die as a d20 + trait; the roll is always with Fear. Features that would require marking Stress can be used without marking Stress.</p><p>An ally within Close range can spend a Hope to stabilize you (roll Humanity again). If the scene ends while you're in Cyberpsychosis, reduce your Humanity Die.</p>",
+      "EffectDuration": "Until stabilized or the end of the scene",
+      "ChatPsycho": "<h3>CYBERPSYCHOSIS</h3><p><strong>{name}</strong> lost control. Rolls use only the Fear Die (d20) and are always with Fear; features that would mark Stress don't.</p>",
+      "StabilizeButton": "Stabilize (an ally spends 1 Hope)",
+      "NotPsycho": "{name} is not in Cyberpsychosis.",
+      "SelectHelper": "Select the token (or set the character) of the ally who will stabilize.",
+      "NoHope": "{name} has no Hope to spend.",
+      "OnlyGMEnd": "Only the GM can end Cyberpsychosis without stabilization.",
+      "ChatGMEnded": "<p>The GM ended <strong>{name}</strong>'s Cyberpsychosis.</p>",
+      "ReasonManual": "manual adjustment",
+      "ReasonSheet": "Roll requested from the sheet",
+      "ReasonFearStress": "Rolled with Fear with all Stress marked.",
+      "ReasonFearHope": "Rolled with Fear with no Hope.",
+      "ReasonScenePsycho": "ended the scene in Cyberpsychosis",
+      "ReasonHardDisconnect": "Hard Disconnect from {item}",
+      "LoadWarning": "{name}: with Cyber Load {load} and Humanity d{die}, the chance to stay in control on a Humanity Roll right now is {chance}%."
+    },
+    "Levelup": {
+      "Applied": "Edgeheart: Edgeheart Level Up applied to this world (no HP, Stress, Evasion, Traits, or Multiclass). You can turn it off in the module settings.",
+      "Restored": "Edgeheart: the original Daggerheart Level Up was restored in this world."
+    },
+    "Cyberware": {
+      "ChooseTrait": "choose the trait",
+      "Trait": "Trait",
+      "ChooseExperience": "choose the Experience",
+      "Experience": "Experience",
+      "NewExperience": "New Experience (+2)",
+      "NewExperienceName": "Name of the new Experience",
+      "NewExperiencePlaceholder": "only if you pick New",
+      "NeuralArchiveDefault": "Neural Archive",
+      "NoExperiences": "{name} has no Experiences to choose from.",
+      "ChooseCompetency": "choose the Competency",
+      "Competency": "Competency",
+      "AccessLevel": "Access",
+      "Cost": { "card": "Cost 1: Card Access", "half": "Cost 2: Half Access", "full": "Cost 3: Full Access" },
+      "HalfAccessTo": "Half Access to",
+      "Pending": "{name}: choice pending. Make it from the Chrome tab of the Edgeheart Sheet.",
+      "PackMissing": "Cyberware compendium not found. Check that the Edgeheart module is active."
+    },
+    "Sheet": {
+      "Label": "Edgeheart Sheet",
+      "CrewLabel": "Crew Sheet",
+      "NewCharacter": "New Edgeheart Character",
+      "NewCharacterName": "New Edgerunner",
+      "SubclassSuggestion": "Suggested by the {name} subclass"
+    },
+    "KillChain": {
+      "EffectDescription": "<p>The Kill Chain Die is above d4. At the end of the scene it returns to d4.</p>",
+      "EffectDuration": "Until the end of the scene",
+      "RollFlavor": "Kill Chain Die ({faces}): add it to the damage",
+      "Max": "The Kill Chain Die is already at its maximum (d20).",
+      "ChatStep": "<p><strong>{name}</strong>: Kill Chain Die {from} → <strong>{to}</strong>.</p>",
+      "ChatReset": "<p><strong>{name}</strong>: Kill Chain Die returns to <strong>d4</strong>{reason}.</p>",
+      "ReasonSceneEnd": "end of the scene"
+    },
+    "Cover": {
+      "NoFeature": "{action}: this character doesn't have the Cover Work feature.",
+      "NotEnough": "{action} needs {need} Cover (you have {have}).",
+      "Max": "Cover is already at its maximum ({max})."
+    },
+    "Pick": {
+      "Prompt": "Choose: {title}.",
+      "ChatChose": "<p><strong>{name}</strong> chose <strong>{option}</strong> ({title}).</p>"
+    },
+    "Eidolon": {
+      "UnbondedTitle": "Sync without Soul Bond",
+      "UnbondedPrompt": "<p><strong>{name}</strong> has no Soul Bond with <strong>{item}</strong>. Mark 2 Stress and roll the Humanity Die? If the result is equal to or lower than the total Cyber Load (including the Sync Cost), the sync fails.</p>",
+      "UnbondedRollTitle": "Sync without Soul Bond",
+      "UnbondedLine": "d{die} = <strong>{total}</strong> vs total Cyber Load <strong>{load}</strong> (including {item}'s Sync Cost)",
+      "SyncOk": "The sync works.",
+      "SyncFail": "The sync fails (or the GM introduces a serious consequence).",
+      "AlreadySynced": "{name} is already synced with an Eidolon.",
+      "IsDisabled": "{item} is Disabled: repair it before mobilizing.",
+      "EffectName": "Eidolon: {item}",
+      "EffectDescription": "<p>Synced with the Eidolon: HP, Evasion, Thresholds, Armor, and weapons are the frame's.</p>",
+      "ChatMobilized": "<p><strong>{name}</strong> mobilized <strong>{item}</strong>. Sync Cost <strong>+{cost}</strong> to Cyber Load while synced.</p>",
+      "ChatUnsynced": "<p><strong>{name}</strong> unsynced.</p>",
+      "ChatUnsyncedFrom": "<p><strong>{name}</strong> unsynced from <strong>{item}</strong>.</p>",
+      "ChatRepaired": "<p><strong>{item}</strong> was repaired: HP and Armor Slots cleared.</p>",
+      "DisabledTitle": "{item} is Disabled",
+      "DisabledPrompt": "<p><strong>{item}</strong> marked its last Hit Point and is <strong>Disabled</strong>: it can't move, attack, or use features until repaired or reactivated. Choose one:</p><ul><li><strong>Stay Inside:</strong> stay inside the frame, protected from immediate outside danger.</li><li><strong>Hard Disconnect:</strong> force an unsync: mark 2 Stress and make a Humanity Roll.</li><li><strong>Emergency Overclock:</strong> reactivate in Overclock: you mark HP instead of the Eidolon, and 1 HP at the end of each of your actions.</li></ul>",
+      "ChatOverclock": "<p><strong>{item}</strong> reactivated in <strong>Emergency Overclock</strong>: HP now belong to {name}, and each action marks 1 HP.</p>",
+      "ChatStayInside": "<p><strong>{name}</strong> stays inside <strong>{item}</strong> (Disabled): protected from immediate outside danger.</p>",
+      "DisabledWarn": "The Eidolon is Disabled: it can't attack or use features until repaired or reactivated."
+    },
+    "Chrome": {
+      "HumanityDieTooltip": "Humanity Die: d4 → d6 → d8 → d10 → d12",
+      "LoadTooltip": "Cyber Load: sum of the Cost of all installed cyberware",
+      "LoadModNote": " ({mod} temporary modifier)",
+      "LoadModTooltip": "Temporary Load modifier (effects, Eidolon, etc.)",
+      "ControlTooltip": "Chance to stay in control on a Humanity Roll right now (you need more than {load} on the d{die})",
+      "AnchorNote": ". Humanity Anchor: roll twice and keep the higher",
+      "Control": "Control",
+      "AnchorTooltip": "Humanity Anchor: roll twice and keep the higher",
+      "BufferTooltip": "Cortical Buffer: you can mark 1 Stress for +1 on the Humanity Roll",
+      "InPsycho": "In Cyberpsychosis",
+      "InPsychoText": "Roll only the Fear Die (d20), always with Fear · features that ask for Stress don't mark it · if the scene ends like this, Humanity drops one step.",
+      "LostTitle": "Lost to Cyberpsychosis",
+      "LostText": "Death Move: Cyberpsycho.",
+      "Stabilize": "Stabilize",
+      "StabilizeTooltip": "An ally within Close range spends 1 Hope: select their token and click",
+      "EndPsychoTooltip": "End the Cyberpsychosis (GM)",
+      "RollHumanity": "Humanity Roll",
+      "RollHumanityTooltip": "Roll when you roll with Fear with all Stress marked or with no Hope (automatic on this sheet), or when the GM asks",
+      "AdvancedThisLevel": "Already advanced this level",
+      "AdvanceTooltip": "Advance: a meaningful bond, an important goal, reclaiming part of yourself, or a moment of genuine hope (once per level)",
+      "ReduceTooltip": "Reduce the Humanity Die one step",
+      "OpenCyberware": "Open the Cyberware compendium (drag an item onto the sheet to install it)",
+      "Tier": "Tier",
+      "WeaponwareTooltip": "Weaponware: counts as an always-equipped weapon",
+      "ChoiceTooltip": "This cyberware asks for a choice",
+      "Choose": "Choose",
+      "CostTooltip": "Cyber Cost",
+      "NoCyberware": "No cyberware. Click <i class=\"fa-solid fa-plus\"></i> and drag an item onto the sheet.",
+      "SyncCostTooltip": "Sync Cost added to Cyber Load",
+      "SyncCostCount": "+{cost} Load",
+      "EidolonStats": "Sync {sync} · HP {marked}/{hp} · Evasion {evasion} · Thresholds {thresholds} · Armor {armor}",
+      "Synced": "Synced",
+      "Disabled": "Disabled",
+      "BondTooltip": "Soul Bond: without it, syncing marks 2 Stress and requires a Humanity Roll",
+      "Unsync": "Unsync",
+      "Mobilize": "Mobilize",
+      "RepairTooltip": "Repair: clears the Eidolon's HP and Armor Slots (during a rest, with tools and parts)",
+      "Competencies": "Competencies",
+      "NoCompetencies": "No Competencies yet. Your class grants Full Access to one; cyberware can unlock others.",
+      "CardIssues": "Cards outside your access",
+      "HowItWorks": "How it works",
+      "Help": {
+        "Humanity": "<strong>Humanity:</strong> starts at d6. It advances once per level (a meaningful bond, an important goal, reclaiming part of yourself, a moment of hope).",
+        "Load": "<strong>Cyber Load:</strong> sum of the Cost of all installed cyberware.",
+        "Roll": "<strong>Humanity Roll:</strong> if the result is higher than your Load, you stay in control; if it's equal or lower, you enter Cyberpsychosis. It's automatic when you roll with Fear with all Stress marked or with no Hope.",
+        "Psycho": "<strong>Cyberpsychosis:</strong> roll only the Fear Die as a d20, always with Fear; features that ask for Stress don't mark it. An ally can spend 1 Hope to stabilize you. Ending the scene like this reduces your Humanity; below d4 you're lost.",
+        "Eidolons": "<strong>Eidolons:</strong> drag an Eidolon from the Cyberware compendium onto the sheet and use Mobilize. While synced, HP, Evasion, Thresholds, Armor, and weapons are the frame's (weapons use your Interface), the Sync Cost adds to your Load, and the Competency Link unlocks cards. On the Eidolon's last HP, choose Stay Inside, Hard Disconnect, or Emergency Overclock.",
+        "Competencies": "<strong>Competencies:</strong> your class grants Full Access to one; cyberware can grant Card Access, Half Access (up to half your level), or Full Access."
+      }
+    },
+    "Crew": {
+      "Spend": "Spend",
+      "Gain": "Gain",
+      "Announce": "Announce",
+      "EdgeGainsSummary": "Once per scene, the Crew gains 1 Edge when…",
+      "EdgeMoves": "Edge Moves",
+      "CrewAgrees": "Crew agrees",
+      "CrewAgreesTooltip": "Anyone can spend Edge, but the Crew must agree",
+      "TierTooltip": "Crew Tier: the highest Tier among the members",
+      "Reputation": "Reputation",
+      "ReputationTooltip": "What are you known for? It becomes each member's shared Reputation Experience (using it costs 1 Hope, once per scene).",
+      "Code": "Code",
+      "CodeTooltip": "What rule does the Crew refuse to break?",
+      "Fixer": "Fixer",
+      "FixerTooltip": "Who finds contracts and connects you to the city?",
+      "Base": "Base",
+      "BaseTooltip": "Where do you meet, repair, argue, and recover between jobs?",
+      "Help": {
+        "Members": "<strong>Members:</strong> drag the characters into the Party's members tab.",
+        "Reputation": "<strong>Reputation:</strong> starts at +2 and rises +1 with each new Crew Tier. It shows up as an Experience on each member's sheet.",
+        "Assets": "<strong>Crew Assets:</strong> vehicles, safehouses, gear, and rewards live in the Party Inventory. They stay with the Crew when someone leaves.",
+        "NewCharacter": "<strong>New character:</strong> starts at the lowest level of the current Tier (Tier 1 → level 1, Tier 2 → 2, Tier 3 → 5, Tier 4 → 8).",
+        "Buttons": "<strong>Chat buttons:</strong> Get Them Out applies to the targeted ally; Back Me Up rolls the selected character's reaction; Hidden Cache puts 3 Supplies in the Inventory; Sabotage Package has the GM's restore button (2 Fear); a Tag Team Roll with Hope offers +1 Edge.",
+        "AllIn": "<strong>All In:</strong> opens the Tag Team Roll with no Hope cost; when it ends, whoever rolled clears 1 Stress."
+      },
+      "Move": {
+        "teamwork": "The first time in each scene a character <strong>Helps an Ally</strong>, their advantage die is a <strong>d8</strong> instead of a d6. When a character starts a <strong>Group Action Roll</strong>, the characters can split the Hope spent.",
+        "backMeUp": "When a Crew member fails an action roll, another member can step in: they move within Close range and make a relevant reaction roll, describing how they save the situation. On a success, the original roll becomes a <strong>success with Fear</strong>.",
+        "getThemOut": "When a Crew member within Close range would mark Hit Points or become <em>Vulnerable</em> or <em>Restrained</em>, another character moves within Very Close range of them. Reduce the HP marked by 1 or clear one temporary condition. Then move both within Close range toward cover, a vehicle, an exit, or a safer position.",
+        "planB": "Reveal a plausible contingency plan the Crew prepared for the Contract.",
+        "allIn": "Two Crew members make a <strong>Tag Team Roll</strong> without spending Hope, even if they already made one this session. Afterward, each character who took part clears 1 Stress."
+      },
+      "Option": {
+        "hiddenCache": "Gain three Supply tokens. Spend one to produce a common consumable, weapon, or tool.",
+        "insideAccess": "Create a Breach against the local network or security system. The next roll made to exploit it gains +4.",
+        "sabotagePackage": "Disable a connected system until the GM spends 2 Fear to restore it.",
+        "escapeVector": "Establish an extraction route within Far range. The group can leave the scene without another roll."
+      },
+      "Gains": {
+        "tagTeam": "A Tag Team Roll succeeds with Hope.",
+        "protect": "A character marks HP, Stress, or accepts a serious consequence to protect another Crew member.",
+        "crewFirst": "A character puts the Crew above their own safety or reward.",
+        "cooperation": "The Crew completes an important part of the Contract through cooperation."
+      },
+      "Supplies": {
+        "Name": "Supplies",
+        "Description": "<p>Plan B Supply token (Hidden Cache). Spend one to produce a common consumable, weapon, or tool.</p>",
+        "Action": "Use Supplies",
+        "ActionDescription": "<p>Produce a common consumable, weapon, or tool.</p>",
+        "Added": "3 Supplies in the Crew Inventory."
+      },
+      "NotEnoughEdge": "{move} costs {cost} Edge; the Crew has {edge}.",
+      "ConfirmTitle": "{move}: {cost} Edge",
+      "ConfirmPrompt": "<p>Does the Crew agree to spend <strong>{cost} Edge</strong> on <strong>{move}</strong>{option}?</p>",
+      "ChooseContingency": "{move}: choose the contingency",
+      "Button": {
+        "reduceHp": "Reduce 1 marked HP",
+        "clearCondition": "Clear Vulnerable/Restrained",
+        "targetTooltip": "Applies to the targeted ally (or the selected token)",
+        "reactionRoll": "Reaction Roll",
+        "reactionTooltip": "Rolls the reaction of the selected character (or your character)",
+        "restoreSystem": "Restore the system (2 Fear)",
+        "gainEdge": "+1 Edge",
+        "onceTooltip": "Once per scene"
+      },
+      "TraitTitle": "Back Me Up: reaction trait",
+      "TraitPrompt": "<p>Which trait does the character use to save the situation?</p>",
+      "TargetAlly": "Target (or select) the ally being pulled out.",
+      "ReducedHp": "Get Them Out: {names} reduces 1 marked HP.",
+      "ClearedCondition": "Get Them Out: temporary condition cleared on {names}.",
+      "SelectSaver": "Select the token of the character who will save the situation.",
+      "RestoreCost": "Restoring the system costs 2 Fear; you have {fear}.",
+      "MaxEdge": "The Crew already has 3 Edge.",
+      "ReputationName": "Crew: {reputation}",
+      "ReputationDescription": "Reputation of the {crew} Crew. Once per scene, spend 1 Hope to add it to a fitting roll.",
+      "NamesJoin": " and ",
+      "AllInChat": "<p><i class=\"fa-solid fa-fire\"></i> <strong>All In:</strong> {names} clear 1 Stress.</p>",
+      "EdgeGainChat": "<p>Tag Team Roll with Hope: the Crew can gain 1 Edge (once per scene).</p>"
+    },
+    "Vehicle": {
+      "damaged": "Damaged",
+      "disabled": "Disabled",
+      "IsDisabled": "{name} is Disabled: it can't move or be used until repaired.",
+      "IsDamaged": "{name} is Damaged: its Feature can't be used until repaired.",
+      "ChatDamaged": "<p><strong>{name}</strong> is now <strong>Damaged</strong>. Its Feature stops working and driving rolls take −2.</p>",
+      "ChatDisabled": "<p><strong>{name}</strong> is now <strong>Disabled</strong>. It can't move or be used until repaired.</p>"
+    },
+    "Build": {
+      "OnlyGM": "Only the GM can build the Edgeheart compendiums.",
+      "NeedEnglish": "Edgeheart: to build the compendiums, switch Foundry's language to English (Babele is translating).",
+      "Started": "Edgeheart: building the module compendiums...",
+      "Unknown": "Edgeheart: {count} names are missing from the glossary (see the console).",
+      "Done": "Edgeheart: compendiums built."
+    }
   }
 }

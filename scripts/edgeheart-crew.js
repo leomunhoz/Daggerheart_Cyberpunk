@@ -15,56 +15,46 @@ const SOCKET = `module.${MODULE_ID}`;
 const EXPERIENCE_ID = "edgeheartCrew";
 const MAX_EDGE = 3;
 
-const MOVES = {
-  teamwork: {
-    name: "Teamwork", cost: 0, icon: "fa-handshake",
-    text: "Na primeira vez em cada cena em que um personagem <strong>Ajuda um Aliado</strong>, o dado de vantagem dele é um <strong>d8</strong> em vez de um d6. Quando um personagem começa uma <strong>Rolagem de Ação em Equipe</strong>, os personagens podem dividir a Esperança gasta."
-  },
-  backMeUp: {
-    name: "Back Me Up", cost: 1, icon: "fa-people-arrows",
-    text: "Quando um membro da Crew falha numa rolagem de ação, outro membro pode intervir: move-se para dentro do alcance Próximo e faz uma rolagem de reação relevante, descrevendo como salva a situação. Em um sucesso, a rolagem original vira um <strong>sucesso com Medo</strong>."
-  },
-  getThemOut: {
-    name: "Get Them Out", cost: 1, icon: "fa-person-running",
-    text: "Quando um membro da Crew dentro do alcance Próximo fosse marcar Pontos de Vida, ficar <em>Vulnerável</em> ou <em>Imobilizado</em>, outro personagem se move para dentro do alcance Muito Próximo dele. Reduza em 1 os PV marcados ou limpe uma condição temporária. Depois, mova os dois dentro do alcance Próximo em direção a cobertura, veículo, saída ou posição mais segura."
-  },
+// Textos da interface ficam em lang/*.json (EDGEHEART.*).
+const t = (key, data) => data ? game.i18n.format(`EDGEHEART.${key}`, data) : game.i18n.localize(`EDGEHEART.${key}`);
+
+// Nomes dos movimentos e das contingências ficam no original do PDF (como os nomes das features).
+// Os textos vêm do idioma na hora de mostrar (EDGEHEART.Crew.Move.<id> / Crew.Option.<id>).
+const MOVE_DEFS = {
+  teamwork: { name: "Teamwork", cost: 0, icon: "fa-handshake" },
+  backMeUp: { name: "Back Me Up", cost: 1, icon: "fa-people-arrows" },
+  getThemOut: { name: "Get Them Out", cost: 1, icon: "fa-person-running" },
   planB: {
     name: "Plan B", cost: 2, icon: "fa-route",
-    text: "Revele um plano de contingência plausível que a Crew preparou para o Contrato.",
-    options: {
-      hiddenCache: { name: "Hidden Cache", text: "Ganhe três marcadores de Suprimento. Gaste um para produzir um consumível, arma ou ferramenta comum." },
-      insideAccess: { name: "Inside Access", text: "Crie uma Breach contra a rede local ou o sistema de segurança. A próxima rolagem feita para explorá-la ganha +4." },
-      sabotagePackage: { name: "Sabotage Package", text: "Desative um sistema conectado até o mestre gastar 2 Medo para restaurá-lo." },
-      escapeVector: { name: "Escape Vector", text: "Estabeleça uma rota de extração dentro do alcance Distante. O grupo pode sair da cena sem outra rolagem." }
-    }
+    options: { hiddenCache: "Hidden Cache", insideAccess: "Inside Access", sabotagePackage: "Sabotage Package", escapeVector: "Escape Vector" }
   },
-  allIn: {
-    name: "All In", cost: 3, icon: "fa-fire",
-    text: "Dois membros da Crew fazem uma <strong>Rolagem em Dupla</strong> sem gastar Esperança, mesmo que já tenham feito uma nesta sessão. Depois, cada personagem que participou limpa 1 Estresse."
-  }
+  allIn: { name: "All In", cost: 3, icon: "fa-fire" }
 };
 
-const GAINS = [
-  "Uma Rolagem em Dupla tem sucesso com Esperança.",
-  "Um personagem marca PV, Estresse ou aceita uma consequência séria para proteger outro membro da Crew.",
-  "Um personagem coloca a Crew acima da própria segurança ou recompensa.",
-  "A Crew completa uma parte importante do Contrato por meio de cooperação."
-];
+function move(id) {
+  const def = MOVE_DEFS[id];
+  const options = def.options
+    ? Object.fromEntries(Object.entries(def.options).map(([key, name]) => [key, { id: key, name, text: t(`Crew.Option.${key}`) }]))
+    : null;
+  return { ...def, text: t(`Crew.Move.${id}`), options };
+}
+
+const GAIN_KEYS = ["tagTeam", "protect", "crewFirst", "cooperation"];
 
 // Hidden Cache: consumível do Inventário da Crew, no padrão das poções oficiais (a ação gasta 1 de
 // quantidade do próprio item; o itemId do custo é preenchido depois de criado).
 const SUPPLIES = quantity => {
   const actionId = foundry.utils.randomID();
   return {
-    name: "Suprimento", type: "consumable", img: `modules/${MODULE_ID}/assets/cpr/gear/carryall.svg`,
+    name: t("Crew.Supplies.Name"), type: "consumable", img: `modules/${MODULE_ID}/assets/cpr/gear/carryall.svg`,
     flags: { [MODULE_ID]: { supplies: true } },
     system: {
       quantity, consumeOnUse: true,
-      description: "<p>Marcador de Suprimento do Plan B (Hidden Cache). Gaste um para produzir um consumível, arma ou ferramenta comum.</p>",
+      description: t("Crew.Supplies.Description"),
       actions: {
         [actionId]: {
-          _id: actionId, type: "effect", name: "Usar Suprimento", actionType: "action",
-          description: "<p>Produza um consumível, arma ou ferramenta comum.</p>",
+          _id: actionId, type: "effect", name: t("Crew.Supplies.Action"), actionType: "action",
+          description: t("Crew.Supplies.ActionDescription"),
           cost: [{ key: "quantity", value: 1, scalable: false, step: null, consumeOnSuccess: false }]
         }
       }
@@ -117,11 +107,11 @@ export const Crew = {
       tier: this.tier(actor),
       reputationValue: this.reputationValue(actor),
       edgePips: Array.from({ length: MAX_EDGE }, (_, i) => ({ value: i + 1, filled: i < d.edge })),
-      moves: Object.entries(MOVES).map(([id, m]) => ({
-        id, ...m, affordable: d.edge >= m.cost,
-        options: m.options ? Object.values(m.options) : null
-      })),
-      gains: GAINS,
+      moves: Object.keys(MOVE_DEFS).map(id => {
+        const m = move(id);
+        return { ...m, id, affordable: d.edge >= m.cost, options: m.options ? Object.values(m.options) : null };
+      }),
+      gains: GAIN_KEYS.map(key => t(`Crew.Gains.${key}`)),
       members: this.members(actor).map(m => ({ name: m.name, img: m.img, uuid: m.uuid, tier: m.system.tier }))
     };
   },
@@ -133,22 +123,22 @@ export const Crew = {
   },
 
   async useMove(actor, moveId) {
-    const move = MOVES[moveId];
+    const m = move(moveId);
     const { edge } = this.data(actor);
-    if (edge < move.cost) return ui.notifications.warn(`${move.name} custa ${move.cost} Edge; a Crew tem ${edge}.`);
+    if (edge < m.cost) return ui.notifications.warn(t("Crew.NotEnoughEdge", { move: m.name, cost: m.cost, edge }));
 
     let option = null;
-    if (move.options) {
-      option = await chooseOption(move);
+    if (m.options) {
+      option = await chooseOption(m);
       if (!option) return;
     }
-    const confirmed = move.cost === 0 || await foundry.applications.api.DialogV2.confirm({
-      window: { title: `${move.name} — ${move.cost} Edge` },
-      content: `<p>A Crew concorda em gastar <strong>${move.cost} Edge</strong> em <strong>${move.name}</strong>${option ? ` (${option.name})` : ""}?</p>`
+    const confirmed = m.cost === 0 || await foundry.applications.api.DialogV2.confirm({
+      window: { title: t("Crew.ConfirmTitle", { move: m.name, cost: m.cost }) },
+      content: t("Crew.ConfirmPrompt", { cost: m.cost, move: m.name, option: option ? ` (${option.name})` : "" })
     });
     if (!confirmed) return;
 
-    if (move.cost) await this.setEdge(actor, edge - move.cost);
+    if (m.cost) await this.setEdge(actor, edge - m.cost);
     if (option?.id === "hiddenCache") await asOwner(actor, "crewAddSupplies", { crewUuid: actor.uuid, quantity: 3 });
     await chatCard(actor, moveId, option);
     if (moveId === "allIn") await this.startAllIn(actor);
@@ -176,14 +166,14 @@ export const Crew = {
         if (current) await member.update({ [`system.experiences.${EXPERIENCE_ID}`]: new foundry.data.operators.ForcedDeletion() });
         continue;
       }
-      const name = `Crew: ${reputation}`;
+      const name = t("Crew.ReputationName", { reputation });
       if (current?.name === name && current?.value === value && !current.core) continue;
       // O sistema marca as duas primeiras Experiências de um personagem como "core" (as da criação);
       // a Reputação nunca é uma delas, então um personagem ainda sem Experiências recebe a correção.
       await member.update({
         [`system.experiences.${EXPERIENCE_ID}`]: {
           name, value, core: false,
-          description: `Reputação da Crew ${actor.name}. Uma vez por cena, gaste 1 Esperança para somá-la a uma rolagem adequada.`
+          description: t("Crew.ReputationDescription", { crew: actor.name })
         }
       });
       if (member._source.system.experiences[EXPERIENCE_ID]?.core) {
@@ -202,49 +192,49 @@ export const Crew = {
   }
 };
 
-async function chooseOption(move) {
-  const buttons = Object.entries(move.options).map(([action, o]) => ({ action, label: o.name }));
-  const content = `<p>${move.text}</p><ul>${Object.values(move.options).map(o => `<li><strong>${o.name}:</strong> ${o.text}</li>`).join("")}</ul>`;
+async function chooseOption(m) {
+  const buttons = Object.values(m.options).map(o => ({ action: o.id, label: o.name }));
+  const content = `<p>${m.text}</p><ul>${Object.values(m.options).map(o => `<li><strong>${o.name}:</strong> ${o.text}</li>`).join("")}</ul>`;
   const choice = await foundry.applications.api.DialogV2.wait({
-    window: { title: `${move.name} — escolha a contingência` },
+    window: { title: t("Crew.ChooseContingency", { move: m.name }) },
     content, buttons, rejectClose: false,
     position: { width: 480 }
   });
-  return choice ? { id: choice, ...move.options[choice] } : null;
+  return choice ? m.options[choice] : null;
 }
 
 // Botões dos cards de movimento, no padrão dos cards de ação do sistema (aplicam ao alvo / ao
-// personagem selecionado). "gm" = só o mestre vê.
+// personagem selecionado). "gm" = só o mestre vê. label/tooltip são chaves de EDGEHEART.Crew.Button.
 const CARD_BUTTONS = {
   getThemOut: [
-    { id: "reduceHp", icon: "fa-heart", label: "Reduzir 1 PV marcado", tooltip: "Aplica ao aliado alvo (ou ao token selecionado)" },
-    { id: "clearCondition", icon: "fa-person-walking-arrow-right", label: "Limpar Vulnerável/Imobilizado", tooltip: "Aplica ao aliado alvo (ou ao token selecionado)" }
+    { id: "reduceHp", icon: "fa-heart", label: "reduceHp", tooltip: "targetTooltip" },
+    { id: "clearCondition", icon: "fa-person-walking-arrow-right", label: "clearCondition", tooltip: "targetTooltip" }
   ],
   backMeUp: [
-    { id: "reactionRoll", icon: "fa-dice", label: "Rolagem de Reação", tooltip: "Rola a reação do personagem selecionado (ou do seu personagem)" }
+    { id: "reactionRoll", icon: "fa-dice", label: "reactionRoll", tooltip: "reactionTooltip" }
   ],
   sabotagePackage: [
-    { id: "restoreSystem", icon: "fa-skull", label: "Restaurar o sistema (2 Medo)", gm: true, once: true }
+    { id: "restoreSystem", icon: "fa-skull", label: "restoreSystem", gm: true, once: true }
   ],
   edgeGain: [
-    { id: "gainEdge", icon: "fa-bolt", label: "+1 Edge", tooltip: "Uma vez por cena", once: true }
+    { id: "gainEdge", icon: "fa-bolt", label: "gainEdge", tooltip: "onceTooltip", once: true }
   ]
 };
 
 function cardButtons(key) {
   return (CARD_BUTTONS[key] ?? []).map(b =>
-    `<button type="button" data-eh-crew="${b.id}"${b.gm ? ` data-eh-gm="1"` : ""}${b.once ? ` data-eh-once="1"` : ""}${b.tooltip ? ` data-tooltip="${b.tooltip}"` : ""}><i class="fa-solid ${b.icon}"></i> ${b.label}</button>`
+    `<button type="button" data-eh-crew="${b.id}"${b.gm ? ` data-eh-gm="1"` : ""}${b.once ? ` data-eh-once="1"` : ""}${b.tooltip ? ` data-tooltip="${t(`Crew.Button.${b.tooltip}`)}"` : ""}><i class="fa-solid ${b.icon}"></i> ${t(`Crew.Button.${b.label}`)}</button>`
   ).join("");
 }
 
 async function chatCard(actor, moveId, option) {
-  const move = MOVES[moveId];
-  const body = option ? `<p>${move.text}</p><p><strong>${option.name}:</strong> ${option.text}</p>` : `<p>${move.text}</p>`;
+  const m = move(moveId);
+  const body = option ? `<p>${m.text}</p><p><strong>${option.name}:</strong> ${option.text}</p>` : `<p>${m.text}</p>`;
   const buttons = cardButtons(moveId) + cardButtons(option?.id);
-  const extra = option?.id === "hiddenCache" ? `<p class="eh-note"><i class="fa-solid fa-box-open"></i> 3 Suprimentos no Inventário da Crew.</p>` : "";
+  const extra = option?.id === "hiddenCache" ? `<p class="eh-note"><i class="fa-solid fa-box-open"></i> ${t("Crew.Supplies.Added")}</p>` : "";
   return ChatMessage.create({
     speaker: ChatMessage.getSpeaker({ actor }),
-    content: `<div class="eh-chat eh-crew-chat"><h3><i class="fa-solid ${move.icon}"></i> ${move.name} <span class="eh-edge-cost">${move.cost} Edge</span></h3>${body}${extra}${buttons ? `<div class="eh-card-buttons">${buttons}</div>` : ""}</div>`,
+    content: `<div class="eh-chat eh-crew-chat"><h3><i class="fa-solid ${m.icon}"></i> ${m.name} <span class="eh-edge-cost">${m.cost} Edge</span></h3>${body}${extra}${buttons ? `<div class="eh-card-buttons">${buttons}</div>` : ""}</div>`,
     flags: { [MODULE_ID]: { crewCard: { crewUuid: actor.uuid, move: moveId, option: option?.id ?? null, used: [] } } }
   });
 }
@@ -264,8 +254,8 @@ async function chooseTrait() {
   const traits = CONFIG.DH.ACTOR.abilities;
   const buttons = Object.entries(traits).map(([action, t]) => ({ action, label: game.i18n.localize(t.label) }));
   return foundry.applications.api.DialogV2.wait({
-    window: { title: "Back Me Up — atributo da reação" },
-    content: "<p>Com que atributo o personagem salva a situação?</p>",
+    window: { title: t("Crew.TraitTitle") },
+    content: t("Crew.TraitPrompt"),
     buttons, rejectClose: false, position: { width: 420 }
   });
 }
@@ -273,19 +263,19 @@ async function chooseTrait() {
 const CARD_ACTIONS = {
   async reduceHp(message) {
     const actors = buttonTargets().filter(a => a.type === "character");
-    if (!actors.length) return ui.notifications.warn("Marque como alvo (ou selecione) o aliado que está sendo tirado dali.");
+    if (!actors.length) return ui.notifications.warn(t("Crew.TargetAlly"));
     await relay("crewReduceHp", { actorUuids: actors.map(a => a.uuid) }, actors);
-    ui.notifications.info(`Get Them Out: ${actors.map(a => a.name).join(", ")} reduz 1 PV marcado.`);
+    ui.notifications.info(t("Crew.ReducedHp", { names: actors.map(a => a.name).join(", ") }));
   },
   async clearCondition(message) {
     const actors = buttonTargets().filter(a => a.type === "character");
-    if (!actors.length) return ui.notifications.warn("Marque como alvo (ou selecione) o aliado que está sendo tirado dali.");
+    if (!actors.length) return ui.notifications.warn(t("Crew.TargetAlly"));
     await relay("crewClearConditions", { actorUuids: actors.map(a => a.uuid) }, actors);
-    ui.notifications.info(`Get Them Out: condição temporária limpa em ${actors.map(a => a.name).join(", ")}.`);
+    ui.notifications.info(t("Crew.ClearedCondition", { names: actors.map(a => a.name).join(", ") }));
   },
   async reactionRoll(message) {
     const actor = rollingCharacter();
-    if (!actor) return ui.notifications.warn("Selecione o token do personagem que vai salvar a situação.");
+    if (!actor) return ui.notifications.warn(t("Crew.SelectSaver"));
     const trait = await chooseTrait();
     if (!trait) return;
     await actor.rollTrait(trait, {
@@ -296,7 +286,7 @@ const CARD_ACTIONS = {
   async restoreSystem(message) {
     const key = CONFIG.DH.SETTINGS.gameSettings.Resources.Fear;
     const fear = game.settings.get(CONFIG.DH.id, key);
-    if (fear < 2) return ui.notifications.warn(`Restaurar o sistema custa 2 Medo; você tem ${fear}.`);
+    if (fear < 2) return ui.notifications.warn(t("Crew.RestoreCost", { fear }));
     await game.settings.set(CONFIG.DH.id, key, fear - 2);
     return true;
   },
@@ -304,7 +294,7 @@ const CARD_ACTIONS = {
     const crew = await fromUuid(message.getFlag(MODULE_ID, "crewCard.crewUuid"));
     if (!crew) return;
     const { edge } = Crew.data(crew);
-    if (edge >= MAX_EDGE) return ui.notifications.warn("A Crew já está com 3 Edge.");
+    if (edge >= MAX_EDGE) return ui.notifications.warn(t("Crew.MaxEdge"));
     await Crew.setEdge(crew, edge + 1);
     return true;
   }
@@ -313,14 +303,14 @@ const CARD_ACTIONS = {
 // Aplica em atores que o usuário pode não controlar: direto se for dono de todos, senão pelo mestre.
 async function relay(action, payload, actors) {
   if (actors.every(a => a.isOwner)) return handlers[action](payload);
-  if (!game.users.activeGM) return ui.notifications.warn("Nenhum mestre conectado para aplicar isso.");
+  if (!game.users.activeGM) return ui.notifications.warn(t("Common.NoGM"));
   game.socket.emit(SOCKET, { action, payload });
 }
 
 // Mudanças no ator da Crew feitas por quem não é dono dela vão para o mestre pelo socket do módulo.
 async function asOwner(actor, action, payload) {
   if (actor.isOwner) return handlers[action](payload);
-  if (!game.users.activeGM) return ui.notifications.warn("Nenhum mestre conectado para aplicar isso.");
+  if (!game.users.activeGM) return ui.notifications.warn(t("Common.NoGM"));
   game.socket.emit(SOCKET, { action, payload });
 }
 
@@ -437,7 +427,7 @@ Hooks.once("init", () => {
 
 Hooks.once("setup", () => {
   foundry.documents.collections.Actors.registerSheet(MODULE_ID, defineSheet(), {
-    types: ["party"], label: "Ficha da Crew", makeDefault: false
+    types: ["party"], label: "EDGEHEART.Sheet.CrewLabel", makeDefault: false
   });
 });
 
@@ -509,20 +499,20 @@ Hooks.on("createChatMessage", async (message, _options, userId) => {
   const crew = game.actors.find(a => Crew.isCrew(a) && a.system.tagTeam?.initiator?.memberId && Object.keys(a.system.tagTeam.members ?? {}).length);
   if (!crew) return;
   const members = Object.keys(crew.system.tagTeam.members).map(id => game.actors.get(id)).filter(Boolean);
-  const names = members.map(m => m.name).join(" e ");
+  const names = members.map(m => m.name).join(t("Crew.NamesJoin"));
   const lines = [];
 
   if (crew.getFlag(MODULE_ID, "crew.allInPending")) {
     await asOwner(crew, "crewSetFlag", { crewUuid: crew.uuid, key: "allInPending", value: false });
     await relay("crewClearStress", { actorUuids: members.map(m => m.uuid) }, members);
-    lines.push(`<p><i class="fa-solid fa-fire"></i> <strong>All In:</strong> ${names} limpam 1 Estresse.</p>`);
+    lines.push(t("Crew.AllInChat", { names }));
   }
 
   const roll = message.rolls[0];
   const difficulty = roll?.options?.roll?.difficulty;
   const success = difficulty == null || roll.isCritical || roll.total >= difficulty;
   const gain = (roll?.withHope || roll?.isCritical) && success;
-  if (gain) lines.push(`<p>Rolagem em Dupla com Esperança: a Crew pode ganhar 1 Edge (uma vez por cena).</p>`);
+  if (gain) lines.push(t("Crew.EdgeGainChat"));
   if (!lines.length) return;
 
   await ChatMessage.create({
@@ -544,16 +534,16 @@ function isAction(action, name) {
   const id = Array.isArray(ids) ? ids.find(([n]) => n === name)?.[1] : null;
   return id ? (action.id ?? action._id) === id : action.name === name;
 }
-const VEHICLE_STATES = { ok: "", damaged: " (Damaged)", disabled: " (Disabled)" };
-
 export const Vehicle = {
   data(item) {
     return item?.getFlag(MODULE_ID, "vehicle") ?? null;
   },
 
+  // O estado aparece no nome do item, no idioma de quem aplicou ("Street Bike (Damaged)").
   async setState(item, state) {
     const v = this.data(item);
-    await item.update({ name: v.baseName + VEHICLE_STATES[state], [`flags.${MODULE_ID}.vehicle.state`]: state });
+    const suffix = state === "ok" ? "" : ` (${t(`Vehicle.${state}`)})`;
+    await item.update({ name: v.baseName + suffix, [`flags.${MODULE_ID}.vehicle.state`]: state });
   }
 };
 
@@ -565,11 +555,11 @@ Hooks.on("daggerheart.preUseAction", (action, config) => {
     config.extraFormula = config.extraFormula ? `${config.extraFormula} - 2` : "-2";
   }
   if (v.state === "disabled" && !isAction(action, VEHICLE.repair)) {
-    ui.notifications.warn(`${v.baseName} está Disabled: não se move nem pode ser usado até ser consertado.`);
+    ui.notifications.warn(t("Vehicle.IsDisabled", { name: v.baseName }));
     return false;
   }
   if (v.state === "damaged" && v.featureActions?.some(name => isAction(action, name))) {
-    ui.notifications.warn(`${v.baseName} está Damaged: a Característica não pode ser usada até ser consertado.`);
+    ui.notifications.warn(t("Vehicle.IsDamaged", { name: v.baseName }));
     return false;
   }
 });
@@ -583,7 +573,7 @@ Hooks.on("daggerheart.postUseAction", async (action) => {
     await Vehicle.setState(item, next);
     await ChatMessage.create({
       speaker: ChatMessage.getSpeaker({ actor: item.parent }),
-      content: `<div class="eh-chat"><p><strong>${v.baseName}</strong> ficou <strong>${next === "damaged" ? "Damaged" : "Disabled"}</strong>. ${next === "damaged" ? "A Característica para de funcionar e as rolagens para dirigir sofrem −2." : "Não se move nem pode ser usado até ser consertado."}</p></div>`
+      content: `<div class="eh-chat">${t(next === "damaged" ? "Vehicle.ChatDamaged" : "Vehicle.ChatDisabled", { name: v.baseName })}</div>`
     });
   } else if (isAction(action, VEHICLE.repair) && v.state !== "ok") {
     await Vehicle.setState(item, "ok");

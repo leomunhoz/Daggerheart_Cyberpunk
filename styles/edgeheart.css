@@ -232,3 +232,8 @@
 .edgeheart-sheet .eh-eidolon-actions { display: flex; flex-direction: column; gap: 4px; align-items: stretch; flex: 0 0 auto; }
 .edgeheart-sheet .eh-eidolon-actions button { width: auto; padding: 0 8px; height: 26px; line-height: 24px; white-space: nowrap; }
 .edgeheart-sheet .eh-bond { display: flex; align-items: center; gap: 4px; font-size: var(--font-size-11, 11px); white-space: nowrap; }
+/* Pastas dos compêndios do módulo: sombra no nome para continuar legível nas cores claras (Ghost, Chrome) */
+[id^="Compendium-edgeheart-cyberpunk_"] .folder-header .folder-name,
+[id^="Compendium-edgeheart-cyberpunk_"] .folder-header > i {
+  text-shadow: 0 0 2px #000, 0 0 4px #000, 1px 1px 1px #000;
+}

@@ -3561,7 +3561,226 @@
                                                                                                       "description":  "\u003cp\u003eWhen this adversary would fail an attack roll, mark 2 Stress to reroll the d20. If the reroll succeeds, the target also becomes temporarily \u003cem\u003eVulnerable\u003c/em\u003e.\u003c/p\u003e"
                                                                                                   }
                                                                       }
-                                                        }
+                                                        },
+                                  "City Patrol Officer":  {
+                                                              "description":  "\u003cp\u003eAn underpaid patrol cop with a ballistic vest, a radio on the shoulder, and little desire to die for the salary.\u003c/p\u003e",
+                                                              "motivesAndTactics":  "Surround, call for backup, enforce order",
+                                                              "items":  {
+                                                                            "Minion (4)":  {
+                                                                                               "description":  "\u003cp\u003eThe @Lookup[@name] is defeated when they take any damage. For every 4 damage a PC deals to the @Lookup[@name], defeat an additional Minion within range the attack would succeed against.\u003c/p\u003e"
+                                                                                           },
+                                                                            "Group Attack":  {
+                                                                                                 "description":  "\u003cp\u003e\u003cstrong\u003eSpend a Fear\u003c/strong\u003e to choose a target and spotlight all @Lookup[@name]s within Close range of them. Those Minions move into Melee range of the target and make one shared attack roll. On a success, they deal @Lookup[@system.attack.damageFormula] physical damage each. Combine this damage.\u003c/p\u003e"
+                                                                                             }
+                                                                        }
+                                                          },
+                                  "Patrol Sergeant":  {
+                                                          "description":  "\u003cp\u003eA veteran sergeant who has seen too many gangs, corps, and cyberpsychos, and still comes back for the night shift.\u003c/p\u003e",
+                                                          "motivesAndTactics":  "Coordinate the patrol, contain the scene, bring someone in cuffed",
+                                                          "items":  {
+                                                                        "Rally the Squad":  {
+                                                                                                "description":  "\u003cp\u003e\u003cstrong\u003eSpend 2 Fear\u003c/strong\u003e to spotlight the @Lookup[@name] and up to 2d4 allies within Far range.\u003c/p\u003e"
+                                                                                            },
+                                                                        "On My Signal":  {
+                                                                                             "description":  "\u003cp\u003e\u003cem\u003eCountdown (5).\u003c/em\u003e When the @Lookup[@name] is in the spotlight for the first time, activate the countdown. It ticks down when a PC makes an attack roll. When it triggers, all City Patrol Officers within Far range make a standard attack with advantage against the nearest target within their range. If any attacks succeed on the same target, combine their damage.\u003c/p\u003e"
+                                                                                         },
+                                                                        "Momentum":  {
+                                                                                         "description":  "\u003cp\u003eWhen the @Lookup[@name] makes a successful attack against a PC, you gain a Fear.\u003c/p\u003e"
+                                                                                     }
+                                                                    }
+                                                      },
+                                  "Riot Squad":  {
+                                                     "description":  "\u003cp\u003eA line of riot cops with ballistic shields, gas launchers, and shock batons, advancing like a wall.\u003c/p\u003e",
+                                                     "motivesAndTactics":  "Form the line, disperse the crowd, push until it breaks",
+                                                     "items":  {
+                                                                   "Gas Volley":  {
+                                                                                      "description":  "\u003cp\u003e\u003cstrong\u003eSpend a Fear\u003c/strong\u003e to target a point within Far range. Make an attack with advantage against all targets within Close range of that point. Targets the @Lookup[@name] succeeds against take 1d10+4 physical damage.\u003c/p\u003e"
+                                                                                  },
+                                                                   "Suppressing Fire":  {
+                                                                                            "description":  "\u003cp\u003eMark a Stress to target a point within Far range. Until the next roll with Fear, a creature who moves within Close range of that point must make an Agility Reaction Roll. On a failure, they take 2d6+3 physical damage. On a success, they take half damage.\u003c/p\u003e"
+                                                                                        },
+                                                                   "Horde (1d6+3)":  {
+                                                                                         "description":  "\u003cp\u003eWhen the @Lookup[@name] has marked half or more of their HP, their standard attack deals @Lookup[@system.typeData.hordeDamage] physical damage instead.\u003c/p\u003e"
+                                                                                     }
+                                                               }
+                                                 },
+                                  "Riot Lieutenant":  {
+                                                          "description":  "\u003cp\u003eA riot lieutenant who is more chrome than flesh, holding an entire street alone behind a bullet-scarred shield.\u003c/p\u003e",
+                                                          "motivesAndTactics":  "Advance slowly, break the barricade, never give ground",
+                                                          "items":  {
+                                                                        "Relentless (3)":  {
+                                                                                               "description":  "\u003cp\u003eThe @Lookup[@name] can be spotlighted up to three times per GM turn. Spend Fear as usual to spotlight them.\u003c/p\u003e"
+                                                                                           },
+                                                                        "Riot Plating":  {
+                                                                                             "description":  "\u003cp\u003e\u003cem\u003eCountdown (3).\u003c/em\u003e When the @Lookup[@name] first appears, activate the countdown. It ticks down when they take Major or Severe damage. Until the countdown triggers, reduce incoming damage by 1d12. When it triggers, the plating gives way and they gain a +1 bonus to their Difficulty and attack rolls, driven by rage.\u003c/p\u003e"
+                                                                                         },
+                                                                        "Momentum":  {
+                                                                                         "description":  "\u003cp\u003eWhen the @Lookup[@name] makes a successful attack against a PC, you gain a Fear.\u003c/p\u003e"
+                                                                                     },
+                                                                        "Shield Charge":  {
+                                                                                              "description":  "\u003cp\u003eMark a Stress to choose a point within Far range and charge toward it with the shield in a straight line. Make an attack against all targets in the path. Targets the @Lookup[@name] succeeds against take 3d12 physical damage.\u003c/p\u003e"
+                                                                                          },
+                                                                        "Point-Blank Blast":  {
+                                                                                                  "description":  "\u003cp\u003eMark a Stress to place a token on this stat block. The next time the @Lookup[@name] is spotlighted, spend the token and make an attack against a PC within Close range with the shotgun pressed against them. On a success, deal 3d20+5 direct physical damage. On a failure, the target marks a Stress.\u003c/p\u003e"
+                                                                                              },
+                                                                        "Combat Stims":  {
+                                                                                             "description":  "\u003cp\u003eWhen the @Lookup[@name] marks half or more of their HP, you can spend a Fear and mark any number of Stress to clear a number of HP equal to the number of Stress marked.\u003c/p\u003e"
+                                                                                         }
+                                                                    }
+                                                      },
+                                  "Psycho Squad Operator":  {
+                                                                "description":  "\u003cp\u003eAn elite operator of the unit that hunts cyberpsychos: carbon fiber armor, a four-lens green-eyed helmet, and orders to neutralize at any cost.\u003c/p\u003e",
+                                                                "motivesAndTactics":  "Surround, pin the target, neutralize the threat",
+                                                                "items":  {
+                                                                              "Gang Up":  {
+                                                                                              "description":  "\u003cp\u003eThe @Lookup[@name] gains a +2 bonus to attack rolls against targets within Melee range of one or more allies.\u003c/p\u003e"
+                                                                                          },
+                                                                              "Capture Line":  {
+                                                                                                   "description":  "\u003cp\u003eWhen the @Lookup[@name] makes a successful standard attack against a target beyond Melee range, you can mark a Stress to pull them into Melee range with a capture line. If you do, you can spend a Fear to make a standard attack with advantage against the target.\u003c/p\u003e"
+                                                                                               }
+                                                                          }
+                                                            },
+                                  "Psycho Squad Commander":  {
+                                                                 "description":  "\u003cp\u003eThe commander of the anti-cyberpsycho unit: mantis blades in both forearms, reflexes no one should have, and the conviction that it takes a monster to hunt one.\u003c/p\u003e",
+                                                                 "motivesAndTactics":  "Hunt, isolate the prey, execute in public",
+                                                                 "items":  {
+                                                                               "Relentless (3)":  {
+                                                                                                      "description":  "\u003cp\u003eThe @Lookup[@name] can be spotlighted up to three times per GM turn. Spend Fear as usual to spotlight them.\u003c/p\u003e"
+                                                                                                  },
+                                                                               "Carbon Plating":  {
+                                                                                                      "description":  "\u003cp\u003eWhen the @Lookup[@name] takes damage, reduce it by 1d10.\u003c/p\u003e"
+                                                                                                  },
+                                                                               "Mantis Sweep":  {
+                                                                                                    "description":  "\u003cp\u003eMark a Stress to make a standard attack against all targets within Very Close range in a spin of the mantis blades. PCs the @Lookup[@name] succeeds against lose a number of Hope equal to the HP they marked from this attack.\u003c/p\u003e"
+                                                                                                },
+                                                                               "Call the Squad":  {
+                                                                                                      "description":  "\u003cp\u003e\u003cstrong\u003eSpend a Fear\u003c/strong\u003e to call two Psycho Squad Operators, who appear at Far range.\u003c/p\u003e"
+                                                                                                  },
+                                                                               "Containment Zone":  {
+                                                                                                        "description":  "\u003cp\u003e\u003cem\u003eCountdown (1d8).\u003c/em\u003e When the @Lookup[@name] is in the spotlight for the first time, activate the countdown. When it triggers, the unit locks down a containment zone covering an area within Far range of the @Lookup[@name]. A target within that area is Vulnerable until they leave it. The zone drops if the @Lookup[@name] takes Severe damage.\u003c/p\u003e"
+                                                                                                    },
+                                                                               "Momentum":  {
+                                                                                                "description":  "\u003cp\u003eWhen the @Lookup[@name] makes a successful attack against a PC, you gain a Fear.\u003c/p\u003e"
+                                                                                            },
+                                                                               "Public Execution":  {
+                                                                                                        "description":  "\u003cp\u003eWhen a target marks HP from an attack by the @Lookup[@name], all PCs within Far range of the target lose a Hope.\u003c/p\u003e"
+                                                                                                    }
+                                                                           }
+                                                             },
+                                  "Chrome Maw Scrapper":  {
+                                                              "description":  "\u003cp\u003eA Chrome Maw kid with a cheap cyber forearm and a hunger for more chrome, whatever it costs.\u003c/p\u003e",
+                                                              "motivesAndTactics":  "Swarm, rip out implants, prove themselves to the gang",
+                                                              "items":  {
+                                                                            "Minion (3)":  {
+                                                                                               "description":  "\u003cp\u003eThe @Lookup[@name] is defeated when they take any damage. For every 3 damage a PC deals to the @Lookup[@name], defeat an additional Minion within range the attack would succeed against.\u003c/p\u003e"
+                                                                                           },
+                                                                            "Group Attack":  {
+                                                                                                 "description":  "\u003cp\u003e\u003cstrong\u003eSpend a Fear\u003c/strong\u003e to choose a target and spotlight all @Lookup[@name]s within Close range of them. Those Minions move into Melee range of the target and make one shared attack roll. On a success, they deal @Lookup[@system.attack.damageFormula] physical damage each. Combine this damage.\u003c/p\u003e"
+                                                                                             }
+                                                                        }
+                                                          },
+                                  "Chrome Maw Gunner":  {
+                                                            "description":  "\u003cp\u003eA stocky Chrome Maw veteran, beard braided with shells and a mechanical arm bolted to the shoulder to hold the shotgun steady.\u003c/p\u003e",
+                                                            "motivesAndTactics":  "Wait for the opening, finish whoever falls, cover the gang",
+                                                            "items":  {
+                                                                          "Opportunist":  {
+                                                                                              "description":  "\u003cp\u003eWhen two or more adversaries are within Very Close range of a creature, all damage the @Lookup[@name] deals to that creature is doubled.\u003c/p\u003e"
+                                                                                          },
+                                                                          "Mercy Shot":  {
+                                                                                             "description":  "\u003cp\u003eMake an attack against a Vulnerable target within Far range. On a success, mark a Stress to deal 3d4+8 physical damage.\u003c/p\u003e"
+                                                                                         }
+                                                                      }
+                                                        },
+                                  "Chrome Maw Stalker":  {
+                                                             "description":  "\u003cp\u003eA Chrome Maw hunter who is too tall and too thin, with backward-bending cyber legs and thin blades in the forearms. It crawls before it leaps.\u003c/p\u003e",
+                                                             "motivesAndTactics":  "Stalk, pounce on the isolated, drag them into the dark",
+                                                             "items":  {
+                                                                           "Shadow Stalker":  {
+                                                                                                  "description":  "\u003cp\u003eWhile Hidden, the @Lookup[@name] gains a +2 bonus to their attack rolls.\u003c/p\u003e"
+                                                                                              },
+                                                                           "Pouncing Strike":  {
+                                                                                                   "description":  "\u003cp\u003eMark a Stress to have the @Lookup[@name] leap on their cyber legs into Melee range of a target within Far range and make an attack against them. On a success, deal 1d12+2 physical damage.\u003c/p\u003e"
+                                                                                               }
+                                                                       }
+                                                         },
+                                  "Ava Response Medic":  {
+                                                             "description":  "\u003cp\u003eAn Ava Biodyne response medic in white armor, with extra surgical arms and orders to keep the client alive. Not you.\u003c/p\u003e",
+                                                             "motivesAndTactics":  "Stabilize the client, sedate the threat, bill the service",
+                                                             "items":  {
+                                                                           "Combat Stim":  {
+                                                                                               "description":  "\u003cp\u003eMark a Stress to choose up to three allies within Far range and dose them with a combat stim. Each one gains advantage on their next attack roll.\u003c/p\u003e"
+                                                                                           },
+                                                                           "Sedative Harpoon":  {
+                                                                                                    "description":  "\u003cp\u003e\u003cstrong\u003eSpend a Fear\u003c/strong\u003e to choose a PC within Far range and hit them with a sedative harpoon. They are Restrained until they break free with a successful Strength Roll. While Restrained this way, when the target spends Hope, you gain a Fear.\u003c/p\u003e"
+                                                                                                },
+                                                                           "Paralytic Injection":  {
+                                                                                                       "description":  "\u003cp\u003eMark a Stress to make a standard attack against a target within Melee range. On a success, the target takes standard damage and must mark 1d4 Stress. If the target marks their last Stress from this attack, you gain a Fear.\u003c/p\u003e"
+                                                                                                   }
+                                                                       }
+                                                         },
+                                  "Ava Response Gunner":  {
+                                                              "description":  "\u003cp\u003eThe cover gunner of an Ava Biodyne response team. Anything that moves near the client becomes a target.\u003c/p\u003e",
+                                                              "motivesAndTactics":  "Cover the extraction, suppress, protect the client at any cost",
+                                                              "items":  {
+                                                                            "Crossfire":  {
+                                                                                              "description":  "\u003cp\u003eWhen the @Lookup[@name] makes a standard attack against a target within Melee range of one or more of their allies, they gain a +2 bonus to the attack roll.\u003c/p\u003e"
+                                                                                          },
+                                                                            "Assisted Aim":  {
+                                                                                                 "description":  "\u003cp\u003eMark a Stress to make a standard attack with assisted aim. The @Lookup[@name] has advantage on the attack roll and critically succeeds on a roll of 19–20.\u003c/p\u003e"
+                                                                                             },
+                                                                            "Covering Burst":  {
+                                                                                                   "description":  "\u003cp\u003eWhen the @Lookup[@name] makes a standard attack, you can mark any number of Stress to target an equal number of additional creatures within range.\u003c/p\u003e"
+                                                                                               }
+                                                                        }
+                                                          },
+                                  "Ava Security Specialist":  {
+                                                                  "description":  "\u003cp\u003eThe security specialist of an Ava Biodyne response team, with a tactical shotgun and an armored med case strapped to their back.\u003c/p\u003e",
+                                                                  "motivesAndTactics":  "Lock the perimeter, protect the client, bill later",
+                                                                  "items":  {
+                                                                                "Cover Formation":  {
+                                                                                                        "description":  "\u003cp\u003eMark a Stress to move into Melee range of an ally and make a standard attack against a target within Very Close range. On a success, deal 2d10+2 physical damage and the ally can clear a Stress.\u003c/p\u003e"
+                                                                                                    },
+                                                                                "Protect the Client":  {
+                                                                                                           "description":  "\u003cp\u003eWhen the @Lookup[@name] is within Very Close range of the client, a medic, or the team chief who would take damage, you can mark a Stress to move into Melee range of them and take the damage instead.\u003c/p\u003e"
+                                                                                                       }
+                                                                            }
+                                                              },
+                                  "Blackwall Warden Daemon":  {
+                                                                  "description":  "\u003cp\u003eA warden daemon of the Black Wall: a monolith of data that rewrites itself nonstop and locks down anyone who gets too close to the quarantine.\u003c/p\u003e",
+                                                                  "motivesAndTactics":  "Contain, isolate, delete intruders",
+                                                                  "items":  {
+                                                                                "Hex Barrier":  {
+                                                                                                    "description":  "\u003cp\u003eCreatures within Melee range of the @Lookup[@name] have disadvantage on attack rolls against them. Creatures trapped inside their quarantine are immune to this feature.\u003c/p\u003e"
+                                                                                                },
+                                                                                "Quarantine":  {
+                                                                                                   "description":  "\u003cp\u003eMark a Stress to make an attack against a target within Very Close range. On a success, the target is Restrained inside the @Lookup[@name]\u0027s quarantine until freed with a successful Strength Roll (18). While Restrained, the target can only attack the @Lookup[@name].\u003c/p\u003e"
+                                                                                               }
+                                                                            }
+                                                              },
+                                  "Theoi Avatar":  {
+                                                       "description":  "\u003cp\u003eThe projection of one of the Theoi AIs: a mass of digital noise with a cracked porcelain mask, which has already calculated your future before you walked into the room.\u003c/p\u003e",
+                                                       "motivesAndTactics":  "Predict, decree, rewrite the fate of mortals",
+                                                       "items":  {
+                                                                     "Terrifying":  {
+                                                                                        "description":  "\u003cp\u003eWhen the @Lookup[@name] makes a successful attack, all PCs within Far range lose a Hope and you gain a Fear.\u003c/p\u003e"
+                                                                                    },
+                                                                     "System Closing In":  {
+                                                                                               "description":  "\u003cp\u003eWhen a creature rolls a failure while within Very Far range of the @Lookup[@name], they must mark a Stress.\u003c/p\u003e"
+                                                                                           },
+                                                                     "Pronounce Fate":  {
+                                                                                            "description":  "\u003cp\u003e\u003cstrong\u003eSpend a Fear\u003c/strong\u003e to show a target within Far range a simulation of their personal nightmare. The target must make a Knowledge Reaction Roll. On a failure, they lose all Hope and take 2d20+4 direct techno damage. On a success, they take half damage and lose a Hope.\u003c/p\u003e"
+                                                                                        },
+                                                                     "Summon Daemons":  {
+                                                                                            "description":  "\u003cp\u003eOnce per day, \u003cstrong\u003espend 2 Fear\u003c/strong\u003e to summon 2d4 Tier 2 or below Minions tied to one of the PCs\u0027 personal nightmares: daemons, digital ghosts, or rebuilt people from their past. They appear at Close range of that PC.\u003c/p\u003e"
+                                                                                        },
+                                                                     "Total Prediction":  {
+                                                                                              "description":  "\u003cp\u003eWhen the @Lookup[@name] sees a mortal creature, they instantly know one of their personal nightmares.\u003c/p\u003e"
+                                                                                          },
+                                                                     "Countermeasure":  {
+                                                                                            "description":  "\u003cp\u003eWhen the @Lookup[@name] marks HP from an attack within Very Close range, you can mark a Stress to knock the attacker back to Far range and deal 2d10+4 physical damage.\u003c/p\u003e"
+                                                                                        }
+                                                                 }
+                                                   }
                               },
     "edgeheart-environments":  {
                                    "Neon Night Market":  {
