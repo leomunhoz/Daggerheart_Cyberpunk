@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.33.0
+- **Arte nova no padrão do módulo** (pintura semirrealista estilo Cyberpunk 2077):
+  - As **64 armas**: armas de fogo em três quartos niveladas, lâminas e armas longas na diagonal, escudos, drones e granadas de frente.
+  - As **25 armaduras**, mostradas sozinhas, sem pessoa vestindo, com silhueta esguia.
+  - Os **40 consumíveis** e as primeiras **8 peças de loot**.
+  - Os **6 Life Paths** e as **8 Affiliations** ganharam cenas do lugar de cada origem.
+
 ## v1.32.0
 - **Ficha Edgeheart com tema cyberpunk:** preto e amarelo neon, cantos chanfrados, códigos "SYS://" nas seções, Esperança em chips e a Carga Cibernética com ícone de engrenagem. Glitches animados aparecem em rajadas curtas nas bordas, e o centro da ficha fica estável para leitura. Em **Ciberpsicose**, a ficha fica vermelha, a borda pulsa e os glitches ficam mais fortes e frequentes. Cada jogador escolhe nas configurações entre tema com glitch, tema sem animação ou o visual original do Daggerheart.
 - **Cartas de Competência em neon:** as 11 artes ganharam fundo escuro com grade e o sigilo aceso na cor de cada Competência (Assault agora é índigo). As pastas do compêndio e a faixa das cartas usam as mesmas cores.

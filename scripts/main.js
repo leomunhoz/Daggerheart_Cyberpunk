@@ -520,12 +520,14 @@ async function importWeaponsAndArmor() {
     ...primary.map(w => ({ ...buildWeaponData(w, false), folder: folders[/tech/i.test(w.damage) ? "magical" : "physical"][w.tier].id })),
     ...secondary.map(w => ({ ...buildWeaponData(w, true), folder: folders.secondary[w.tier].id }))
   ];
-  const armorData = ARMORS.map(a => ({ ...buildArmorData(a), folder: folders.armor[a.tier].id }));
+  const armorArt = await gearArt("armors");
+  const armors = ARMORS.map(a => armorArt[artSlug(a.name)] ? { ...a, img: armorArt[artSlug(a.name)] } : a);
+  const armorData = armors.map(a => ({ ...buildArmorData(a), folder: folders.armor[a.tier].id }));
 
   const createdWeapons = await Item.createDocuments(weaponData, { pack: weaponsPack.collection, keepId: true });
   const createdArmor = await Item.createDocuments(armorData, { pack: armorsPack.collection, keepId: true });
   await applyOfficialFeatures(createdWeapons, [...primary, ...secondary], "weaponFeatures");
-  await applyOfficialFeatures(createdArmor, ARMORS, "armorFeatures");
+  await applyOfficialFeatures(createdArmor, armors, "armorFeatures");
   return { weapons: createdWeapons, armor: createdArmor };
 }
 
@@ -703,7 +705,8 @@ function buildVehicleData(v) {  const [, dice, bonus] = v.damage.match(/^(d\d+)(
 
 async function importLootAndConsumables() {
   const officialConsumables = await game.packs.get("daggerheart.consumables")?.getDocuments() ?? [];
-  const consumables = CONSUMABLES.map(c => {
+  const consumableArt = await gearArt("consumables"), lootArt = await gearArt("loot");
+  const consumables = CONSUMABLES.map(c => ({ ...c, img: consumableArt[artSlug(c.name)] ?? c.img })).map(c => {
     const _id = stableId(`consumable:${c.name}`);
     let { actions, effects } = c;
     if (c.clone) {
@@ -716,7 +719,7 @@ async function importLootAndConsumables() {
       system: { description: `<p>${c.text}</p>`, quantity: 1, consumeOnUse: true, actions: withDefaultActionImg(withQuantityCost(actions, _id, c.img, c.name), c.img), attribution: ATTRIBUTION, gmNotes: "" }
     };
   });
-  const loot = LOOT.map(l => ({
+  const loot = LOOT.map(l => ({ ...l, img: lootArt[artSlug(l.name)] ?? l.img })).map(l => ({
     _id: stableId(`loot:${l.name}`), name: l.name, type: "loot", img: l.img,
     effects: [...gearPassiveEffect({ ...l, feature: `${l.name}|${l.text}` }), ...l.effects],
     system: { description: `<p>${l.text}</p>`, quantity: 1, actions: withDefaultActionImg(l.actions, l.img), attribution: ATTRIBUTION, gmNotes: "" }
@@ -1965,12 +1968,13 @@ async function importLifePathsAndAffiliations() {
   // e os itens principais (Life Path / Affiliation) soltos na raiz do compêndio.
   const lifePathFeaturesFolder = await makeFolder(ancestriesPack, "Talentos de Trajetória");
   const affiliationFeaturesFolder = await makeFolder(communitiesPack, "Talentos de Afiliação");
+  const lifePathArt = await gearArt("lifepaths"), affiliationArt = await gearArt("affiliations");
 
   for (const lp of LIFE_PATHS) {
     const [primaryItem, secondaryItem] = await createFeatureItems(ancestriesPack, [lp.primary, lp.secondary], lifePathFeaturesFolder.id, `lifepath:${lp.name}`);
     await Item.createDocuments([{
       _id: stableId(`lifepath:${lp.name}`),
-      name: lp.name, type: "ancestry", img: ICONS.lifePaths[lp.name] ?? "icons/svg/village.svg",
+      name: lp.name, type: "ancestry", img: lifePathArt[artSlug(plain(lp.name))] ?? ICONS.lifePaths[lp.name] ?? "icons/svg/village.svg",
       system: {
         description: lp.description,
         features: [
@@ -1988,7 +1992,7 @@ async function importLifePathsAndAffiliations() {
     const [featureItem] = await createFeatureItems(communitiesPack, [aff.feature], affiliationFeaturesFolder.id, `affiliation:${aff.name}`);
     await Item.createDocuments([{
       _id: stableId(`affiliation:${aff.name}`),
-      name: aff.name, type: "community", img: ICONS.affiliations[aff.name] ?? "icons/svg/anchor.svg",
+      name: aff.name, type: "community", img: affiliationArt[artSlug(plain(aff.name))] ?? ICONS.affiliations[aff.name] ?? "icons/svg/anchor.svg",
       system: {
         description: aff.description,
         features: [featureItem.uuid],
@@ -4291,6 +4295,8 @@ function automateThreatFeature(owner, f, officialAdversaries) {
 // Arte dos adversários (assets/art/adversaries/<nome-em-slug>.webp e tokens/<nome-em-slug>.webp, no padrão
 // retrato + token do Art for Daggerheart). Sem arte, o adversário fica com o ícone do pacote.
 const artSlug = name => name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+// Nomes em português viram nome de arquivo sem acento ("Nômade" → "nomade").
+const plain = name => name.normalize("NFD").replace(/[̀-ͯ]/g, "");
 async function adversaryArt() {
   const base = `modules/${MODULE_ID}/assets/art/adversaries`;
   const FP = foundry.applications.apps.FilePicker.implementation;
