@@ -10,7 +10,7 @@ Os jogadores são mercenários na New Dark Age: pegam contratos sujos, instalam 
 
 - **9 classes e 18 subclasses:** Runner, Infiltrator, Solo, Augmented, Tech, Broker, Reclaimer, Trauma Doc e Warden.
 - **11 Competências (domínios), com 21 cartas cada:** Network, Ghost, Assault, Chrome, Systems, Influence, Frontier, Medtech e Aegis, das classes, e Redline e Blackwall, acessadas pelo cyberware. Cada uma com sigilo, cor e arte de carta próprios. As cartas copiam a automação das cartas oficiais equivalentes (o Redline copia o domínio Blood do The Void).
-- **Ficha Edgeheart:** Dado de Humanidade, Carga Cibernética, Ciberpsicose e a aba Chrome, com o cyberware, os Eidolons e os acessos a Competências.
+- **Ficha Edgeheart:** Dado de Humanidade, Carga Cibernética, Ciberpsicose e a aba Chrome, com o cyberware, os Eidolons e os acessos a Competências. Visual cyberpunk em preto e amarelo neon, com glitches nas bordas que ficam vermelhos na Ciberpsicose; cada jogador pode trocar por um tema sem animação ou pelo visual original nas configurações.
 - **Ficha da Crew:** Reputação, Edge e os Movimentos de Edge, no Grupo do próprio sistema.
 - **60 cyberwares**, que substituem os avanços de PV, Estresse, Evasão e atributos e dão acesso a outras Competências.
 - **Trajetórias e Afiliações** no lugar de Ancestralidade e Comunidade.
