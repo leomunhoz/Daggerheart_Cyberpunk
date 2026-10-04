@@ -4387,6 +4387,16 @@ const BONUS = {
   armor: n => [{ type: "armor", phase: "initial", priority: 20, value: { max: String(n), current: 0, damageThresholds: null, interaction: "none" } }]
 };
 
+// Nome do arquivo de arte (assets/art/cyberware/<slug>.webp) de cada cyberware, na ordem do número.
+const CYBER_ART = [
+  "ocular-overlay", "neural-access", "skillsoft-socket", "pain-gate", "auxiliary-organ", "gripware-palms", "reflex-spur", "biomonitor-suite", "muscle-threading", "shock-palm",
+  "pop-up-blade", "subdermal-comms", "dermal-storage", "audio-filters", "environmental-filters", "trait-booster", "synaptic-accelerator", "reinforced-skeleton", "stress-regulator", "pain-gate-array",
+  "auxiliary-organ-cluster", "subdermal-plating", "smartgun-link", "street-mantis-blades", "frontier-routeware", "tactical-threat-suite", "voiceprint-modulator", "drone-link-cortex", "reflex-cable-legs", "synthetic-lungs",
+  "military-mantis-blades", "surgical-swarm-hive", "netdaemon-cortex", "ghostskin-system", "overdrive-muscles", "aegis-threat-mesh", "cortical-buffer", "second-heart", "ablative-dermal-shell", "reflex-ghostware",
+  "tactical-mesh-implant", "neural-archive", "systems-module-bay", "red-overclock-engine", "black-ice-cortex", "last-chance-auto-injector", "blackwall-co-processor", "berserk-kernel", "time-slice-accelerator", "titanium-soul-frame",
+  "angel-skin-plating", "clone-reflex-loop", "ghost-in-the-suite", "metamorphic-chassis", "neural-crown-of-command", "siege-organ-rig", "overload-governor", "perfected-pain-editor", "omega-organ-cluster", "humanity-anchor"
+];
+
 const CYBERWARE = [
   { n: 1, name: "Sobreposição Ocular", cost: 0, img: CPR("cyberware/lowlight_ir_uv"), text: "Você enxerga claramente na penumbra, lê telas digitais à distância e tem vantagem em rolagens para notar falhas visuais, câmeras escondidas ou pequenos detalhes." },
   { n: 2, name: "Acesso Neural", cost: 1, choice: "competency", img: CPR("cyberware/neural_link"), text: "Escolha uma Competência. Custo 1: ganhe Acesso de Carta a uma carta do seu nível ou menor. Custo 2: ganhe Meio Acesso. Custo 3: ganhe Acesso Total. Este cyberware não concede Cargas e não vale para as Competências Redline e Blackwall." },
@@ -4694,7 +4704,10 @@ async function importCyberware() {
   for (const tier of [1, 2, 3, 4]) {
     folders[tier] = await makeFolder(pack, `Tier ${tier} — ${["Comum", "Incomum", "Raro", "Lendário"][tier - 1]}`);
   }
-  const data = CYBERWARE.map(def => buildCyberwareItem(def, folders[cyberTier(def.n)].id));
+  // Arte própria em assets/art/cyberware/<slug>.webp; sem arquivo, fica o ícone do CPR.
+  // O nome aqui ainda está em português (vira inglês na localização), então o arquivo vem pelo número.
+  const cyberArt = await gearArt("cyberware");
+  const data = CYBERWARE.map(def => buildCyberwareItem({ ...def, img: cyberArt[CYBER_ART[def.n - 1]] ?? def.img }, folders[cyberTier(def.n)].id));
   const eidolonFolder = await makeFolder(pack, "Eidolons (Cyberware Especial)");
   // Retrato (assets/art/eidolons/<slug>.webp) e token (tokens/<slug>.webp); sem arquivo, fica o ícone do CPR.
   const art = await gearArt("eidolons"), tokens = await gearArt("eidolons/tokens");

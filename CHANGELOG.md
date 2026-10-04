@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.34.0
+- **Arte nova no padrão do módulo** para o que faltava:
+  - Os **60 cyberwares**, cada implante mostrado sozinho, com a cor da Competência ligada a ele. As Lâminas Mantis (de rua e militar) seguem o formato das Mantis Blades do Cyberpunk 2077.
+  - As **32 peças de loot** que faltavam, completando as 40.
+  - Os **15 ambientes** que faltavam, como cenas do lugar; agora os 16 têm arte.
+- O gerador encontra a arte dos cyberwares pelo número, já que o nome só vira inglês na etapa de localização.
+
 ## v1.33.0
 - **Arte nova no padrão do módulo** (pintura semirrealista estilo Cyberpunk 2077):
   - As **64 armas**: armas de fogo em três quartos niveladas, lâminas e armas longas na diagonal, escudos, drones e granadas de frente.
