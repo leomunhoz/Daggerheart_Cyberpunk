@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.35.0
+- **Arte de carta para as habilidades**, cada uma mostrando um momento da habilidade em ação, na cor da classe:
+  - As **80 habilidades de classe e subclasse** (Esperança, Classe, Fundação, Especialização e Maestria).
+  - **98 das 133 habilidades de adversário**; as que se repetem (Minion, Horde, Group Attack, Relentless, Momentum) usam a mesma arte. As 35 restantes vêm na próxima versão.
+  - As ações de cada habilidade passam a usar a mesma arte; os efeitos mantêm o ícone de status.
+- **Arte nova para os 18 itens iniciais de classe** (Cyberdeck Ilegal, Ficha de Contrato, Kit de Trauma etc.).
+- **Créditos:** o módulo é de Leo Munhoz; o README deixa claro que o PDF e o conteúdo original do Edgeheart são de AllenDGray14, com link para o perfil dele.
+
 ## v1.34.0
 - **Arte nova no padrão do módulo** para o que faltava:
   - Os **60 cyberwares**, cada implante mostrado sozinho, com a cor da Competência ligada a ele. As Lâminas Mantis (de rua e militar) seguem o formato das Mantis Blades do Cyberpunk 2077.

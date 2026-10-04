@@ -2886,16 +2886,25 @@ function withDefaultActionImg(actions, img) {
     [id, DEFAULT_ACTION_IMGS.includes(a.img) || !a.img ? { ...a, img } : a]));
 }
 
-// idPrefix: gera _id fixo a partir de "<prefixo>:<nome>" (ver stableId).
-async function createFeatureItems(pack, list, folderId = null, idPrefix = null) {
-  const data = list.map(f => ({
+// Arte própria de feature: assets/art/<pasta>/<nome-em-slug>.webp, sem o "(X)" de Minion (3), Horde (1d6+2) etc.
+const featureSlug = name => artSlug(name.replace(/\s*\(.*\)$/, ""));
+// Troca o ícone da feature pela arte, junto com as ações que usavam o mesmo ícone; os efeitos mantêm o ícone de status.
+function withFeatureArt(item, art) {
+  if (!art) return item;
+  const actions = Object.fromEntries(Object.entries(item.system.actions ?? {}).map(([id, a]) => [id, !a.img || a.img === item.img ? { ...a, img: art } : a]));
+  return { ...item, img: art, system: { ...item.system, actions } };
+}
+
+// idPrefix: gera _id fixo a partir de "<prefixo>:<nome>" (ver stableId). art: mapa slug → arquivo (ver gearArt).
+async function createFeatureItems(pack, list, folderId = null, idPrefix = null, art = {}) {
+  const data = list.map(f => withFeatureArt({
     ...(idPrefix ? { _id: stableId(`${idPrefix}:${f.name}`) } : {}),
     name: f.name, type: "feature", img: featureImg(f),
     system: { description: f.description, gmNotes: "", actions: withDefaultActionImg(f.actions || {}, featureImg(f)), featureForm: f.form ?? "passive", attribution: ATTRIBUTION, resource: f.resource ?? null },
     effects: f.effects || [],
     flags: f.flags ?? {},
     folder: folderId
-  }));
+  }, art[featureSlug(f.name)]));
   return Item.createDocuments(data, { pack: pack.collection, keepId: true });
 }
 
@@ -2932,24 +2941,26 @@ async function importClassesAndSubclasses(equipment) {
   const allEquipment = [...equipment.weapons, ...equipment.armor];
   const equipmentUuid = name => (name ? allEquipment.find(i => i.name === name)?.uuid ?? null : null);
 
+  // Arte própria dos itens de classe (nome em português, sem acento) e das features de classe e subclasse.
+  const art = { items: await gearArt("class-items"), features: await gearArt("abilities") };
   for (const cls of CLASSES) {
-    await importClass(cls, { classesPack, subclassesPack, folders, equipmentUuid });
+    await importClass(cls, { classesPack, subclassesPack, folders, equipmentUuid, art });
   }
 }
 
-async function importClass(cls, { classesPack, subclassesPack, folders, equipmentUuid }) {
+async function importClass(cls, { classesPack, subclassesPack, folders, equipmentUuid, art }) {
   const { key, class: c, guide } = cls;
   const itemsFolder = await makeFolder(classesPack, c.name, { parent: folders.classItems.id });
   const featuresFolder = await makeFolder(classesPack, c.name, { parent: folders.classFeatures.id });
 
   const classLootItems = await Item.createDocuments(withFolder(cls.classItems.map(i => ({
     _id: stableId(`${key}:item:${i.name}`),
-    name: i.name, type: "loot", img: i.img ?? "systems/daggerheart/assets/icons/documents/items/open-treasure-chest.svg",
+    name: i.name, type: "loot", img: art.items[artSlug(plain(i.name))] ?? i.img ?? "systems/daggerheart/assets/icons/documents/items/open-treasure-chest.svg",
     system: { description: i.description, quantity: 1, actions: {}, attribution: ATTRIBUTION, gmNotes: "" }
   })), itemsFolder.id), { pack: classesPack.collection, keepId: true });
 
-  const [hopeItem] = await createFeatureItems(classesPack, [c.hopeFeature], featuresFolder.id, `${key}:hope`);
-  const classFeatureItems = await createFeatureItems(classesPack, c.classFeatures, featuresFolder.id, `${key}:class`);
+  const [hopeItem] = await createFeatureItems(classesPack, [c.hopeFeature], featuresFolder.id, `${key}:hope`, art.features);
+  const classFeatureItems = await createFeatureItems(classesPack, c.classFeatures, featuresFolder.id, `${key}:class`, art.features);
 
   const [classItem] = await Item.createDocuments([{
     _id: stableId(`${key}:class`),
@@ -2984,9 +2995,9 @@ async function importClass(cls, { classesPack, subclassesPack, folders, equipmen
 
   for (const sub of cls.subclasses) {
     const prefix = `${key}:${sub.name}`;
-    const foundationItems = await createFeatureItems(subclassesPack, sub.foundation, foundationFolder.id, `${prefix}:foundation`);
-    const specializationItems = await createFeatureItems(subclassesPack, sub.specialization, specializationFolder.id, `${prefix}:specialization`);
-    const masteryItems = await createFeatureItems(subclassesPack, sub.mastery, masteryFolder.id, `${prefix}:mastery`);
+    const foundationItems = await createFeatureItems(subclassesPack, sub.foundation, foundationFolder.id, `${prefix}:foundation`, art.features);
+    const specializationItems = await createFeatureItems(subclassesPack, sub.specialization, specializationFolder.id, `${prefix}:specialization`, art.features);
+    const masteryItems = await createFeatureItems(subclassesPack, sub.mastery, masteryFolder.id, `${prefix}:mastery`, art.features);
 
     await Item.createDocuments([{
       _id: stableId(`${prefix}:subclass`),
@@ -4314,7 +4325,7 @@ async function importAdversaries() {  const pack = await getOrCreatePack("advers
   const officialAdversaries = await game.packs.get("daggerheart.adversaries")?.getDocuments() ?? [];
   const folders = {};
   for (const tier of [...new Set(ADVERSARIES.map(a => a.tier))].sort()) folders[tier] = await makeFolder(pack, `Tier ${tier}`, { type: "Actor" });
-  const art = await adversaryArt();
+  const art = await adversaryArt(), featureArt = await gearArt("adversary-features");
   const data = ADVERSARIES.map(a => ({
     _id: adversaryId(a.name), name: a.name, img: art[a.name]?.portrait ?? a.img, type: "adversary", folder: folders[a.tier].id,
     prototypeToken: { name: a.name, texture: { src: art[a.name]?.token ?? a.img } },
@@ -4330,7 +4341,7 @@ async function importAdversaries() {  const pack = await getOrCreatePack("advers
       // Horde: dano do ataque padrão com metade ou mais dos PV marcados (usado pela feature Horde oficial).
       typeData: a.horde ? { type: "horde", hordeDamage: a.horde.damage.replace(/ .*$/, ""), hordeHP: Math.ceil(a.hp / 2) } : null
     },
-    items: a.features.map(f => automateThreatFeature(a, f, officialAdversaries))
+    items: a.features.map(f => withFeatureArt(automateThreatFeature(a, f, officialAdversaries), featureArt[featureSlug(f.name)]))
   }));
   await Actor.createDocuments(data, { pack: pack.collection, keepId: true });
 }

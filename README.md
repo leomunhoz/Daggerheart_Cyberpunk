@@ -75,12 +75,18 @@ O histórico está no [CHANGELOG](CHANGELOG.md). Uma nova versão é publicada c
 
 ## Créditos
 
-Conteúdo original do Edgeheart: **AllenDGray14**. Daggerheart é marca da Darrington Press. As cartas de Redline copiam a automação do domínio Blood do módulo [The Void (unofficial)](https://github.com/brunocalado/the-void-unofficial), de Bruno Calado, sob licença GPL-3.0; o The Void é material de playtest da Darrington Press. Projeto de fã, sem fins comerciais.
+**Módulo:** feito por **[Leo Munhoz](https://github.com/leomunhoz)**.
+
+**PDF do Edgeheart:** o campaign frame original (regras, classes, cyberware, adversários e textos) é de **AllenDGray14** ([perfil no Reddit](https://www.reddit.com/user/SnooLobsters9291/submitted/)), dono do PDF. O módulo adapta esse conteúdo para o Foundry e não substitui o PDF.
+
+Daggerheart é marca da Darrington Press. As cartas de Redline copiam a automação do domínio Blood do módulo [The Void (unofficial)](https://github.com/brunocalado/the-void-unofficial), de Bruno Calado, sob licença GPL-3.0; o The Void é material de playtest da Darrington Press. Projeto de fã, sem fins comerciais.
 
 ---
 
 ## English
 
 **Edgeheart — Cyberpunk Homebrew** brings the Edgeheart cyberpunk campaign frame by AllenDGray14 to the Daggerheart system on Foundry VTT v14: 9 classes, 11 Competencies, 60 cyberware, Eidolons, vehicles, 39 adversaries, 16 environments, the Edgeheart and Crew sheets, and the full SRD in journals. The compendiums are in English (the original PDF text); Brazilian Portuguese is available through Babele. Nothing in the Daggerheart system is modified.
+
+**Credits:** module by [Leo Munhoz](https://github.com/leomunhoz). The Edgeheart PDF and its original content belong to **AllenDGray14** ([Reddit profile](https://www.reddit.com/user/SnooLobsters9291/submitted/)).
 
 **Install:** paste `https://github.com/leomunhoz/Daggerheart_Cyberpunk/releases/latest/download/module.json` in Foundry's *Install Module → Manifest URL*, or download `https://github.com/leomunhoz/Daggerheart_Cyberpunk/releases/latest/download/module.zip` and extract it to `Data/modules/edgeheart-cyberpunk`.
