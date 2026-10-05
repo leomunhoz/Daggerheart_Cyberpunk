@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.35.1
+- **As 35 habilidades de adversário que faltavam** ganharam arte de carta; agora as 133 têm arte.
+- A descrição do módulo na lista do Foundry ficou curta: "um cenário cyberpunk para Daggerheart".
+
 ## v1.35.0
 - **Arte de carta para as habilidades**, cada uma mostrando um momento da habilidade em ação, na cor da classe:
   - As **80 habilidades de classe e subclasse** (Esperança, Classe, Fundação, Especialização e Maestria).
