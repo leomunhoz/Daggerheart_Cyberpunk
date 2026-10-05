@@ -1,5 +1,8 @@
 # Changelog
 
+## v1.36.0
+- **Arte nova para as 9 classes e as 18 subclasses**, em retrato pintado no estilo do módulo, na cor de cada classe. Cada classe tem um personagem fixo, que aparece também nas duas subclasses dela (a mesma netrunner na Runner, no Breach Specialist e no Net Diver, e assim por diante).
+
 ## v1.35.1
 - **As 35 habilidades de adversário que faltavam** ganharam arte de carta; agora as 133 têm arte.
 - A descrição do módulo na lista do Foundry ficou curta: "um cenário cyberpunk para Daggerheart".

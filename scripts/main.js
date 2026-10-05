@@ -2942,7 +2942,8 @@ async function importClassesAndSubclasses(equipment) {
   const equipmentUuid = name => (name ? allEquipment.find(i => i.name === name)?.uuid ?? null : null);
 
   // Arte própria dos itens de classe (nome em português, sem acento) e das features de classe e subclasse.
-  const art = { items: await gearArt("class-items"), features: await gearArt("abilities") };
+  // Classes e subclasses: assets/art/classes/<nome-em-slug>.webp; sem arquivo, fica o ícone do CPR.
+  const art = { items: await gearArt("class-items"), features: await gearArt("abilities"), classes: await gearArt("classes") };
   for (const cls of CLASSES) {
     await importClass(cls, { classesPack, subclassesPack, folders, equipmentUuid, art });
   }
@@ -2964,7 +2965,7 @@ async function importClass(cls, { classesPack, subclassesPack, folders, equipmen
 
   const [classItem] = await Item.createDocuments([{
     _id: stableId(`${key}:class`),
-    name: c.name, type: "class", img: c.img,
+    name: c.name, type: "class", img: art.classes[artSlug(c.name)] ?? c.img,
     system: {
       description: c.description, gmNotes: "",
       domains: c.domains, classItems: [],
@@ -3001,7 +3002,7 @@ async function importClass(cls, { classesPack, subclassesPack, folders, equipmen
 
     await Item.createDocuments([{
       _id: stableId(`${prefix}:subclass`),
-      name: sub.name, type: "subclass", img: sub.img,
+      name: sub.name, type: "subclass", img: art.classes[artSlug(sub.name)] ?? sub.img,
       folder: subclassFolder.id,
       system: {
         description: sub.description, gmNotes: "",
