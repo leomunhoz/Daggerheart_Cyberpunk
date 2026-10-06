@@ -4326,7 +4326,7 @@ async function importAdversaries() {  const pack = await getOrCreatePack("advers
   const officialAdversaries = await game.packs.get("daggerheart.adversaries")?.getDocuments() ?? [];
   const folders = {};
   for (const tier of [...new Set(ADVERSARIES.map(a => a.tier))].sort()) folders[tier] = await makeFolder(pack, `Tier ${tier}`, { type: "Actor" });
-  const art = await adversaryArt(), featureArt = await gearArt("adversary-features");
+  const art = await adversaryArt(), featureArt = await gearArt("adversary-features"), attackArt = await gearArt("adversary-attacks");
   const data = ADVERSARIES.map(a => ({
     _id: adversaryId(a.name), name: a.name, img: art[a.name]?.portrait ?? a.img, type: "adversary", folder: folders[a.tier].id,
     prototypeToken: { name: a.name, texture: { src: art[a.name]?.token ?? a.img } },
@@ -4336,7 +4336,7 @@ async function importAdversaries() {  const pack = await getOrCreatePack("advers
       resources: { hitPoints: { value: 0, max: a.hp }, stress: { value: 0, max: a.stress } },
       motivesAndTactics: a.motives, description: a.description, notes: "",
       experiences: Object.fromEntries(Object.entries(a.experiences).map(([name, value]) => [foundry.utils.randomID(), { name, value, description: "" }])),
-      attack: adversaryAttack({ ...a.attack, img: a.img }),
+      attack: adversaryAttack({ ...a.attack, img: attackArt[artSlug(a.attack.name)] ?? a.img }),
       resistance: threatResistance(a.resistance),
       attribution: ATTRIBUTION, size: "medium", advantageSources: [], disadvantageSources: [], criticalThreshold: 20,
       // Horde: dano do ataque padrão com metade ou mais dos PV marcados (usado pela feature Horde oficial).

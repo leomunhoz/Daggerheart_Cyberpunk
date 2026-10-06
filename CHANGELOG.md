@@ -1,5 +1,8 @@
 # Changelog
 
+## v1.37.0
+- **Arte nova para as 39 armas dos adversários** (o ataque padrão de cada um), no mesmo estilo das armas dos jogadores: Lâmina de Rua, Fuzil de Segurança, Punhos de Cromo, Lâminas Mantis, Canhão Rotativo, Sinal Proibido e as demais.
+
 ## v1.36.0
 - **Arte nova para as 9 classes e as 18 subclasses**, em retrato pintado no estilo do módulo, na cor de cada classe. Cada classe tem um personagem fixo, que aparece também nas duas subclasses dela (a mesma netrunner na Runner, no Breach Specialist e no Net Diver, e assim por diante).
 
