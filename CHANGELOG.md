@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.38.1
+- **Arte de carta para as 52 habilidades dos 16 ambientes**, cada ambiente na sua cor: mercado noturno em magenta, metrô assombrado em verde, catedral digital em violeta, torre corporativa em dourado, tempestade da Blackwall em azul e assim por diante.
+- **O mestre pode subir o Dado de Humanidade a qualquer momento**: o limite de um avanço por nível continua valendo para os jogadores, e o ajuste do mestre não gasta o avanço do nível. Antes, depois de subir uma vez num nível, o dado não voltava a subir nem quando era reduzido.
+
 ## v1.38.0
 - **Arte de carta para os 20 talentos de origem**: os 8 Talentos de Afiliação e os 12 Talentos de Trajetória, cada um na cor da sua afiliação ou trajetória.
 - **Arte nova para as 19 armas dos Eidolons**, cada arma mostrada sozinha como peça de equipamento pesado.

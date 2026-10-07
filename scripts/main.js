@@ -4352,7 +4352,7 @@ async function importEnvironments() {
   const adversaries = game.packs.get(`${PACK_SCOPE}.${PACKS.adversaries.name}`);
   const folders = {};
   for (const tier of [...new Set(ENVIRONMENTS.map(e => e.tier))].sort()) folders[tier] = await makeFolder(pack, `Tier ${tier}`, { type: "Actor" });
-  const art = await gearArt("environments");
+  const art = await gearArt("environments"), featureArt = await gearArt("environment-features");
   const data = ENVIRONMENTS.map(e => {
     const img = art[artSlug(e.name)] ?? e.img;
     // Só entram os adversários que já existem no compêndio (os de Tiers ainda não feitos ficam no texto).
@@ -4369,7 +4369,7 @@ async function importEnvironments() {
           : {},
         attribution: ATTRIBUTION
       },
-      items: e.features.map(f => automateThreatFeature(e, { ...f, img: f.img ?? e.img }, []))
+      items: e.features.map(f => withFeatureArt(automateThreatFeature(e, { ...f, img: f.img ?? e.img }, []), featureArt[featureSlug(f.name)]))
     };
   });
   await Actor.createDocuments(data, { pack: pack.collection, keepId: true });

@@ -152,8 +152,9 @@ export const Humanity = {
       die,
       steps: HUMANITY_STEPS.map(faces => ({ faces, current: faces === die, below: faces < die })),
       // Perdido (abaixo de d4) só o mestre traz de volta, e pode fazer isso a qualquer momento.
-      canAdvance: this.isLost(actor) ? game.user.isGM : die < 12 && actor.getFlag(MODULE_ID, "humanityAdvancedAt") !== level,
-      advancedThisLevel: actor.getFlag(MODULE_ID, "humanityAdvancedAt") === level,
+      // O limite de um avanço por nível vale para os jogadores; o mestre pode ajustar sempre.
+      canAdvance: this.isLost(actor) ? game.user.isGM : die < 12 && (game.user.isGM || actor.getFlag(MODULE_ID, "humanityAdvancedAt") !== level),
+      advancedThisLevel: !game.user.isGM && actor.getFlag(MODULE_ID, "humanityAdvancedAt") === level,
       canReduce: !this.isLost(actor),
       load: this.cyberLoad(actor),
       loadMod: Number(actor.getFlag(MODULE_ID, "cyberLoadMod") ?? 0),
@@ -221,9 +222,10 @@ export const Humanity = {
       return;
     }
     const next = HUMANITY_STEPS[HUMANITY_STEPS.indexOf(s.die) + 1];
+    // Ajuste do mestre não gasta o avanço do nível do jogador.
     await actor.update({
       [`flags.${MODULE_ID}.humanityDie`]: next,
-      [`flags.${MODULE_ID}.humanityAdvancedAt`]: actor.system.levelData.level.current
+      ...(game.user.isGM ? {} : { [`flags.${MODULE_ID}.humanityAdvancedAt`]: actor.system.levelData.level.current })
     });
     await chat(actor, t("Humanity.ChatAdvanced", { name: actor.name, from: s.die, to: next }));
   },
