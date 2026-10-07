@@ -1968,10 +1968,10 @@ async function importLifePathsAndAffiliations() {
   // e os itens principais (Life Path / Affiliation) soltos na raiz do compêndio.
   const lifePathFeaturesFolder = await makeFolder(ancestriesPack, "Talentos de Trajetória");
   const affiliationFeaturesFolder = await makeFolder(communitiesPack, "Talentos de Afiliação");
-  const lifePathArt = await gearArt("lifepaths"), affiliationArt = await gearArt("affiliations");
+  const lifePathArt = await gearArt("lifepaths"), affiliationArt = await gearArt("affiliations"), featureArt = await gearArt("origin-features");
 
   for (const lp of LIFE_PATHS) {
-    const [primaryItem, secondaryItem] = await createFeatureItems(ancestriesPack, [lp.primary, lp.secondary], lifePathFeaturesFolder.id, `lifepath:${lp.name}`);
+    const [primaryItem, secondaryItem] = await createFeatureItems(ancestriesPack, [lp.primary, lp.secondary], lifePathFeaturesFolder.id, `lifepath:${lp.name}`, featureArt);
     await Item.createDocuments([{
       _id: stableId(`lifepath:${lp.name}`),
       name: lp.name, type: "ancestry", img: lifePathArt[artSlug(plain(lp.name))] ?? ICONS.lifePaths[lp.name] ?? "icons/svg/village.svg",
@@ -1989,7 +1989,7 @@ async function importLifePathsAndAffiliations() {
   }
 
   for (const aff of AFFILIATIONS) {
-    const [featureItem] = await createFeatureItems(communitiesPack, [aff.feature], affiliationFeaturesFolder.id, `affiliation:${aff.name}`);
+    const [featureItem] = await createFeatureItems(communitiesPack, [aff.feature], affiliationFeaturesFolder.id, `affiliation:${aff.name}`, featureArt);
     await Item.createDocuments([{
       _id: stableId(`affiliation:${aff.name}`),
       name: aff.name, type: "community", img: affiliationArt[artSlug(plain(aff.name))] ?? ICONS.affiliations[aff.name] ?? "icons/svg/anchor.svg",
@@ -2887,7 +2887,7 @@ function withDefaultActionImg(actions, img) {
 }
 
 // Arte própria de feature: assets/art/<pasta>/<nome-em-slug>.webp, sem o "(X)" de Minion (3), Horde (1d6+2) etc.
-const featureSlug = name => artSlug(name.replace(/\s*\(.*\)$/, ""));
+const featureSlug = name => artSlug(plain(name.replace(/\s*\(.*\)$/, "")));
 // Troca o ícone da feature pela arte, junto com as ações que usavam o mesmo ícone; os efeitos mantêm o ícone de status.
 function withFeatureArt(item, art) {
   if (!art) return item;
@@ -4675,14 +4675,22 @@ function buildEidolonParts(e) {
     delete data._id;
     data.system.description = gearDescription(w.feature) + "<p><em>Arma embutida do Eidolon: usa o atributo de Interface do piloto.</em></p>";
     data.system.attack.img = CPR(e.img);
+    // Arte própria em assets/art/eidolon-weapons/<slug>.webp; sem arquivo, fica o ícone do CPR.
+    const art = e.weaponArt?.[artSlug(w.name)];
+    if (art) {
+      for (const a of Object.values(data.system.actions ?? {})) if (a.img === data.img) a.img = art;
+      data.img = art; data.system.attack.img = art;
+    }
     return data;
   });
+  // Arte própria em assets/art/eidolon-features/<slug>.webp; sem arquivo, fica o ícone do CPR.
+  const partImg = f => e.featureArt?.[artSlug(f.name)] ?? CPR(e.img);
   const features = e.features.map(f => ({
-    name: f.name, type: "feature", img: CPR(e.img),
+    name: f.name, type: "feature", img: partImg(f),
     system: {
       description: `<p>${f.text}</p>`, gmNotes: "", attribution: ATTRIBUTION, featureForm: f.form,
-      actions: withDefaultActionImg(f.actions, CPR(e.img)),
-      resource: f.charges ? { type: "simple", value: 0, max: String(f.charges.max), icon: CPR(e.img), recovery: null, progression: "increasing" } : null
+      actions: withDefaultActionImg(f.actions, partImg(f)),
+      resource: f.charges ? { type: "simple", value: 0, max: String(f.charges.max), icon: partImg(f), recovery: null, progression: "increasing" } : null
     },
     effects: [...gearPassiveEffect({ ...f, img: CPR(e.img), feature: `${f.name}|${f.text}` }), ...f.effects]
   }));
@@ -4722,8 +4730,8 @@ async function importCyberware() {
   const data = CYBERWARE.map(def => buildCyberwareItem({ ...def, img: cyberArt[CYBER_ART[def.n - 1]] ?? def.img }, folders[cyberTier(def.n)].id));
   const eidolonFolder = await makeFolder(pack, "Eidolons (Cyberware Especial)");
   // Retrato (assets/art/eidolons/<slug>.webp) e token (tokens/<slug>.webp); sem arquivo, fica o ícone do CPR.
-  const art = await gearArt("eidolons"), tokens = await gearArt("eidolons/tokens");
-  data.push(...EIDOLONS.map(e => buildEidolonItem({ ...e, art: art[artSlug(e.name)], token: tokens[artSlug(e.name)] }, eidolonFolder.id)));
+  const art = await gearArt("eidolons"), tokens = await gearArt("eidolons/tokens"), weaponArt = await gearArt("eidolon-weapons"), featureArt = await gearArt("eidolon-features");
+  data.push(...EIDOLONS.map(e => buildEidolonItem({ ...e, art: art[artSlug(e.name)], token: tokens[artSlug(e.name)], weaponArt, featureArt }, eidolonFolder.id)));
   await Item.createDocuments(data, { pack: pack.collection, keepId: true });
 }
 

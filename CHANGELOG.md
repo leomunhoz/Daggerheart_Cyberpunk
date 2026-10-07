@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.38.0
+- **Arte de carta para os 20 talentos de origem**: os 8 Talentos de Afiliação e os 12 Talentos de Trajetória, cada um na cor da sua afiliação ou trajetória.
+- **Arte nova para as 19 armas dos Eidolons**, cada arma mostrada sozinha como peça de equipamento pesado.
+- **Arte de carta para as 21 habilidades dos Eidolons**, feitas a partir do retrato de cada Eidolon para manter o mesmo design. Eles aparecem na escala de plataformas de combate gigantes, em campo aberto, carregando, protegendo e consertando outros Eidolons.
+
 ## v1.37.0
 - **Arte nova para as 39 armas dos adversários** (o ataque padrão de cada um), no mesmo estilo das armas dos jogadores: Lâmina de Rua, Fuzil de Segurança, Punhos de Cromo, Lâminas Mantis, Canhão Rotativo, Sinal Proibido e as demais.
 
