@@ -51,7 +51,7 @@
       ]
     }
   ],
-  "esmodules": ["scripts/main.js", "scripts/edgeheart-character.js", "scripts/edgeheart-crew.js", "scripts/edgeheart-babele.js"],
+  "esmodules": ["scripts/main.js", "scripts/edgeheart-character.js", "scripts/edgeheart-browser-filters.js", "scripts/edgeheart-crew.js", "scripts/edgeheart-babele.js"],
   "styles": ["styles/edgeheart.css", "styles/edgeheart-sheet-theme.css"],
   "socket": true,
   "flags": {}
