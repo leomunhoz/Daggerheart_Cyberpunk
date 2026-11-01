@@ -19,14 +19,18 @@ entra quando for necessário: uma busca ampla e rápida em que você só precisa
    --parent-worktree <lote> --json`.
 3. **WIP.** Confira `docs/backlog.md` ("Lote atual"): só um ticket em implementação ou revisão por
    vez, salvo o par paralelo marcado na Spec.
-4. **Terminal do papel.** Reaproveite o terminal do papel se ele já estiver aberto e ocioso
-   (`orca terminal list --worktree <sel> --json`). Senão:
+4. **Terminal do papel.** Um terminal novo **por tarefa**: a sessão do papel encerra depois do
+   `worker_done`, e reaproveitar o terminal dá `agent_unconfigured`.
    `orca terminal create --worktree <sel> --title "<papel> <ticket>" --command "claude --agent <papel>" --json`
 5. **Entregar e supervisionar** (orquestração do Orca):
    - uma vez por lote: `orca orchestration run-create --objective "Lote NN: <slug>" --json`
      (depois de reiniciar, `run-use --id <run>`);
    - `orca orchestration worker-start --terminal <handle> --task-title "<ticket> <papel>" --spec "<pedido>" --json`;
-   - `orca orchestration check --wait --types "worker_done,escalation,question" --timeout-ms 900000 --json`.
+   - `orca orchestration check --wait --types "worker_done,escalation,question" --timeout-ms 900000 --json`;
+   - em worktree que não é o atual, passe `--worktree id:<repoId>::<caminho>` no `worker-start`
+     (senão dá `terminal_worktree_mismatch`);
+   - se o `worker-start` responder `agent_unconfigured`, a sessão do papel naquele terminal acabou:
+     abra um terminal novo para o papel (passo 4) e reenvie.
 
    O pedido (`--spec`) começa pelo comando da skill do papel (`/implementar …`, `/revisao …`,
    `/prd-feature …`, `/commit …`, `/lote …`) e traz só o contexto que não está nos documentos.

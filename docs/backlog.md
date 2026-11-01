@@ -14,10 +14,32 @@ Porta de entrada de todo pedido, bug ou pendência (ADR 0002). Quem cuida é o C
 | B-004 | Filtrar armas, itens e consumíveis que não são do módulo | feat | completa | aprovado | FIL-01 #6 |
 | B-005 | Opção nas configurações do módulo para ligar/desligar o filtro (B-004) | feat | completa | aprovado | FIL-01 #6 |
 | B-006 | Risco: `CONFIG.DH.ACTOR.abilities` virou alias de `traits` na 2.12 | fix | — | bruto | `docs/spec/compat-2-12.md` (Q4) |
+| B-007 | Teste de fumaça lista os esmodules fixos; ler do `module.json` | test | rápida | bruto | achado no LVL-01 |
 
 ## Lote atual
 
-Nenhum. Próximo lote: `gabrielctorres/lote-01-compat-e-filtros` (primeiro commit: os arquivos do workflow).
+**Lote 01** — branch `gabrielctorres/lote-01-compat-e-filtros`, worktree Orca `lote-01-compat-e-filtros`.
+
+| Ordem | Ticket | Issue | Estado |
+|---|---|---|---|
+| 1 | C212-01 | #1 | commitado `95148fa`, push feito; conferência no Foundry pendente |
+| 2 | C212-03 | #3 | aprovado (red nível 3: precisa do Foundry) |
+| 3 | LVL-01 | #5 | commitado `ac06132`, push feito; conferência no Foundry pendente (L1-L4) |
+| 4 | ORG-01 | #4 | APROVADO (100%), commitado; rebuild e conferência O1-O4 pendentes (depois do C212-03) |
+| 5 | FIL-01 | #6 | aprovado; **próximo a implementar** |
+| 6 | C212-02 | #2 | aprovado (depois do roteiro nível 3 do usuário) |
+
+Commits: `8debcae` chore(time), `8a1937f` docs(planejamento).
+
+**Pausa (2026-11-01, pedido do usuário):** trabalho parado ao fim do dia. Para retomar:
+1. FIL-01 (`/implementar organizacao-e-filtros FIL-01`, terminal novo da Fábrica no worktree do lote).
+2. C212-03 precisa do usuário: `buildPacks()` no Foundry 2.12.1 em inglês, com o módulo apontando para
+   este worktree; o resultado do comando de conferência da Spec decide o red.
+3. Depois do C212-03: rebuild dos compêndios (cobre C212-03 e ORG-01) e commit `chore(packs)`.
+4. Usuário roda os roteiros nível 3 (compat-2-12 passos 1-13; L1-L4; O1-O4; F1-F5) e então C212-02.
+5. `/lote 01` (PR contra a `main`, com confirmação do usuário).
+
+**Autorização do usuário (2026-11-01, vale só para o lote 01):** ticket APROVADO vira commit e push na branch do lote sem nova confirmação. O PR continua pedindo confirmação.
 
 ## Itens
 
@@ -72,3 +94,8 @@ Nenhum. Próximo lote: `gabrielctorres/lote-01-compat-e-filtros` (primeiro commi
 - **Risco:** se uma versão futura tirar o alias, o Back Me Up e o gerador quebram.
 - **Gatilho para triar:** a próxima conferência de versão do sistema, ou o sistema anunciar a
   remoção do alias. Correção provável: `CONFIG.DH.ACTOR.traits ?? CONFIG.DH.ACTOR.abilities` (ADR 0007).
+
+### B-007 — Teste de fumaça com lista fixa de esmodules
+- **Origem:** relatório da Fábrica no LVL-01 (2026-11-01). `tests/smoke.test.mjs` importa uma lista fixa de
+  scripts; o `scripts/edgeheart-browser-filters.js` novo não entra. Ler a lista de `module.json.esmodules`.
+- **Via:** rápida (só `tests/smoke.test.mjs`).

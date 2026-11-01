@@ -82,7 +82,7 @@ Nada novo do sistema é importado por caminho, sobrescrito ou copiado (ADR 0005)
      `contentFor` recebem o nome de origem antes do prefixo);
    - a base em inglês fica `[0] Ocular Overlay` e a entrada do Babele tem chave `[0] Ocular Overlay`
      e nome `[0] Sobreposição Ocular`.
-3. **Ordem (R1, CA1)**: as pastas de Tier têm `sorting: "a"`. `[0] …` < `[1] …` < `[1–3] …` < `[2] …`
+3. **Ordem (R1, CA1)**: as pastas de Tier têm `sorting: "a"`. `[0] …` < `[1–3] …` < `[1] …` < `[2] …`
    < `[3] …` < `[4] …` (o maior custo é 4; nenhum custo tem dois dígitos). Dentro do mesmo custo, a
    ordem é alfabética no nome mostrado, em cada língua. **Não se usa o campo `sort`**: com
    ordenação manual, o desempate ficaria preso à ordem de uma língua só.
@@ -93,7 +93,9 @@ Nada novo do sistema é importado por caminho, sobrescrito ou copiado (ADR 0005)
    Nada procura cyberware pelo nome do item, então a Carga, as escolhas e as ações seguem iguais.
    Sem migração.
 6. **Acesso Neural**: o nome fica `[1–3] Acesso Neural` (igual ao texto, CA3); a posição é logo
-   depois dos itens de custo 1.
+   **antes** dos itens de custo 1 (depois dos de custo 0). O `localeCompare` (root, `en` e `pt-BR`)
+   ignora a pontuação `]` no primeiro nível de comparação, então `[1–3` vence `[1] ` pelo `–`;
+   conferido no Node pela Fábrica. Aceito sem mudar código (emenda de 2026-11-01, seção 5).
 
 ### 3.2 Arquivo novo de filtros do Item Browser
 
@@ -188,6 +190,11 @@ na `.item-list` (a lista é preenchida depois do render). Mais `renderDhCharacte
 **Decisões do gate (2026-11-01):** Q1 = manter o kit inicial como está. Tickets ORG-01, LVL-01 e
 FIL-01 aprovados.
 
+**Emenda (2026-11-01):** a Fábrica verificou no Node que `localeCompare` (root, `en`, `pt-BR`) põe
+`[1–3] Acesso Neural` antes dos `[1] …`, não depois. O usuário decidiu aceitar esse comportamento,
+sem mudar código; a seção 3.1 (itens 3 e 6) e o roteiro O2 foram corrigidos. O critério CA1 segue
+atendido: `1–3` começa em 1, então a ordem por custo não decresce.
+
 ## 6. Tickets
 
 Ordem sugerida: ORG-01 ∥ LVL-01, depois FIL-01. ORG-01 não tem arquivo em comum com nenhum dos outros
@@ -277,7 +284,7 @@ em pt-BR. Um GM e um jogador.
 - O1. Foundry em inglês: compêndio Cyberware, pasta "Tier 1 — Common". Os nomes começam com `[0]`
   e depois `[1]`, e em cada custo a ordem é alfabética. Ex.: `[0] Ocular Overlay`.
 - O2. Foundry em pt-BR com Babele: mesma pasta, `[0] Sobreposição Ocular`; ordem por custo e
-  alfabética em português. `[1–3] Acesso Neural` vem depois dos `[1]`.
+  alfabética em português. `[1–3] Acesso Neural` vem logo antes dos `[1]` (depois dos `[0]`).
 - O3. Abrir 5 cyberwares ao acaso (um por custo): o número do nome é igual ao "Custo Cibernético"
   da primeira linha do texto (CA3). Pasta de Eidolons sem mudança.
 - O4. Personagem criado **antes** do Rebuild, com cyberware: o nome antigo continua, a Carga
