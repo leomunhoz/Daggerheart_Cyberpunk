@@ -39,6 +39,17 @@ https://foundryvtt.com/api/v14/classes/foundry.documents.collections.CompendiumC
   LevelDB ↔ JSON/YAML. **Não está adotada** aqui (dependência nova; ver ADR 0004).
   https://github.com/foundryvtt/foundryvtt-cli
 
+- **[V]** `index` (coleção mínima do compêndio), `indexed` (já indexado?), `indexFields`. A página
+  não diz se o índice já vem carregado no `ready` **[I]** nem se a entrada de Item traz `type` **[I]**
+  (conferido em 2026-11-02, Spec `release-1-39`).
+
+## Notificações
+https://foundryvtt.com/api/v14/classes/foundry.applications.ui.Notifications.html
+- **[V]** `ui.notifications.info|warn|error|success(message, options)` devolvem a notificação.
+  Opções dos exemplos: `permanent`, `console`, `localize`, `format`, `progress`.
+- **[V]** Barra de progresso: `const n = ui.notifications.info(msg, { progress: true })` e
+  `ui.notifications.update(n, { pct, message })`. `remove(n)`, `has(n)` e `clear()`.
+
 ## Aplicações e fichas
 https://foundryvtt.com/api/v14/classes/foundry.applications.apps.DocumentSheetConfig.html
 - **[V]** `DocumentSheetConfig.registerSheet(documentClass, scope, sheetClass, options)`. O módulo

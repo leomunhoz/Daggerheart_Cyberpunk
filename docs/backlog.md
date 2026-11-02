@@ -15,31 +15,28 @@ Porta de entrada de todo pedido, bug ou pendência (ADR 0002). Quem cuida é o C
 | B-005 | Opção nas configurações do módulo para ligar/desligar o filtro (B-004) | feat | completa | aprovado | FIL-01 #6 |
 | B-006 | Risco: `CONFIG.DH.ACTOR.abilities` virou alias de `traits` na 2.12 | fix | — | bruto | `docs/spec/compat-2-12.md` (Q4) |
 | B-007 | Teste de fumaça lista os esmodules fixos; ler do `module.json` | test | rápida | bruto | achado no LVL-01 |
+| B-008 | `buildPacks()` sem progresso nem aviso de onde parou | fix | rápida | aprovado | Spec `release-1-39` (BLD-01) |
+| B-009 | Filtro de equipamento esconde tudo se os compêndios do Edgeheart estão vazios | fix | rápida | aprovado | Spec `release-1-39` (FIL-02) |
+| B-010 | Versão v1.39.0 sem rebuild (lotes 01 e 02) | chore | rápida | aprovado | Spec `release-1-39` (REL-01, emenda D5, sem issue de código) |
+| B-011 | Rebuild dos compêndios na 2.12.1 (`chore(packs)`: C212-03, ORG-01 com custo `[n]`) | chore | rápida | triado | versão seguinte à 1.39.0; Spec `release-1-39` (D5) |
 
 ## Lote atual
 
-**Lote 01** — branch `gabrielctorres/lote-01-compat-e-filtros`, worktree Orca `lote-01-compat-e-filtros`.
+**Lote 02 (release 1.39)**: branch `gabrielctorres/lote-02-release-1-39`, worktree Orca
+`lote-02-release-1-39`, base `main` em `7b3abb4` (lote 01 entrou pelo PR #7). Spec
+`docs/spec/release-1-39.md`, via rápida, com as decisões do usuário de 2026-11-02 (gate feito).
 
-| Ordem | Ticket | Issue | Estado |
-|---|---|---|---|
-| 1 | C212-01 | #1 | commitado `95148fa`, push feito; conferência no Foundry pendente |
-| 2 | C212-03 | #3 | APROVADO 97% (2026-11-02); rebuild e N3 depois do merge (usuário) |
-| 3 | LVL-01 | #5 | commitado `ac06132`, push feito; conferência no Foundry pendente (L1-L4) |
-| 4 | ORG-01 | #4 | APROVADO (100%), commitado; rebuild e conferência O1-O4 pendentes (depois do C212-03) |
-| 5 | FIL-01 | #6 | APROVADO 99% (2026-11-02); commit pelo DevOps |
-| 6 | C212-02 | #2 | APROVADO 98% (2026-11-02); N3 depois do merge (usuário) |
+| Ordem | Ticket | Item | Issue | Estado |
+|---|---|---|---|---|
+| 1 | BLD-01 | B-008 | — | aprovado; paralelo com FIL-02 |
+| 1 | FIL-02 | B-009 | — | aprovado; paralelo com BLD-01 |
+| 2 | REL-01 | B-010 | sem issue (não tem código) | depois de BLD-01 e FIL-02: N3, gerados restaurados, `v1.39.0` (sem rebuild, D5), `/lote 02` |
 
-Commits: `8debcae` chore(time), `8a1937f` docs(planejamento).
+Pendências do lote 01 que entram no REL-01: os roteiros N3 que não dependem de rebuild
+(compat-2-12 passos 1-13; L1-L4; F1-F5). O rebuild (C212-03, ORG-01) e o O1-O4 foram para o B-011.
 
-**Pausa (2026-11-01, pedido do usuário):** trabalho parado ao fim do dia. Para retomar:
-1. FIL-01 (`/implementar organizacao-e-filtros FIL-01`, terminal novo da Fábrica no worktree do lote).
-2. C212-03 precisa do usuário: `buildPacks()` no Foundry 2.12.1 em inglês, com o módulo apontando para
-   este worktree; o resultado do comando de conferência da Spec decide o red.
-3. Depois do C212-03: rebuild dos compêndios (cobre C212-03 e ORG-01) e commit `chore(packs)`.
-4. Usuário roda os roteiros nível 3 (compat-2-12 passos 1-13; L1-L4; O1-O4; F1-F5) e então C212-02.
-5. `/lote 01` (PR contra a `main`, com confirmação do usuário).
-
-**Autorização do usuário (2026-11-01, vale só para o lote 01):** ticket APROVADO vira commit e push na branch do lote sem nova confirmação. O PR continua pedindo confirmação.
+**Lote 01** (fechado, PR #7): C212-01, C212-02, C212-03, LVL-01, ORG-01, FIL-01, todos aprovados e
+na `main`. Detalhes nas Specs `compat-2-12` e `organizacao-e-filtros`.
 
 ## Itens
 
@@ -99,3 +96,36 @@ Commits: `8debcae` chore(time), `8a1937f` docs(planejamento).
 - **Origem:** relatório da Fábrica no LVL-01 (2026-11-01). `tests/smoke.test.mjs` importa uma lista fixa de
   scripts; o `scripts/edgeheart-browser-filters.js` novo não entra. Ler a lista de `module.json.esmodules`.
 - **Via:** rápida (só `tests/smoke.test.mjs`).
+
+### B-008 — `buildPacks()` sem progresso nem aviso de onde parou
+- **Origem:** investigação INV-01 (Arquiteto, 2026-11-02). O gerador apaga os 14 compêndios
+  (`clearPacks`) antes de recriar e não avisa nada entre "building" e "Done". Se para no meio, os
+  compêndios ficam vazios e não se sabe em qual parou.
+- **Decisão do usuário (2026-11-02):** progresso por compêndio e mensagem clara de falha
+  (`ui.notifications` e console, nas duas línguas), sem mudar a ordem nem o conteúdo. Ticket BLD-01.
+
+### B-009 — Filtro de equipamento com os compêndios vazios
+- **Origem:** INV-01. Com os compêndios de equipamento do Edgeheart vazios, o filtro do FIL-01
+  esconde todo o equipamento de fora e o Item Browser fica sem armas.
+- **Decisão do usuário (2026-11-02):** salvaguarda: sem equipamento do Edgeheart (por tipo), o
+  filtro não esconde nada. Ticket FIL-02.
+
+### B-010 — Rebuild e versão v1.39.0
+- Rebuild dos compêndios pelo usuário no Foundry 2.12.1 (cobre C212-03 e ORG-01), commit
+  `chore(packs)`, roteiros N3 dos lotes 01 e 02 e commit `v1.39.0` (`module.json` e `CHANGELOG.md`,
+  ADR 0006). O número é proposta do Controlador e o usuário confirma. Item REL-01 da Spec
+  `release-1-39`.
+- **Emenda (2026-11-02, decisão do usuário, D5):** a `v1.39.0` sai **sem rebuild**: só o commit
+  `v1.39.0` (`module.json` `version` e `CHANGELOG.md`). Os compêndios ficam os atuais (gerados na
+  2.10.8, migrados pelo sistema ao carregar). O rebuild foi para o B-011. O usuário confere
+  atualizando o módulo pelo Foundry depois da Release.
+
+### B-011 — Rebuild dos compêndios na 2.12.1 (versão seguinte à 1.39.0)
+- **Origem:** emenda D5 da Spec `release-1-39` (2026-11-02). Saiu do REL-01.
+- **O que é:** rebuild pelo usuário (Foundry v14 em inglês, Daggerheart 2.12.1, gerador com o
+  BLD-01), commit `chore(packs)` só com `packs/**` e `babele/pt-BR/**`, roteiro B2 da
+  `release-1-39` (diff dos gerados) e O1-O4 da `organizacao-e-filtros`. Entra nos compêndios o
+  que já está no gerador: features oficiais no formato `itemFeatures` (C212-03) e cyberware por
+  custo com `[n]` no nome (ORG-01). A versão que sai com ele anuncia essas duas coisas no
+  `CHANGELOG.md`.
+- **Via:** rápida (sem código; Rebuild: sim).
