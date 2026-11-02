@@ -23,7 +23,7 @@ Porta de entrada de todo pedido, bug ou pendência (ADR 0002). Quem cuida é o C
 | Ordem | Ticket | Issue | Estado |
 |---|---|---|---|
 | 1 | C212-01 | #1 | commitado `95148fa`, push feito; conferência no Foundry pendente |
-| 2 | C212-03 | #3 | aprovado (red nível 3: precisa do Foundry) |
+| 2 | C212-03 | #3 | APROVADO 97% (2026-11-02); rebuild e N3 depois do merge (usuário) |
 | 3 | LVL-01 | #5 | commitado `ac06132`, push feito; conferência no Foundry pendente (L1-L4) |
 | 4 | ORG-01 | #4 | APROVADO (100%), commitado; rebuild e conferência O1-O4 pendentes (depois do C212-03) |
 | 5 | FIL-01 | #6 | APROVADO 99% (2026-11-02); commit pelo DevOps |
