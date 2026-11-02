@@ -479,10 +479,14 @@ function buildArmorData(a) {
 }
 
 // Aplica as features oficiais depois de criar: o sistema monta os efeitos e ações delas (updateItemFeatures).
-async function applyOfficialFeatures(docs, list, key) {
+// Daggerheart 2.11+: campo system.itemFeatures ({ chave: { value } }); 2.10: weaponFeatures/armorFeatures ([{ value }]).
+export async function applyOfficialFeatures(docs, list, key) {
   for (const doc of docs) {
     const keys = list.find(i => i.name === doc.name)?.official ?? [];
-    if (keys.length) await doc.update({ [`system.${key}`]: keys.map(value => ({ value })) });
+    if (!keys.length) continue;
+    if (doc.system?.schema?.fields?.itemFeatures) {
+      await doc.update({ "system.itemFeatures": Object.fromEntries(keys.map(value => [value, { value }])) });
+    } else await doc.update({ [`system.${key}`]: keys.map(value => ({ value })) });
   }
 }
 
