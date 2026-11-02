@@ -16,6 +16,10 @@
         "full": "Tema com glitch animado",
         "static": "Tema sem animação",
         "off": "Visual original do Daggerheart"
+      },
+      "GearFilter": {
+        "Name": "Ocultar equipamento que não é do Edgeheart",
+        "Hint": "Oculta armas, armaduras, consumíveis e loot de outras fontes no Item Browser, inclusive no passo de equipamento da criação de personagem."
       }
     },
     "Common": {

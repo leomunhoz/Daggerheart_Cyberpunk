@@ -479,10 +479,14 @@ function buildArmorData(a) {
 }
 
 // Aplica as features oficiais depois de criar: o sistema monta os efeitos e ações delas (updateItemFeatures).
-async function applyOfficialFeatures(docs, list, key) {
+// Daggerheart 2.11+: campo system.itemFeatures ({ chave: { value } }); 2.10: weaponFeatures/armorFeatures ([{ value }]).
+export async function applyOfficialFeatures(docs, list, key) {
   for (const doc of docs) {
     const keys = list.find(i => i.name === doc.name)?.official ?? [];
-    if (keys.length) await doc.update({ [`system.${key}`]: keys.map(value => ({ value })) });
+    if (!keys.length) continue;
+    if (doc.system?.schema?.fields?.itemFeatures) {
+      await doc.update({ "system.itemFeatures": Object.fromEntries(keys.map(value => [value, { value }])) });
+    } else await doc.update({ [`system.${key}`]: keys.map(value => ({ value })) });
   }
 }
 
@@ -4409,7 +4413,7 @@ const CYBER_ART = [
   "angel-skin-plating", "clone-reflex-loop", "ghost-in-the-suite", "metamorphic-chassis", "neural-crown-of-command", "siege-organ-rig", "overload-governor", "perfected-pain-editor", "omega-organ-cluster", "humanity-anchor"
 ];
 
-const CYBERWARE = [
+export const CYBERWARE = [
   { n: 1, name: "Sobreposição Ocular", cost: 0, img: CPR("cyberware/lowlight_ir_uv"), text: "Você enxerga claramente na penumbra, lê telas digitais à distância e tem vantagem em rolagens para notar falhas visuais, câmeras escondidas ou pequenos detalhes." },
   { n: 2, name: "Acesso Neural", cost: 1, choice: "competency", img: CPR("cyberware/neural_link"), text: "Escolha uma Competência. Custo 1: ganhe Acesso de Carta a uma carta do seu nível ou menor. Custo 2: ganhe Meio Acesso. Custo 3: ganhe Acesso Total. Este cyberware não concede Cargas e não vale para as Competências Redline e Blackwall." },
   { n: 3, name: "Soquete de Skillsoft", cost: 1, choice: "experience", img: CPR("cyberware/chipware_socket"), text: "Escolha uma de suas Experiências. Ela ganha +1 de bônus." },
@@ -4477,16 +4481,19 @@ const CYBERWARE = [
 
 const cyberTier = n => (n <= 24 ? 1 : n <= 36 ? 2 : n <= 48 ? 3 : 4);
 
+// Rótulo do Custo Cibernético: o número, ou "1–3" no Acesso Neural (custo escolhido ao instalar).
+export const cyberCostLabel = def => (def.choice === "competency" ? "1–3" : String(def.cost));
+
 function cyberDescription(def) {
   const access = def.access
     ? `<p><strong>${ACCESS_LABELS[def.access.level]}:</strong> ${COMPETENCY_LABELS[def.access.competency]}${def.choice === "tacticalMesh" ? " ou Influence (escolha ao instalar)" : ""}</p>` : "";
-  return `<p><strong>Cyberware ${String(def.n).padStart(2, "0")}</strong> · Tier ${cyberTier(def.n)} · <strong>Custo Cibernético ${def.choice === "competency" ? "1–3" : def.cost}</strong></p>${access}<p>${def.text}</p>`;
+  return `<p><strong>Cyberware ${String(def.n).padStart(2, "0")}</strong> · Tier ${cyberTier(def.n)} · <strong>Custo Cibernético ${cyberCostLabel(def)}</strong></p>${access}<p>${def.text}</p>`;
 }
 
 function buildCyberwareItem(def, folderId) {
   const flags = {
     [MODULE_ID]: {
-      cyberware: true, cyberCost: def.cost, tier: cyberTier(def.n), number: def.n,
+      cyberware: true, cyberCost: def.cost, costLabel: cyberCostLabel(def), tier: cyberTier(def.n), number: def.n,
       ...(def.access ? { access: def.access } : {}),
       ...(def.choice ? { choice: def.choice } : {}),
       ...(def.humanity ? { humanity: def.humanity } : {})

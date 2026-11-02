@@ -16,6 +16,10 @@
         "full": "Theme with animated glitches",
         "static": "Theme without animation",
         "off": "Original Daggerheart look"
+      },
+      "GearFilter": {
+        "Name": "Hide non-Edgeheart gear",
+        "Hint": "Hides weapons, armor, consumables and loot from other sources in the Item Browser, including the character creation equipment step."
       }
     },
     "Common": {

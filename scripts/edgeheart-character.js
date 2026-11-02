@@ -1307,8 +1307,10 @@ Hooks.on("deleteActiveEffect", async (effect, options, userId) => {
 
 // "Faça uma Rolagem de Humanidade quando rolar com Medo com todo o Estresse marcado ou sem Esperança."
 Hooks.on("daggerheart.postRollDuality", (config) => {
-  if (config.roll?.result?.duality !== -1) return;
-  const actor = config.data?.parent ?? (config.source?.actor ? fromUuidSync(config.source.actor) : null);
+  // 2.12+: config.evaluated é a própria rolagem; 2.10/2.11: config.roll.result.duality (ADR 0007).
+  const withFear = config.evaluated ? config.evaluated.withFear : config.roll?.result?.duality === -1;
+  if (!withFear) return;
+  const actor = config.actor ?? config.data?.parent ?? (config.source?.actor ? fromUuidSync(config.source.actor) : null);
   if (!Humanity.isEdgeheart(actor) || !actor.isOwner || Humanity.isCyberpsycho(actor) || Humanity.isLost(actor)) return;
   const { stress, hope } = actor.system.resources;
   const stressFull = stress.value >= stress.max;

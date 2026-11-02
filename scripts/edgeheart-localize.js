@@ -142,11 +142,21 @@ function translateEffects(ctx, effects, en = {}, item = {}) {
   return { pt, updates };
 }
 
+// Prefixo do Custo Cibernético no nome do cyberware ("[0] Ocular Overlay"): a pasta de Tier ordena por
+// nome, então fica na ordem de custo. O glossário e o content-en.json continuam casando pelo nome sem custo.
+export function withCostLabel(name, flags) {
+  const label = flags?.costLabel;
+  if (label === undefined || label === null || name.startsWith(`[${label}] `)) return name;
+  return `[${label}] ${name}`;
+}
+
 // Dados de item (documento ou item embutido/guardado em flag) → { update da base, updates dos efeitos,
 // entrada pt-BR }. `en` é a entrada do item em content-en.json.
 function translateItemData(ctx, data, en = {}) {
   const system = data.system ?? {};
-  const { en: enName, pt: ptName } = ctx.names(data.name);
+  const names = ctx.names(data.name);
+  const enName = withCostLabel(names.en, data.flags?.[MODULE_ID]);
+  const ptName = withCostLabel(names.pt, data.flags?.[MODULE_ID]);
   const update = {};
   if (enName !== data.name) update.name = enName;
   if (en.description) update["system.description"] = en.description;

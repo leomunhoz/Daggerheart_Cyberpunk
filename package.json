@@ -1,0 +1,11 @@
+{
+  "name": "edgeheart-cyberpunk-dev",
+  "private": true,
+  "description": "Ferramentas de desenvolvimento do módulo (não entram no module.zip). Sem dependências.",
+  "type": "module",
+  "scripts": {
+    "check": "node tools/check.mjs",
+    "test": "node --test \"tests/**/*.test.mjs\"",
+    "verify": "node tools/check.mjs && node --test \"tests/**/*.test.mjs\""
+  }
+}

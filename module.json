@@ -15,7 +15,7 @@
   ],
   "relationships": {
     "systems": [
-      { "id": "daggerheart", "type": "system", "compatibility": { "minimum": "2.10.0" } }
+      { "id": "daggerheart", "type": "system", "compatibility": { "minimum": "2.11.0", "verified": "2.12.1" } }
     ],
     "recommends": [
       { "id": "babele", "type": "module", "reason": "Traduz os compêndios para português (pt-BR) / Translates the compendiums to Brazilian Portuguese." }
@@ -51,7 +51,7 @@
       ]
     }
   ],
-  "esmodules": ["scripts/main.js", "scripts/edgeheart-character.js", "scripts/edgeheart-crew.js", "scripts/edgeheart-babele.js"],
+  "esmodules": ["scripts/main.js", "scripts/edgeheart-character.js", "scripts/edgeheart-browser-filters.js", "scripts/edgeheart-crew.js", "scripts/edgeheart-babele.js"],
   "styles": ["styles/edgeheart.css", "styles/edgeheart-sheet-theme.css"],
   "socket": true,
   "flags": {}
