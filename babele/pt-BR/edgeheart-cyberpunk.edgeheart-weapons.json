@@ -345,12 +345,6 @@
     "Vibroblade": {
       "name": "Vibrolâmina",
       "description": "<p><strong>Fio Vibratório:</strong> quando você tira 1 num dado de dano, trate como 6.</p>",
-      "effects": {
-        "Self Correcting": {
-          "name": "Autocorretivo",
-          "description": "When you roll a 1 on a damage die, it deals 6 damage instead."
-        }
-      },
       "attack": {
         "name": "Ataque"
       }
@@ -475,7 +469,7 @@
       "effects": {
         "Protective": {
           "name": "Protetor",
-          "description": "Add the item's Tier to your Armor Score"
+          "description": "Add @Resolve[@item.itemFeatures.protective.config.value|sign]{the item's Tier} to your Armor Score"
         }
       },
       "attack": {
@@ -603,12 +597,6 @@
     "Mono-Knife": {
       "name": "Monofaca",
       "description": "<p><strong>Serrilhado:</strong> quando você tira 1 num dado de dano, ele causa 6 de dano.</p>",
-      "effects": {
-        "Self Correcting": {
-          "name": "Autocorretivo",
-          "description": "When you roll a 1 on a damage die, it deals 6 damage instead."
-        }
-      },
       "attack": {
         "name": "Ataque"
       }

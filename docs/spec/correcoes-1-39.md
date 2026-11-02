@@ -191,6 +191,23 @@ muda o que se esconde na tela.
 | Q3 | Sim, BLD-03 entra no lote 03 | Ticket aprovado |
 | Q4 | Sim (ordem do fluxo) | B-011 só depois do BLD-02 na `main` |
 
+### 5.2 Emenda (2026-11-02): conferência do rebuild do B-011
+
+Rebuild do usuário no Foundry v14 b369 + Daggerheart 2.12.4 (mundo em inglês), gerador da v1.39.1.
+Diff dos gerados contra a `main`, conferido no código do sistema (`../daggerheart-src`, branch
+`v14`, 2.12.3, e `../dh-2.10.13`):
+
+| Achado | Causa no sistema | Veredito |
+|---|---|---|
+| Vibrolâmina e Monofaca (`official("selfCorrecting")`) sem ActiveEffect; `itemFeatures.selfCorrecting.effectIds = []`; some o bloco `effects` "Self Correcting" do babele | Na 2.10.13 (`module/config/itemConfig.mjs`) a feature criava um efeito com `changes: []`, só de rótulo, sem regra. Na 2.12 (`module/config/itemFeatures.mjs`) ela é `rollModifiers: ['sc6']`: `weapon.mjs` (`prepareDerivedData`) monta `system.rollModifiers` a partir de `itemFeatures`, `damageRoll.mjs` liga o modificador no diálogo de dano e `dice/die/baseDie.mjs` (`selfCorrecting`) troca cada 1 por 6 | **Esperado.** Não há perda de regra; a regra passou a ser aplicada de fato (antes não era). Sem ticket |
+| Broquel Antimotim: descrição do efeito "Protective" mudou para `Add @Resolve[...]{the item's Tier} ...` e continua em inglês no pt-BR | Texto novo do sistema na 2.12. O inglês no pt-BR já existia antes do rebuild (o gerador não traduz descrição de efeito vindo do sistema) | Sem regressão. Melhoria opcional no backlog (tradução de descrição de efeito de feature oficial), fora do B-011 |
+| Outras features | Das features oficiais que o módulo usa (`selfCorrecting`, `long`, `paired`, `protective`, `hooked`, `reliable`, `deadly`, `flexible`, `reinforced`, `heavy`, `shifting`, `impenetrable`, `fortified`), só `selfCorrecting` virou `rollModifiers` na 2.12 (as outras com `rollModifiers` são `brutal`, `massive`, `powerful`, `serrated`, que o módulo não usa). `edgeheart-armors.json` sem diff | Nenhuma outra perda |
+| Domínios: Personal Firewall e Trauma Ward ganham `effects` | Efeitos novos das cartas clonadas na 2.12 | Ganho, esperado |
+| Cyberware: nomes com prefixo `[N] ` | ORG-01 (`withCostLabel`, `scripts/edgeheart-localize.js`), primeiro rebuild depois dele | Esperado |
+| `packs/*/lost/` (não rastreadas) | Arquivos antigos que o LevelDB move ao reparar o banco | Não são conteúdo: ficam fora do commit `chore(packs)` |
+
+Conclusão: o commit `chore(packs)` do B-011 pode seguir sem ticket de correção.
+
 ## 6. Tickets
 
 Ordem: BLD-02 ∥ (FIL-03 depois do console). BLD-03 só se Q3 = sim, depois do BLD-02.

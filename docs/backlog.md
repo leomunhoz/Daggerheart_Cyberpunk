@@ -18,12 +18,24 @@ Porta de entrada de todo pedido, bug ou pendência (ADR 0002). Quem cuida é o C
 | B-008 | `buildPacks()` sem progresso nem aviso de onde parou | fix | rápida | aprovado | Spec `release-1-39` (BLD-01) |
 | B-009 | Filtro de equipamento esconde tudo se os compêndios do Edgeheart estão vazios | fix | rápida | aprovado | Spec `release-1-39` (FIL-02) |
 | B-010 | Versão v1.39.0 sem rebuild (lotes 01 e 02) | chore | rápida | aprovado | Spec `release-1-39` (REL-01, emenda D5, sem issue de código) |
-| B-011 | Rebuild dos compêndios na 2.12.1 (`chore(packs)`: C212-03, ORG-01 com custo `[n]`) | chore | rápida | triado | versão seguinte à 1.39.0; Spec `release-1-39` (D5); BLD-02 pronto na v1.39.1 (B-013): pode ir depois do merge |
+| B-011 | Rebuild dos compêndios na 2.12.1 (`chore(packs)`: C212-03, ORG-01 com custo `[n]`) | chore | rápida | em execução | lote 04 (`gabrielctorres/lote-04-compendios`): rebuild feito em 2026-11-02 no Foundry v14 b369 + Daggerheart **2.12.4**, em inglês, sem erro nos 11 passos; contagens iguais às de antes (cyberware 70, domínios 231...); 60 de 70 cyberwares com custo no nome (59 `[n]` + `[1–3] Neural Access`; os 10 sem custo parecem ser os Eidolons, conferir no O1-O4). N3 (2026-11-02, pelo navegador): B2 ok; O1, O2 e O3 ok (60/60 com custo igual ao "Cyber Cost" do texto; 10 Eidolons sem prefixo); O4 não feito (mundo sem personagem anterior). Self Correcting sem efeito é o esperado na 2.12 (`rollModifiers`, Arquiteto, emenda 5.2 da Spec `correcoes-1-39`), sem ticket. Falta: commit `chore(packs)` (sem as pastas `packs/*/lost/`) e versão |
+| B-015 | Traduzir no pt-BR a descrição dos efeitos de features oficiais (ex.: Protective) | fix | — | bruto | sugestão do Arquiteto no B-011 (2026-11-02), opcional |
 | B-012 | Sessão de papel encerra sem `worker_done` (DevOps no lote 01, Examinador no FIL-02); e `worker-start` logo após `terminal create` dá `agent_unconfigured` (esperar o Claude abrir); `check --ack` sem o `delivery_id` não confirma e a mensagem antiga volta; terminais somem quando o Orca cai (lote 03) | chore | rápida | bruto | ajustar a skill `/papel` |
 | B-013 | `buildPacks()` quebra nas Competências (Corruption Spike) desde o Daggerheart 2.10.12 | fix | rápida | pronto | lote 03: BLD-02 (#11) e BLD-03 (#12), versão v1.39.1 |
-| B-014 | Filtro de equipamento ligado e armas/armaduras do sistema aparecem no Item Browser e na criação | fix | rápida | em Spec | FIL-03 adiado para o lote seguinte (decisão do usuário em 2026-11-02): espera a saída do console do Item Browser |
+| B-014 | Filtro de equipamento ligado e armas/armaduras do sistema aparecem no Item Browser e na criação | fix | rápida | em Spec | Console do Item Browser (2026-11-02, v1.39.1, 2.12.4): Weapons 324/324, Armors 69/69, Consumables 121/121 e Items 150/150 itens de fora marcados, 0 visíveis. É a linha H1 da tabela 3.3 (cache), então o FIL-03 não roda no Item Browser. Falta conferir a criação de personagem (H5) |
 
 ## Lote atual
+
+**Lote 04 (compêndios)**: branch `gabrielctorres/lote-04-compendios`, worktree Orca
+`lote-04-compendios`, base `main` em `47eae9a` (v1.39.1). Run Orca `run_0b2a60df8d6d`. Só o B-011,
+sem código: rebuild feito em 2026-11-02 (Foundry v14 b369, Daggerheart 2.12.4), N3 B2/O1-O3 ok,
+O4 pendente (sem personagem antigo no mundo de teste).
+
+| Ordem | Passo | Item | Estado |
+|---|---|---|---|
+| 1 | `chore(packs)` (sem `packs/*/lost/`) | B-011 | DevOps |
+| 2 | `docs` (backlog, emenda 5.2 da `correcoes-1-39`, referência do sistema) | B-011 | DevOps |
+| 3 | versão `v1.39.2` (proposta) e `/lote 04` | B-011 | DevOps |
 
 **Lote 02 (release 1.39)**: branch `gabrielctorres/lote-02-release-1-39`, worktree Orca
 `lote-02-release-1-39`, base `main` em `7b3abb4` (lote 01 entrou pelo PR #7). Spec

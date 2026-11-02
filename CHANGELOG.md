@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.39.2
+- **Compêndios regenerados no Daggerheart 2.12**: as features oficiais de armas e armaduras usam o formato novo do sistema, e Self Correcting passa a ser aplicada na rolagem de dano pelo próprio sistema.
+- **Cyberwares com o custo no nome**: cada implante mostra o custo [n] e a lista segue a ordem de custo dentro de cada Tier.
+
 ## v1.39.1
 - **Gerador dos compêndios volta a funcionar no Daggerheart 2.12**: com o Daggerheart 2.10.12 ou mais novo, o gerador parava na carta Corruption Spike das Competências e deixava os compêndios vazios. Agora ele passa dessa carta e preenche tudo.
 - **Ferramenta de desenvolvimento** que confere as cartas copiadas do sistema contra a versão do Daggerheart instalada e avisa o que mudou. Não muda nada no jogo.

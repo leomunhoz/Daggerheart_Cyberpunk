@@ -1624,6 +1624,11 @@
         "Personal Firewall": {
           "name": "Firewall Pessoal"
         }
+      },
+      "effects": {
+        "Personal Firewall": {
+          "name": "Firewall Pessoal"
+        }
       }
     },
     "Optical Scrambler": {
@@ -1993,6 +1998,11 @@
       "name": "Ala de Trauma",
       "description": "<p>Faça uma Rolagem de Interface (16). Uma vez por descanso longo, em um sucesso, escolha um ponto dentro do alcance Distante e monte ali uma ala de trauma para todos os aliados dentro do alcance Muito Próximo desse ponto. Ela pode aparecer como um perímetro de drones médicos, clínica de hard-light, tenda cirúrgica, cortina de nanitos, campo de estabilização de emergência ou zona automatizada de suporte de vida.</p><p>Quando fizer isso, coloque um d6 nesta carta com o 1 virado para cima. Quando um aliado na zona sofre dano, ele o reduz pelo valor do dado. Depois, aumente o valor do dado em um. Quando o valor passaria de 6, o efeito termina.</p>",
       "actions": {
+        "Trauma Ward": {
+          "name": "Ala de Trauma"
+        }
+      },
+      "effects": {
         "Trauma Ward": {
           "name": "Ala de Trauma"
         }
