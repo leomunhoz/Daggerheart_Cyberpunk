@@ -18,10 +18,10 @@ Porta de entrada de todo pedido, bug ou pendência (ADR 0002). Quem cuida é o C
 | B-008 | `buildPacks()` sem progresso nem aviso de onde parou | fix | rápida | aprovado | Spec `release-1-39` (BLD-01) |
 | B-009 | Filtro de equipamento esconde tudo se os compêndios do Edgeheart estão vazios | fix | rápida | aprovado | Spec `release-1-39` (FIL-02) |
 | B-010 | Versão v1.39.0 sem rebuild (lotes 01 e 02) | chore | rápida | aprovado | Spec `release-1-39` (REL-01, emenda D5, sem issue de código) |
-| B-011 | Rebuild dos compêndios na 2.12.1 (`chore(packs)`: C212-03, ORG-01 com custo `[n]`) | chore | rápida | triado | versão seguinte à 1.39.0; Spec `release-1-39` (D5); **depende do BLD-02** (B-013) |
-| B-012 | Sessão de papel encerra sem `worker_done` (DevOps no lote 01, Examinador no FIL-02); e `worker-start` logo após `terminal create` dá `agent_unconfigured` (esperar o Claude abrir) | chore | rápida | bruto | ajustar a skill `/papel` |
-| B-013 | `buildPacks()` quebra nas Competências (Corruption Spike) desde o Daggerheart 2.10.12 | fix | rápida | em Spec | Spec `correcoes-1-39` (BLD-02; BLD-03 opcional) |
-| B-014 | Filtro de equipamento ligado e armas/armaduras do sistema aparecem no Item Browser e na criação | fix | rápida | em Spec | Spec `correcoes-1-39` (FIL-03 condicional, espera o console do usuário) |
+| B-011 | Rebuild dos compêndios na 2.12.1 (`chore(packs)`: C212-03, ORG-01 com custo `[n]`) | chore | rápida | triado | versão seguinte à 1.39.0; Spec `release-1-39` (D5); BLD-02 pronto na v1.39.1 (B-013): pode ir depois do merge |
+| B-012 | Sessão de papel encerra sem `worker_done` (DevOps no lote 01, Examinador no FIL-02); e `worker-start` logo após `terminal create` dá `agent_unconfigured` (esperar o Claude abrir); `check --ack` sem o `delivery_id` não confirma e a mensagem antiga volta; terminais somem quando o Orca cai (lote 03) | chore | rápida | bruto | ajustar a skill `/papel` |
+| B-013 | `buildPacks()` quebra nas Competências (Corruption Spike) desde o Daggerheart 2.10.12 | fix | rápida | pronto | lote 03: BLD-02 (#11) e BLD-03 (#12), versão v1.39.1 |
+| B-014 | Filtro de equipamento ligado e armas/armaduras do sistema aparecem no Item Browser e na criação | fix | rápida | em Spec | FIL-03 adiado para o lote seguinte (decisão do usuário em 2026-11-02): espera a saída do console do Item Browser |
 
 ## Lote atual
 
