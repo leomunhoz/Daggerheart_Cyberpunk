@@ -77,3 +77,4 @@ Dados em `flags["edgeheart-cyberpunk"].crew` do ator `party`.
 
 ## Ferramentas (fora do zip)
 - `tools/check.mjs` (nível 1), `tests/**/*.test.mjs` com `tests/helpers/foundry-stub.mjs` (nível 2).
+- `tools/check-official-clones.mjs <clone do sistema>`: confere cartas, consumíveis e features de adversário com `clone` contra os `src/packs` de um clone local do Daggerheart (ADR 0007, item 5). Fora do `npm run verify`.

@@ -551,7 +551,7 @@ const L = (name, img, text, extras = {}) => ({ name, img: CPR(img), text, ...gea
 const STRESS1 = [{ key: "stress", value: 1 }];
 const HOPE1 = [{ key: "hope", value: 1 }];
 
-const CONSUMABLES = [
+export const CONSUMABLES = [
   C("Minor Health Patch", "status/speedheal", "Limpe 1d4 Pontos de Vida.", {}, "Minor Health Potion"),
   C("Minor Stamina Injector", "status/stim", "Limpe 1d4 de Estresse.", {}, "Minor Stamina Potion"),
   C("Trauma Foam", "status/quickfix", "Quando uma criatura dentro do alcance Corpo a Corpo marca PV, use isto para fazê-la limpar 1 Estresse e parar de sangrar, queimar ou vazar.", gearHeal("Trauma Foam", { stress: 1 })),
@@ -3191,7 +3191,7 @@ function threatResistance(resistance = {}) {
   return { physical: entry("physical"), magical: entry("magical") };
 }
 
-const ADVERSARIES = [
+export const ADVERSARIES = [
   {
     tier: 1, name: "Neon Claw Ganger", type: "minion", img: CPR("cyberware/scratchers"),
     description: "<p>Um gangue barulhento com cromo barato, cores vivas e algo a provar.</p>",
