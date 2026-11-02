@@ -125,3 +125,18 @@ Para conferir algo: clone o sistema **fora** deste repositório e só leia.
   `equipments`: `armor, weapon, consumable, loot`). Classe da janela: `compendium-browser`.
 - **[V]** O passo de equipamento da criação abre o mesmo Item Browser (`characterCreation.mjs`
   `viewCompendium`, `equipments.folders.weapons/armors`); as sugestões da classe vêm do item de classe.
+
+## Clones das cartas oficiais e bundle publicado (conferido em 2026-11-02, 2.10.13 / 2.12.1 / `v14` 2.12.3, Spec `correcoes-1-39`)
+- **[V]** O sistema renomeia ações de cartas oficiais entre versões menores, sem aviso. Exemplo:
+  Blighting Strike (`src/packs/domains/domainCard_Blighting_Strike_CEOM585jIX8V9PHz.json`):
+  `With Hope`/`With Fear` até a 2.10.11, `Damage (With Hope)`/`Damage (With Fear)` a partir da
+  **2.10.12** (commit `bda013f7`). O `actionNames`/`patch` das cartas clonadas do módulo depende
+  desses nomes: confira a cada versão nova (todos os clones casam na 2.12.1, depois do BLD-02).
+- **[V]** Para conferir pacotes: os JSON de origem estão em `src/packs/<pack>/*.json` no repositório
+  do sistema (`system.actions` é objeto por `_id`; `effects` é lista).
+- **[V]** O `system.zip` da Release traz o código empacotado em `build/daggerheart.js` (rollup, sem
+  minificar). Na 2.12.1 a classe continua `class ItemBrowser`, então o hook `renderItemBrowser` vale.
+  O `styles/daggerheart.css` não usa `@layer` nem `!important` em `.item-container`.
+- **[V]** Item Browser 2.12.1: `loadItems` troca a lista com
+  `element.querySelector('.item-list').innerHTML = …`. Os filtros e a busca do sistema escondem
+  linhas com `li.hidden`, não com classe nem `style`.

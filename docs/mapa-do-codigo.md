@@ -18,7 +18,7 @@ com `grep -n "<nome>" scripts/<arquivo>`. Linhas mudam, nomes não. Quem mantém
 | Consumíveis, loot, veículos | `C`, `L`, `CONSUMABLES`, `LOOT`, `V`, `VEHICLES`, `VEHICLE_ACTIONS`, `buildVehicleData`, `importLootAndConsumables` |
 | Classes e subclasses | `RUNNER`, `INFILTRATOR`, `SOLO`, `AUGMENTED`, `TECH`, `BROKER`, `RECLAIMER`, `TRAUMA_DOC`, `WARDEN`, `CLASSES`, `KILL_CHAIN_ACTIONS`, `COVER_ACTIONS`, `CHROME_ACTIONS`, `importClassesAndSubclasses`, `importClass` |
 | Trajetórias e afiliações | `LIFE_PATHS`, `AFFILIATIONS`, `importLifePathsAndAffiliations` |
-| Cartas de Competência | `buildCardAction`, `NETWORK_CARDS` … `MEDTECH_CARDS`, `BLACKWALL_CARDS`, `REDLINE_CARDS`, `cloneOfficialCard`, `OFFICIAL_ACTION_NAMES`, `COMPETENCIES`, `ensureHomebrewDomains` (Homebrew do sistema), `importDomainCards` |
+| Cartas de Competência | `buildCardAction`, `cardAction`, `setCardDamage` (os `patch` das cartas clonadas acham ação pelo nome; o sistema renomeia ações entre versões, ver `docs/referencias/daggerheart-sistema.md`), `NETWORK_CARDS` … `MEDTECH_CARDS`, `BLACKWALL_CARDS`, `REDLINE_CARDS`, `cloneOfficialCard`, `OFFICIAL_ACTION_NAMES`, `COMPETENCIES`, `ensureHomebrewDomains` (Homebrew do sistema), `importDomainCards` |
 | Adversários e ambientes | `adversaryAttack`, `adversaryAction`, `threatAction`, `threatFeature`, `ADVERSARIES`, `ENVIRONMENTS`, `THREAT_AUTOMATION`, `automateThreatFeature`, `importAdversaries`, `importEnvironments` |
 | Cyberware e Eidolons | `CYBERWARE`, `CYBER_ART`, `BONUS`, `buildCyberwareItem`, `cyberEffect`, `EIDOLONS`, `EW`, `EF`, `buildEidolonParts`, `buildEidolonItem`, `importCyberware` |
 | Diários e tabelas | `JOURNALS`, `TABLE_NAMES`, `cyberwareTable`, `competencyCards`, `loadJournalsEn`, `importJournals` |
