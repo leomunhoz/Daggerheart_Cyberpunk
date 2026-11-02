@@ -58,6 +58,12 @@ Para conferir algo: clone o sistema **fora** deste repositório e só leia.
   converte `weaponFeatures`/`armorFeatures` ao carregar. As ações e os efeitos da feature só são
   criados quando a mudança vem em `system.itemFeatures` (`module/data/item/helpers.mjs`,
   `updateItemFeatures`). O gerador do módulo ainda grava o formato antigo (C212-03).
+- **[V]** Na 2.12, algumas features de arma aplicam a regra por `rollModifiers` e não por
+  ActiveEffect (`module/config/itemFeatures.mjs`: `selfCorrecting` `sc6`, `serrated` `sc8`,
+  `brutal` `br`, `powerful` `pw`; `massive` tem `pw` e ainda um efeito). `weapon.mjs` (`prepareDerivedData`) monta `system.rollModifiers`,
+  `dice/damageRoll.mjs` aplica no dano e `dice/die/baseDie.mjs` implementa o modificador. Na 2.10
+  essas features criavam um efeito com `changes: []`, só de rótulo. Arma com `effectIds: []`
+  nelas é o esperado (conferido no rebuild do B-011, Spec `correcoes-1-39` 5.2).
 - **[V]** `system.actions` é `ActionCollectionField` (`module/data/fields/action-collection-field.mjs`),
   `ActionCollection extends Collection`.
 - **[V]** Item `class`: `classItems`, `inventory.*` e `characterGuide.suggested*` viraram
