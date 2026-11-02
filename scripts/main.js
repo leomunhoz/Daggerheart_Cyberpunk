@@ -4949,6 +4949,57 @@ function stampActionIds(doc) {
 // Textos da interface ficam em lang/*.json (EDGEHEART.*).
 const t = (key, data) => data ? game.i18n.format(`EDGEHEART.${key}`, data) : game.i18n.localize(`EDGEHEART.${key}`);
 
+// Etapas do gerador, na ordem em que rodam. packs: chaves de PACKS que a etapa preenche (para o aviso de
+// progresso e de falha); phase: etapa que não é de um compêndio só. ctx passa dados de uma etapa para outra.
+export const BUILD_STEPS = [
+  { phase: "Clear", run: () => clearPacks() },
+  { packs: ["weapons", "armors"], run: async ctx => { ctx.equipment = await importWeaponsAndArmor(); } },
+  { packs: ["consumables", "loot", "rolltables"], run: () => importLootAndConsumables() },
+  { packs: ["classes", "subclasses"], run: ctx => importClassesAndSubclasses(ctx.equipment) },
+  { packs: ["ancestries", "communities"], run: () => importLifePathsAndAffiliations() },
+  { packs: ["domains"], run: () => importDomainCards() },
+  { packs: ["cyberware"], run: () => importCyberware() },
+  { packs: ["adversaries"], run: () => importAdversaries() },
+  { packs: ["environments"], run: () => importEnvironments() },
+  { packs: ["journals"], run: () => importJournals() },
+  {
+    phase: "Localize",
+    run: async ctx => {
+      // Os actionIds ficam com os nomes de origem: o hook sai antes da base em inglês + babele/pt-BR.
+      Hooks.off("preCreateItem", ctx.stampHook);
+      const { localizePacks } = await import(`./edgeheart-localize.js?v=${Date.now()}`);
+      const { unknown } = await localizePacks({
+        packs: Object.values(PACKS).map(p => ({ collection: `${PACK_SCOPE}.${p.name}`, labelPt: p.label })),
+        extraNames: extraLocalizedNames(),
+        packFolders: { "Character Options": "Opções de Personagem", "Items": "Itens" },
+        journalEn: await loadJournalsEn()
+      });
+      ctx.unknown = unknown;
+    }
+  }
+];
+
+// Roda as etapas em ordem. report.step antes de cada uma; se uma lança, report.fail e o mesmo erro sobe
+// (as seguintes não rodam).
+export async function runBuildSteps(steps, ctx, report) {
+  const total = steps.length;
+  for (const [index, step] of steps.entries()) {
+    report.step(step, index, total);
+    try {
+      await step.run(ctx);
+    } catch (error) {
+      report.fail(step, index, total, error);
+      throw error;
+    }
+  }
+}
+
+// Nome da etapa nos avisos: a fase traduzida, ou os títulos dos compêndios dela.
+export function stepLabel(step) {
+  if (step.phase) return t(`Build.Phase.${step.phase}`);
+  return step.packs.map(k => game.packs.get(`${PACK_SCOPE}.${PACKS[k].name}`)?.title ?? PACKS[k].label).join(", ");
+}
+
 // Gerador dos compêndios do módulo (ferramenta de desenvolvimento). Recria todo o conteúdo a partir
 // deste código e trava os compêndios de novo no final.
 async function buildPacks() {
@@ -4961,32 +5012,29 @@ async function buildPacks() {
     ui.notifications.error(t("Build.NeedEnglish"));
     return;
   }
-  ui.notifications.info(t("Build.Started"));
-  const stampHook = Hooks.on("preCreateItem", doc => stampActionIds(doc));
+  const bar = ui.notifications.info(t("Build.Started"), { progress: true });
+  const ctx = { stampHook: Hooks.on("preCreateItem", doc => stampActionIds(doc)) };
+  const report = {
+    step(step, index, total) {
+      const label = stepLabel(step);
+      ui.notifications.update(bar, { pct: index / total, message: t("Build.Step", { step: index + 1, total, packs: label }) });
+      console.log(`Edgeheart | Build ${index + 1}/${total}: ${label}`);
+    },
+    fail(step, index, total, error) {
+      const label = stepLabel(step);
+      ui.notifications.remove(bar);
+      ui.notifications.error(t("Build.Failed", { step: index + 1, total, packs: label }), { permanent: true });
+      console.error(`Edgeheart | Build parou na etapa ${index + 1}/${total} (${label}).`, error);
+    }
+  };
   try {
-    await clearPacks();
-    const equipment = await importWeaponsAndArmor();
-    await importLootAndConsumables();
-    await importClassesAndSubclasses(equipment);
-    await importLifePathsAndAffiliations();
-    await importDomainCards();
-    await importCyberware();
-    await importAdversaries();
-    await importEnvironments();
-    await importJournals();
+    await runBuildSteps(BUILD_STEPS, ctx, report);
   } finally {
-    Hooks.off("preCreateItem", stampHook);
+    Hooks.off("preCreateItem", ctx.stampHook);
   }
-  // Base em inglês + babele/pt-BR (depois dos actionIds, que ficam com os nomes de origem).
-  const { localizePacks } = await import(`./edgeheart-localize.js?v=${Date.now()}`);
-  const { unknown } = await localizePacks({
-    packs: Object.values(PACKS).map(p => ({ collection: `${PACK_SCOPE}.${p.name}`, labelPt: p.label })),
-    extraNames: extraLocalizedNames(),
-    packFolders: { "Character Options": "Opções de Personagem", "Items": "Itens" },
-    journalEn: await loadJournalsEn()
-  });
-  if (unknown.length) ui.notifications.warn(t("Build.Unknown", { count: unknown.length }));
+  if (ctx.unknown.length) ui.notifications.warn(t("Build.Unknown", { count: ctx.unknown.length }));
   for (const key of Object.keys(PACKS)) await game.packs.get(`${PACK_SCOPE}.${PACKS[key].name}`)?.configure({ locked: true });
+  ui.notifications.update(bar, { pct: 1 });
   ui.notifications.info(t("Build.Done"));
   console.log("Edgeheart | Compêndios do módulo gerados.");
 }

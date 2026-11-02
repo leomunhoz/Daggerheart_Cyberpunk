@@ -310,7 +310,13 @@
       "NeedEnglish": "Edgeheart: to build the compendiums, switch Foundry's language to English (Babele is translating).",
       "Started": "Edgeheart: building the module compendiums...",
       "Unknown": "Edgeheart: {count} names are missing from the glossary (see the console).",
-      "Done": "Edgeheart: compendiums built."
+      "Done": "Edgeheart: compendiums built.",
+      "Step": "Edgeheart: step {step}/{total}, {packs}...",
+      "Failed": "Edgeheart: the build stopped at step {step}/{total} ({packs}). The compendiums are incomplete. See the console (F12) and run buildPacks() again.",
+      "Phase": {
+        "Clear": "clearing the compendiums",
+        "Localize": "English base and pt-BR translation"
+      }
     }
   }
 }

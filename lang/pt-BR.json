@@ -310,7 +310,13 @@
       "NeedEnglish": "Edgeheart: para gerar os compêndios, troque o idioma do Foundry para English (o Babele está traduzindo).",
       "Started": "Edgeheart: gerando os compêndios do módulo...",
       "Unknown": "Edgeheart: {count} nomes fora do glossário (veja o console).",
-      "Done": "Edgeheart: compêndios gerados."
+      "Done": "Edgeheart: compêndios gerados.",
+      "Step": "Edgeheart: etapa {step}/{total}, {packs}...",
+      "Failed": "Edgeheart: o gerador parou na etapa {step}/{total} ({packs}). Os compêndios estão incompletos. Veja o console (F12) e rode o buildPacks() de novo.",
+      "Phase": {
+        "Clear": "limpando os compêndios",
+        "Localize": "base em inglês e tradução pt-BR"
+      }
     }
   }
 }
