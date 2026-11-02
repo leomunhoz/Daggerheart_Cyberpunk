@@ -15,7 +15,7 @@
   ],
   "relationships": {
     "systems": [
-      { "id": "daggerheart", "type": "system", "compatibility": { "minimum": "2.10.0" } }
+      { "id": "daggerheart", "type": "system", "compatibility": { "minimum": "2.11.0", "verified": "2.12.1" } }
     ],
     "recommends": [
       { "id": "babele", "type": "module", "reason": "Traduz os compêndios para português (pt-BR) / Translates the compendiums to Brazilian Portuguese." }

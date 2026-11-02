@@ -8,7 +8,8 @@
 //  3. lang/en.json e lang/pt-BR.json com as mesmas chaves;
 //  4. chaves EDGEHEART.* usadas no código e nos templates existem no lang/en.json;
 //  5. module.json: esmodules, styles, languages e packs apontam para arquivos/pastas que existem,
-//     e packFolders só cita compêndios declarados;
+//     e packFolders só cita compêndios declarados; a entrada daggerheart de relationships.systems
+//     tem compatibility.minimum e compatibility.verified, com verified >= minimum;
 //  6. caminhos fixos de arte (CPR("..."), ICON_PNG("..."), `modules/${MODULE_ID}/...`) existem no disco;
 //  7. babele/pt-BR tem um arquivo por compêndio.
 import { readFileSync, existsSync, readdirSync, statSync } from "node:fs";
@@ -108,6 +109,15 @@ if (manifest) {
   };
   walk(manifest.packFolders);
   if (manifest.id !== MODULE_ID) err(`module.json: id "${manifest.id}" diferente de ${MODULE_ID}`);
+  const dh = (manifest.relationships?.systems ?? []).find(s => s.id === "daggerheart");
+  const { minimum, verified } = dh?.compatibility ?? {};
+  if (!dh) err("module.json: relationships.systems sem a entrada daggerheart");
+  else if (!minimum || !verified) err("module.json: relationships.systems[daggerheart].compatibility precisa de minimum e verified");
+  else {
+    const a = String(minimum).split(".").map(Number), b = String(verified).split(".").map(Number);
+    const cmp = (() => { for (let i = 0; i < Math.max(a.length, b.length); i++) { const d = (b[i] ?? 0) - (a[i] ?? 0); if (d) return d; } return 0; })();
+    if (cmp < 0) err(`module.json: daggerheart verified ${verified} menor que minimum ${minimum}`);
+  }
 
   // 7. Uma tradução do Babele por compêndio
   for (const name of packNames) {
