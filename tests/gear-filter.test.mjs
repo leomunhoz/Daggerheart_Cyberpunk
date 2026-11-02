@@ -51,3 +51,31 @@ test("setting gearFilter: mundo, visível, Boolean, ligada por padrão, sem reca
   assert.equal(typeof s.onChange, "function");
   assert.doesNotThrow(() => s.onChange(false), "onChange sem Item Browser aberto não quebra");
 });
+
+// FIL-02: o filtro só esconde quando o Edgeheart tem equipamento daquele tipo nos compêndios dele.
+const { hasModuleGear } = await import("../scripts/edgeheart-browser-filters.js");
+
+test("compêndios vazios: o filtro não esconde nada (FIL-02)", () => {
+  assert.equal(hasModuleGear([], ["weapon"]), false);
+});
+
+test("há arma do Edgeheart: lista de armas e de equipamento filtram", () => {
+  assert.equal(hasModuleGear([{ type: "weapon" }], ["weapon"]), true);
+  assert.equal(hasModuleGear([{ type: "weapon" }], EQUIP), true);
+});
+
+test("build parado antes do loot: lista de loot não filtra", () => {
+  assert.equal(hasModuleGear([{ type: "weapon" }], ["loot"]), false);
+});
+
+test("só equipamento conta (cartas e classes não)", () => {
+  assert.equal(hasModuleGear([{ type: "domainCard" }, { type: "class" }], EQUIP), false);
+});
+
+test("entrada do índice sem type conta como item", () => {
+  assert.equal(hasModuleGear([{ name: "x" }], ["weapon"]), true);
+});
+
+test("lista que não é de equipamento: false", () => {
+  assert.equal(hasModuleGear([{ type: "weapon" }], ["domainCard"]), false);
+});

@@ -5,7 +5,7 @@
  * - Level Up: enquanto uma janela de Level Up de personagem estiver aberta, as cartas de domínio que
  *   o personagem já tem (ou já escolheu no Level Up) somem da lista (classe eh-hidden-owned).
  * - Equipamento: com a setting gearFilter ligada, armas, armaduras, consumíveis e loot que não vêm
- *   de compêndio do Edgeheart somem da lista (classe eh-hidden-gear).
+ *   de compêndio do Edgeheart somem da lista (classe eh-hidden-gear), só se o Edgeheart tem item do tipo.
  */
 
 const MODULE_ID = "edgeheart-cyberpunk";
@@ -87,11 +87,38 @@ export function isForeignGear({ uuid, types, enabled }) {
   return !String(uuid ?? "").startsWith(MODULE_PACK_PREFIX);
 }
 
+// O filtro só vale se o Edgeheart tem item daquele tipo (compêndios vazios após um build parado: nada some).
+// Entrada do índice sem type conta como item, para não desligar o filtro à toa.
+export function hasModuleGear(entries, types) {
+  const wanted = (types ?? []).filter(type => GEAR_TYPES.includes(type));
+  if (!wanted.length) return false;
+  return [...(entries ?? [])].some(entry => !entry?.type || wanted.includes(entry.type));
+}
+
+// Índice ainda não carregado: pede uma vez por compêndio e refiltra quando chega; até lá, conta como vazio.
+const indexRequests = new Map();
+function requestIndex(pack) {
+  if (indexRequests.has(pack.collection)) return;
+  indexRequests.set(pack.collection, pack.getIndex()
+    .then(() => { if (ui.compendiumBrowser?.rendered) filterGear(ui.compendiumBrowser); })
+    .catch(err => console.error(`${MODULE_ID} | índice de ${pack.collection}`, err)));
+}
+
+function moduleGearEntries() {
+  const entries = [];
+  for (const pack of game.packs.values()) {
+    if (pack.metadata?.packageName !== MODULE_ID || pack.documentName !== "Item") continue;
+    if (!pack.indexed) { requestIndex(pack); continue; }
+    entries.push(...pack.index.values());
+  }
+  return entries;
+}
+
 function filterGear(browser) {
   const list = browser?.element?.querySelector(".item-list");
   if (!list) return;
   const types = browser.selectedMenu?.data?.type ?? [];
-  const enabled = game.settings.get(MODULE_ID, "gearFilter");
+  const enabled = game.settings.get(MODULE_ID, "gearFilter") && hasModuleGear(moduleGearEntries(), types);
   for (const row of list.querySelectorAll(".item-container[data-item-uuid]")) {
     row.classList.toggle(GEAR_CLASS, isForeignGear({ uuid: row.dataset.itemUuid, types, enabled }));
   }
