@@ -2539,7 +2539,7 @@ const RB_FX = {
 
 const BLACKWALL_CARDS = [
   rb("Corruption Spike", { img: CPR("programs/hellbolt"), clone: "Blighting Strike",
-    actionNames: { "Spellcast Roll": "Rolagem de Interface", "With Hope": "Dano (Esperança)", "With Fear": "Dano (Medo)" },
+    actionNames: { "Spellcast Roll": "Rolagem de Interface", "Damage (With Hope)": "Dano (Esperança)", "Damage (With Fear)": "Dano (Medo)" },
     effectNames: { "Blightning Strike": "Corrompido" },
     // PDF: d6/d10 sem +1; o próximo dano do alvo cai 1d6 (o Dread corta pela metade), então o efeito vira marcador.
     patch: c => {
@@ -2787,7 +2787,7 @@ const REDLINE_CARDS = [
 
 // Competências (domínios homebrew). Para adicionar uma, registre aqui com as cartas dela;
 // importDomainCards registra o domínio no Homebrew do sistema e cria as cartas.
-const COMPETENCIES = [
+export const COMPETENCIES = [
   { id: "network", label: "Network", src: ICON_PNG("competency-network"), color: "#0098b8", cardImg: CARD_ART("network"), cards: NETWORK_CARDS },
   { id: "aegis", label: "Aegis", src: ICON_PNG("competency-aegis"), color: "#b89a00", cardImg: CARD_ART("aegis"), cards: AEGIS_CARDS },
   { id: "assault", label: "Assault", src: ICON_PNG("competency-assault"), color: "#4a3de0", cardImg: CARD_ART("assault"), cards: ASSAULT_CARDS },
@@ -2826,6 +2826,37 @@ async function ensureHomebrewDomains() {
   console.log(`Edgeheart | Competências homebrew registradas/atualizadas: ${changed.map(c => c.id).join(", ")}.`);
 }
 
+// Monta uma carta de Competência: copia a oficial (card.clone) de `officials` e aplica o patch.
+// Tolerante (ADR 0007): nome de ação que o sistema renomeou e patch que falha só avisam no console;
+// a carta segue com a cópia oficial, porque parar o build depois do clearPacks esvazia os compêndios.
+export function cloneCompetencyCard(card, officials) {
+  if (!card.clone) return card;
+  const official = officials.find(o => o.name === card.clone);
+  if (!official) {
+    console.warn(`Edgeheart | Carta oficial "${card.clone}" não encontrada; ${card.name} fica só com texto.`);
+    if (card.damageType) setDamageType(card.actions, card.damageType);
+    return card;
+  }
+  const officialNames = Object.values(official._source.system.actions ?? {}).map(a => a.name);
+  for (const key of Object.keys(card.actionNames ?? {})) {
+    if (!officialNames.includes(key)) console.warn(`Edgeheart | ${card.name}: ação oficial "${key}" não encontrada em ${card.clone} (nomes: ${officialNames.join(", ")})`);
+  }
+  const copy = () => {
+    const c = { ...card, ...cloneOfficialCard(official, card.name, card.img, card) };
+    if (card.damageType) setDamageType(c.actions, card.damageType);
+    return c;
+  };
+  let c = copy();
+  // patch: ajusta a cópia aos números do PDF (ex: dado d12 em vez do d8 da carta oficial).
+  if (card.patch) {
+    try { card.patch(c); } catch (err) {
+      console.warn(`Edgeheart | ${card.name}: ajuste da carta falhou; segue a cópia oficial sem o ajuste.`, err);
+      c = copy();
+    }
+  }
+  return c;
+}
+
 async function importDomainCards() {
   await ensureHomebrewDomains();
   const pack = await getOrCreatePack("domains");
@@ -2841,15 +2872,7 @@ async function importDomainCards() {
       levelFolders[level] = await makeFolder(pack, `Nível ${level}`, { parent: top.id, color: competency.color, sort: level * 1000 });
     }
     const data = competency.cards.map(card => {
-      let c = card;
-      if (card.clone) {
-        const official = (card.source === "void" ? voidCards : officialCards).find(o => o.name === card.clone);
-        if (official) c = { ...card, ...cloneOfficialCard(official, card.name, card.img, card) };
-        else console.warn(`Edgeheart | Carta oficial "${card.clone}" não encontrada; ${card.name} fica só com texto.`);
-        if (card.damageType) setDamageType(c.actions, card.damageType);
-        // patch: ajusta a cópia aos números do PDF (ex: dado d12 em vez do d8 da carta oficial).
-        if (official && card.patch) card.patch(c);
-      }
+      const c = cloneCompetencyCard(card, card.source === "void" ? voidCards : officialCards);
       return {
       _id: cardId(competency.id, c.name),
       name: c.name,
