@@ -42,6 +42,11 @@ https://foundryvtt.com/api/v14/classes/foundry.documents.collections.CompendiumC
 - **[V]** `index` (coleção mínima do compêndio), `indexed` (já indexado?), `indexFields`. A página
   não diz se o índice já vem carregado no `ready` **[I]** nem se a entrada de Item traz `type` **[I]**
   (conferido em 2026-11-02, Spec `release-1-39`).
+- **[V]** (console do usuário, 2026-11-02, Foundry 14 + Daggerheart 2.12.1) Depois do `ready`, os
+  compêndios Item do módulo estavam com `indexed = true`, e a entrada do índice trazia `type`.
+- **[I]** O navegador pode manter arquivos de módulo (`.js`, `.css`) de uma versão antiga em cache
+  depois da atualização: a pilha de um erro veio do `main.js` da 1.38.1 com a 1.39.0 instalada.
+  Depois de atualizar o módulo, use Ctrl+F5 (Spec `correcoes-1-39`).
 
 ## Notificações
 https://foundryvtt.com/api/v14/classes/foundry.applications.ui.Notifications.html

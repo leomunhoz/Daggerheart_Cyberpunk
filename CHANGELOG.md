@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.39.1
+- **Gerador dos compêndios volta a funcionar no Daggerheart 2.12**: com o Daggerheart 2.10.12 ou mais novo, o gerador parava na carta Corruption Spike das Competências e deixava os compêndios vazios. Agora ele passa dessa carta e preenche tudo.
+- **Ferramenta de desenvolvimento** que confere as cartas copiadas do sistema contra a versão do Daggerheart instalada e avisa o que mudou. Não muda nada no jogo.
+
 ## v1.39.0
 - **Compatível com o Daggerheart 2.12**: a Rolagem de Humanidade volta a aparecer ao rolar com Medo com todo o Estresse marcado. O módulo agora pede o Daggerheart 2.11.0 ou mais novo e foi conferido na 2.12.1.
 - **Level Up sem cartas repetidas**: ao escolher carta no Level Up, o Item Browser esconde as cartas que o personagem já tem ou já escolheu nesse Level Up.
