@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.39.0
+- **Compatível com o Daggerheart 2.12**: a Rolagem de Humanidade volta a aparecer ao rolar com Medo com todo o Estresse marcado. O módulo agora pede o Daggerheart 2.11.0 ou mais novo e foi conferido na 2.12.1.
+- **Level Up sem cartas repetidas**: ao escolher carta no Level Up, o Item Browser esconde as cartas que o personagem já tem ou já escolheu nesse Level Up.
+- **Só equipamento do Edgeheart no Item Browser**: armas, armaduras, consumíveis e loot de outras fontes ficam escondidos, inclusive no passo de equipamento da criação de personagem. Dá para desligar nas configurações do módulo ("Ocultar equipamento que não é do Edgeheart"). Se os compêndios do módulo estiverem vazios, nada é escondido.
+- **Gerador dos compêndios** (ferramenta de desenvolvimento): mostra o progresso de cada compêndio e, se parar no meio, avisa em que compêndio parou.
+
 ## v1.38.1
 - **Arte de carta para as 52 habilidades dos 16 ambientes**, cada ambiente na sua cor: mercado noturno em magenta, metrô assombrado em verde, catedral digital em violeta, torre corporativa em dourado, tempestade da Blackwall em azul e assim por diante.
 - **O mestre pode subir o Dado de Humanidade a qualquer momento**: o limite de um avanço por nível continua valendo para os jogadores, e o ajuste do mestre não gasta o avanço do nível. Antes, depois de subir uma vez num nível, o dado não voltava a subir nem quando era reduzido.

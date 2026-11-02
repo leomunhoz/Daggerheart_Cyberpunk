@@ -19,6 +19,7 @@ Porta de entrada de todo pedido, bug ou pendência (ADR 0002). Quem cuida é o C
 | B-009 | Filtro de equipamento esconde tudo se os compêndios do Edgeheart estão vazios | fix | rápida | aprovado | Spec `release-1-39` (FIL-02) |
 | B-010 | Versão v1.39.0 sem rebuild (lotes 01 e 02) | chore | rápida | aprovado | Spec `release-1-39` (REL-01, emenda D5, sem issue de código) |
 | B-011 | Rebuild dos compêndios na 2.12.1 (`chore(packs)`: C212-03, ORG-01 com custo `[n]`) | chore | rápida | triado | versão seguinte à 1.39.0; Spec `release-1-39` (D5) |
+| B-012 | Sessão de papel encerra sem `worker_done` (DevOps no lote 01, Examinador no FIL-02); e `worker-start` logo após `terminal create` dá `agent_unconfigured` (esperar o Claude abrir) | chore | rápida | bruto | ajustar a skill `/papel` |
 
 ## Lote atual
 
@@ -28,8 +29,8 @@ Porta de entrada de todo pedido, bug ou pendência (ADR 0002). Quem cuida é o C
 
 | Ordem | Ticket | Item | Issue | Estado |
 |---|---|---|---|---|
-| 1 | BLD-01 | B-008 | — | aprovado; paralelo com FIL-02 |
-| 1 | FIL-02 | B-009 | — | aprovado; paralelo com BLD-01 |
+| 1 | BLD-01 | B-008 | #8 | APROVADO 100%, commitado (f8720c1) |
+| 1 | FIL-02 | B-009 | #9 | APROVADO 92% (2026-11-02) |
 | 2 | REL-01 | B-010 | sem issue (não tem código) | depois de BLD-01 e FIL-02: N3, gerados restaurados, `v1.39.0` (sem rebuild, D5), `/lote 02` |
 
 Pendências do lote 01 que entram no REL-01: os roteiros N3 que não dependem de rebuild
