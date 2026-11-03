@@ -18,24 +18,47 @@ Porta de entrada de todo pedido, bug ou pendência (ADR 0002). Quem cuida é o C
 | B-008 | `buildPacks()` sem progresso nem aviso de onde parou | fix | rápida | aprovado | Spec `release-1-39` (BLD-01) |
 | B-009 | Filtro de equipamento esconde tudo se os compêndios do Edgeheart estão vazios | fix | rápida | aprovado | Spec `release-1-39` (FIL-02) |
 | B-010 | Versão v1.39.0 sem rebuild (lotes 01 e 02) | chore | rápida | aprovado | Spec `release-1-39` (REL-01, emenda D5, sem issue de código) |
-| B-011 | Rebuild dos compêndios na 2.12.1 (`chore(packs)`: C212-03, ORG-01 com custo `[n]`) | chore | rápida | em execução | lote 04 (`gabrielctorres/lote-04-compendios`): rebuild feito em 2026-11-02 no Foundry v14 b369 + Daggerheart **2.12.4**, em inglês, sem erro nos 11 passos; contagens iguais às de antes (cyberware 70, domínios 231...); 60 de 70 cyberwares com custo no nome (59 `[n]` + `[1–3] Neural Access`; os 10 sem custo parecem ser os Eidolons, conferir no O1-O4). N3 (2026-11-02, pelo navegador): B2 ok; O1, O2 e O3 ok (60/60 com custo igual ao "Cyber Cost" do texto; 10 Eidolons sem prefixo); O4 não feito (mundo sem personagem anterior). Self Correcting sem efeito é o esperado na 2.12 (`rollModifiers`, Arquiteto, emenda 5.2 da Spec `correcoes-1-39`), sem ticket. Falta: commit `chore(packs)` (sem as pastas `packs/*/lost/`) e versão |
+| B-011 | Rebuild dos compêndios na 2.12.1 (`chore(packs)`: C212-03, ORG-01 com custo `[n]`) | chore | rápida | feito | lote 04 (`gabrielctorres/lote-04-compendios`): rebuild feito em 2026-11-02 no Foundry v14 b369 + Daggerheart **2.12.4**, em inglês, sem erro nos 11 passos; contagens iguais às de antes (cyberware 70, domínios 231...); 60 de 70 cyberwares com custo no nome (59 `[n]` + `[1–3] Neural Access`; os 10 sem custo parecem ser os Eidolons, conferir no O1-O4). N3 (2026-11-02, pelo navegador): B2 ok; O1, O2 e O3 ok (60/60 com custo igual ao "Cyber Cost" do texto; 10 Eidolons sem prefixo); O4 não feito (mundo sem personagem anterior). Self Correcting sem efeito é o esperado na 2.12 (`rollModifiers`, Arquiteto, emenda 5.2 da Spec `correcoes-1-39`), sem ticket. Commits 75ec297, 775bbf4, 6305208 (v1.39.2); PR #14 mergeado (60b1bb1); Release v1.39.2 publicada em 2026-11-02. O4 ficou sem conferir (mundo sem personagem antigo) |
 | B-015 | Traduzir no pt-BR a descrição dos efeitos de features oficiais (ex.: Protective) | fix | — | bruto | sugestão do Arquiteto no B-011 (2026-11-02), opcional |
-| B-012 | Sessão de papel encerra sem `worker_done` (DevOps no lote 01, Examinador no FIL-02); e `worker-start` logo após `terminal create` dá `agent_unconfigured` (esperar o Claude abrir); `check --ack` sem o `delivery_id` não confirma e a mensagem antiga volta; terminais somem quando o Orca cai (lote 03) | chore | rápida | bruto | ajustar a skill `/papel` |
+| B-012 | Sessão de papel encerra sem `worker_done` (DevOps no lote 01, Examinador no FIL-02); e `worker-start` logo após `terminal create` dá `agent_unconfigured` (esperar o Claude abrir); `check --ack` sem o `delivery_id` não confirma e a mensagem antiga volta; terminais somem quando o Orca cai (lote 03); DevOps sai do processo logo após mandar uma `question` e o `reply` volta `dispatch_inactive` (2x no lote 04; contorno: mandar a confirmação já no `--spec`); o Criativo não tem Bash e não consegue mandar o `worker_done` (lote 05, PRD `visual-e-levelup`: o Controlador leu o arquivo e fez `worker-abandon`) | chore | rápida | bruto | ajustar a skill `/papel` |
 | B-013 | `buildPacks()` quebra nas Competências (Corruption Spike) desde o Daggerheart 2.10.12 | fix | rápida | pronto | lote 03: BLD-02 (#11) e BLD-03 (#12), versão v1.39.1 |
 | B-014 | Filtro de equipamento ligado e armas/armaduras do sistema aparecem no Item Browser e na criação | fix | rápida | em Spec | Console do Item Browser (2026-11-02, v1.39.1, 2.12.4): Weapons 324/324, Armors 69/69, Consumables 121/121 e Items 150/150 itens de fora marcados, 0 visíveis. É a linha H1 da tabela 3.3 (cache), então o FIL-03 não roda no Item Browser. Falta conferir a criação de personagem (H5) |
+| B-016 | Level Up conforme as regras do homebrew do PDF | feat | completa | aprovado | PRD + Spec `visual-e-levelup` (LUP-01, LUP-02), gate 2026-11-02 |
+| B-017 | Janela de Level Up no estilo de design da ficha Edgeheart | feat | completa | aprovado | Spec `visual-e-levelup` (LUP-03) |
+| B-018 | Estilo da ficha nos outros menus e diálogos do módulo (a ficha atual não muda) | feat | completa | aprovado | Spec `visual-e-levelup` (THM-01..04) |
+| B-019 | Barra de Medo com visual cyberpunk (caveira, vírus, tech) | feat | completa | aprovado | Spec `visual-e-levelup` (ART-01, FEAR-01, FEAR-02) |
+| B-020 | Levantar o que está diferente entre o PDF do Edgeheart e o módulo | docs | completa (investigação) | bruto | plano: auditoria do Arquiteto, vira itens novos no backlog |
+| B-021 | Artefato de referência visual dos menus (atuais e novos) | docs | rápida | feito | lote 05: inventário `docs/referencias/design-atual.md` (Arquiteto) + artefato https://claude.ai/artifact/QYoWtertbZFkB7KR6vDWKN (Controlador, 2026-11-02) |
+| B-022 | Release v1.39.2: DevOps só cria tag e Release com exceção escrita no pedido (o `devops.md` proíbe, a regra 9 permite com pedido do usuário) | chore | rápida | bruto | decidir se a definição do DevOps ganha o passo de release |
 
 ## Lote atual
 
-**Lote 04 (compêndios)**: branch `gabrielctorres/lote-04-compendios`, worktree Orca
+**Lote 05 (visual e Level Up)**: branch `gabrielctorres/lote-05-design-levelup`, worktree Orca
+`lote-05-design-levelup`, base `main` em `60b1bb1` (v1.39.2). Run Orca `run_717d734976b9`. Planejamento
+feito em 2026-11-02 (artefato, PRD, Spec, gate); a execução segue a ordem da tabela 6.0 da Spec
+`visual-e-levelup` (ART-01 pelo Codex). O link do Foundry (`modules/edgeheart-cyberpunk`) aponta para este worktree.
+
+| Ordem | Passo | Item | Estado |
+|---|---|---|---|
+| 1 | Limpeza das branches já usadas (lote 04, local e remoto) | — | feito (sobram `main` e a branch do lote 05) |
+| 2 | Inventário do design atual, Level Up e barra de Medo | B-021 | feito: `docs/referencias/design-atual.md` (perguntas Q1–Q7) |
+| 3 | Artefato de referência (menus atuais e novos) | B-021 | feito: https://claude.ai/artifact/QYoWtertbZFkB7KR6vDWKN |
+| 4 | PRD `docs/prd/visual-e-levelup.md` (R1–R22, CA1–CA22, Q1–Q7) | B-016..B-019 | feito (Criativo) |
+| 5 | Spec `docs/spec/visual-e-levelup.md` + ADRs 0008, 0009 | B-016..B-019 | feito (Arquiteto), emendada com o gate |
+| 6 | Gate único (2026-11-02): Q1 `sheetFx`, Q2 manter +1, Q3 lembrete, Q4 setting de mundo, Q5 painel, Q6 fontes no módulo, Q7 Codex, Q8 1240px; ADRs 0008 e 0009 aceitas | B-016..B-019 | feito |
+| 7 | Commit dos documentos e push da branch do lote | — | DevOps |
+| 8 | Issues dos 10 tickets (`/issue`) | B-016..B-019 | Controlador |
+
+**Lote 04 (compêndios)**, fechado (PR #14, Release v1.39.2): branch `gabrielctorres/lote-04-compendios`, worktree Orca
 `lote-04-compendios`, base `main` em `47eae9a` (v1.39.1). Run Orca `run_0b2a60df8d6d`. Só o B-011,
 sem código: rebuild feito em 2026-11-02 (Foundry v14 b369, Daggerheart 2.12.4), N3 B2/O1-O3 ok,
 O4 pendente (sem personagem antigo no mundo de teste).
 
 | Ordem | Passo | Item | Estado |
 |---|---|---|---|
-| 1 | `chore(packs)` (sem `packs/*/lost/`) | B-011 | DevOps |
-| 2 | `docs` (backlog, emenda 5.2 da `correcoes-1-39`, referência do sistema) | B-011 | DevOps |
-| 3 | versão `v1.39.2` (proposta) e `/lote 04` | B-011 | DevOps |
+| 1 | `chore(packs)` (sem `packs/*/lost/`) | B-011 | 75ec297 |
+| 2 | `docs` (backlog, emenda 5.2 da `correcoes-1-39`, referência do sistema) | B-011 | 775bbf4 |
+| 3 | versão `v1.39.2` e `/lote 04` | B-011 | 6305208; PR #14 aberto, falta O4 e merge |
 
 **Lote 02 (release 1.39)**: branch `gabrielctorres/lote-02-release-1-39`, worktree Orca
 `lote-02-release-1-39`, base `main` em `7b3abb4` (lote 01 entrou pelo PR #7). Spec
@@ -165,3 +188,38 @@ na `main`. Detalhes nas Specs `compat-2-12` e `organizacao-e-filtros`.
   CSS da 1.38.1 em cache, sem a regra `.eh-hidden-gear` [I]. Comandos de console e tabela de
   decisão na Spec `correcoes-1-39`, seção 3.3. O FIL-03 só abre com o resultado.
 
+
+### Decisões do usuário sobre o artefato (2026-11-02)
+- **A Ficha Edgeheart atual não muda.** Responde parte da Q1 do `design-atual.md`: o tema da ficha
+  fica como está; ele é a referência para as outras telas.
+- **As outras telas do artefato estão aprovadas:** Level Up (passo 1, Humanidade e resumo), barra
+  de Medo (caveira-vírus em hexágono, modos tokens e barra), diálogos, Crew no tema e cards de chat.
+  As perguntas Q2 a Q7 continuam abertas para o gate.
+- **Assets de arte (ícones e imagens) são gerados pelo Codex**, aberto num terminal do Orca, com o
+  pedido completo (uso, tamanho em px, formato, fundo transparente, paleta do tema, estilo, onde
+  entra no módulo). Botões, molduras, linhas e overlays são CSS/SVG feitos pelo Claude (Fábrica).
+  Todo asset gerado vai para `assets/` e entra no `module.zip`.
+
+### B-016 — Level Up conforme as regras do homebrew do PDF
+- **Pedido (2026-11-02):** "Quero ajustar o sistema de Level UP conforme as regras do homebrew do PDF."
+- **Para o PRD:** o que o PDF muda no Level Up do Daggerheart (Humanidade um passo por nível,
+  cyberware, Competências etc.); a janela é do sistema, então só hook de render e CSS (regra 1).
+  As regras levantadas no inventário do lote 05 entram aqui.
+
+### B-017 — Janela de Level Up no estilo da ficha
+- **Pedido:** "o Menu de Level UP poderia ser o estilo de design da ficha". Referência: artefato do lote 05.
+
+### B-018 — Estilo da ficha nos outros menus do módulo
+- **Pedido:** "levanto essa ideia para outros menus que o modulo faz". Referência: artefato do lote 05
+  (lista das telas no `docs/referencias/design-atual.md`).
+
+### B-019 — Barra de Medo cyberpunk
+- **Pedido:** "a barra de pontos de Medo também ter um design cyberpunk. Uma caveira vírus tech algo assim."
+- **Atenção:** a barra é do sistema; viabilidade por CSS/hook no inventário do lote 05.
+
+### B-020 — Diferenças entre o PDF e o módulo
+- **Pedido:** "Para futuras atualizações eu queria levantar o que ta diferente do PDF de regras do
+  sistema com o modulo."
+- **Forma:** investigação do Arquiteto, capítulo por capítulo (`docs/referencias/edgeheart-pdf.md`),
+  com uma lista de diferenças; cada diferença vira um item novo do backlog. Ainda não iniciada
+  (o usuário pediu só o registro por enquanto).

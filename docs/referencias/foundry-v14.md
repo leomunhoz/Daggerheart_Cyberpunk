@@ -27,6 +27,10 @@ https://foundryvtt.com/article/module-development/
 https://foundryvtt.com/api/v14/classes/foundry.helpers.ClientSettings.html
 - **[V]** `game.settings.register(ns, key, {name, hint, scope, config, requiresReload, type, choices, default, onChange})`.
   Escopos `world`, `user` (por jogador) e `client` (por navegador). `set` é assíncrono.
+- **[V]** (14.369, `client/helpers/client-settings.mjs:327-328`, `client/hooks.mjs:1448`) Hook
+  `clientSettingChanged(key, value, options)`: disparado só para setting de **cliente**, logo depois do
+  `onChange` registrado; `key` = `"<namespace>.<chave>"`. Serve para reagir a uma setting sem mexer no
+  registro dela. Setting de mundo: o `onChange` roda em **todos** os clientes (`client/documents/setting.mjs:41-51`).
 
 ## Compêndios
 https://foundryvtt.com/api/v14/classes/foundry.documents.collections.CompendiumCollection.html
@@ -63,6 +67,10 @@ https://foundryvtt.com/api/v14/classes/foundry.applications.apps.DocumentSheetCo
 - **[V]** Hooks de render: `render<NomeDaClasse>(app, element: HTMLElement, context, options)`,
   disparado para cada classe da herança, **antes** de o elemento entrar no DOM.
   https://foundryvtt.com/api/v14/functions/hookEvents.renderApplicationV2.html
+- **[V]** (14.369, `client/applications/api/application.mjs:1612-1636`) `changeTab(tab, group)` lança erro se a
+  aba não está no DOM: renderize antes (`await sheet.render({ force: true })`).
+- **[V]** (14.369, `application.mjs:600, 657, 1101-1108`) `setPosition` dentro do hook de render da primeira
+  renderização vale: `options.position` é o próprio `#position` e o `setPosition` do fim do render o reaplica.
 - **[I]** `renderChatMessageHTML(message, html: HTMLElement)` substituiu o `renderChatMessage` (jQuery) na v13.
 
 ## Comunicação jogador → mestre
